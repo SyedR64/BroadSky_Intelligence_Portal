@@ -531,6 +531,252 @@ def embed_checks(browser, site):
         ctx.close()
 
 
+# ── wave 3: the signature question, live floor plans, pictures and the globe ─────────────────────
+PREPARED = os.path.join(ROOT, 'data', 'agent', 'prepared.json')
+VIEWS = os.path.join(ROOT, 'data', 'agent', 'views_samples.json')
+SITE_CARD = os.path.join(ROOT, 'server', 'tests', 'fixtures', 'site', 'nj_full.json')
+# a firm role, a company office role and a field role, each with its own picture
+SIG_ROLES = (('bsp-partner', 'ranked_bars'), ('cet-estimator', 'pipeline_board'), ('pp-plumber', 'floor_sketch'))
+# the 3D view's pinned three.js (WAVE3 ruling 11), the only other host a page here may load
+THREE_RX = re.compile(r'^https://(unpkg\.com|cdn\.jsdelivr\.net/npm)/three@\d+\.\d+\.\d+/')
+SIZES = ((1440, 900, False), (390, 844, True), (1440, 900, True), (390, 844, False))
+
+
+def _offline_ctx(browser, site, w, h, dark):
+    """A context in which nothing but the local site loads (fonts aside): no backend, no model, no other host."""
+    ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
+    outside = []
+
+    def route(r):
+        u = r.request.url
+        if u.startswith(site) or 'fonts.googleapis.com' in u or 'fonts.gstatic.com' in u or THREE_RX.match(u):
+            return r.continue_()
+        outside.append(u)
+        return r.abort()
+    ctx.route('**/*', route)
+    return ctx, page, outside
+
+
+def signature_checks(browser, site, catalog):
+    """The role's signature question is the first chip; one tap shows the prepared answer from data/agent/prepared.json with the
+    backend off: its text, its picture through renderCard, the draft card and the "Waiting for approval" list. No model call."""
+    prepared = json.load(open(PREPARED, encoding='utf-8'))['roles']
+    roles = {r['id']: r for r in catalog['roles']}
+    for role, kind in SIG_ROLES:
+        for w, h, dark in SIZES:
+            label = f"signature {role} {w} px {'dark' if dark else 'light'}"
+            ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+            con = Console(page, site)
+            posts = []
+            page.on('request', lambda r: r.method == 'POST' and posts.append(r.url))
+            page.goto(f'{site}/agent.html?role={role}&backend=off')
+            wait_ready(page)
+            page.wait_for_timeout(300)
+            first = page.evaluate("""() => { const all = [...document.querySelectorAll('#ca-chat button.sys-chip, #ca-chat button.ch-chip')].filter(b => b.offsetParent);
+              return all[0] ? { text: all[0].textContent.trim(), sig: all[0].dataset.ca === 'sig' } : null; }""")
+            want_q = roles[role]['signature']['question']
+            check(f'{label}: the first chip is the signature question', first and first['sig'] and first['text'] == want_q, json.dumps(first))
+            page.locator('[data-ca="sig"]').click()
+            ok = poll(lambda: page.evaluate("() => !!document.querySelector('#ca-chat .ch-turn.bot[data-prepared] .ch-answer p')"), 8)
+            got = page.evaluate("""() => { const t = document.querySelector('#ca-chat .ch-turn.bot[data-prepared]'); if (!t) return {};
+              return { q: [...document.querySelectorAll('#ca-chat .ch-turn.user')].at(-1)?.textContent.trim(), text: t.querySelector('.ch-answer').textContent.trim(),
+                       kinds: [...t.querySelectorAll('.ch-blocks > *')].map(e => e.querySelector('[data-av-kind]')?.dataset.avKind || (e.matches('.ca-sketch') ? 'floor_sketch' : e.matches('.ca-draft') ? 'action_draft' : e.className)),
+                       draft: t.querySelector('.ca-draft .sys-card-title')?.textContent.trim() || '' }; }""")
+            if kind != 'floor_sketch':
+                poll(lambda: page.evaluate(f"() => !!document.querySelector('#ca-chat [data-av-kind=\"{kind}\"]')"), 6)
+                got['kinds'] = page.evaluate("""() => [...document.querySelectorAll('#ca-chat .ch-turn.bot[data-prepared] .ch-blocks > *')].map(e => e.querySelector('[data-av-kind]')?.dataset.avKind || (e.matches('.ca-draft') ? 'action_draft' : e.className))""")
+            p = prepared[role]
+            draft = next(c for c in p['cards'] if c.get('kind') == 'action_draft')
+            check(f'{label}: the answer is the prepared text under the question', ok and got.get('q') == want_q and got.get('text') == p['text'], json.dumps(got)[:200])
+            check(f'{label}: the picture ({kind}) and the draft render through renderCard', got.get('kinds') == [kind, 'action_draft'] and got.get('draft') == draft['title'], json.dumps(got.get('kinds')))
+            appr = page.evaluate("JSON.parse(localStorage.getItem('bsp-os-approvals') || '[]')")
+            check(f'{label}: the draft is in Waiting for approval', any(a.get('id') == draft['id'] and a.get('status') == 'draft' and a.get('role') == role for a in appr), json.dumps(appr)[:160])
+            sw = page.evaluate('document.documentElement.scrollWidth')
+            check(f'{label}: no model call, no other host, no sideways scroll, no console errors',
+                  not posts and not outside and sw == w and not con.errors, json.dumps({'posts': posts[:2], 'outside': outside[:2], 'sw': sw, 'errors': con.errors[:2]}))
+            ctx.close()
+    # the managing partner's question is the best-three globe tour: its own line, the tour on the globe, the post retitled
+    ctx, page, outside = _offline_ctx(browser, site, 1440, 900, False)
+    page.goto(f'{site}/agent.html?role=bsp-managing-partner&backend=off')
+    wait_ready(page)
+    page.evaluate("() => { window.__sent = []; window.MapCmd = { run: c => { window.__sent.push(c); return c; } }; }")
+    page.locator('[data-ca="sig"]').click()
+    poll(lambda: page.evaluate("() => !!document.querySelector('#ca-chat .ch-turn.bot[data-prepared] .ca-draft')"), 8)
+    r = page.evaluate("""() => { const t = document.querySelector('#ca-chat .ch-turn.bot[data-prepared]');
+      return { text: t.querySelector('.ch-answer').textContent, sent: window.__sent, map: t.querySelectorAll('.ca-map [data-ca="map"]').length,
+               draft: t.querySelector('.ca-draft .sys-card-title')?.textContent }; }""")
+    check('signature bsp-managing-partner: the best-three tour runs once, with its own line and the post retitled',
+          r['sent'] == [{'tour': 'best3'}] and r['map'] == 1 and 'Midland' in r['text'] and r['draft'] == 'Post the three targets to the partners channel' and not outside, json.dumps(r)[:240])
+    ctx.close()
+
+
+CARD_JS = """async ([card, opts]) => {
+  const m = await import('./assets/agent-cards.js');
+  let box = document.getElementById('ca-t'); if (!box) { box = document.createElement('div'); box.id = 'ca-t'; document.querySelector('.ca-main').prepend(box); }
+  const turn = document.createElement('div'); turn.className = 'ch-turn bot'; turn.innerHTML = '<span class="ch-avatar sm" aria-hidden="true"></span><div class="ch-col"><div class="ch-blocks"></div></div>'; box.append(turn);
+  const el = window.__agent.state.cards.renderCard(card, { turn, widget: { root: box }, live: !!opts.live });
+  if (el) { el.dataset.cardId = card.id; turn.querySelector('.ch-blocks').append(el); }
+  return true;
+}"""
+
+
+def live_card_checks(browser, site):
+    """A live floor_sketch card (a recorded public-building card): the real outline behind the plan, the place chip, the key, the
+    facts in a closed section, no "Example address"; the 3D control opens and closes cleanly; a company-record card keeps
+    "Example address". 1440x900 and 390x844, light and dark."""
+    fx = json.load(open(SITE_CARD, encoding='utf-8'))
+    live, cmd_card = fx['card'], fx['map_command']
+    sandbox = json.load(open(PREPARED, encoding='utf-8'))['roles']['pp-plumber']['cards'][0]
+    for w, h, dark in SIZES:
+        label = f"live card {w} px {'dark' if dark else 'light'}"
+        ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+        wait_ready(page)
+        page.evaluate(CARD_JS, [live, {}])
+        r = page.evaluate("""() => { const a = document.querySelector('#ca-t article.ca-sketch'), svg = a.querySelector('.ca-fs-svg:not([hidden]) svg');
+          const poly = svg.querySelector('polygon.ca-fs-outline'), d = a.querySelector('details.ca-facts');
+          const P = poly ? poly.getAttribute('points').trim().split(/\\s+/).map(q => q.split(',').map(Number)) : [], rect = svg.querySelector('rect.ca-fs-wall');
+          const fit = P.length ? [(Math.max(...P.map(q => q[0])) - Math.min(...P.map(q => q[0]))) / Number(rect.getAttribute('width')), (Math.max(...P.map(q => q[1])) - Math.min(...P.map(q => q[1]))) / Number(rect.getAttribute('height'))] : [];
+          return { outline: P.length, fit, has: svg.classList.contains('has-outline'),
+                   place: a.querySelector('.ca-fs-place')?.textContent || '', precision: a.querySelector('.ca-fs-place')?.dataset.precision,
+                   title: a.querySelector('.ca-fs-title').textContent, dated: a.querySelector('.ca-fs-outline-t')?.textContent || '',
+                   key: [...a.querySelectorAll('.ca-legend [data-basis]')].map(s => s.dataset.basis + ':' + s.textContent),
+                   factsOpen: d ? d.open : null, facts: d ? d.querySelectorAll('.ca-fact-list > div').length : 0, srcs: d ? d.querySelectorAll('.ca-fact-src').length : 0,
+                   srcList: d ? d.querySelectorAll('.ca-fact-srcs li').length : 0, text: a.innerText, wide: a.scrollWidth - a.clientWidth,
+                   map: a.querySelectorAll('.ca-map-btn').length }; }""")
+        ring = len(live['building']['footprint']['ring_m']) - 1   # recorded closed; drawn open
+        check(f'{label}: the real outline is drawn behind the plan', r['outline'] == ring and r['has'], f"{r['outline']} points vs {ring}")
+        check(f'{label}: the outline sits square on the plan rectangle (extents within 5%)', len(r['fit']) == 2 and all(abs(x - 1) < 0.05 for x in r['fit']), json.dumps(r['fit']))
+        check(f'{label}: place chip with the typed address and its precision, title is the typed address',
+              live['address'] in r['place'] and 'Parcel match' in r['place'] and r['precision'] == 'parcel' and r['title'] == live['address'], r['place'])
+        check(f'{label}: outline date shown', r['dated'].startswith('Outline from imagery dated Aug 2024'), r['dated'])
+        check(f'{label}: the key names public record and likely, no company record',
+              r['key'] == ['public:Public record', 'likely:Likely, confirm on site'], json.dumps(r['key']))
+        nf = len(live['facts']) + (1 if live.get('permits') else 0)
+        check(f'{label}: facts sit in a closed section, each with its source and date', r['factsOpen'] is False and r['facts'] == nf and r['srcs'] == nf and r['srcList'] == len(live['sources']),
+              json.dumps({k: r[k] for k in ('factsOpen', 'facts', 'srcs', 'srcList')}))
+        check(f'{label}: no "Example address", sandbox or fictional words on a live card', not re.search(r'example address|sandbox|fictional', r['text'], re.I))
+        check(f'{label}: "Show on map" built from the place', r['map'] == 1)
+        # 3D: opens assets/house3d.js under the plan, and a second press removes it cleanly
+        btn = page.locator('#ca-t article.ca-sketch [data-ca="3d"]')
+        btn.click()
+        opened = poll(lambda: page.evaluate("() => { const h = document.querySelector('#ca-t .ca-3d'); return !h.hidden && !!h.querySelector('.h3, p.sys-src:not(.ca-3d-wait)'); }"), 10)
+        mod = page.evaluate("() => [...performance.getEntriesByType('resource')].some(e => /assets\\/house3d\\.js\\?v=/.test(e.name))")
+        check(f'{label}: 3D opens the house view (lazy, stamped import)', opened and mod and btn.get_attribute('aria-expanded') == 'true')
+        btn.click()
+        gone = page.evaluate("() => { const h = document.querySelector('#ca-t .ca-3d'); return h.hidden && h.childElementCount === 0; }")
+        check(f'{label}: a second press removes the 3D view', gone and btn.get_attribute('aria-expanded') == 'false')
+        # a company-record card (example data) still says so
+        page.evaluate(CARD_JS, [{**sandbox, 'id': 'fs-sbx'}, {}])
+        ex = page.evaluate("() => [...document.querySelectorAll('#ca-t article.ca-sketch')].at(-1).querySelector('.ca-fs-ex')?.textContent || ''")
+        key = page.evaluate("() => [...[...document.querySelectorAll('#ca-t article.ca-sketch')].at(-1).querySelectorAll('.ca-legend [data-basis]')].map(s => s.textContent)")
+        check(f'{label}: a company-record card shows "Example address" and "Company record (example data)"', ex == 'Example address' and 'Company record (example data)' in key, json.dumps([ex, key]))
+        sw = page.evaluate('document.documentElement.scrollWidth')
+        check(f'{label}: no sideways scroll, nothing outside the site, no console errors', sw == w and r['wide'] <= 1 and not outside and not con.errors,
+              json.dumps({'sw': sw, 'wide': r['wide'], 'outside': outside[:2], 'errors': con.errors[:2]}))
+        ctx.close()
+
+
+def view_card_checks(browser, site):
+    """A card of each picture kind, both as { kind: 'view', view } and as the server's own card (source_line, long basis words),
+    drawn by assets/agent-views.js; a company record reads "Company record (example data)"; the picture's draft button adds a draft."""
+    samples = json.load(open(VIEWS, encoding='utf-8'))['samples']
+    srv = json.load(open(PREPARED, encoding='utf-8'))['roles']['pp-cfo']['cards'][0]   # a bridge with basis 'company record (example data)'
+    for w, h, dark in SIZES:
+        label = f"view cards {w} px {'dark' if dark else 'light'}"
+        ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-cfo&backend=off')
+        wait_ready(page)
+        for i, s in enumerate(samples):
+            page.evaluate(CARD_JS, [{'type': 'card', 'kind': 'view', 'id': f'v{i}', 'view': s['view']}, {}])
+        page.evaluate(CARD_JS, [srv, {}])
+        poll(lambda: page.evaluate(f"() => document.querySelectorAll('#ca-t [data-av-kind]').length === {len(samples) + 1}"), 10)
+        r = page.evaluate("""() => ({ kinds: [...document.querySelectorAll('#ca-t [data-av-kind]')].map(e => e.dataset.avKind),
+          empty: document.querySelectorAll('#ca-t .av-empty, #ca-t [data-av-empty]').length,
+          srvMarks: [...[...document.querySelectorAll('#ca-t [data-av-kind]')].at(-1).querySelectorAll('[data-av-mark]')].map(e => e.textContent.trim()),
+          srvSrc: [...document.querySelectorAll('#ca-t [data-av-kind]')].at(-1).querySelector('[data-src]')?.textContent || '',
+          wide: Math.max(...[...document.querySelectorAll('#ca-t .ca-view')].map(e => e.scrollWidth - e.clientWidth)) })""")
+        want = [s['view']['kind'] for s in samples] + ['bridge']
+        check(f'{label}: every picture kind draws ({", ".join(sorted(set(want)))})', r['kinds'] == want and set(want) >= {'scorecard', 'bridge', 'heatmap', 'pipeline_board', 'ranked_bars'}, json.dumps(r['kinds']))
+        check(f'{label}: a server card reads "Company record (example data)" and carries its source', r['srvMarks'] and all(m == 'Company record (example data)' for m in r['srvMarks'])
+              and r['srvSrc'] and not r['srvSrc'].lower().startswith('source:'), json.dumps([r['srvMarks'][:2], r['srvSrc'][:60]]))
+        n0 = page.evaluate("JSON.parse(localStorage.getItem('bsp-os-approvals') || '[]').length")
+        page.locator('#ca-t [data-av-draft]').first.click()
+        poll(lambda: page.locator('#ca-t .ca-draft').count() == 1, 4)
+        n1 = page.evaluate("JSON.parse(localStorage.getItem('bsp-os-approvals') || '[]').length")
+        check(f'{label}: a picture\'s draft button adds a draft card and an approval item', page.locator('#ca-t .ca-draft').count() == 1 and n1 == n0 + 1, f'{n0} -> {n1}')
+        sw = page.evaluate('document.documentElement.scrollWidth')
+        check(f'{label}: no sideways scroll, no console errors', sw == w and r['wide'] <= 1 and not outside and not con.errors,
+              json.dumps({'sw': sw, 'wide': r['wide'], 'errors': con.errors[:2]}))
+        ctx.close()
+
+
+def map_checks(browser, site):
+    """"Show on map": a live answer runs the map command once; a restored card waits for a tap; the shell (MapCmd) gets it on the
+    page that has it, the parent gets it by postMessage from inside a frame, and a plain page gets a link to the globe."""
+    fx = json.load(open(SITE_CARD, encoding='utf-8'))
+    live, cmd_card = fx['card'], fx['map_command']
+    for w, h, dark in ((1440, 900, False), (390, 844, True)):
+        tag = f"{w} px {'dark' if dark else 'light'}"
+        ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+        wait_ready(page)
+        page.evaluate("() => { window.__sent = []; window.MapCmd = { run: c => { window.__sent.push(c); return c; } }; }")
+        page.evaluate(CARD_JS, [live, {}])
+        # same turn: the map card joins the sketch's control (live: it runs once)
+        page.evaluate("""async c => { const t = [...document.querySelectorAll('#ca-t .ch-turn')].at(-1);
+          const el = window.__agent.state.cards.renderCard(c, { turn: t, live: true }); if (el) t.querySelector('.ch-blocks').append(el); }""", cmd_card)
+        r1 = page.evaluate("() => ({ sent: window.__sent.length, ctrl: document.querySelectorAll('#ca-t .ch-turn:last-child [data-ca=\"map\"]').length })")
+        check(f'map {tag}: a live answer runs the command once, one "Show on map" in the answer', r1 == {'sent': 1, 'ctrl': 1}, json.dumps(r1))
+        page.locator('#ca-t .ch-turn:last-child [data-ca="map"]').click()
+        sent = page.evaluate('window.__sent')
+        check(f'map {tag}: "Show on map" sends the answer\'s own command to MapCmd', len(sent) == 2 and sent[1] == cmd_card['cmd'], json.dumps(sent[-1])[:160])
+        # restored: nothing runs by itself
+        page.evaluate("() => { window.__sent = []; }")
+        page.evaluate(CARD_JS, [{**cmd_card, 'id': 'mc-restored'}, {}])
+        n = page.evaluate('window.__sent.length')
+        ctl = page.locator('#ca-t .ch-turn:last-child .ca-map [data-ca="map"]')
+        check(f'map {tag}: a restored map card shows "Show on map" and does nothing by itself', n == 0 and ctl.count() == 1)
+        ctl.click()
+        check(f'map {tag}: tapping it then sends the command', page.evaluate('window.__sent.length') == 1)
+        check(f'map {tag}: no console errors, nothing outside the site', not con.errors and not outside, '; '.join(con.errors[:2]))
+        ctx.close()
+    # a plain page (no shell, no frame): a link to the globe with the place
+    ctx, page, outside = _offline_ctx(browser, site, 1440, 900, False)
+    page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+    wait_ready(page)
+    page.evaluate("() => { delete window.MapCmd; }")
+    page.evaluate(CARD_JS, [live, {}])
+    href = page.evaluate("() => document.querySelector('#ca-t a[data-ca=\"map-link\"]')?.getAttribute('href') || ''")
+    q = urllib.parse.parse_qs(href.split('?', 1)[1]) if '?' in href else {}
+    check('map: without the shell, "Show on map" is a link to the globe at the place',
+          href.startswith('app.html#/globe/view?') and abs(float(q.get('lat', ['0'])[0]) - live['place']['lat']) < 1e-6 and float(q.get('zoom', ['99'])[0]) <= 19, href)
+    ctx.close()
+    # inside the shell's frame: the command goes to the parent by postMessage
+    ctx, page, outside = _offline_ctx(browser, site, 1440, 900, False)
+    page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+    wait_ready(page)
+    page.evaluate("""() => { window.__msgs = []; addEventListener('message', e => { if (e.origin === location.origin) window.__msgs.push(e.data); });
+      const f = document.createElement('iframe'); f.id = 'shellframe'; f.src = 'agent.html?role=pp-dispatcher&backend=off&embed=1'; f.style.cssText = 'width:900px;height:700px';
+      document.body.prepend(f); }""")
+    frame = None
+    for _ in range(80):
+        frame = next((f for f in page.frames if 'embed=1' in f.url), None)
+        if frame and frame.evaluate("() => !!(window.__agent && window.__agent.state.cards)"):
+            break
+        page.wait_for_timeout(150)
+    frame.evaluate(CARD_JS, [live, {}])
+    frame.locator('#ca-t [data-ca="map"]').click()
+    poll(lambda: page.evaluate('window.__msgs.length') > 0, 3)
+    msgs = page.evaluate('window.__msgs')
+    ok = msgs and msgs[0].get('type') == 'bsp:map' and (msgs[0].get('cmd') or {}).get('steps', [{}])[0].get('kind') == 'site'
+    check('map: inside a frame, "Show on map" posts { type: "bsp:map", cmd } to the parent', ok, json.dumps(msgs)[:200])
+    ctx.close()
+
+
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
 def axe_checks(browser, site):
     url = f'{site}/agent.html?role={TECH}&backend=off&apps=all'
@@ -599,6 +845,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--no-backend', action='store_true', help='skip the check against a mock-driven backend')
     ap.add_argument('--no-axe', action='store_true', help='skip the axe-core checks')
+    ap.add_argument('--only-wave3', action='store_true', help='run only the signature, live card, picture and map checks')
     args = ap.parse_args()
     catalog = json.load(open(CATALOG, encoding='utf-8'))
     tmp = tempfile.mkdtemp(prefix='agent-page-')
@@ -609,14 +856,19 @@ def main():
         with sync_playwright() as pw:
             browser = pw.chromium.launch()
             try:
-                page_checks(browser, site, catalog)
-                replay_checks(browser, site)
-                desktop_role_list_checks(browser, site)
-                embed_checks(browser, site)
-                if not args.no_axe:
-                    axe_checks(browser, site)
-                if not args.no_backend:
-                    backend_checks(browser, site, tmp)
+                signature_checks(browser, site, catalog)
+                live_card_checks(browser, site)
+                view_card_checks(browser, site)
+                map_checks(browser, site)
+                if not args.only_wave3:
+                    page_checks(browser, site, catalog)
+                    replay_checks(browser, site)
+                    desktop_role_list_checks(browser, site)
+                    embed_checks(browser, site)
+                    if not args.no_axe:
+                        axe_checks(browser, site)
+                    if not args.no_backend:
+                        backend_checks(browser, site, tmp)
             finally:
                 browser.close()
     finally:
