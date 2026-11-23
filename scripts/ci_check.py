@@ -8,7 +8,12 @@ without console errors or uncaught page errors, and every link to a portal scree
 
 Pages:  every *.html in the repo except scripts/, .git/, node_modules/.
 Routes: app.html#/<module>/<view> for each module/view parsed from modules/*.js (cross-checked against the
-        live App registry once the app boots).
+        live App registry once the app boots), viewed as the managing partner (app.html?role=bsp-managing-partner),
+        the level that opens every screen.
+Levels: for each of the five levels of Broad Sky OS, one role (LEVEL_ROLES), chosen through localStorage before the
+        page loads, as a visitor's earlier "Viewing as" choice would be: every item of that role's menu must open
+        without an error and land on its screen, the menu must hold what OS_SPEC 3 gives the level (LEVEL_MENU), and a
+        screen the level does not have must send the visitor to #/home/overview with the line "Not in this view.".
 Forwarding pages: a page whose <head> carries <meta name="bsp-forward" content="<target>"> only hands its visitor on.
         It is not rendered or counted as a page. Its target must be a file that exists and is not itself a
         forwarding page; a target of app.html#/<module>/<view> must be a live route or a key of the forwarding
@@ -378,6 +383,19 @@ class Collector:
         self._warn('external', f'{reason} {req.url}', req.url)
 
 
+# One role per level (data/agent/catalog.json ids), and what its menu must hold (OS_SPEC 3): 'must' items are always
+# there, 'may' items only once their screen exists (each company's Plan and Tools are built in their own lane).
+LEVEL_ROLES = [('firm_leadership', 'bsp-managing-partner'), ('firm_team', 'bsp-investor-relations'),
+               ('co_leadership', 'pp-ceo'), ('co_office', 'pp-dispatcher'), ('co_field', 'pp-hvac-technician')]
+LEVEL_MENU = {
+    'bsp-managing-partner': {'must': ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh', 'ma', 'deal', 'pe', 'bsp', 'signals', 'fin', 'techos', 'connect'], 'may': []},
+    'bsp-investor-relations': {'must': ['home', 'fin', 'connect'], 'may': []},
+    'pp-ceo': {'must': ['home', 'pp', 'ma/pipeline', 'signals/overview', 'connect'], 'may': ['pp/plan', 'pp/tools']},
+    'pp-dispatcher': {'must': ['home', 'pp', 'connect'], 'may': ['pp/tools']},
+    'pp-hvac-technician': {'must': ['home'], 'may': []},
+}
+
+
 def attach(page, col):
     page.on('console', col.on_console)
     page.on('pageerror', col.on_pageerror)
@@ -436,7 +454,7 @@ async def check_aliases(page, col, aliases, live):
 async def check_routes(ctx, base, routes, settle, aliases=None):
     """One app instance; navigate by hash so each route renders exactly as a user would reach it."""
     page = await ctx.new_page(); col = Collector(base); attach(page, col); results = []
-    await page.goto(f'{base}/app.html#/{routes[0][0]}/{routes[0][1]}', wait_until='load', timeout=45000)
+    await page.goto(f'{base}/app.html?role=bsp-managing-partner#/{routes[0][0]}/{routes[0][1]}', wait_until='load', timeout=45000)
     await page.wait_for_function('() => window.BSP && window.BSP.App && window.BSP.App.modules.length > 0', timeout=30000)
     live = await page.evaluate('() => window.BSP.App.modules.flatMap(m => m.views.map(v => [m.id, v.id]))')
     missing = [r for r in map(tuple, live) if r not in routes]
@@ -457,6 +475,73 @@ async def check_routes(ctx, base, routes, settle, aliases=None):
     await page.close()
     unknown = [f'{m}/{v}' for m, v in routes if [m, v] not in live]
     return results, unknown, forwarded
+
+
+async def check_levels(browser, base, settle):
+    """Each level in its own browser context, its role stored before the page loads (assets/session.js reads
+    localStorage 'bsp-agent-role'). Returns one result row per menu item and one per level for the menu and the
+    hidden-screen redirect."""
+    results = []
+    for level, rid in LEVEL_ROLES:
+        ctx = await browser.new_context(viewport={'width': 1440, 'height': 900}, service_workers='block')
+        await ctx.add_init_script("try { localStorage.setItem('bsp-ci', '1'); localStorage.setItem('bsp-agent-role', JSON.stringify(%s)); } catch (e) {}" % json.dumps(rid))
+        page = await ctx.new_page(); col = Collector(base); attach(page, col)
+        n0, w0, t0 = 0, 0, time.time()
+        label = f'level {level} as {rid}'
+        try:
+            await page.goto(f'{base}/app.html#/home/overview', wait_until='load', timeout=45000)
+            await page.wait_for_function("() => window.BSP && window.BSP.App.current && window.BSPSession && window.BSPSession.catalog() && !document.querySelector('#content > .loading')", timeout=30000)
+            got = await page.evaluate('() => ({ id: BSPSession.role().id, level: BSPSession.level() })')
+            if got != {'id': rid, 'level': level}:
+                col.errors.append({'kind': 'level', 'text': f'viewing as {got}, expected {rid} at {level}'})
+            menu = await page.evaluate("() => [...document.querySelectorAll('#rail .rail-item')].map(a => ({ key: a.dataset.k, href: a.getAttribute('href'), label: a.textContent.trim() }))")
+            keys = [m['key'] for m in menu]
+            want = LEVEL_MENU.get(rid, {'must': [], 'may': []})
+            missing = [k for k in want['must'] if k not in keys]
+            extra = [k for k in keys if k not in want['must'] + want['may']]
+            if missing or extra:
+                col.errors.append({'kind': 'menu', 'text': f'menu {keys}: missing {missing}, not expected {extra}'})
+            if await page.evaluate("() => !!document.querySelector('#rail .rail-foot a[href]:not([hidden])')") != (level in ('firm_leadership', 'firm_team')):
+                col.errors.append({'kind': 'menu', 'text': '"All views" must show for the firm levels only'})
+            # a screen this level does not have: the first registered one it cannot open
+            hidden = await page.evaluate("() => { for (const m of BSP.App.modules) for (const v of m.views) if (!BSP.App.can(m.id, v.id)) return `#/${m.id}/${v.id}`; return null; }")
+            if level == 'firm_leadership' and hidden:
+                col.errors.append({'kind': 'level', 'text': f'the managing partner cannot open {hidden}'})
+            if hidden:
+                await page.evaluate("h => { document.querySelectorAll('.toast').forEach(t => t.remove()); location.hash = h; }", hidden)
+                try:
+                    await page.wait_for_function("() => location.hash === '#/home/overview' && BSP.App.current.id === 'home' && BSP.App.view.id === 'overview' && [...document.querySelectorAll('.toast')].some(t => t.textContent.trim() === 'Not in this view.')", timeout=15000)
+                except Exception:
+                    now = await page.evaluate("() => location.hash + ' | ' + [...document.querySelectorAll('.toast')].map(t => t.textContent).join(' / ')")
+                    col.errors.append({'kind': 'redirect', 'text': f'{hidden} did not go home with "Not in this view.": {now}'})
+        except Exception as e:
+            col.errors.append({'kind': 'navigation', 'text': str(e)[:300]}); menu = []; hidden = None
+        results.append({'target': f'{label}: menu {", ".join(m["label"] for m in menu)}' + (f'; {hidden} goes home' if hidden else ''), 'errors': col.errors[n0:], 'warnings': col.warnings[w0:], 'ignored': 0, 'seconds': round(time.time() - t0, 1)})
+        for m in menu:
+            n0, w0, t0 = len(col.errors), len(col.warnings), time.time()
+            try:
+                await page.evaluate("h => { document.querySelectorAll('.toast').forEach(t => t.remove()); if (location.hash === h) location.hash = '#/home/overview'; }", m['href'])
+                await page.wait_for_timeout(50)
+                await page.evaluate("h => { location.hash = h; }", m['href'])
+                mod, _, rest = m['href'][2:].partition('/')
+                view = rest.split('?')[0]
+                await page.wait_for_function(
+                    "([m, v]) => window.BSP.App.current && window.BSP.App.current.id === m && window.BSP.App.view && window.BSP.App.view.id === v && !document.querySelector('#content > .loading')",
+                    arg=[mod, view], timeout=30000)
+                await page.wait_for_timeout(settle)
+                state = await page.evaluate("() => ({ hash: location.hash, denied: [...document.querySelectorAll('.toast')].some(t => t.textContent.trim() === 'Not in this view.'), failed: (document.querySelector('#content .empty') || {}).textContent || '' })")
+                # the screen may add its own parameters (deal/returns?p=typical); the item's own must all be there
+                want_path, _, want_q = m['href'].partition('?')
+                got_path, _, got_q = state['hash'].partition('?')
+                if state['denied'] or got_path != want_path or not set(filter(None, want_q.split('&'))) <= set(got_q.split('&')):
+                    col.errors.append({'kind': 'menu item', 'text': f"{m['href']} landed on {state['hash']}{' with Not in this view.' if state['denied'] else ''}"})
+                if re.search(r'This (?:screen|view) failed to (?:load|render)', state['failed'], re.I):
+                    col.errors.append({'kind': 'render', 'text': state['failed'][:300]})
+            except Exception as e:
+                col.errors.append({'kind': 'navigation', 'text': str(e)[:300]})
+            results.append({'target': f"{label}: {m['label']} ({m['href']})", 'errors': col.errors[n0:], 'warnings': col.warnings[w0:], 'ignored': 0, 'seconds': round(time.time() - t0, 1)})
+        await ctx.close()
+    return results
 
 
 def static_checks(args, routes):
@@ -491,7 +576,7 @@ async def run(args):
     forward_rows, audit, aliases = static_checks(args, all_routes)
     if args.only:
         pages = [p for p in pages if args.only in p]; routes = [r for r in routes if args.only in f'{r[0]}/{r[1]}']
-    if args.links_only:
+    if args.links_only or args.levels_only:
         pages, routes = [], []
     print(f'ci_check: {len(pages)} pages, {len(routes)} app routes -> {args.base}')
     print_audit(audit, len(forward_rows))
@@ -511,6 +596,8 @@ async def run(args):
         page_results = await asyncio.gather(*[check_page(ctx, args.base, p, args.settle, sem) for p in pages])
         # the forwarding table is followed in the browser on a full run only (a filtered run may not load the portal at all)
         route_results, unknown, forwarded = (await check_routes(ctx, args.base, routes, args.route_settle, None if args.only else aliases)) if routes else ([], [], [])
+        # the five levels: on a full run, or with --levels-only
+        level_results = await check_levels(browser, args.base, args.route_settle) if (not args.only and not args.no_levels) or args.levels_only else []
         # one retry for failing standalone pages: a deterministic error reproduces; a timing flake is reported but not fatal
         page_results = list(page_results)
         for _ in range(args.retries):
@@ -521,7 +608,7 @@ async def run(args):
                         again['flaky_first_run'] = r['errors']; page_results[i] = again
         await browser.close()
     results = page_results + route_results    # the pages and app routes, counted as before
-    extra = forwarded + forward_rows          # old addresses followed in the browser, and forwarding pages read from disk
+    extra = forwarded + forward_rows + level_results   # old addresses, forwarding pages read from disk, and the five levels
     flaky = [r['target'] for r in results if r.get('flaky_first_run')]
     bad = [r for r in results + extra if r['errors']]
     warned = [r for r in results + extra if r.get('warnings')]
@@ -583,6 +670,8 @@ def main():
     ap.add_argument('--retries', type=int, default=1, help='re-check a failing standalone page this many times')
     ap.add_argument('--only', default='', help='substring filter for pages/routes')
     ap.add_argument('--links-only', action='store_true', help='run the link audit and the forwarding-page checks only: no browser')
+    ap.add_argument('--levels-only', action='store_true', help='run the five-level check only (and the link audit)')
+    ap.add_argument('--no-levels', action='store_true', help='skip the five-level check')
     ap.add_argument('--strict-aliases', action='store_true', help='fail when a key of the forwarding table is still a live route (a pending merge)')
     ap.add_argument('--strict-go', action='store_true', help="fail on an App.go('module', 'view') call that names no screen")
     args = ap.parse_args()
