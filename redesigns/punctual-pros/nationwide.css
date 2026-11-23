@@ -330,3 +330,9 @@ input[type=range]{width:100%;accent-color:var(--co)}
 
 /* a pressed chip keeps its light text while hovered (system hover rule otherwise turns it ink-on-ink) */
 button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-pressed="true"]:hover{color:var(--sys-on-ink);border-color:var(--sys-ink)}
+
+/* reference material in closed sections */
+.lv-ev[hidden]{display:none}
+.tl-d>summary{cursor:pointer;list-style:none}.tl-d>summary::-webkit-details-marker{display:none}.tl-d>summary h4{display:inline}.tl-d p{margin-top:6px}
+.sys-fold p,.sys-fold ul{font-size:13px;color:var(--sys-ink-2)}
+.su-short{margin:8px 0 0;font-size:13px}

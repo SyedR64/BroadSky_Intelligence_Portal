@@ -10,7 +10,11 @@ let esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&
 const comma = (v, d = 0) => v == null || isNaN(v) ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
 const usd = v => { if (v == null || isNaN(v)) return '—'; const a = Math.abs(v); if (a >= 1e9) return '$' + (v / 1e9).toFixed(a >= 1e10 ? 0 : 2).replace(/\.?0+$/, '') + 'B'; if (a >= 1e6) return '$' + (v / 1e6).toFixed(a >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'M'; if (a >= 1e3) return '$' + Math.round(v / 1e3) + 'K'; return '$' + Math.round(v); };
 const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
-const srcLink = (u, label) => u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener">${esc(label || host(u))} <span aria-hidden="true">↗</span></a>` : '';
+const srcLink = (u, label) => u ? `<a class="src" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(label || host(u))}" aria-label="${esc(label || host(u))}"><span aria-hidden="true">↗</span></a>` : '';
+/* Reference text (method, caveats, source lines) lives in closed sections, never in the reading path. */
+const fold = (title, body, open = false) => `<details class="sys-fold"${open ? ' open' : ''}><summary><b>${title}</b></summary>${body}</details>`;
+const FOLDS = {};   // id -> html pieces gathered for the Sources and method section
+const keep = (k, html) => { (FOLDS[k] = FOLDS[k] || []).push(html); };
 const shortDate = s => { const d = new Date(String(s) + 'T12:00:00'); return isNaN(d) ? esc(s) : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); };
 /** Value with its unit, e.g. 70 + "% booking rate" -> "70%"; 1.2 + "USD M revenue" -> "$1.2M". Returns [value, rest-of-unit]. */
 function valUnit(v, unit = '') {
@@ -43,10 +47,10 @@ const TERR_PATH = { 0: 25, 12: 32, 24: 44, 36: 58 };
 const ORG_G = 0.12, FEES = 0.03;
 /* Levers whose numbers are market benchmarks, not a Punctual Pros baseline and target. */
 const BENCH = {
-  'pn-lev-05': l => [fmtVal(l.baseline, '%'), 'of US homes have a home standby generator (Generac). That is the attach headroom, not a Punctual Pros baseline.'],
-  'pn-lev-06': l => [fmtVal(l.target, '%'), 'higher spend from customers who finance (published benchmark). Punctual Pros\' financing attach rate is not public.'],
-  'pn-lev-07': l => [comma(l.baseline), 'recorded transfers in 90 days (January to April 2026, priced or not) in the 248 core ZIPs, from the Lancaster, Dauphin and York deed records. A floor: Redfin counts ~26,900 sales a year across all 9 core counties.'],
-  'pn-lev-08': l => [`+${fmtVal(l.baseline, '%')} calls · +${fmtVal(l.target, '%')} revenue`, 'during a heat wave (ServiceTitan data). The surge a storm plan captures, not a company baseline.'],
+  'pn-lev-05': l => [fmtVal(l.baseline, '%'), 'of US homes have a standby generator (Generac)'],
+  'pn-lev-06': l => [fmtVal(l.target, '%'), 'higher spend from customers who finance'],
+  'pn-lev-07': l => [comma(l.baseline), 'recorded transfers in 90 days (Jan to Apr 2026), 248 core ZIPs; Redfin counts ~26,900 sales a year in all 9 core counties'],
+  'pn-lev-08': l => [`+${fmtVal(l.baseline, '%')} calls · +${fmtVal(l.target, '%')} revenue`, 'during a heat wave (ServiceTitan data)'],
 };
 const isBench = l => l.value_kind === 'benchmark' || !!BENCH[l.id];
 /* What each agent's headline number is, so a problem statistic is never read as a result. Duplicates point at the lever that already counts them. */
@@ -128,17 +132,19 @@ function hero() {
   // today = the October 2026 run-rate; the FY2025 estimate ($22M, $2.6M) is what the portal's Command Center shows
   const FY25 = { revenue_usd: 22e6, ebitda_usd: 2.6e6 };
   const K = [['Revenue', 'revenue_usd', usd], ['Adj. EBITDA', 'ebitda_usd', usd], ['Technicians', 'technicians', comma], ['Territories', 'territories', comma]];
-  $('#kpis').innerHTML = K.map(([l, k, f]) => `<div class="sys-kpi"><span class="sys-kpi-label">${l} · month ${z.month}</span><span class="sys-kpi-value">${f(z[k])}<span class="sys-est">est.</span></span>${spark(r.map(x => x[k]))}<span class="sys-kpi-sub">${f(a[k])} today${FY25[k] ? ` (FY2025 ${f(FY25[k])}, grown ~8%)` : ''} · <b>${(z[k] / a[k]).toFixed(1)}x</b> in ${z.month} months</span></div>`).join('');
+  $('#kpis').innerHTML = K.map(([l, k, f]) => `<div class="sys-kpi"><span class="sys-kpi-label">${l}</span><span class="sys-kpi-value">${f(z[k])}<span class="sys-est">est.</span></span>${spark(r.map(x => x[k]))}<span class="sys-kpi-sub">${f(a[k])} today · <b>${(z[k] / a[k]).toFixed(1)}x</b></span></div>`).join('');
+  keep('method', `<li><b>Today</b> is the October 2026 run-rate: revenue ${usd(a.revenue_usd)} (FY2025 ${usd(FY25.revenue_usd)}, grown ~8%) and adjusted EBITDA ${usd(a.ebitda_usd)} (FY2025 ${usd(FY25.ebitda_usd)}, grown ~8%). Month ${z.month} is the plan: ${(z.revenue_usd / a.revenue_usd).toFixed(1)}x revenue, ${(z.ebitda_usd / a.ebitda_usd).toFixed(1)}x EBITDA, ${(z.technicians / a.technicians).toFixed(1)}x technicians and ${(z.territories / a.territories).toFixed(1)}x territories in ${z.month} months.</li><li><b>Territories</b> are franchised outlets, one per brand per area.</li><li>All figures are analyst estimates anchored to public filings (PGIM 10-Q, franchise disclosure Item 19, Form D), not company guidance.</li>`);
   const p1 = S.K('expansion_phase')[0]?.data_points || {}, p4 = S.K('expansion_phase')[3]?.data_points || {};
   const p2 = S.K('expansion_phase')[1]?.data_points || {};
   const strip = [
-    [comma(p1.core_zips), 'Core ZIP codes', `${comma((p1.core_housing_units || 0) / 1e6, 1)}M homes today`],
-    [comma(p1.adjacent_tier1_zips_total), 'Tier 1 ZIPs next door', 'Priority Tier 1 in the Phase 1 ring'],
-    [comma((S.ma?.items || []).length), 'Add-on targets screened', 'PA, NJ, MD, DE and NY'],
-    [comma(p4.fdd_system_outlets_end_2025?.total), 'Tri-brand outlets', 'One Hour, Ben Franklin, Mister Sparky nationally'],
-    [comma(p2.pe_sponsors_overlapping_punctual_pros), 'PE sponsors', 'Chasing the same founders'],
+    [comma(p1.core_zips), 'Core ZIP codes', `${comma((p1.core_housing_units || 0) / 1e6, 1)}M homes`],
+    [comma(p1.adjacent_tier1_zips_total), 'Tier 1 ZIPs next door', ''],
+    [comma((S.ma?.items || []).length), 'Add-on targets screened', 'PA, NJ, MD, DE, NY'],
+    [comma(p4.fdd_system_outlets_end_2025?.total), 'Tri-brand outlets', ''],
+    [comma(p2.pe_sponsors_overlapping_punctual_pros), 'PE sponsors', ''],
   ];
-  $('#hero-strip').innerHTML = strip.map(([b, l, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${l}</span><span class="sys-kpi-value">${b}</span><span class="sys-kpi-sub">${s}</span></div>`).join('');
+  $('#hero-strip').innerHTML = strip.map(([b, l, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${l}</span><span class="sys-kpi-value">${b}</span>${s ? `<span class="sys-kpi-sub">${s}</span>` : ''}</div>`).join('');
+  keep('method', `<li>Tri-brand outlets: One Hour, Ben Franklin and Mister Sparky, nationally. Tier 1 ZIPs are the priority ZIPs in the Phase 1 ring. PE sponsors are chasing the same founders.</li>`);
 }
 
 /* ── 2 · template ───────────────────────────────────────────────────────── */
@@ -153,7 +159,7 @@ function template() {
       const tag = isFL(x) ? '<span class="tl-tag f">Frontline · law-firm analog</span>' : exit ? '<span class="tl-tag x">Exit</span>' : add ? `<span class="tl-tag">Add-on ${add[1]}</span>` : ms ? '<span class="tl-tag m">Milestone</span>' : /TPG/.test(x.event) ? '<span class="tl-tag m">Exit signed</span>' : '<span class="tl-tag m">Anchor acquisition</span>';
       const ev0 = String(x.event || '').replace(/^(Add-on \d+|Milestone|Second analog):\s*/, ''); const ev = ev0.charAt(0).toUpperCase() + ev0.slice(1);
       const minor = !isFL(x) && !exit && !/TPG/.test(x.event) && !(add && ['1', '5', '8', '9'].includes(add[1])) && i > 0;
-      return `<li class="tl ${cls} ${minor ? 'minor' : ''}"><div class="tl-top"><span class="tl-date">${shortDate(x.date)}</span>${tag}<span class="tl-date">· ${esc(x.location || '')}</span></div><h4>${esc(x.company)}</h4><p>${esc(prose(ev))}</p>${x.metric ? `<span class="tl-m">${esc(prose(x.metric))}</span>` : ''}${srcLink(x.source_url)}</li>`;
+      return `<li class="tl ${cls} ${minor ? 'minor' : ''}"><div class="tl-top"><span class="tl-date">${shortDate(x.date)}</span>${tag}<span class="tl-date">· ${esc(x.location || '')}</span></div><details class="sys-fold tl-d"><summary><h4>${esc(x.company)}</h4></summary><p>${esc(prose(ev))}</p></details>${x.metric ? `<span class="tl-m">${esc(prose(x.metric))}</span>` : ''}${srcLink(x.source_url)}</li>`;
     }).join('');
   };
   draw('sh');
@@ -163,12 +169,11 @@ function template() {
   $('#timeline').after(more); setMore();
   const _draw = draw;
   $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => { x.setAttribute('aria-pressed', String(x === b)); }); _draw(b.dataset.f); setMore(); });
-  $('#tpl-caveat').textContent = 'Frontline appears as a secondary analog.';
   const r = S.road, a = r[0] || {}, z = r[r.length - 1] || {}, an = S.nw?.meta?.anchors || {};
   const rows = [
     ['Start', 'One Atlanta office, ~100 professionals (Nov 2022)', `Lancaster HQ + Horvath (NJ), ${esc(an.staff_est || '~130–150')} staff, ${comma(an.territories)} territories`],
     ['Revenue', '<b>$53.2M</b> FY23 → <b>~$175M</b> expected 2026', `<b>${usd(a.revenue_usd)}</b> today (FY25 ~${usd(an.fy2025_revenue_est_usd)}) → <b>${usd(z.revenue_usd)}</b> month ${z.month} <span class="sys-est">est.</span>`],
-    ['Add-ons', '<b>9</b> in about 3.7 years', '<b>2</b> per BSP’s site: Horvath (Dec 2024) and one unnamed → 2 more in year 1, then a steady cadence'],
+    ['Add-ons', '<b>9</b> in about 3.7 years', '<b>2</b>: Horvath (Dec 2024) and one unnamed → 2 more in year 1'],
     ['People', '<b>~100 → ~800</b> professionals', `<b>${comma(a.technicians)} → ${comma(z.technicians)}</b> technicians <span class="sys-est">est.</span>`],
     ['Footprint', '1 office → 11 locations, 7 states + India', '9 PA counties + 2 NJ → PA, NJ, MD, DE, southern NY → national'],
     ['Exit', 'TPG Growth, closed Aug 6 2026 (~4x revenue)', `~${(z.revenue_usd / a.revenue_usd).toFixed(1)}x today's revenue, sold into GF Data's 10x EBITDA tier`],
@@ -179,7 +184,8 @@ function template() {
     ['Bauknight Pietras & Stormer: ~90 staff, the biggest local firm', 'Oliver Heating & Cooling: 230+ staff, anchor-size deal'],
     ['Geels Norton: adds a cyber capability buyers pay for', 'ServiceOS + AI agents: the capability buyers pay for'],
   ];
-  $('#compare').innerHTML = `<div class="sys-card cmp" data-sys-theme="dark"><span class="sys-card-label">Smith + Howard actuals vs the Punctual Pros plan</span><h3 class="sys-card-title">Same plan, new sector</h3><table><thead><tr><th><span class="sys-sr">Measure</span></th><th>Smith + Howard</th><th>Punctual Pros</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table><div class="pairs">${pairs.map(p => `<div class="pair"><span>${esc(p[0])}</span><i>→</i><span>${esc(p[1])}</span></div>`).join('')}</div><p class="sys-src"><b>Source:</b> Smith + Howard and TPG Growth releases; Punctual Pros nationwide plan.</p></div>`;
+  $('#compare').innerHTML = `<div class="sys-card cmp" data-sys-theme="dark"><h3 class="sys-card-title">Smith + Howard vs Punctual Pros</h3><table><thead><tr><th><span class="sys-sr">Measure</span></th><th>Smith + Howard</th><th>Punctual Pros</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table><div class="pairs">${pairs.map(p => `<div class="pair"><span>${esc(p[0])}</span><i>→</i><span>${esc(p[1])}</span></div>`).join('')}</div></div>`;
+  keep('src', '<li>Template: Smith + Howard and TPG Growth releases; Punctual Pros nationwide plan. Smith + Howard actuals against the Punctual Pros plan, estimates for Punctual Pros.</li>');
 }
 
 /* ── 3 · map ────────────────────────────────────────────────────────────── */
@@ -312,7 +318,7 @@ function phasePanel(p) {
   const stat = (b, s) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`;
   const list = (h, rows) => rows.length ? `<div><div class="plist-h">${h}</div><ul class="plist">${rows.map(([a, b]) => `<li><span>${esc(a)}</span><b>${b}</b></li>`).join('')}</ul></div>` : '';
   if (p === 'all') {
-    el.innerHTML = `<span class="sys-card-label">The route</span><h3 class="sys-card-title">Densify, tuck in, anchor metros, then go national.</h3><p class="thesis">${esc(prose(String(S.nw?.meta?.narrative || '').split('. ').slice(2, 4).join('. ')))}.</p>${ph.map((x, i) => `<button class="sys-chip nw-go" type="button" data-go="${i + 1}"><span class="sw" style="background:${PHASE_C[i + 1]}"></span><span><b>Phase ${i + 1} · ${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</b><small>Months ${esc(x.months)}</small></span></button>`).join('')}`;
+    el.innerHTML = `<span class="sys-card-label">The route</span><h3 class="sys-card-title">Densify, tuck in, anchor metros, then go national.</h3>${ph.map((x, i) => `<button class="sys-chip nw-go" type="button" data-go="${i + 1}"><span class="sw" style="background:${PHASE_C[i + 1]}"></span><span><b>Phase ${i + 1} · ${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</b><small>Months ${esc(x.months)}</small></span></button>`).join('')}`;
     $$('[data-go]', el).forEach(b => b.onclick = () => { stopPlay(); setPhase(b.dataset.go); });
     countyTable(p);
     return;
@@ -327,14 +333,14 @@ function phasePanel(p) {
     body = `<div class="stats">${stat(comma(d.authority_territories_mapped), 'Authority territories mapped (PA/NJ/MD/DE)')}${stat(comma(notPP), 'of them not owned by Punctual Pros')}${stat(comma(Object.entries(d.addon_targets_by_state || {}).filter(([s]) => s !== 'PA').reduce((a, [, n]) => a + n, 0)), 'NJ, MD and DE add-on targets')}${stat(comma(d.pe_sponsors_overlapping_punctual_pros), `PE sponsors in the same market (${comma(d.pe_sponsor_threat_mix?.high)} high threat)`)}</div>${hasCt ? '' : list('Metros in this phase · housing units', (d.metros || []).map(m => [m.metro.replace(/\s*\(.*\)/, ''), usd(m.housing_units).replace('$', '')]))}`;
   } else if (p === '3') {
     const hu = (d.metros || []).reduce((a, m) => a + (m.housing_units || 0), 0);
-    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier 1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${hasCt ? '' : list('Metro · Tier 1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}<p class="sys-src">Pittsburgh: ${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}. Richmond needs a separate ZIP pull (VA is not in the model).</p>`;
+    body = `<div class="stats">${stat(comma((d.metros || []).length + 1), 'metro anchors (incl. Richmond)')}${stat(comma(hu / 1e6, 1) + 'M', 'housing units in the 4 modeled metros')}${stat(comma(d.md_tier1_zips_noncore), 'Tier 1 zips in Maryland')}${stat(comma(d.authority_territories_md_not_pp), 'MD Authority territories, none owned by PP')}</div>${hasCt ? '' : list('Metro · Tier 1 zips · homes', (d.metros || []).map(m => [`${m.metro.replace(/\s*\(.*\)/, '')} (${m.tier1_zips})`, usd(m.housing_units).replace('$', '')]))}${fold('Pittsburgh', `<p>${esc(prose(d.fdd_other_pa_one_hour_franchisees) || '—')}.</p>`)}`;
   } else if (p === '4') {
     const o = d.fdd_system_outlets_end_2025 || {}, lg = d.largest_franchisee_revenue_usd || {};
-    body = `<div class="stats">${stat(comma(o.total), 'One Hour + Ben Franklin + Mister Sparky outlets')}${stat(comma(d.fdd_franchisees_end_2025), 'franchisees in the tri-brand system')}${stat(usd(d.fdd_reported_gross_revenue_fy2025_usd), 'reported system revenue FY2025')}${stat(comma(d.pp_share_of_tri_brand_outlets_pct, 2) + '%', 'Punctual Pros share of outlets today')}</div>${list('Largest single franchisee (FDD Item 19)', [['Mister Sparky', usd(lg.mister_sparky)], ['One Hour', usd(lg.one_hour)], ['Ben Franklin', usd(lg.ben_franklin)]])}<p class="sys-src">Arcs show the priority regions named in the thesis (Sun Belt, Midwest). They are illustrative, not specific targets.<span class="sys-est sys-est--illus">illustrative</span></p>`;
+    body = `<div class="stats">${stat(comma(o.total), 'One Hour + Ben Franklin + Mister Sparky outlets')}${stat(comma(d.fdd_franchisees_end_2025), 'franchisees in the tri-brand system')}${stat(usd(d.fdd_reported_gross_revenue_fy2025_usd), 'reported system revenue FY2025')}${stat(comma(d.pp_share_of_tri_brand_outlets_pct, 2) + '%', 'Punctual Pros share of outlets today')}</div>${list('Largest single franchisee (FDD Item 19)', [['Mister Sparky', usd(lg.mister_sparky)], ['One Hour', usd(lg.one_hour)], ['Ben Franklin', usd(lg.ben_franklin)]])}<span class="sys-est sys-est--illus">illustrative</span>`;
   }
   const ct = countyTable(p);
   if (ct) body = `<div class="stats">${stat(comma(ct.n), `counties${ct.dup ? ` (+${ct.dup} shared with Phase 1)` : ''}`)}${stat(comma(ct.hu / 1e6, 2) + 'M<span class="sys-est">est.</span>', 'housing units in those counties (ACS)')}${stat(comma(ct.sales), 'home sales in the last 12 months (Redfin)')}${stat(comma(ct.ab), 'of them with an Authority Brands outlet')}</div>` + body;
-  el.innerHTML = `<span class="sys-card-label"><span class="sw" style="background:${PHASE_C[p]}"></span>Phase ${p} · months ${esc(x.months)}</span><h3 class="sys-card-title">${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</h3><p class="thesis">${esc(prose(String(x.thesis || '').split('. ').slice(0, 2).join('. ')))}.</p>${body}`;
+  el.innerHTML = `<span class="sys-card-label"><span class="sw" style="background:${PHASE_C[p]}"></span>Phase ${p} · months ${esc(x.months)}</span><h3 class="sys-card-title">${esc(x.phase.replace(/^Phase \d+\s*-\s*/, ''))}</h3>${body}${fold('Thesis', `<p class="thesis">${esc(prose(String(x.thesis || '').split('. ').slice(0, 2).join('. ')))}.</p>`)}`;
 }
 
 /* Every phase names its counties, with ACS housing units and Redfin home sales from the national county base table.
@@ -364,18 +370,19 @@ function countyTable(p) {
   const p1Keys = new Set(phaseGroups('1').flatMap(([, l]) => l.map(([s, c]) => `${s}|${c}`)));
   const resolve = (n, list) => list.map(([s, c]) => [s, c, M.nc.get(`${s}|${c}`)]).filter(x => x[2]);
   const est = '<span class="sys-est">est.</span>';
-  const caption = `<caption>Housing units: Census ACS 2019–2023 five-year estimates (whole county; the ZIP model counts only served ZIPs). Home sales: Redfin county market tracker, all residential, twelve months ending May 2026. Authority Brands outlets: national county base table.${p === '4' ? ' Phase 4 regions are illustrative, not named targets.' : ''}</caption>`;
+  const caption = `Housing units: Census ACS 2019–2023 five-year estimates (whole county; the ZIP model counts only served ZIPs). Home sales: Redfin county market tracker, all residential, twelve months ending May 2026. Authority Brands outlets: national county base table.${p === '4' ? ' Phase 4 regions are illustrative, not named targets.' : ''}`;
+  const capFold = c => fold('Method', `<p>${c}</p>`);
   if (p === 'all') {
     const rows = ['1', '2', '3', '4'].map(n => { const seen = new Set(); const all = phaseGroups(n).flatMap(([, l]) => resolve(n, l)).filter(([s, c]) => { const k = `${s}|${c}`; if (seen.has(k) || (n !== '1' && p1Keys.has(k))) return false; seen.add(k); return true; }); return [n, sumOf(all)]; });
-    host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Counties, housing units and home sales by phase"><thead><tr><th>Phase</th><th class="sys-n">Counties</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th class="sys-n">With an Authority Brands outlet</th></tr></thead><tbody>${rows.map(([n, t]) => `<tr><td><span class="sw" style="background:${PHASE_C[n]}"></span><b>Phase ${n}</b> · ${esc(M.phases[n - 1]?.phase.replace(/^Phase \d+\s*-\s*/, '') || '')}${n === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n">${comma(t.n)}</td><td class="sys-n">${comma(t.hu)}</td><td class="sys-n">${comma(t.sales)}</td><td class="sys-n">${comma(t.ab)}</td></tr>`).join('')}</tbody>${caption.replace('</caption>', ' Counties already counted in Phase 1 are not counted again in later phases. Pick a phase above to see every county.</caption>')}</table></div>`;
+    host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Counties, housing units and home sales by phase"><thead><tr><th>Phase</th><th class="sys-n">Counties</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th class="sys-n">With an Authority Brands outlet</th></tr></thead> <tbody>${rows.map(([n, t]) => `<tr><td><span class="sw" style="background:${PHASE_C[n]}"></span><b>Phase ${n}</b> · ${esc(M.phases[n - 1]?.phase.replace(/^Phase \d+\s*-\s*/, '') || '')}${n === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n">${comma(t.n)}</td><td class="sys-n">${comma(t.hu)}</td><td class="sys-n">${comma(t.sales)}</td><td class="sys-n">${comma(t.ab)}</td></tr>`).join('')}</tbody></table></div>${capFold(caption + ' Counties already counted in Phase 1 are not counted again in later phases.')}`;
     return null;
   }
   const groups = phaseGroups(p).map(([g, l]) => [g, resolve(p, l)]);
   const flat = groups.flatMap(([, l]) => l);
   const seen = new Set(); const uniq = flat.filter(([s, c]) => { const k = `${s}|${c}`; if (seen.has(k) || (p !== '1' && p1Keys.has(k))) return false; seen.add(k); return true; });
   const t = sumOf(uniq), dup = new Set(flat.filter(([s, c]) => p !== '1' && p1Keys.has(`${s}|${c}`)).map(([s, c]) => `${s}|${c}`)).size;
-  const tr = ([s, c, r]) => { const shared = p !== '1' && p1Keys.has(`${s}|${c}`); return `<tr${shared ? ' class="shared"' : ''}><td>${esc(c.replace(/ County$/, ''))}, ${esc(s)}${shared ? '<small>also in the Phase 1 ring</small>' : ''}</td><td class="sys-n">${comma(r.housing_units)}</td><td class="sys-n">${r.home_sales_12m != null ? comma(r.home_sales_12m) : '<span class="sys-muted">not reported</span>'}</td><td>${esc(abTxt(r))}</td></tr>`; };
-  host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Phase ${p} counties"><thead><tr><th>County</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th>Authority Brands outlets</th></tr></thead>${groups.map(([g, l]) => `<tbody><tr class="grp"><th colspan="4" scope="colgroup">${esc(g)}</th></tr>${l.map(tr).join('')}</tbody>`).join('')}<tfoot><tr><td><b>Phase ${p} total</b> · ${comma(t.n)} counties${dup ? `, excluding ${dup} shared with Phase 1` : ''}${p === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n"><b>${comma(t.hu)}</b></td><td class="sys-n"><b>${comma(t.sales)}</b></td><td>${comma(t.ab)} with an outlet</td></tr></tfoot>${caption}</table></div>`;
+  const tr = ([s, c, r]) => { const shared = p !== '1' && p1Keys.has(`${s}|${c}`); return `<tr${shared ? ' class="shared"' : ''}><td>${esc(c.replace(/ County$/, ''))}, ${esc(s)}${shared ? '<small>also Phase 1</small>' : ''}</td><td class="sys-n">${comma(r.housing_units)}</td><td class="sys-n">${r.home_sales_12m != null ? comma(r.home_sales_12m) : '<span class="sys-muted">not reported</span>'}</td><td>${esc(abTxt(r))}</td></tr>`; };
+  host.innerHTML = `<div class="sys-table-wrap"><table class="sys-table" aria-label="Phase ${p} counties"><thead><tr><th>County</th><th class="sys-n">Housing units${est}</th><th class="sys-n">Home sales, 12 months</th><th>Authority Brands outlets</th></tr></thead>${groups.map(([g, l]) => `<tbody><tr class="grp"><th colspan="4" scope="colgroup">${esc(g)}</th></tr>${l.map(tr).join('')}</tbody>`).join('')}<tfoot><tr><td><b>Phase ${p} total</b> · ${comma(t.n)} counties${dup ? `, excluding ${dup} shared with Phase 1` : ''}${p === '4' ? '<span class="sys-est sys-est--illus">illustrative</span>' : ''}</td><td class="sys-n"><b>${comma(t.hu)}</b></td><td class="sys-n"><b>${comma(t.sales)}</b></td><td>${comma(t.ab)} with an outlet</td></tr></tfoot></table></div>${capFold(caption)}`;
   return { ...t, dup };
 }
 
@@ -387,7 +394,7 @@ function onHash() {
 /* ── 4 · levers ─────────────────────────────────────────────────────────── */
 function levers() {
   const lv = S.K('growth_lever'); if (!lv.length) return;
-  $('#lev-h').textContent = `${lv.length} ways we improve the business. The website is only one of them.`;
+  $('#lev-h').textContent = `${lv.length} ways to grow the business. The website is one.`;
   $('#lever-grid').innerHTML = lv.map((l, i) => {
     const bench = isBench(l);
     const b = l.baseline, t = l.target, has = !bench && b != null && t != null;
@@ -396,14 +403,14 @@ function levers() {
     const unitTxt = String(l.unit || '').replace(/^(%|x|USD M)\s*/, '');
     const bt = bench ? (BENCH[l.id] ? BENCH[l.id](l) : [fmtVal(b ?? t, l.unit), unitTxt]) : null;
     const bar = bench
-      ? `<div class="bench"><span class="sys-chip sys-chip--soft bench-k">Benchmark</span><b>${esc(bt[0])}</b><span>${esc(bt[1])}</span></div><div class="lv-legend"><span class="lv-flag">Punctual Pros baseline and target set in diligence</span></div>`
+      ? `<div class="bench"><span class="sys-chip sys-chip--soft bench-k">Benchmark</span><b>${esc(bt[0])}</b><span>${esc(bt[1])}</span></div>`
       : has
       ? `<div class="bar" data-bw="${bw.toFixed(1)}" data-tw="${tw.toFixed(1)}"><i class="b-base" style="width:0"></i><i class="b-tgt" style="left:0;width:0"></i><div class="b-lab"><span>${fmtVal(b, l.unit)}</span><span>${fmtVal(t, l.unit)}</span></div></div><div class="lv-legend"><span>Today <b>${fmtVal(b, l.unit)}</b></span><span>Target <b>${fmtVal(t, l.unit)}</b></span><span>${t > b ? `+${comma(((t - b) / b) * 100)}%` : ''}</span></div>`
-      : `<div class="bar empty"><div class="b-lab"><span>${b != null ? `Today ${fmtVal(b, l.unit)}` : 'Baseline not public'}</span><span>${t != null ? `Target ${fmtVal(t, l.unit)}` : 'Target set in diligence'}</span></div></div><div class="lv-legend"><span class="lv-flag">${b == null ? 'Needs company data' : 'Target to be set with the company'}</span></div>`;
+      : `<div class="bar empty"><div class="b-lab"><span>${b != null ? `Today ${fmtVal(b, l.unit)}` : 'Today —'}</span><span>${t != null ? `Target ${fmtVal(t, l.unit)}` : 'Target —'}</span></div></div>`;
     const web = /website/i.test(l.lever);
-    return `<article class="sys-card lever ${web ? 'web' : ''}" id="lever-${i + 1}"><div class="lv-top"><span class="lv-n">${String(i + 1).padStart(2, '0')}</span><div><h3 class="sys-card-title">${esc(l.lever)}</h3>${bench ? '' : `<div class="lv-unit">${esc(unitTxt)}</div>`}</div></div>${bar}<p class="lv-ev">${esc(prose(l.evidence))}</p><div class="sys-card-foot lv-foot">${web ? '<a href="index.html">See the redesign →</a>' : '<button class="lv-more" type="button">Read more</button>'}${srcLink(l.source_url)}</div></article>`;
+    return `<article class="sys-card lever ${web ? 'web' : ''}" id="lever-${i + 1}"><div class="lv-top"><span class="lv-n">${String(i + 1).padStart(2, '0')}</span><div><h3 class="sys-card-title">${esc(l.lever)}</h3>${bench ? '' : `<div class="lv-unit">${esc(unitTxt)}</div>`}</div></div>${bar}<p class="lv-ev" hidden>${esc(prose(l.evidence))}</p><div class="sys-card-foot lv-foot">${web ? '<a href="index.html">See the redesign →</a>' : ''}<button class="lv-more" type="button" aria-expanded="false">Read more</button>${srcLink(l.source_url)}</div></article>`;
   }).join('');
-  $$('#lever-grid .lv-more').forEach(b => b.onclick = () => { const c = b.closest('.lever'); c.classList.toggle('open'); b.textContent = c.classList.contains('open') ? 'Show less' : 'Read more'; });
+  $$('#lever-grid .lv-more').forEach(b => b.onclick = () => { const c = b.closest('.lever'); c.classList.toggle('open'); const o = c.classList.contains('open'); c.querySelector('.lv-ev').hidden = !o; b.setAttribute('aria-expanded', String(o)); b.textContent = o ? 'Show less' : 'Read more'; });
   const animate = el => { const bw = +el.dataset.bw, tw = +el.dataset.tw; el.querySelector('.b-base').style.width = bw + '%'; const tg = el.querySelector('.b-tgt'); tg.style.left = bw + '%'; tg.style.width = tw + '%'; };
   const bars = $$('#lever-grid .bar[data-bw]');
   if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { animate(e.target); io.unobserve(e.target); } }), { threshold: .3 }); bars.forEach(b => io.observe(b)); setTimeout(() => bars.forEach(animate), 4000); }
@@ -421,12 +428,12 @@ function agents() {
   const maxW = Math.max(...ag.map(a => a.weeks_to_deploy || 0), 10);
   const draw = w => {
     const list = w === 'all' ? ag : ag.filter(a => a.who_it_helps === w);
-    $('#runway').innerHTML = `<h3 class="sys-card-title">Go-live runway</h3><p class="rw-sub">Weeks from kickoff to live, fastest first. Click an agent to jump to it.</p><div class="rw">${list.map(a => `<div class="rw-row" data-id="${esc(agSlug(a))}" tabindex="0" role="button"><div class="rw-name"><span>${esc(a.agent.replace(/\s*\(.*\)/, ''))}</span><b>${a.weeks_to_deploy ?? '—'} wk</b></div><div class="rw-track"><i style="width:0;background:${WHO[a.who_it_helps]?.c || '#f26b1d'}" data-w="${((a.weeks_to_deploy || 0) / maxW) * 100}"></i></div></div>`).join('')}</div><div class="rw-axis"><span>0</span><span>${Math.round(maxW / 2)} wks</span><span>${maxW} wks</span></div>`;
+    $('#runway').innerHTML = `<h3 class="sys-card-title">Go-live runway</h3><div class="rw">${list.map(a => `<div class="rw-row" data-id="${esc(agSlug(a))}" tabindex="0" role="button"><div class="rw-name"><span>${esc(a.agent.replace(/\s*\(.*\)/, ''))}</span><b>${a.weeks_to_deploy ?? '—'} wk</b></div><div class="rw-track"><i style="width:0;background:${WHO[a.who_it_helps]?.c || '#f26b1d'}" data-w="${((a.weeks_to_deploy || 0) / maxW) * 100}"></i></div></div>`).join('')}</div><div class="rw-axis"><span>0</span><span>${Math.round(maxW / 2)} wks</span><span>${maxW} wks</span></div>`;
     requestAnimationFrame(() => setTimeout(() => $$('#runway .rw-track i').forEach(i => i.style.width = i.dataset.w + '%'), 60));
     $('#agent-grid').innerHTML = list.map((a, i) => {
       const w = WHO[a.who_it_helps] || WHO.office; const [v, u] = valUnit(a.metric_value, a.metric_unit);
       const dup = AG_DUP[a.id] && levNo(AG_DUP[a.id]); const kind = dup ? [`Same evidence as lever ${dup}, counted once`, 'dup'] : AG_KIND[a.id] || ['Published result', ''];
-      return `<article class="sys-card agent" id="${esc(agSlug(a))}"><div class="ag-top"><span class="ag-ic" style="--w:${w.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${w.ic}</svg></span><div><span class="sys-card-label">Helps the ${w.label.toLowerCase()}</span><h3 class="sys-card-title">${esc(a.agent)}</h3></div></div><p class="job">${esc(prose(a.job_to_be_done))}</p><div class="ag-metric" title="${esc(prose(a.metric_claim))}"><span class="ag-kind ${kind[1]}">${esc(kind[0])}</span><b>${v}</b><span>${esc(u)}</span></div><p class="claim">${esc(prose(a.metric_claim))}</p>${AG_KPI[a.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(AG_KPI[a.id])}</p>` : ''}<div class="vend">${(a.vendor_examples || []).map(x => `<span class="sys-chip">${esc(x)}</span>`).join('')}</div><div class="sys-card-foot ag-foot"><span>Live in <span class="wk">${a.weeks_to_deploy ?? '—'} weeks</span> · ${esc(String(a.cost_model || '').split(/[;,(]/)[0])}</span>${srcLink(a.source_url)}</div></article>`;
+      return `<article class="sys-card agent" id="${esc(agSlug(a))}"><div class="ag-top"><span class="ag-ic" style="--w:${w.c}"><svg viewBox="0 0 24 24" aria-hidden="true">${w.ic}</svg></span><div><span class="sys-card-label">Helps the ${w.label.toLowerCase()}</span><h3 class="sys-card-title">${esc(a.agent)}</h3></div></div><div class="ag-metric" title="${esc(prose(a.metric_claim))}"><span class="ag-kind ${kind[1]}">${esc(kind[0])}</span><b>${v}</b><span>${esc(u)}</span></div><div class="vend">${(a.vendor_examples || []).map(x => `<span class="sys-chip">${esc(x)}</span>`).join('')}</div>${fold('Job, claim, KPI', `<p class="job">${esc(prose(a.job_to_be_done))}</p><p class="claim">${esc(prose(a.metric_claim))}</p>${AG_KPI[a.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(AG_KPI[a.id])}</p>` : ''}`)}<div class="sys-card-foot ag-foot"><span>Live in <span class="wk">${a.weeks_to_deploy ?? '—'} weeks</span> · ${esc(String(a.cost_model || '').split(/[;,(]/)[0])}</span>${srcLink(a.source_url)}</div></article>`;
     }).join('');
     $$('#runway .rw-row').forEach(r => { const go = () => { const c = $(`#${CSS.escape(r.dataset.id)}`); if (!c) return; c.scrollIntoView({ behavior: 'smooth', block: 'center' }); $$('.agent.hl').forEach(x => x.classList.remove('hl')); c.classList.add('hl'); setTimeout(() => c.classList.remove('hl'), 2200); }; r.onclick = go; r.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }; });
   };
@@ -443,9 +450,9 @@ function pros() {
   const total = bls.reduce((a, b) => a + (b.metric_value || 0), 0);
   const cols = ['#f26b1d', '#2f7de1', '#f5a524'];
   const lab = p => p.program.replace(/^Technician shortage - /, '').replace(/\s*\(BLS\)/, '');
-  $('#shortage').innerHTML = `<div class="sys-card sh-main" data-sys-theme="dark"><span class="sys-card-label">The binding constraint · BLS 2025–35</span><div class="sh-big">${comma(total)}</div><p class="sh-cap">openings a year for HVAC techs, plumbers and electricians in the US. Every phase of the plan needs more of them than the market produces.</p><div class="stack">${bls.map((p, i) => `<div style="flex-grow:${p.metric_value};background:${cols[i]}">${comma(p.metric_value)}</div>`).join('')}</div><div class="stack-l">${bls.map((p, i) => `<span><i style="background:${cols[i]}"></i>${esc(lab(p))}</span>`).join('')}</div><div style="margin-top:12px">${bls.map(p => srcLink(p.source_url, 'BLS ' + lab(p))).join(' ')}</div></div><div class="sh-side">${[ind, turn, wage, appr].filter(Boolean).map(p => `<div class="sys-kpi sh-tile"><span class="sys-kpi-value">${fmtVal(p.metric_value, p.metric_unit)}</span><span class="sys-kpi-sub">${esc(valUnit(p.metric_value, p.metric_unit)[1])}</span>${srcLink(p.source_url)}</div>`).join('')}</div>`;
+  $('#shortage').innerHTML = `<div class="sys-card sh-main" data-sys-theme="dark"><span class="sys-card-label">The binding constraint · BLS 2025–35</span><div class="sh-big">${comma(total)}</div><p class="sh-cap">openings a year: HVAC techs, plumbers, electricians</p><div class="stack">${bls.map((p, i) => `<div style="flex-grow:${p.metric_value};background:${cols[i]}">${comma(p.metric_value)}</div>`).join('')}</div><div class="stack-l">${bls.map((p, i) => `<span><i style="background:${cols[i]}"></i>${esc(lab(p))}</span>`).join('')}</div><div style="margin-top:12px">${bls.map(p => srcLink(p.source_url, 'BLS ' + lab(p))).join(' ')}</div></div><div class="sh-side">${[ind, turn, wage, appr].filter(Boolean).map(p => `<div class="sys-kpi sh-tile"><span class="sys-kpi-value">${fmtVal(p.metric_value, p.metric_unit)}</span><span class="sys-kpi-sub">${esc(valUnit(p.metric_value, p.metric_unit)[1])}</span>${srcLink(p.source_url)}</div>`).join('')}</div>`;
   const progs = pr.filter(p => !bls.includes(p) && p !== ind && p !== wage);
-  $('#programs').innerHTML = progs.map(p => { const [v, u] = valUnit(p.metric_value, p.metric_unit); return `<article class="sys-card prog"><span class="sys-card-label">For the ${p.who_it_helps === 'owner' ? 'owner and partner contractors' : 'technicians'}</span><h3 class="sys-card-title">${esc(p.program)}</h3><div class="pm"><b>${v}</b><span>${esc(u)}</span></div><p class="sys-card-body">${esc(prose(p.evidence))}</p>${PRO_KPI[p.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(PRO_KPI[p.id])}</p>` : ''}${p.cost_note ? `<div class="cost">${esc(prose(p.cost_note))}</div>` : ''}<span class="sys-card-foot">${srcLink(p.source_url)}</span></article>`; }).join('');
+  $('#programs').innerHTML = progs.map(p => { const [v, u] = valUnit(p.metric_value, p.metric_unit); return `<article class="sys-card prog"><span class="sys-card-label">For the ${p.who_it_helps === 'owner' ? 'owner and partner contractors' : 'technicians'}</span><h3 class="sys-card-title">${esc(p.program)}</h3><div class="pm"><b>${v}</b><span>${esc(u)}</span></div>${fold('Evidence, KPI, cost', `<p class="sys-card-body">${esc(prose(p.evidence))}</p>${PRO_KPI[p.id] ? `<p class="ag-kpi"><b>KPI it moves:</b> ${esc(PRO_KPI[p.id])}</p>` : ''}${p.cost_note ? `<div class="cost">${esc(prose(p.cost_note))}</div>` : ''}`)}<span class="sys-card-foot">${srcLink(p.source_url)}</span></article>`; }).join('');
 }
 
 /* ── 7 · tuck-ins + 100-day plan ────────────────────────────────────────── */
@@ -453,7 +460,7 @@ function verifyNote() {
   if (!S.verify.length) return '';
   const fdd = S.K('expansion_phase')[0]?.data_points?.pp_territories_fdd || {};
   const mapNJ = (S.ma?.meta?.authority_brands_territory_map || []).filter(t => t.state === 'NJ' && /^portfolio/i.test(t.owner_status || '')).length;
-  return `<div class="tk-verify" role="note"><b>Held back until ownership is confirmed</b>${S.verify.map(t => `<p>${esc(String(t.company).replace(/\s*\(.*\)/, ''))} (${esc(t.hq_city || '')}, ${esc(t.state)}) scores ${t.fit_score ?? '—'}/100 but trades as “The Punctual Pros”. ${fdd.NJ && mapNJ && fdd.NJ > mapNJ ? `The franchise disclosure lists ${fdd.NJ} New Jersey outlets for Punctual Pros, but only ${mapNJ} map to Horvath, so these outlets may already belong to Punctual Pros. ` : ''}Confirm with Authority Brands before any outreach.</p>`).join('')}</div>`;
+  return `<div class="tk-verify" role="note"><b>Held back: ownership unconfirmed</b>${S.verify.map(t => `<p>${esc(String(t.company).replace(/\s*\(.*\)/, ''))} (${esc(t.hq_city || '')}, ${esc(t.state)}): ${t.fit_score ?? '—'}/100, trades as “The Punctual Pros”.</p>`).join('')}${fdd.NJ && mapNJ && fdd.NJ > mapNJ ? fold('Why', `<p>The franchise disclosure lists ${fdd.NJ} New Jersey outlets for Punctual Pros, but only ${mapNJ} map to Horvath, so these outlets may already belong to Punctual Pros. Confirm with Authority Brands before any outreach.</p>`) : ''}</div>`;
 }
 function tuckins() {
   const it = S.ma?.items || [];
@@ -461,11 +468,11 @@ function tuckins() {
   const fit70 = it.filter(t => (t.fit_score || 0) >= 70).length;
   const rev = it.reduce((a, t) => a + (t.revenue_est_usd || 0), 0);
   const pe = S.K('expansion_phase')[1]?.data_points?.pe_sponsors_overlapping_punctual_pros;
-  $('#tk-sub').textContent = `Ranked from the portal's add-on screen of ${it.length} companies (${Object.entries(byState).map(([s, n]) => `${s} ${n}`).join(', ')}), with fit scored out of 100. Click a row for the reasons.`;
+  keep('method', `<li>Tuck-ins are ranked from the portal's add-on screen of ${it.length} companies (${Object.entries(byState).map(([s, n]) => `${s} ${n}`).join(', ')}), with fit scored out of 100 on density, trade mix, scale, ownership readiness and brand alignment (each out of 20).</li>`);
   const pin = t => `<span class="tgt-r" style="background:${STATE_C[t.state] || '#333'}">${t.rank}</span>`;
-  $('#targets').innerHTML = `<div class="tk-stats"><div><b>${it.length}</b><span>companies screened</span></div><div><b>${fit70}</b><span>with fit score 70+</span></div><div><b>${usd(rev)}</b><span>modeled revenue in the screen (est.)</span></div><div><b>${pe ?? '—'}</b><span>PE sponsors chasing the same founders</span></div></div><div class="fit-key">${FIT_KEYS.map(k => `<span><i style="background:${k[2]}"></i>${k[1]}</span>`).join('')}</div>${S.top.map((t, i) => {
+  $('#targets').innerHTML = `<div class="tk-stats"><div><b>${it.length}</b><span>companies screened</span></div><div><b>${fit70}</b><span>with fit score 70+</span></div><div><b>${usd(rev)}</b><span>modeled revenue (est.)</span></div><div><b>${pe ?? '—'}</b><span>PE sponsors, same founders</span></div></div><div class="fit-key">${FIT_KEYS.map(k => `<span><i style="background:${k[2]}"></i>${k[1]}</span>`).join('')}</div>${S.top.map((t, i) => {
     const fb = t.fit_breakdown || {}; const meta = [`${t.hq_city || ''}, ${t.state}`, t.employees ? `~${t.employees} staff` : '', t.revenue_est_usd ? `${usd(t.revenue_est_usd)} rev. est.` : '', t.ownership ? String(t.ownership).replace(/_/g, ' ') : ''].filter(Boolean).join(' · ');
-    return `<div class="tgt ${i === 0 ? 'open' : ''}" tabindex="0" role="button" aria-expanded="${i === 0}">${pin(t)}<div style="min-width:0"><h4 title="${esc(t.company)}">${esc(t.company)}</h4><div class="meta">${esc(meta)}</div></div><div class="fit"><span class="fit-n">${t.fit_score ?? '—'}<span class="of">/100</span></span><div class="fit-bar" aria-label="Fit breakdown">${FIT_KEYS.map(k => `<i style="width:${fb[k[0]] || 0}%;background:${k[2]}" title="${k[1]} ${fb[k[0]] ?? '—'}/20"></i>`).join('')}</div></div><p class="why">${esc(prose(t.why || t.strategic_rationale))}${t.risk_flags?.length ? ` <b>Watch:</b> ${esc(prose(t.risk_flags[0]))}.` : ''}</p></div>`;
+    return `<div class="tgt" tabindex="0" role="button" aria-expanded="false">${pin(t)}<div style="min-width:0"><h4 title="${esc(t.company)}">${esc(t.company)}</h4><div class="meta">${esc(meta)}</div></div><div class="fit"><span class="fit-n">${t.fit_score ?? '—'}<span class="of">/100</span></span><div class="fit-bar" aria-label="Fit breakdown">${FIT_KEYS.map(k => `<i style="width:${fb[k[0]] || 0}%;background:${k[2]}" title="${k[1]} ${fb[k[0]] ?? '—'}/20"></i>`).join('')}</div></div><p class="why">${esc(prose(t.why || t.strategic_rationale))}${t.risk_flags?.length ? ` <b>Watch:</b> ${esc(prose(t.risk_flags[0]))}.` : ''}</p></div>`;
   }).join('')}${verifyNote()}`;
   $$('#targets .tgt').forEach(r => { const tog = () => { r.classList.toggle('open'); r.setAttribute('aria-expanded', String(r.classList.contains('open'))); }; r.onclick = tog; r.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } }; });
 
@@ -479,7 +486,8 @@ function tuckins() {
     { d: 'Day 76–100', h: 'Prove it and line up the next one', t: ['KPI pack for the PRG: booking rate, average ticket, members, tech turnover', 'Integration review, then an LOI on the next target from the top 10'] },
   ];
   ag.forEach(a => P[slot(a)].t.push({ ai: a.agent.replace(/\s*\(.*\)/, ''), w: a.weeks_to_deploy }));
-  $('#hundred').innerHTML = `<h3 class="sys-card-title">The 100-day integration plan</h3><p class="h-sub">Analyst plan. Accented items are AI agents, placed by their published weeks to go live.</p>${P.map(p => `<div class="hd-phase"><div class="hd-day">${p.d}</div><h4>${p.h}</h4><ul>${p.t.map(x => typeof x === 'string' ? `<li>${esc(x)}</li>` : `<li class="ai">${esc(x.ai)}<em>${x.w} wk</em></li>`).join('')}</ul></div>`).join('')}<p class="sys-src">Run on <a href="serviceos.html">ServiceOS</a>, the shared stack every tuck-in joins.</p>`;
+  $('#hundred').innerHTML = `<h3 class="sys-card-title">The 100-day integration plan</h3>${P.map(p => `<div class="hd-phase"><div class="hd-day">${p.d}</div><h4>${p.h}</h4><ul>${p.t.map(x => typeof x === 'string' ? `<li>${esc(x)}</li>` : `<li class="ai">${esc(x.ai)}<em>${x.w} wk</em></li>`).join('')}</ul></div>`).join('')}<p class="sys-src"><a href="serviceos.html">ServiceOS</a></p>`;
+  keep('method', '<li>The 100-day plan is an analyst plan. Accented items are AI agents, placed by their published weeks to go live. Every tuck-in runs on ServiceOS, the shared stack.</li>');
 }
 
 /* ── 8 · financing & returns ────────────────────────────────────────────── */
@@ -510,12 +518,12 @@ function roadNote() {
   const d1 = S.K('expansion_phase')[0]?.data_points || {}, d2 = S.K('expansion_phase')[1]?.data_points || {};
   const fdd = d1.pp_territories_fdd || {}, owned = Object.values(d2.authority_territories_pp_owned_or_inferred_by_state || {}).reduce((x, y) => x + y, 0), notPP = Object.values(d2.authority_territories_not_pp_by_state || {}).reduce((x, y) => x + y, 0);
   const lv = S.K('growth_lever').find(l => /territory productivity/i.test(l.lever));
-  return `<p class="sys-src"><b>Base:</b> today = Oct 2026 run-rate of ${usd(a.revenue_usd)} (FY25 est. ~${usd(an.fy2025_revenue_est_usd)} grown ~8%), so month ${z.month} is ~${(z.revenue_usd / a.revenue_usd).toFixed(1)}x today's revenue. <b>Territories</b> = franchised outlets as counted in the franchise disclosure (one per brand per area): ${comma(fdd.total)} today${fdd.PA ? ` (PA ${fdd.PA}, NJ ${fdd.NJ})` : ''}, of which ${owned} appear on Authority's location map. The path to ${comma(z.territories)} is capped at what Phases 1–3 can buy or convert: ${notPP} mapped Authority outlets in PA, NJ, MD and DE that Punctual Pros does not own, plus independents converted to the three brands. Revenue per territory rises from ${usd(a.revenue_usd / a.territories)} (${lv?.baseline ? `${usd(lv.baseline * 1e6)} on FY25 revenue` : 'run-rate'}) to ${usd(z.revenue_usd / z.territories)}${lv?.target ? `, about halfway to the ${usd(lv.target * 1e6)} top-quartile benchmark in lever ${levNo(lv.id)}` : ''}.</p>`;
+  return `<li><b>Roadmap base.</b> today = Oct 2026 run-rate of ${usd(a.revenue_usd)} (FY25 est. ~${usd(an.fy2025_revenue_est_usd)} grown ~8%), so month ${z.month} is ~${(z.revenue_usd / a.revenue_usd).toFixed(1)}x today's revenue. <b>Territories</b> = franchised outlets as counted in the franchise disclosure (one per brand per area): ${comma(fdd.total)} today${fdd.PA ? ` (PA ${fdd.PA}, NJ ${fdd.NJ})` : ''}, of which ${owned} appear on Authority's location map. The path to ${comma(z.territories)} is capped at what Phases 1–3 can buy or convert: ${notPP} mapped Authority outlets in PA, NJ, MD and DE that Punctual Pros does not own, plus independents converted to the three brands. Revenue per territory rises from ${usd(a.revenue_usd / a.territories)} (${lv?.baseline ? `${usd(lv.baseline * 1e6)} on FY25 revenue` : 'run-rate'}) to ${usd(z.revenue_usd / z.territories)}${lv?.target ? `, about halfway to the ${usd(lv.target * 1e6)} top-quartile benchmark in lever ${levNo(lv.id)}` : ''}.</li>`;
 }
 function financing() {
   const fin = S.K('financing');
   const tag = f => /credit|loan|debt/i.test(f.source_of_funds) ? 'Debt' : /Fund I/i.test(f.source_of_funds) ? 'Fund equity' : /co-invest/i.test(f.source_of_funds) ? 'Co-invest' : /rollover/i.test(f.source_of_funds) ? 'Seller equity' : /leverage/i.test(f.source_of_funds) ? 'Market check' : 'Value creation';
-  $('#fin-grid').innerHTML = fin.map(f => `<article class="sys-card fin"><span class="sys-card-label">${tag(f)}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><div class="amt">${esc(prose(f.amount_or_range))}</div><p class="sys-card-body">${esc(prose(f.evidence))}</p><span class="sys-card-foot">${srcLink(f.source_url)}</span></article>`).join('');
+  $('#fin-grid').innerHTML = fin.map(f => `<article class="sys-card fin"><span class="sys-card-label">${tag(f)}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><div class="amt">${esc(prose(f.amount_or_range))}</div>${fold('Evidence', `<p class="sys-card-body">${esc(prose(f.evidence))}</p>`)}<span class="sys-card-foot">${srcLink(f.source_url)}</span></article>`).join('');
   // roadmap chart + table
   const r = S.road; if (r.length) {
     const W = 600, H = 270, pl = 30, pr = 30, pt = 30, pb = 40, cw = (W - pl - pr) / r.length;
@@ -526,8 +534,9 @@ function financing() {
     const line = `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" style="stroke:var(--sys-good)" stroke-width="3"/>${pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#fff" style="stroke:var(--sys-good)" stroke-width="3"/><rect x="${p[0] - 44}" y="${p[1] - 27}" width="88" height="19" rx="9.5" style="fill:var(--sys-surface);stroke:var(--sys-line-2)"/><text x="${p[0]}" y="${p[1] - 13.5}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--sys-good)">${usd(r[i].ebitda_usd)} · ${Math.round(r[i].ebitda_usd / r[i].revenue_usd * 100)}%</text>`).join('')}`;
     const grid = `<line x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}" style="stroke:var(--sys-line-2)"/><line x1="${pl}" x2="${W - pr}" y1="${pt + 66}" y2="${pt + 66}" style="stroke:var(--sys-line)" stroke-dasharray="4 4"/>`;
     $('#road-chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenue bars and EBITDA line, months 0 to 36 (estimates)">${grid}${bars}${line}<g font-size="11.5" style="fill:var(--sys-ink-2)"><rect x="${pl}" y="2" width="11" height="11" rx="3" style="fill:var(--sys-ink-2)"/><text x="${pl + 16}" y="12">Revenue</text><line x1="${pl + 82}" x2="${pl + 100}" y1="7.5" y2="7.5" style="stroke:var(--sys-good)" stroke-width="3"/><text x="${pl + 105}" y="12">Adj. EBITDA · margin</text></g></svg>`;
-    $('#road-table').innerHTML = `<table class="sys-table tbl"><thead><tr><th>Month</th><th class="sys-n">Revenue</th><th class="sys-n">EBITDA</th><th class="sys-n">Margin</th><th class="sys-n">Techs</th><th class="sys-n">Territories</th><th class="sys-n" title="Revenue per territory">Rev / terr.</th><th class="sys-n">Members</th></tr></thead><tbody>${r.map(x => `<tr><td>${x.month}</td><td class="sys-n">${usd(x.revenue_usd)}</td><td class="sys-n">${usd(x.ebitda_usd)}</td><td class="sys-n">${Math.round(x.ebitda_usd / x.revenue_usd * 100)}%</td><td class="sys-n">${comma(x.technicians)}</td><td class="sys-n">${comma(x.territories)}</td><td class="sys-n">${usd(x.revenue_usd / x.territories)}</td><td class="sys-n">${comma(x.members)}</td></tr>`).join('')}</tbody><caption>Source: Punctual Pros nationwide plan (KPI roadmap), analyst estimates.</caption></table>`;
-    $('#road-table').insertAdjacentHTML('afterend', roadNote());
+    $('#road-table').innerHTML = `<table class="sys-table tbl"><thead><tr><th>Month</th><th class="sys-n">Revenue</th><th class="sys-n">EBITDA</th><th class="sys-n">Margin</th><th class="sys-n">Techs</th><th class="sys-n">Territories</th><th class="sys-n" title="Revenue per territory">Rev / terr.</th><th class="sys-n">Members</th></tr></thead><tbody>${r.map(x => `<tr><td>${x.month}</td><td class="sys-n">${usd(x.revenue_usd)}</td><td class="sys-n">${usd(x.ebitda_usd)}</td><td class="sys-n">${Math.round(x.ebitda_usd / x.revenue_usd * 100)}%</td><td class="sys-n">${comma(x.technicians)}</td><td class="sys-n">${comma(x.territories)}</td><td class="sys-n">${usd(x.revenue_usd / x.territories)}</td><td class="sys-n">${comma(x.members)}</td></tr>`).join('')}</tbody></table>`;
+    keep('method', roadNote());
+    keep('src', '<li>KPI roadmap: Punctual Pros nationwide plan, analyst estimates.</li>');
   }
   // value bridge
   const mxI = $('#mx'), osI = $('#os');
@@ -541,7 +550,7 @@ function financing() {
     const y = v => pt + (H - pt - pb) * (1 - v / max);
     const g = steps.map(([n, s0, v, c], i) => { const x = pl + i * cw + cw * .14, w = cw * .72; const top = y(s0 + Math.max(0, v)), h = Math.max(2, Math.abs(y(s0) - y(s0 + v))); const [l1, l2 = ''] = n.split('|'); const mid = i > 0 && i !== 4; return `<rect x="${x}" y="${top}" width="${w}" height="${h}" rx="6" style="fill:${c}"${c.startsWith('url') ? ' stroke="#7c4ddb" stroke-width="1.5"' : ''}/>${mid ? `<line x1="${x - cw * .28}" x2="${x}" y1="${y(s0)}" y2="${y(s0)}" style="stroke:var(--sys-line-2)" stroke-dasharray="3 3"/>` : ''}<text x="${x + w / 2}" y="${top - 7}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--sys-ink)">${mid ? '+' : ''}${usd(v)}</text><text x="${x + w / 2}" y="${H - pb + 17}" text-anchor="middle" font-size="11" style="fill:var(--sys-ink-2)">${esc(l1)}</text><text x="${x + w / 2}" y="${H - pb + 31}" text-anchor="middle" font-size="11" style="fill:var(--sys-ink-2)">${esc(l2)}</text>`; }).join('');
     const defs = '<defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f0eafd"/><rect width="3.5" height="8" fill="#7c4ddb" opacity=".55"/></pattern></defs>';
-    $('#bridge').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Enterprise value bridge from ${usd(b.ev0)} today to ${usd(b.ev36)} at month 36 (estimate)">${defs}${g}</svg><div class="ev-row"><span>Base enterprise value at month 36<span class="sys-est">est.</span><br><span class="sys-muted">${usd(b.e36)} EBITDA × ${b.mx.toFixed(1)}x, vs ${usd(b.e0)} × ${b.m0.toFixed(1)}x today${b.os ? `. Upside case with the AI premium: ${usd(b.ev36 + b.prem)} (not in base)` : ''}</span></span><b>${usd(b.ev36)}</b></div>`;
+    $('#bridge').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Enterprise value bridge from ${usd(b.ev0)} today to ${usd(b.ev36)} at month 36 (estimate)">${defs}${g}</svg><div class="ev-row"><span>Base enterprise value at month 36<span class="sys-est">est.</span><br><span class="sys-muted">${usd(b.e36)} EBITDA × ${b.mx.toFixed(1)}x, vs ${usd(b.e0)} × ${b.m0.toFixed(1)}x today${b.os ? `. AI upside: ${usd(b.ev36 + b.prem)} (not in base)` : ''}</span></span><b>${usd(b.ev36)}</b></div>`;
     const ra = S.ra;
     $('#bridge-note').innerHTML = `Organic is today's business growing ~${pct(ORG_G)} a year, at the ${pct(b.mg36)} margin it reaches by month 36. Acquired is the rest of the ${usd(S.road[S.road.length - 1]?.revenue_usd)}, valued at the entry multiple. The tuck-ins cost ~${usd(b.price)} of that bar (see sources and uses below); the rest is their margin gain after joining. ServiceOS savings are already in the roadmap margin (${pct(b.mg0)} → ${pct(b.mg36)}), so the base case adds no AI premium. The slider is an upside case only, capped at 1 turn of EBITDA${ra ? `: the ServiceOS case is a ${usd(ra.investment_usd[0])}–${usd(ra.investment_usd[1])} investment with ${usd(ra.ebitda_impact_usd[0])}–${usd(ra.ebitda_impact_usd[1])} of EBITDA impact` : ''}. Entry at ${b.m0.toFixed(1)}x is the midpoint of GF Data's range for deals under $25M (6.3–6.9x). Exit at 10.0x is its range for $100–250M deals.`;
     returnsTable(b);
@@ -557,42 +566,42 @@ function returnsTable(b) {
       row('ServiceOS build', usd(b.os$), 'midpoint of the ServiceOS case'),
       row('Total uses', usd(b.uses))].join('')}</table></div>
     <div><h4>Sources</h4><table class="tbl su">${[
-      ...(b.ddtl ? [row('Existing delayed-draw line', usd(b.ddtl), 'undrawn commitment in PGIM Private Credit Fund\'s slice (10-Q, Jun 30, 2026)'),
-        row('Upsized or incremental term loan', usd(b.debtNew - b.ddtl), `to be raised; total acquisition debt ${usd(b.debtNew)} = ${b.lev.toFixed(1)}x acquired EBITDA`)]
-        : [row('Acquisition debt', usd(b.debtNew), `delayed-draw / unitranche at ${b.lev.toFixed(1)}x acquired EBITDA`)]),
+      ...(b.ddtl ? [row('Existing delayed-draw line', usd(b.ddtl), 'undrawn, PGIM Private Credit Fund (10-Q, Jun 30, 2026)'),
+        row('Upsized or incremental term loan', usd(b.debtNew - b.ddtl), `to raise; total debt ${usd(b.debtNew)} = ${b.lev.toFixed(1)}x`)]
+        : [row('Acquisition debt', usd(b.debtNew), `delayed-draw / unitranche, ${b.lev.toFixed(1)}x`)]),
       row('Seller rollover', usd(b.rollover), `${pct(b.roll)} of price (20–35% typical)`),
       row('New equity', usd(b.eqNew), 'Fund I follow-on + deal co-invest'),
       row('Total sources', usd(b.debtNew + b.rollover + b.eqNew))].join('')}</table></div>
     <div><h4>Equity returns at ${b.mx.toFixed(1)}x exit</h4><table class="tbl su">${[
       row('Exit enterprise value', usd(b.ev36), `${usd(b.e36)} × ${b.mx.toFixed(1)}x, no AI premium`),
-      row('Less net debt', '−' + usd(b.debt36), `today ~${usd(b.debt0)} (${b.lev.toFixed(1)}x today's EBITDA${b.fac.length ? `, consistent with a facility estimated at ~${usd(b.fac[0])}–${usd(b.fac[1])}` : ''}) + acquisition ${usd(b.debtNew)}; no paydown assumed (${(b.debt36 / b.e36).toFixed(1)}x exit EBITDA)`),
+      row('Less net debt', '−' + usd(b.debt36), `today ~${usd(b.debt0)} + acquisition ${usd(b.debtNew)}, no paydown (${(b.debt36 / b.e36).toFixed(1)}x exit EBITDA)`),
       row('Equity value at exit', usd(b.eq36)),
-      row('Equity in', usd(b.eqIn), `today's equity at ${b.m0.toFixed(1)}x (${usd(b.eq0)}) + new ${usd(b.eqNew)} + rollover ${usd(b.rollover)}`),
-      row('IRR', pct(b.irr), `all equity counted from day 0${b.os ? `; upside case ${b.moicUp.toFixed(1)}x / ${pct(b.irrUp)}` : ''}`),
+      row('Equity in', usd(b.eqIn), `today ${usd(b.eq0)} at ${b.m0.toFixed(1)}x + new ${usd(b.eqNew)} + rollover ${usd(b.rollover)}`),
+      row('IRR', pct(b.irr), `from day 0${b.os ? `; upside case ${b.moicUp.toFixed(1)}x / ${pct(b.irrUp)}` : ''}`),
       row('Gross MOIC', b.moic.toFixed(1) + 'x')].join('')}</table></div>`;
-  $('#su-note').innerHTML = `Every line is an analyst estimate built from the roadmap above and the financing sources on this page. Acquired revenue (${usd(b.acqRev)} at month 36) is bought at today's ~${pct(b.mg0)} margin; organic growth is ~${pct(ORG_G)} a year. Returns are measured on today's value (${b.m0.toFixed(1)}x run-rate EBITDA), not on BSP's original cost, and are gross of fees and carry. Debt is held flat, which understates returns if cash flow pays it down.${b.ddtl ? ` <b>Debt capacity check:</b> the only acquisition loan visible in filings is PGIM Private Credit Fund's ${usd(b.par)} first-lien loan to Punctual Pros Midco (SOFR + 5.00%, due March 2029). ${usd(b.ddtl)} of it can still be drawn for deals. Other lenders likely hold the rest of a loan package estimated at ~${usd(b.fac[0])}–${usd(b.fac[1])}. So the plan assumes the lenders enlarge the loan or add a new one for the other ${usd(b.debtNew - b.ddtl)}. That is ${b.lev.toFixed(1)}x the acquired EBITDA, the midpoint of GF Data's 2.9–3.3x.` : ''}`;
+  $('#su-note').innerHTML = `Every line is an analyst estimate built from the roadmap above and the financing sources on this page. Acquired revenue (${usd(b.acqRev)} at month 36) is bought at today's ~${pct(b.mg0)} margin; organic growth is ~${pct(ORG_G)} a year. Returns are measured on today's value (${b.m0.toFixed(1)}x run-rate EBITDA), not on BSP's original cost, and are gross of fees and carry. Debt is held flat, which understates returns if cash flow pays it down.${b.ddtl ? ` <b>Debt capacity check:</b> the only acquisition loan visible in filings is PGIM Private Credit Fund's ${usd(b.par)} first-lien loan to Punctual Pros Midco (SOFR + 5.00%, due March 2029). ${usd(b.ddtl)} of it can still be drawn for deals. Other lenders likely hold the rest of a loan package estimated at ~${usd(b.fac[0])}–${usd(b.fac[1])}, which fits today's ~${usd(b.debt0)} of debt (${b.lev.toFixed(1)}x today's EBITDA). So the plan assumes the lenders enlarge the loan or add a new one for the other ${usd(b.debtNew - b.ddtl)}. That is ${b.lev.toFixed(1)}x the acquired EBITDA, the midpoint of GF Data's 2.9–3.3x.` : ''}`;
 }
 
 /* ── 9 · risks & asks; footer sources ───────────────────────────────────── */
 function risks() {
   const p2 = S.K('expansion_phase')[1]?.data_points || {}; const notPP = Object.values(p2.authority_territories_not_pp_by_state || {}).reduce((a, b) => a + b, 0);
   const R = [
-    ['Franchisor approval', `Every franchise tuck-in and conversion needs Authority Brands' consent, and independents may hit territorial limits.`, `Agree a territory roadmap with Authority at CEO level before Phase 2; pre-clear the ${notPP} mapped territories Punctual Pros does not own.`],
-    ['Technician capacity', 'BLS projects ~155,300 trade openings a year, and turnover runs 16–21% by trade.', 'The pro programs above, plus AI copilots that make juniors productive faster.'],
-    ['Competition for founders', `${p2.pe_sponsors_overlapping_punctual_pros ?? 17} PE sponsors overlap Punctual Pros, ${p2.pe_sponsor_threat_mix?.high ?? 6} rated high threat (${(p2.pe_sponsors_high_threat || []).slice(3, 6).map(s => s.split(' - ').pop()).join(', ')}).`, 'Move first on the top 10, offer rollover, and sell the operator growth plan rather than price.'],
-    ['Royalty-capped margins', 'Franchise royalties of ~7.2–7.5% of revenue cap how far margin can rise.', 'Grow memberships, financing and attach revenue, and add independents where Authority allows it.'],
-    ['AI results are vendor claims', 'Agent metrics come from vendor case studies, not controlled studies.', 'Pilot each agent in one territory against a control group for 60 days before rolling it out.'],
-    ['Thin company data', "Membership count, review count, online-booking share and technician headcount are not public; several baselines are assumptions.", 'A 30-day data request replaces every est. baseline on this page.'],
+    ['Franchisor approval', `Tuck-ins and conversions need Authority Brands' consent.`, `Agree a territory roadmap at CEO level before Phase 2; pre-clear the ${notPP} mapped territories.`],
+    ['Technician capacity', 'BLS projects ~155,300 trade openings a year; turnover runs 16–21%.', 'Run the pro programs and give juniors AI copilots.'],
+    ['Competition for founders', `${p2.pe_sponsors_overlapping_punctual_pros ?? 17} PE sponsors overlap; ${p2.pe_sponsor_threat_mix?.high ?? 6} rated high threat (${(p2.pe_sponsors_high_threat || []).slice(3, 6).map(s => s.split(' - ').pop()).join(', ')}).`, 'Move first on the top 10 and offer rollover.'],
+    ['Royalty-capped margins', 'Royalties of ~7.2–7.5% of revenue cap margin.', 'Grow memberships, financing and attach revenue; add independents where allowed.'],
+    ['AI results are vendor claims', 'Agent metrics come from vendor case studies.', 'Pilot each agent in one territory against a control group for 60 days.'],
+    ['Thin company data', 'Members, reviews, booking share and headcount are not public.', 'Request company data within 30 days to replace est. baselines.'],
   ];
-  $('#risk-list').innerHTML = R.map(r => `<li><b>${esc(r[0])}</b><span>${esc(r[1])}</span><em>Mitigation: ${esc(r[2])}</em></li>`).join('');
+  $('#risk-list').innerHTML = R.map(r => `<li><b>${esc(r[0])}</b><span>${esc(r[1])}</span><em>${esc(r[2])}</em></li>`).join('');
   const ra = S.ra;
   const A = [
-    ['PRG + Punctual Pros CFO', 'Company data pull', 'Members, reviews, booking rate, tech headcount and revenue by territory, to replace the est. baselines.'],
+    ['PRG + Punctual Pros CFO', 'Company data pull', 'Members, reviews, booking rate, tech headcount, revenue by territory.'],
     ['BSP deal partners', 'Authority Brands meeting', 'A territory roadmap for PA, NJ, MD, DE and southern NY, with transfer pre-clearance.'],
-    ['PRG tech lead', `Approve ServiceOS${ra ? ` (${usd(ra.investment_usd[0])}–${usd(ra.investment_usd[1])} est.)` : ''}`, 'Start with a 60-day pilot of the AI dispatcher and missed-call text-back in Lancaster.'],
-    ['PRG talent', 'Hire an integration lead and a head of talent', 'They own the 100-day plan, the Thaddeus Stevens partnership, apprenticeships and veteran hiring.'],
+    ['PRG tech lead', `Approve ServiceOS${ra ? ` (${usd(ra.investment_usd[0])}–${usd(ra.investment_usd[1])} est.)` : ''}`, 'Pilot the AI dispatcher and missed-call text-back in Lancaster for 60 days.'],
+    ['PRG talent', 'Hire an integration lead and a head of talent', 'Own the 100-day plan, Thaddeus Stevens partnership, apprenticeships, veteran hiring.'],
     ['Deal team', 'Founder outreach to the top 10', 'Start with Lancaster Plumbing, the West Chester tri-brand and C&C, using rollover terms.'],
-    ['Deal team + lenders', 'Capital for Phase 3', 'Expand the delayed-draw line and prepare a Punctual Pros co-invest SPV like the TS, FL and CET vehicles.'],
+    ['Deal team + lenders', 'Capital for Phase 3', 'Expand the delayed-draw line; prepare a co-invest SPV like the TS, FL and CET vehicles.'],
   ];
   $('#ask-list').innerHTML = A.map(a => `<li><div><span class="who">${esc(a[0])}</span><b>${esc(a[1])}</b><span>${esc(a[2])}</span></div></li>`).join('');
 }
@@ -601,9 +610,22 @@ function sources() {
   const gen = m.generated ? shortDate(String(m.generated).slice(0, 10)) : '—';
   // The dataset's method note mixes reader-facing sourcing with build notes; show the sourcing and describe the computation in plain words.
   const sourcing = String(m.method || '').split(/\s*Expansion-phase/)[0].replace(/, fetched (\d{4}-\d{2}-\d{2})/, (x, d) => `, read ${shortDate(d)}`).replace(/\bfetched\b/g, 'read');
-  const method = `${esc(prose(sourcing))} Expansion-phase figures come from the portal's own data: the Punctual Pros ZIP-code model, its add-on targets and the Authority Brands territory map. They also use the private-equity landscape and Punctual Pros public filings (franchise disclosure, PGIM 10-Q, Form D and ADV). KPI targets and the 36-month roadmap are analyst assumptions based on the FY2025 estimates in those filings.`;
+  const methodTail = `Expansion-phase figures come from the portal's own data: the Punctual Pros ZIP-code model, its add-on targets and the Authority Brands territory map. They also use the private-equity landscape and Punctual Pros public filings (franchise disclosure, PGIM 10-Q, Form D and ADV). KPI targets and the 36-month roadmap are analyst assumptions based on the FY2025 estimates in those filings.`;
   const caveats = (m.caveats || []).filter(c => !/^(The user's request|Per earlier user guidance)/i.test(c)).map(c => prose(c).replace(/Confirm which company .*$/, '').replace(/\bor null\b/g, 'or shown as —'));
-  $('#src-body').innerHTML = `<p><b>Method.</b> ${method}</p><p><b>Data.</b> Punctual Pros nationwide plan (${S.items.length} sourced items from ${urls.size} distinct sources, compiled ${gen}), Punctual Pros add-on targets, OS program evidence and the Punctual Pros ZIP-code model, all in the BSP portal.</p><p><b>Caveats</b></p><ul>${caveats.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+  const sent = t => String(t).split(/(?<=\.)\s+/).filter(Boolean);
+  const li = a => a.map(x => `<li>${x}</li>`).join('');
+  const sources = [
+    'Plan at a glance: Punctual Pros ZIP-code model, Punctual Pros add-on targets, 2025 franchise disclosure documents and the Private-equity landscape, BSP portal, Oct 2026.',
+    'Map: Punctual Pros ZIP-code model, add-on targets and nationwide plan, BSP portal, Oct 2026. County housing units: Census ACS 2019–2023 five-year estimates. Home sales: Redfin county market tracker, twelve months ending May 2026. Authority Brands presence: national county base table. Map tiles © Esri.',
+    'AI agents: vendor case studies and published benchmarks collected in the Punctual Pros nationwide plan, Oct 2026. Results are vendor-reported; treat them as upper bounds.',
+    'Tuck-ins: Punctual Pros add-on targets (state licensing, company sites and press), BSP portal, Oct 2026. Revenue and staff counts are estimates.',
+    ...(FOLDS.src || []).map(x => x.replace(/^<li>|<\/li>$/g, '')),
+  ];
+  const terms = 'TEV: total enterprise value. FDD: franchise disclosure document. LSA: Google Local Services Ads. CSR: customer service rep. AP/AR: bills paid and bills collected. SOFR: the benchmark rate loans are priced over.';
+  $('#src-body').innerHTML = fold('Sources', `<ul>${li(sent(esc(prose(sourcing))).concat(sources))}<li>Data: Punctual Pros nationwide plan (${S.items.length} sourced items from ${urls.size} distinct sources, compiled ${gen}), Punctual Pros add-on targets, OS program evidence and the Punctual Pros ZIP-code model, all in the BSP portal.</li></ul>`)
+    + fold('Method', `<ul>${li(sent(methodTail))}${(FOLDS.method || []).join('')}</ul>`)
+    + fold('Caveats', `<ul>${caveats.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`)
+    + fold('Terms', `<p>${terms}</p>`);
 }
 
 /* ── chat: autocomplete prompts + data-computed answers ─────────────────── */
@@ -691,7 +713,7 @@ function mountChat(Chat) {
   // "type a few letters" demo buttons: show the autocomplete working in place
   const card = $('#ask'); const tries = ['ai age', 'phase', 'smith', 'tuck-in', 'fund'];
   const row = document.createElement('div'); row.className = 'ask-try';
-  row.innerHTML = `<span>Try typing:</span>${tries.map(t => `<button type="button" data-t="${esc(t)}">${esc(t)}…</button>`).join('')}`;
+  row.innerHTML = `${tries.map(t => `<button type="button" data-t="${esc(t)}">${esc(t)}…</button>`).join('')}`;
   card.appendChild(row);
   const typeIn = t => { const ta = $('#hero-chat textarea'); if (!ta) return; ta.value = t; ta.focus(); ta.dispatchEvent(new Event('input', { bubbles: true })); };
   $$('button', row).forEach(b => b.onclick = () => typeIn(b.dataset.t));
