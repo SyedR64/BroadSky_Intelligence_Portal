@@ -155,14 +155,14 @@ export function football(p, srcs) {
   const e0 = p.rev * p.mg / 100, out = [];
   const evs = []; for (const dw of [-1, 1]) for (const dg of [-0.5, 0.5]) { const d = dcf({ ...p, wacc: p.wacc + dw, tg: p.tg + dg }); if (d.evG != null) evs.push(d.evG); }
   const base = dcf(p);
-  if (evs.length) out.push({ k: 'dcfg', label: 'DCF, long-run growth', sub: `Discount rate ±1 point, growth ±0.5 point`, lo: Math.min(...evs), hi: Math.max(...evs), mid: base.evG });
+  if (evs.length) out.push({ k: 'dcfg', label: 'DCF, long-run growth', sub: 'Rate ±1 point, growth ±0.5 point', lo: Math.min(...evs), hi: Math.max(...evs), mid: base.evG });
   const evm = []; for (const dw of [-1, 1]) for (const dt of [-1, 1]) evm.push(dcf({ ...p, wacc: p.wacc + dw, tm: Math.max(1, p.tm + dt) }).evM);
-  out.push({ k: 'dcfm', label: 'DCF, year-5 sale multiple', sub: 'Discount rate ±1 point, multiple ±1x', lo: Math.min(...evm), hi: Math.max(...evm), mid: base.evM });
+  out.push({ k: 'dcfm', label: 'DCF, year-5 sale multiple', sub: 'Rate ±1 point, multiple ±1x', lo: Math.min(...evm), hi: Math.max(...evm), mid: base.evM });
   if (e0 > 0) {
     out.push({ k: 'gf', label: 'Lower-middle-market deals', sub: 'GF Data: 6.3x (under $25M) to 10.0x ($100M to $250M)', lo: 6.3 * e0, hi: 10.0 * e0, src: srcs?.gf });
     out.push({ k: 'cap', label: 'Typical to premium deals', sub: 'Capstone: 6.8x typical, 9.8x premium (2026)', lo: 6.8 * e0, hi: 9.8 * e0, src: srcs?.cap });
     const a = solveEntry(p, 0.25), b = solveEntry(p, 0.20);
-    if (a != null && b != null) out.push({ k: 'lbo', label: 'What a buyer can pay', sub: 'Price that still earns a 20% to 25% annual return', lo: a * e0, hi: b * e0, mult: [a, b] });
+    if (a != null && b != null) out.push({ k: 'lbo', label: 'What a buyer can pay', sub: 'Earns a 20% to 25% return', lo: a * e0, hi: b * e0, mult: [a, b] });
   }
   return { rows: out, price: e0 * p.em, e0 };
 }
