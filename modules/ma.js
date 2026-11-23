@@ -7,6 +7,7 @@ import * as Copy from './copy.js?v=20261117223642';
 import { renderTargets, fitTierOf } from '../assets/components.js?v=20261117223642';
 import * as DL from './deal-lib.js?v=20261117223642';
 import { companyBlock } from './ma-company.js?v=20261117223642';
+import { App } from '../assets/core.js?v=20261117223642';
 
 /* ── Constants ───────────────────────────────────────────────────────────── */
 const PLAT = {
@@ -598,7 +599,7 @@ async function overview(ctx) {
     ${ui.panel({ title: 'Where the targets are', cls: 'ma-fill', sub: 'Every screened add-on by company (size = fit tier; lighter dots come from SBA loan records); rings are BSP portfolio company HQs. Click a point to inspect.', body: `<div class="map" id="ma-map"></div>`, flush: true, foot: ui.source('ZoomInfo search and company websites (add-on target lists); SBA PPP, 7(a) and 504 loan records; BSP firm profile', null, b.cet?.meta?.generated) })}
     ${ui.panel({ title: 'This quarter’s top 10', sub: 'Each company’s #1 pick, then its #2, and so on (rubrics are not comparable across companies). Names that collide with a BSP company are held out.', body: `<div class="ma-top" id="ma-top10"></div><div id="ma-affil"></div>`, scroll: true, foot: `<span class="src">Ranking: portfolio company shortlists (top 10 for CET and Punctual Pros, top 8 for Frontline and Thomas Scientific), affiliation-flagged names removed and ranks re-numbered · reasons from screen authors</span>` })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held portfolio company against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, actions: '<a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/bsp/deals">BSP add-on record →</a>', body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="sys-chips ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: ui.source('BSP firm profile (portfolio add-ons, timeline, employee estimates); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Smith + Howard benchmark · add-on pace and headcount since BSP entry', sub: 'Cumulative dated add-ons by years since BSP’s investment, each held portfolio company against the S+H trajectory (entry Nov 2022 → TPG exit Aug 2026)', accent: true, actions: '<a class="sys-btn sys-btn--secondary sys-btn--sm btn" href="#/bsp/deals">BSP add-on record →</a>', body: `<div class="ma-sh"><div><div id="ma-sh-chart"></div><div class="sys-chips ma-sh-leg" id="ma-sh-leg"></div></div><div><div id="ma-sh-tbl"></div><div class="h-note mt-8" id="ma-sh-read"></div></div></div>`, foot: (stats.add_on_reconciliation ? `<div>Add-ons by name: ${esc(stats.add_on_reconciliation.replace(/^Identified by name:\s*/, ''))}</div>` : '') + ui.source('BSP firm profile (portfolio add-ons, timeline, employee estimates); S+H headcount and ~4x revenue from the BSP exit release', 'https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', b.firm?.meta?.generated) })}</div>
   <div class="grid grid-2 mt-12">
     ${ui.panel({ title: 'Screening funnel · portfolio company × fit tier', sub: 'Targets per fit tier (T1 ≥80, T2 65–79, T3 50–64, T4 <50). Listed = on the screen authors’ ranked shortlist; Owner = confirmed founder/family owner.', body: `<div id="ma-heat"></div><div class="sys-card-label th-h mt-12">Conversion across all companies</div><div id="ma-funnel"></div><div class="sys-card-label th-h mt-12">Read-out <span class="sys-est sys-est--illus analyst">analyst view</span></div><ul class="bul" id="ma-readout"></ul>`, foot: ui.source('CET, Punctual Pros, Frontline and Thomas Scientific add-on targets', null, b.pp?.meta?.generated) })}
     ${ui.panel({ title: 'Buy-and-build plan', sub: 'How a target moves from screen to integrated add-on', body: `<div class="sys-grid steps" id="ma-steps"></div><div class="sys-card-label th-h mt-16">Actions this week <span class="sys-est sys-est--illus analyst">analyst view</span></div><ol class="acts" id="ma-acts"></ol>`, foot: ui.source('PRG description from broadskypartners.com; PE landscape implications', null, b.pe?.meta?.generated) })}
@@ -1003,7 +1004,7 @@ async function rivalsView(ctx) {
     actions: `<a class="sys-btn sys-btn--secondary btn" href="#/pe">Private equity →</a><a class="sys-btn sys-btn--secondary btn" href="#/fin/methods">Methods and gaps</a>`,
   }) +
   ui.kpis([
-    { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings · ${fmt.num(nBdc)} lender loan lines · ${fmt.num(nPpp)} PPP records`, color: 'var(--sys-bad)' },
+    { label: 'Rival companies', value: fmt.num(all.length), sub: `${fmt.num(b.rivals.items?.length)} filings · ${fmt.num(nBdc)} lender loan lines · ${fmt.num(nPpp)} PPP records (pre-roll-up payroll anchors)`, color: 'var(--sys-bad)' },
     { label: 'PE-backed', value: fmt.num(peN), sub: `${pubN} public strategics · ${all.length - peN - pubN} private/other`, color: 'var(--c-pe)' },
     { label: 'Credit stress', value: fmt.num(stressed.length), sub: `${esc(stressed.slice(0, 3).map(r => r.name).join(', ') || '—')} · ${fmt.num(pikN)} paying PIK`, color: 'var(--sys-bad)' },
     { label: 'Refi due ≤2027', value: fmt.num(refi.length), sub: esc(refi.map(r => r.name).slice(0, 2).join(', ') || '—'), color: 'var(--sys-warn)' },
@@ -1486,6 +1487,10 @@ async function researchView(ctx) {
 
 /* Everything modules/ma-company.js needs from this file. It is passed in, so that file imports nothing. */
 const KIT = { Copy, PLAT, PKEYS, SKEYS, SRC_LABEL, REACH_TXT, DIM_MAX, num, median, countBy, topN, clip, pctOf, titleCase, handOnly, tok, ceoFix, rankedFor, rankedRaw, metaFor, sourceFoot, nextActionFor, openTarget };
+
+/* The one add-on target list replaced four per-company target screens; keep their words findable in portal search. */
+App.index([{ label: 'Acquisition engine · Add-on targets', sub: 'Target list · add-on pipeline · hand-researched list and SBA loan screen', href: '#/ma/pipeline', kind: 'Targets', color: 'var(--c-ma)' },
+  ...SKEYS.map(p => ({ label: `${PLAT[p].label} · Add-on targets`, sub: `${PLAT[p].label} target list and brief in the add-on pipeline`, href: `#/ma/pipeline?platform=${p}`, kind: 'Targets', color: PLAT[p].color }))]);
 
 export default {
   id: 'ma', name: 'Acquisition engine', tag: 'M&A', color: 'var(--c-ma)', group: 'Intelligence',
