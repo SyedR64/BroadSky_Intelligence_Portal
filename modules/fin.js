@@ -103,6 +103,13 @@ const numKF = (kf, re, exclude) => flatKF(kf).filter(([k, v]) => re.test(k) && !
 /* scrub collection-tooling jargon out of analyst text, and clip on a word boundary */
 const clean = t => Copy.text(String(t ?? '')).replace(/Raise\s+CLAUDE_CODE_\w+,?\s*then\s+(\w)/gi, (m, c) => c.toUpperCase()).replace(/CLAUDE_CODE_\w+/g, 'research limits').replace(/\bweb[\s-]?search budget\b/gi, 'research budget').replace(/\s+for this session\b/gi, ' this cycle').replace(/\bthis session\b/gi, 'this cycle');
 const clip = (t, n) => { const x = clean(t); if (x.length <= n) return x; const c = x.slice(0, n); const i = c.lastIndexOf(' '); return `${(i > n * 0.6 ? c.slice(0, i) : c).replace(/[\s,;:(–—-]+$/, '')}…`; };
+/* working notes in the research files (how a lookup went, budgets, access errors, the brief) never reach a screen: parentheticals and sentences that carry them are dropped */
+const INTERNAL = /relayed user request|task brief|\bthe brief\b|brief said|web ?search budget|search budget|budget (?:was |for this \w+ was )?exhausted|quota was exhausted|rate[- ]limit|HTTP\s*4\d\d|\b(?:403|429)\b|Verification notes|CLAUDE|when budget allows|blocked automated|bot (?:security )?checks?|not attempted|Cloudflare|security-check/i;
+/* drop the access-error clause of a sentence and keep the gap it names; a sentence that is only a working note goes whole */
+const scrubSentence = x => { let h = x; while (INTERNAL.test(h)) { const i = Math.max(h.lastIndexOf(': '), h.lastIndexOf('; '), h.lastIndexOf(', ')); if (i <= 0) return ''; h = h.slice(0, i).replace(/[\s,;:]+$/, ''); } return h === x ? x : h.split(/\s+/).length >= 4 ? `${h}.` : ''; };
+const scrub = t => { const raw = asText(t).replace(/\s*\([^)]*\)/g, m => INTERNAL.test(m) ? '' : m); const keep = raw.split(/(?<=[a-z0-9)%][.;])\s+(?=[A-Z(0-9'])/).map(scrubSentence).filter(Boolean).join(' ').trim(); return keep ? clean(keep) : ''; };
+const srcP = (ctx, text, url, asof) => `<p class="sys-src" data-src>${url ? ctx.fmt.link(url, text) : ctx.esc(text)}${asof ? ` · as of ${ctx.esc(asof)}` : ''}</p>`;
+const methodP = html => `<p class="sys-src" data-method>${html}</p>`;
 const shortEst = s => String(s || '').replace(/\s*\([^)]*\)/g, '').split(/;\s/)[0].trim();
 
 function injectCss() {
@@ -193,7 +200,7 @@ function estPart(e, kind) {
 const eqText = e => { const parts = String(e?.estimate || '').replace(/\s*\([^)]*\)/g, '').split(/;\s+/); const p = parts.find(x => /cumulative/i.test(x)) || parts[0] || ''; return p.replace(/\s*cumulative.*$/i, ' cum.').replace(/\s+primary$/i, '').trim(); };
 const byNum = k => (a, b) => (a[k] ?? -Infinity) - (b[k] ?? -Infinity);
 const isPF = e => /pro forma|incl\.? NJ|CET\+/i.test(e?.metric || '');
-const estCellK = (esc, fmt, e, kind) => e ? `<div class="est-cell">${confDot(e.confidence)}${esc(estPart(e, kind).slice(0, 40))}${isPF(e) ? ` ${fmt.chip('PF', 'var(--c-fin)')}` : ''}</div>` : '<span class="dim">—</span>';
+const estCellK = (esc, fmt, e, kind) => e ? `<div class="est-cell">${confDot(e.confidence)}${esc(estPart(e, kind).replace(/^No term loan or unitranche identified$/i, 'None identified').slice(0, 40))}${isPF(e) ? ` ${fmt.chip('PF', 'var(--c-fin)')}` : ''}</div>` : '<span class="dim">—</span>';
 
 function firmEntry(firm, co) {
   const it = (firm?.items || []).find(i => i.id === `bsp-${co.id}`);
@@ -281,18 +288,18 @@ function exitFlag(held, mo, tplHeld) {            // k = urgency, 0 first; st = 
 
 /* The next action per company: `action` is the one sentence both tables print; `detail` is the supporting line the full table adds. */
 const NEXT = {
-  ts:  r => ({ action: `Extend or refinance the loan due in ${r.matLong || 'December 2027'}, and rebuild normalized EBITDA before any sale.`,
-               detail: `The unitranche matures ${r.matLabel || 'Dec 2027'}: fix a refinance-vs-sale decision date (Q1 2027). The refinancing case rests on target-account revenue, so make share-of-wallet growth the board's first KPI.` }),
-  fh:  r => ({ action: `${r.held != null ? `At ${r.heldYears} with no add-ons` : 'With no add-ons'}, decide the exit path: wholesale-door and category growth to a sponsor, or a strategic sale.`,
-               detail: 'No term loan identified: test strategic-buyer appetite now (Chubbies → Solo Brands is the reference trade) and decide hold vs. sell for the 2027 season.' }),
-  bpi: r => ({ action: `Integrate the ${r.addOns ?? 'six'} add-ons into one reporting line and benchmark against listed peers (PPHC ~8.4x EBITDA) ahead of a 2027–28 process.`,
-               detail: `${r.addOns ?? 'Six'} add-ons in ${r.heldTxt}: package the integrated US/UK/EU company story for a 2027 process; PPHC (~8.4x EV / 2025 Adj. EBITDA) is the public anchor.` }),
-  pp:  r => ({ action: 'Use the PGIM delayed-draw term loan (~$1.4M unfunded) for the next adjacent-county franchise tuck-in.',
-               detail: `The facility runs to ${r.matLabel || 'Mar 2029'}: there is runway, so close the next add-on (density in Lancaster or Ocean/Monmouth) before exit prep in 2027–28.` }),
-  fl:  r => ({ action: 'Close the first BSP-era add-on (legal MSP or eBilling) and grow mid-size-firm accounts to build the earnings story.',
-               detail: `No add-ons since entry (${r.entryLabel}): the first legal-IT / RCM tuck-in is the main value lever; the co-investor already marks equity up ~10%.` }),
-  cet: r => ({ action: 'Run Horton + NuWave under one reporting line and report pro forma EBITDA quarterly; line up the next New England tuck-in (wastewater / solar O&M).',
-               detail: 'Integrate Horton (Sept 2026) and NuWave; the next add-on should extend New England wastewater and pump-station work.' }),
+  ts:  r => ({ action: `Refinance the ${r.matLong || 'December 2027'} loan; rebuild normalized EBITDA first.`,
+               detail: `The unitranche (a single term loan that blends senior and junior debt) matures ${r.matLabel || 'Dec 2027'}: fix a refinance-vs-sale decision date (Q1 2027). The refinancing case rests on target-account revenue, so make share-of-wallet growth the board's first KPI.` }),
+  fh:  r => ({ action: 'Decide the exit path: sponsor or strategic sale.',
+               detail: `${r.held != null ? `At ${r.heldYears} with no add-ons.` : 'No add-ons so far.'} The sponsor route rests on wholesale-door and category growth. No term loan identified: test strategic-buyer appetite now (Chubbies → Solo Brands is the reference trade) and decide hold vs. sell for the 2027 season.` }),
+  bpi: r => ({ action: `Integrate the ${r.addOns ?? 'six'} add-ons into one reporting line.`,
+               detail: `Aim for a 2027–28 process; benchmark against listed peers (PPHC ~8.4x EBITDA). ${r.addOns ?? 'Six'} add-ons in ${r.heldTxt}: package the integrated US/UK/EU company story for a 2027 process; PPHC (~8.4x EV / 2025 Adj. EBITDA) is the public anchor.` }),
+  pp:  r => ({ action: 'Use the PGIM loan (~$1.4M unfunded) for the next tuck-in.',
+               detail: `The PGIM facility is a delayed-draw term loan; the next tuck-in is an adjacent-county franchise. The facility runs to ${r.matLabel || 'Mar 2029'}: there is runway, so close the next add-on (density in Lancaster or Ocean/Monmouth) before exit prep in 2027–28.` }),
+  fl:  r => ({ action: 'Close the first BSP-era add-on: legal IT or eBilling.',
+               detail: `The first add-on is a legal MSP or eBilling business. Grow mid-size-firm accounts to build the earnings story. No add-ons since entry (${r.entryLabel}): the first legal-IT / RCM (revenue-cycle management: billing and collections) tuck-in is the main value lever; the co-investor already marks equity up ~10%.` }),
+  cet: r => ({ action: 'Report Horton and NuWave pro forma EBITDA quarterly.',
+               detail: 'Run Horton and NuWave under one reporting line; Horton closed in Sept 2026. Line up the next tuck-in in wastewater and solar O&M; it should extend wastewater and pump-station work.' }),
 };
 
 async function loadCore(ctx) {                    // six filings files + the firm profile; Data caches each
@@ -363,34 +370,45 @@ async function portfolioView(ctx) {
   const nextMat = board.filter(r => r.mo != null && r.mo > 0).sort((a, b) => a.mo - b.mo)[0];
   const urgent = board.filter(r => r.flag.k <= 1).sort((a, b) => a.flag.k - b.flag.k);
   const addOnsAll = board.reduce((a, r) => a + (r.addOns || 0), 0);
+  const fhRaise = (capital?.deal_vehicles || []).find(v => /issuer Form D/i.test(v.vehicle));
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Portfolio financial picture',
-    sub: `Six companies add up to roughly ${fmt.money(pfRev)} of revenue and ${fmt.money(pfEbitda)} of EBITDA (est.)${biggest ? `; ${esc(biggest.co.name)} is the largest` : ''}. Every figure comes from public records. ${urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision within 12–18 months` : 'No portfolio company is yet in its exit window'}${nextMat ? `; ${esc(nextMat.co.short)}'s debt matures ${esc(nextMat.matLabel)}` : ''}.`,
-    chips: `${fmt.chip(`Filings for ${present.length} of ${COS.length} companies`, present.length < COS.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Estimates, not audited', 'var(--sys-warn)')}${fmt.chip('As of Sept 2026', 'var(--c-fin)')}`,
+    sub: urgent.length ? `${esc(urgent.map(r => r.co.short).join(' and '))} need${urgent.length === 1 ? 's' : ''} an exit or refinancing decision in 12–18 months.` : 'No portfolio company is yet in its exit window.',
+    chips: present.length < COS.length ? fmt.chip(`Filings for ${present.length} of ${COS.length} companies`, 'var(--sys-warn)') : '',
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/comps">Public comparables</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/explorer">Filings explorer</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/methods">Methods & gaps</a>`,
   })}
+  <span data-asof="Sept 2026"></span>
   ${ui.kpis([
-    { label: 'Portfolio revenue (est.)', value: pfRev ? fmt.money(pfRev) : '—', sub: `sum of midpoints · ${board.filter(r => r.rev && isPF(r.rev)).length} pro forma`, color: 'var(--c-fin)' },
-    { label: 'Portfolio EBITDA (est.)', value: pfEbitda ? fmt.money(pfEbitda) : '—', sub: pfRev && pfEbitda ? `~${fmt.num(pfEbitda / pfRev * 100, 0)}% blended margin` : '', color: 'var(--sys-good)' },
-    { label: 'Average hold', value: avgHold != null ? `${fmt.num(avgHold, 1)} yrs` : '—', sub: `${fmt.num(addOnsAll)} add-ons to date · Smith + Howard exited at ${tplHeld} yrs with ${fmt.num(tpl.addons)}`, color: 'var(--sys-brand)' },
+    { label: 'Portfolio revenue (est.)', value: pfRev ? fmt.money(pfRev) : '—', sub: `${board.filter(r => r.rev && isPF(r.rev)).length} pro forma`, color: 'var(--c-fin)' },
+    { label: 'Portfolio EBITDA (est.)', value: pfEbitda ? fmt.money(pfEbitda) : '—', sub: pfRev && pfEbitda ? `~${fmt.num(pfEbitda / pfRev * 100, 0)}% margin` : '', color: 'var(--sys-good)' },
+    { label: 'Average hold', value: avgHold != null ? `${fmt.num(avgHold, 1)} yrs` : '—', sub: `${fmt.num(addOnsAll)} add-ons`, color: 'var(--sys-brand)' },
     { label: 'In exit window', value: fmt.num(inWindow.length), sub: inWindow.length ? esc(inWindow.map(r => `${r.co.short} ${fmt.num(r.held, 1)}y`).join(' · ')) : 'none held 4+ yrs', color: 'var(--sys-warn)' },
-    { label: 'Nearest maturity', value: nextMat ? esc(nextMat.matLabel) : '—', sub: nextMat ? `${esc(nextMat.co.short)} · ${fmt.num(nextMat.mo, 0)} months` : 'no maturities disclosed', color: 'var(--sys-warn)' },
-    { label: 'Fund I gross mark', value: fundGav && fundSold ? `${fmt.num(fundGav / fundSold, 2)}x` : '—', sub: fundGav ? `${fmt.money(fundGav)} GAV (ADV) vs ${fmt.money(fundSold)} sold · ${fmt.num(capital?.investors)} investors` : 'Form ADV not loaded', color: 'var(--sys-good)' },
+    { label: 'Nearest maturity', value: nextMat ? esc(nextMat.matLabel) : '—', sub: nextMat ? `${esc(nextMat.co.short)} · ${fmt.num(nextMat.mo, 0)} months` : 'none disclosed', color: 'var(--sys-warn)' },
+    { label: 'Fund I gross mark', value: fundGav && fundSold ? `${fmt.num(fundGav / fundSold, 2)}x` : '—', sub: fundGav ? `${fmt.money(fundGav)} vs ${fmt.money(fundSold)}` : 'Form ADV not loaded', color: 'var(--sys-good)' },
   ])}
-  ${flSpv && fundSold ? `<div class="mt-8">${ui.note(`<b>Fund I is ${fmt.money(fundSold)}</b> (Form D amendment ${esc(capital?.as_of || '')}). The ~${fmt.money(flSpv.sold_usd)} figure sometimes quoted as "Fund I" is <b>${esc(flSpv.vehicle)}</b>, the Frontline deal vehicle (Form D ${esc(flSpv.filed || flSpv.first_sale || '')}).`, '')}</div>` : ''}
-  <div class="mt-12">${ui.panel({ title: 'Value and exit (est.)', sub: 'One row per company, most urgent first · equity = fund + co-invest estimate, Form D vehicles beneath · PF = pro forma for closed add-ons · dot = confidence (green high · amber medium · grey low) · click a row for the full estimate table', body: '<div id="fin-board"></div>', foot: `${ui.source('Company public filings (estimate tables, BDC schedules) · BSP firm profile entry dates · SEC Form D / ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026')} · <span class="sys-muted">Exit window rule: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 years or more, exit prep.</span>` })}</div>
-  <div class="grid grid-main mt-12">
-    <div class="col gap-12">
-    ${ui.panel({ title: 'Hold period vs the template exit', sub: `Years held to date · Smith + Howard = entry ${esc(monLabel(tpl.entry))} → TPG ${esc(monLabel(tpl.exit))}`, body: '<div id="dl-hold"></div>', foot: ui.source('BSP firm profile: entry dates and timeline', null, firm?.meta?.generated) })}
-    ${ui.panel({ title: 'Lender & sponsor marks', sub: 'Every public mark on a BSP position: BDC loan marks (% of par) and co-investor / ADV equity marks', body: '<div id="dl-marks"></div>', foot: ui.source('BDC 10-Q schedules · Form ADV Schedule D · co-investor N-PORT', null, 'Sept 2026') })}
-    ${ui.panel({ title: 'Equity raised by vehicle', sub: `Latest Form D amount sold. ${fmt.num(vehicles.length)} deal vehicles total ${fmt.money(vehEquity)}; they pool Fund I money with LP co-invest, so bars are not additive to Fund I.`, body: `<div id="fin-ledger"></div>`, foot: capital?.source_url ? ui.source('SEC Form D (BSP firm profile ledger)', capital.source_url, capital.as_of) : '' })}
-    </div>
-    ${ui.panel({ title: 'Signals from the filings', sub: 'High-confidence operating datapoints (scale, people, footprint) per company', body: '<div id="fin-signals"></div>', foot: `${ui.source('Estimate-table rows rated high confidence (operating metrics only)')}${nComps ? ` · <a href="#/fin/comps">${fmt.num(nComps)} listed peers in ${fmt.num(nSectors)} sectors: Public comparables →</a>` : ''}` })}
+  <div class="mt-12">${ui.panel({ title: 'Value and exit (est.)', body: '<div id="fin-board"></div>' })}</div>
+  ${flSpv && fundSold ? `<div class="mt-12">${ui.note(`Fund I is <b>${fmt.money(fundSold)}</b>; ${esc(flSpv.vehicle)}'s ${fmt.money(flSpv.sold_usd)} is the Frontline vehicle.`, '')}</div>` : ''}
+  <div class="grid grid-3 mt-12">
+    ${ui.panel({ title: 'Hold period vs the template exit', body: '<div id="dl-hold"></div>' })}
+    ${ui.panel({ title: 'Lender & sponsor marks', body: '<div id="dl-marks"></div>' })}
+    ${ui.panel({ title: 'Equity raised by vehicle', body: `<div id="fin-ledger"></div>` })}
   </div>
   <div class="grid grid-3 mt-12" id="fin-cos"></div>
-  <div class="mt-12">${ui.panel({ title: 'BSP fund vehicles: every Form D / Form ADV record', sub: `All SEC Form D and SEC Form ADV items across the ${fmt.num(rows.length)} filings indexed (${fmt.num(companyRows.length)} portfolio · ${D.rival ? `${fmt.num(rows.length - companyRows.length)} rival` : 'competitor filings pending'}); BSP vehicles flagged. Headline $ = largest amount-sold (or GAV) figure in the record.`, body: '<div id="fin-veh"></div>', foot: ui.source('SEC EDGAR Form D / IAPD Form ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001917706&type=D', 'Sept 2026') })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Next public-record pulls', sub: 'Highest-value public-record pull per company, sequenced for the PRG finance workstream', body: '<div id="fin-acts"></div>', foot: `<a href="#/fin/methods">All data gaps and next pulls →</a>` })}</div>
+  <div class="mt-12">${ui.panel({ title: 'BSP fund vehicles: Form D and Form ADV records', body: '<div id="fin-veh"></div>' })}</div>
+  ${methodP(`Exit window: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 years or more, exit prep. Rows run most urgent first. Equity is the fund plus co-invest estimate, with Form D vehicles in the row panel. PF is pro forma for closed add-ons. The dot is confidence: green high, amber medium, grey low. Estimates, not audited.`)}
+  ${methodP(`Filings for ${present.length} of ${COS.length} companies. Portfolio revenue and EBITDA are sums of midpoints${biggest ? `; ${esc(biggest.co.name)} is the largest` : ''}. Smith + Howard exited at ${tplHeld} yrs with ${fmt.num(tpl.addons)} add-ons.`)}
+  ${methodP(`Fund I gross mark: gross asset value from Form ADV (${fundGav ? fmt.money(fundGav) : '—'}) over the Form D amount sold (${fundSold ? fmt.money(fundSold) : '—'}); ${fmt.num(capital?.investors)} investors. Fund I is ${fundSold ? fmt.money(fundSold) : '—'} (Form D amendment ${esc(capital?.as_of || '')})${flSpv ? `; ${esc(flSpv.vehicle)} is the Frontline deal vehicle (Form D ${esc(flSpv.filed || flSpv.first_sale || '')})` : ''}.`)}
+  ${methodP(`Hold: ${esc(tpl.company)} entry ${esc(monLabel(tpl.entry))} to TPG ${esc(monLabel(tpl.exit))}. ${esc(tpl.note)}.`)}
+  ${methodP(`${fmt.num(vehicles.length)} deal vehicles total ${fmt.money(vehEquity)}; they pool Fund I money with LP co-invest, so bars are not additive to Fund I.${fhRaise ? ` Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round, not a BSP vehicle.` : ''} No Punctual Pros vehicle exists on EDGAR: PP was funded from Fund I alone.`)}
+  ${methodP(`${fmt.num(rows.length)} filings indexed (${fmt.num(companyRows.length)} portfolio · ${D.rival ? `${fmt.num(rows.length - companyRows.length)} rival` : 'competitor filings pending'}); BSP vehicles flagged. Headline $ is the largest amount-sold or GAV figure in the record.${nComps ? ` ${fmt.num(nComps)} listed peers in ${fmt.num(nSectors)} sectors are on Public comparables.` : ''}`)}
+  ${cos.filter(x => x.d).map(({ co, d }) => methodP(`${esc(co.name)}: ${fmt.num((d.items || []).length)} records · ${fmt.num(toArr(d.meta?.estimate_table).filter(e => !isSens(e)).length)} operating estimates · generated ${esc(d.meta?.generated || '')}`)).join('')}
+  ${srcP(ctx, 'Company public filings (estimate tables, BDC schedules), BSP firm profile entry dates, SEC Form D and ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?company=BSP-&type=D', 'Sept 2026')}
+  ${srcP(ctx, 'BSP firm profile: entry dates and timeline', null, firm?.meta?.generated)}
+  ${srcP(ctx, 'BDC 10-Q schedules, Form ADV Schedule D, co-investor N-PORT', null, 'Sept 2026')}
+  ${capital?.source_url ? srcP(ctx, 'SEC Form D (BSP firm profile ledger)', capital.source_url, capital.as_of) : ''}
+  ${srcP(ctx, 'SEC EDGAR Form D and IAPD Form ADV', 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001917706&type=D', 'Sept 2026')}
+  ${cos.filter(x => x.d).map(({ co, d }) => { const t = srcList(d.meta || {}).slice(0, 2).join(' · ').slice(0, 140); return t ? srcP(ctx, `${co.short}: ${t}`, null, d.meta?.generated) : ''; }).join('')}
   </div>`;
 
   // the full table: exit window and the next action sit right after the company, so they never scroll out of view
@@ -398,22 +416,22 @@ async function portfolioView(ctx) {
     rows: board, pageSize: 10, sortKey: 'exit_flag', sortDir: 1, exportName: 'bsp_value_exit_scoreboard', rowKey: r => r.id, onRow: r => openCompany(ctx, r),
     columns: [
       { key: 'company', label: 'Company', width: '70px', fmt: (v, r) => `<span class="row" style="gap:6px"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${r.co.color}"></i><b>${esc(r.co.short)}</b></span>${r.missing ? '<div class="small" style="color:var(--sys-warn-ink)">dataset pending</div>' : ''}` },
-      { key: 'held_years', label: 'Held', num: true, width: '96px', fmt: (v, r) => v == null ? '—' : `${fmt.num(v, 1)} yrs<div class="small dim">${esc(r.entryLabel)} · ${fmt.num(r.addOns)} add-on${r.addOns === 1 ? '' : 's'}</div>` },
+      { key: 'held_years', label: 'Held', num: true, width: '84px', fmt: (v, r) => v == null ? '—' : `${fmt.num(v, 1)} yrs` },
       { key: 'exit_flag', label: 'Exit window', wrap: true, sort: byNum('flag_sort'), fmt: (v, r) => fmt.chip(r.flag.t, r.flag.c) },
-      { key: 'next_action', label: 'Next action', wrap: true, fmt: (v, r) => `<div class="small text-2" style="min-width:220px;max-width:38ch;white-space:normal">${esc(r.action)}<div class="small dim mt-8">${esc(r.detail)}</div></div>` },
-      { key: 'bsp_equity_est', label: 'BSP equity (est.)', num: true, wrap: true, sort: byNum('equity'), fmt: (v, r) => `${r.eq.primary ? `<div class="est-cell" title="${esc(r.eq.label)}">${confDot(r.eq.e ? r.eq.e.confidence : 'high')}${esc(r.eq.primary)}</div>` : '<span class="dim">—</span>'}${r.eq.sub ? `<div class="small dim fin-sub">${esc(r.eq.sub)}</div>` : ''}` },
-      { key: 'revenue_est', label: 'Revenue (current / PF)', num: true, wrap: true, sort: byNum('rev_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.rev, 'revenue')}${r.rev ? `<div class="small dim fin-sub">${esc(clip(r.rev.metric, 44))}</div>` : ''}` },
-      { key: 'ebitda_est', label: 'EBITDA', num: true, wrap: true, sort: byNum('ebitda_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.ebitda, 'ebitda')}${r.ebitda ? `<div class="small dim fin-sub">${esc(clip(r.ebitda.metric, 44))}</div>` : ''}` },
+      { key: 'next_action', label: 'Next action', wrap: true, fmt: (v, r) => `<div class="small text-2" style="min-width:200px;max-width:34ch;white-space:normal">${esc(r.action)}</div>` },
+      { key: 'bsp_equity_est', label: 'BSP equity (est.)', num: true, wrap: true, sort: byNum('equity'), fmt: (v, r) => r.eq.primary ? `<div class="est-cell" title="${esc(r.eq.label)}">${confDot(r.eq.e ? r.eq.e.confidence : 'high')}${esc(r.eq.primary)}</div>` : '<span class="dim">—</span>' },
+      { key: 'revenue_est', label: 'Revenue', num: true, wrap: true, sort: byNum('rev_sort'), fmt: (v, r) => estCellK(esc, fmt, r.rev, 'revenue') },
+      { key: 'ebitda_est', label: 'EBITDA', num: true, wrap: true, sort: byNum('ebitda_sort'), fmt: (v, r) => estCellK(esc, fmt, r.ebitda, 'ebitda') },
       { key: 'entry_ev_est', label: 'Entry EV', num: true, wrap: true, sort: byNum('ev_sort'), fmt: (v, r) => estCellK(esc, fmt, r.ev) },
       { key: 'senior_debt_est', label: 'Senior debt', num: true, wrap: true, sort: byNum('debt_sort'), fmt: (v, r) => `${estCellK(esc, fmt, r.debt)}${r.lev ? `<div class="small dim fin-sub">lev. ${esc(shortEst(r.lev.estimate))}</div>` : ''}` },
-      { key: 'maturity', label: 'Maturity', width: '84px', fmt: (v, r) => r.mat ? `<span style="color:${r.mo != null && r.mo < 24 ? 'var(--sys-warn-ink)' : 'var(--sys-ink-2)'}">${esc(r.matLabel)}</span><div class="small dim">${r.mo != null ? `${fmt.num(r.mo, 0)} mo` : ''}</div>` : '<span class="dim">n/d</span>' },
+      { key: 'maturity', label: 'Maturity', width: '84px', fmt: (v, r) => r.mat ? `<span style="color:${r.mo != null && r.mo < 24 ? 'var(--sys-warn-ink)' : 'var(--sys-ink-2)'}">${esc(r.matLabel)}</span>` : '<span class="dim">n/d</span>' },
       { key: 'sponsor_marks', label: 'Latest mark', wrap: true, sort: byNum('mark_sort'), fmt: (v, r) => `${r.lm ? `<div style="color:${r.lm.v < 90 ? 'var(--sys-bad-ink)' : r.lm.v < 97 ? 'var(--sys-warn-ink)' : 'var(--sys-good-ink)'}">${fmt.num(r.lm.v, 1)}% of par</div>` : ''}${r.sm.map(e => `<div class="small text-2" title="${esc(`${e.metric}: ${e.estimate}`)}">${esc(shortEst(e.estimate))} <span class="dim">${esc(markLabel(e.metric))}</span></div>`).join('')}${r.co.id === 'ts' ? '<a class="small" href="#/ts/filings?deal=1">Lender filings →</a>' : !r.lm && !r.sm.length ? '<span class="dim">none public</span>' : ''}` },
     ],
   });
 
   // hold bars, with the exited company as the template
   const hb = [...holds.map(r => ({ label: `${r.co.short} · ${monLabel(r.entry)}`, value: +r.held.toFixed(2), color: r.co.color })), { label: `${tpl.company} (exited)`, value: +tpl.hold.toFixed(2), color: 'var(--sys-brand)' }].sort((a, b) => b.value - a.value);
-  el.querySelector('#dl-hold').innerHTML = `${charts.hbar(hb, { fmt: v => `${fmt.num(v, 1)} yrs`, labelW: 170 })}<div class="small dim mt-8">${esc(tpl.company)}: ${esc(tpl.note)}. Add-ons to date: ${fmt.num(addOnsAll)} (${board.map(r => `${esc(r.co.short)} ${fmt.num(r.addOns)}`).join(' · ')}).</div>`;
+  el.querySelector('#dl-hold').innerHTML = charts.hbar(hb, { fmt: v => `${fmt.num(v, 1)} yrs`, labelW: 170 });
 
   // marks list
   const mk = [];
@@ -421,55 +439,30 @@ async function portfolioView(ctx) {
     if (r.lm) mk.push({ r, t: `Lender mark ${fmt.num(r.lm.v, 1)}% of par`, s: `${r.lm.item.filer_or_source_agency || r.lm.item.title || ''} · ${r.lm.item.filed_or_dated || ''}`, url: r.lm.item.source_url, c: r.lm.v < 90 ? 'var(--sys-bad-ink)' : 'var(--sys-warn-ink)' });
     r.sm.forEach(e => mk.push({ r, t: `${e.metric}: ${e.estimate}`, s: e.basis || '', c: /~0|≤1%|write/i.test(e.estimate) ? 'var(--sys-bad-ink)' : 'var(--sys-good-ink)' }));
   }
-  const tsMarks = `<div class="sig">${fmt.chip('TS', COS.find(c => c.id === 'ts')?.color || 'var(--co-ts)')}<div class="grow"><div class="t">Lender filings, with the filing and date on each number</div><div class="small dim"><a href="#/ts/filings?deal=1">Open what lenders' public filings show →</a></div></div></div>`;
-  el.querySelector('#dl-marks').innerHTML = tsMarks + (mk.length ? mk.map(x => `<div class="sig">${fmt.chip(x.r.co.short, x.r.co.color)}<div class="grow"><div class="t" style="color:${x.c}">${esc(x.t)}</div><div class="small dim">${esc(clip(x.s, 200))}${x.url ? ` · ${fmt.link(x.url, 'Source ↗')}` : ''}</div></div></div>`).join('') : '');
+  const tsMarks = `<div class="sig">${fmt.chip('TS', COS.find(c => c.id === 'ts')?.color || 'var(--co-ts)')}<div class="grow"><div class="t"><a href="#/ts/filings?deal=1">Lender filings →</a></div></div></div>`;
+  el.querySelector('#dl-marks').innerHTML = tsMarks + (mk.length ? mk.map(x => `<div class="sig">${fmt.chip(x.r.co.short, x.r.co.color)}<div class="grow"><div class="t" style="color:${x.c}">${esc(x.t)}</div><div class="small dim" data-src>${esc(clip(x.s, 200))}${x.url ? ` · ${fmt.link(x.url, 'Source ↗')}` : ''}</div></div></div>`).join('') : '');
 
-  // signals: operating metrics only (value, debt and marks are in the table above)
-  const sig = [];
-  for (const { co, d } of cos) {
-    const pool = toArr(d?.meta?.estimate_table).filter(e => !isSens(e));
-    const hi = pool.filter(e => e.confidence === 'high');
-    const pick = (hi.length >= 2 ? hi : pool.filter(e => e.confidence !== 'low')).map(e => ({ e, s: (/territor|billings|headcount|employees|run-rate|fees|revenue|equity invested|equity in/i.test(e.metric) ? 2 : 0) + (e.confidence === 'high' ? 1 : 0) })).sort((a, b) => b.s - a.s).slice(0, 2);
-    pick.forEach(({ e }) => sig.push({ co, e }));
-  }
-  el.querySelector('#fin-signals').innerHTML = sig.length ? sig.map(({ co, e }) => `<div class="sig" title="${esc(Copy.text(e.basis || ''))}">${fmt.chip(co.short, co.color)}<div class="grow"><div class="t">${confDot(e.confidence)}${esc(e.metric)}</div><div class="v">${esc(e.estimate)}</div></div></div>`).join('') : ui.empty('No high-confidence estimates yet');
-
-  // company panels
+  // company cards: the first three operating estimates; the full financial picture opens in the side panel
   el.querySelector('#fin-cos').innerHTML = cos.map(({ co, d }) => {
-    if (!d) return ui.panel({ title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co.color}"></i>${esc(co.name)}</span>`, sub: 'Filings dataset pending', body: `${ui.note(`<b>${esc(Copy.dataset(co.ds))}</b> is still being verified. Comps for ${esc(SECTORS[co.sector]?.label || '')} are live in <a href="#/fin/comps?sector=${co.sector}">Public comparables</a>.`, 'warn')}`, actions: `<a class="fin-link" href="#/${co.id}">Open →</a>` });
+    if (!d) return ui.panel({ title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co.color}"></i>${esc(co.name)}</span>`, body: `${ui.note(`<b>${esc(Copy.dataset(co.ds))}</b> is pending. Comps: <a href="#/fin/comps?sector=${co.sector}">${esc(SECTORS[co.sector]?.label || 'Public comparables')}</a>.`, 'warn')}`, actions: `<a class="fin-link" href="#/${co.id}">Open →</a>` });
     const m = d.meta || {}; const est = toArr(m.estimate_table); const opEst = est.filter(e => !isSens(e));
     const cats = {}; (d.items || []).forEach(i => { cats[i.category] = (cats[i.category] || 0) + 1; });
-    const pri = opEst.map((e, i) => ({ e, i, s: (/revenue|EBITDA|equity|headcount|employees|territor/i.test(e.metric) ? 2 : 0) + (e.confidence === 'high' ? 1 : 0) - (/payroll|per /i.test(e.metric) ? 1 : 0) })).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, 5).sort((a, b) => a.i - b.i).map(x => x.e);
-    const lead = opSegments(m.financial_picture)[0] || segments(m.financial_picture)[0];
+    const pri = opEst.map((e, i) => ({ e, i, s: (/revenue|EBITDA|equity|headcount|employees|territor/i.test(e.metric) ? 2 : 0) + (e.confidence === 'high' ? 1 : 0) - (/payroll|per /i.test(e.metric) ? 1 : 0) })).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, 3).sort((a, b) => a.i - b.i).map(x => x.e);
     return ui.panel({
       title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co.color}"></i>${esc(co.name)}</span>`,
-      sub: `${fmt.num((d.items || []).length)} records · ${fmt.num(opEst.length)} operating estimates · generated ${esc(m.generated || '')}`,
-      actions: `<a class="fin-link" href="#/fin/explorer?company=${co.id}">Filings →</a>`,
-      body: `<div class="fin-excerpt">${lead ? esc(sentences(lead, 2)) : '<span class="dim">—</span>'}</div>
-        <div class="sys-table-wrap"><table class="sys-table fin-mini"><tbody>${pri.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td class="m">${esc(e.metric)}</td><td class="v">${esc(shortEst(e.estimate).slice(0, 34))}</td><td class="c">${confDot(e.confidence)}</td></tr>`).join('') || '<tr><td>No estimates</td></tr>'}</tbody></table></div>
+      actions: `<a class="fin-link" href="#/fin/explorer?company=${co.id}">${fmt.num((d.items || []).length)} filings →</a>`,
+      body: `<div class="sys-table-wrap"><table class="sys-table fin-mini"><tbody>${pri.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td class="m">${esc(clip(e.metric, 48))}</td><td class="v">${esc(shortEst(e.estimate).slice(0, 34))}</td><td class="c">${confDot(e.confidence)}</td></tr>`).join('') || '<tr><td>No estimates</td></tr>'}</tbody></table></div>
         <div class="sys-chips fin-chips">${Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, n]) => `<a href="#/fin/explorer?company=${co.id}&category=${encodeURIComponent(c)}" style="text-decoration:none">${fmt.chip(`${catLabel(c)} ${n}`, co.color)}</a>`).join('')}</div>
         <div class="row mt-8"><button class="sys-btn sys-btn--secondary sys-btn--sm btn xs" data-open="${co.id}">Estimates & gaps</button><a class="sys-btn sys-btn--secondary sys-btn--sm btn xs" href="#/${co.id}">Open ${esc(co.short)}</a></div>`,
-      foot: ui.source(srcList(m).slice(0, 2).join(' · ').slice(0, 140) || 'SEC EDGAR, SBA PPP, state registries', null, m.generated),
     });
   }).join('');
   el.querySelectorAll('#fin-cos [data-open]').forEach(b => b.onclick = () => { const r = board.find(x => x.id === b.dataset.open); if (r) openCompany(ctx, r); });
 
   // ledger chart (Form D amounts sold are public and already on EDGAR)
   const led = [...(fundSold ? [{ label: 'Fund I', value: fundSold, color: 'var(--sys-brand)' }] : []), ...vehicles.map(v => ({ label: `${v.vehicle}`, value: v.sold_usd, color: (COS.find(c => c.ledger.test(v.company)) || {}).color }))].sort((a, b) => b.value - a.value);
-  const fhRaise = (capital?.deal_vehicles || []).find(v => /issuer Form D/i.test(v.vehicle));
-  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="sys-chips legend mt-12">${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--sys-brand)"></i>Fund I</span></div>${fhRaise ? `<div class="small dim mt-8">Fair Harbor: issuer-level Form D ${fmt.money(fhRaise.sold_usd)} sold (${esc(fhRaise.first_sale || '')}) alongside the BSP round — not a BSP vehicle.</div>` : ''}<div class="small dim mt-8">No Punctual Pros SPV exists on EDGAR: PP was funded from Fund I alone.</div>` : ui.note('BSP firm profile ledger not available yet.', 'warn');
+  el.querySelector('#fin-ledger').innerHTML = led.length ? `${charts.hbar(led, { fmt: v => fmt.money(v), labelW: 170 })}<div class="sys-chips legend mt-12" data-method>${COS.filter(c => vehicles.some(v => c.ledger.test(v.company))).map(c => `<span><i style="background:${c.color}"></i>${esc(c.short)}</span>`).join('')}<span><i style="background:var(--sys-brand)"></i>Fund I</span></div>` : ui.note('BSP firm profile ledger not available yet.', 'warn');
 
   vehiclesTable(ctx, el.querySelector('#fin-veh'), rows);
-
-  // pulls: the first queued public-record pull per company that is not about marks or debt, then the BSP-level one
-  const acts = [];
-  for (const { co, d } of cos) {
-    const np = toArr(d?.meta?.next_pulls).map(clean).find(t => !SENS_TEXT.test(t));
-    if (np) acts.push({ chip: co.short, color: co.color, text: clip(np, 260) });
-    else if (!d) acts.push({ chip: co.short, color: co.color, text: `Complete ${Copy.dataset(co.ds)}: issuer Form D, state filings and benchmarks against the ${SECTORS[co.sector]?.label || ''} comp set.` });
-  }
-  if (fundGav) acts.push({ chip: 'BSP', color: 'var(--sys-brand)', text: `Watch the Mar 31 Form ADV amendment: Fund I gross assets (${fmt.money(fundGav)}) and any new Fund II vehicle are the cleanest public read on marks and fundraising.` });
-  el.querySelector('#fin-acts').innerHTML = actionList(ctx, acts);
 
   app.index(companyRows.slice(0, 200).map(r => ({ label: r.title, sub: `${r._coName} · ${catLabel(r.category)} · ${r.filed_or_dated || ''}`, href: `#/fin/explorer?company=${r._co}&q=${encodeURIComponent(String(r.entity || '').slice(0, 30))}`, kind: 'Filing', color: 'var(--c-fin)' })));
 }
@@ -484,14 +477,16 @@ function openCompany(ctx, r) {
   if (!d) { inspector.open({ title: esc(co.name), sub: 'Filings dataset pending', color: co.color, sections: [{ label: 'Status', html: ui.note(`Public filings for ${esc(co.name || co.short || 'this company')} are not available yet.`, 'warn') }] }); return; }
   const m = d.meta || {};
   const est = r.estShown || [], ts = co.id === 'ts';
-  const segs = segments(m.financial_picture).filter(s => !ts || !MARK_TEXT.test(s));
-  const pull = toArr(m.next_pulls).map(clean).find(t => !ts || !SENS_TEXT.test(t));
+  const segs = segments(m.financial_picture).map(scrub).filter(s => s && (!ts || !MARK_TEXT.test(s)));
+  const pull = toArr(m.next_pulls).map(scrub).find(t => t && (!ts || !SENS_TEXT.test(t)));
   inspector.open({
     title: esc(co.name), color: co.color, sub: `${fmt.num((d.items || []).length)} records · generated ${esc(m.generated || '')}`,
     sections: [
-      { label: 'Financial picture', html: `<div class="small text-2" style="line-height:1.55">${segs.map(s => `<p class="mb-8">${esc(clean(s))}</p>`).join('') || '—'}</div>` },
+      { label: 'Next action', html: `<div class="small">${esc(r.action)}</div>${r.detail ? `<div class="small dim mt-8">${esc(r.detail)}</div>` : ''}` },
+      { label: 'Position', html: ui.kv({ 'Held since': esc(r.entryLabel), Maturity: r.mat ? `${esc(r.matLabel)}${r.mo != null ? ` (${fmt.num(r.mo, 0)} months)` : ''}` : '', 'Add-ons': r.en?.addOnNames?.length ? esc(r.en.addOnNames.join(', ')) : fmt.num(r.addOns || 0), 'BSP equity': esc(r.eq.primary || ''), 'Equity basis': esc(r.eq.label || ''), 'Form D': esc(String(r.eq.sub || '').replace(/^Form D:\s*/, '')), 'Revenue basis': esc(r.rev?.metric || ''), 'EBITDA basis': esc(r.ebitda?.metric || ''), Leverage: esc(r.lev?.estimate || '') }) },
+      { label: 'Financial picture', html: `<div class="small text-2" style="line-height:1.55">${segs.map(s => `<p class="mb-8">${esc(s)}</p>`).join('') || '—'}</div>` },
       { label: 'Estimate table', html: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Metric</th><th class="sys-n n">Estimate</th></tr></thead><tbody>${est.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(e.metric)}<div class="dim small">${esc(e.basis || '')}</div></td><td class="sys-n n">${esc(e.estimate)}</td></tr>`).join('')}</tbody></table></div>${ts ? `<div class="small dim mt-8">Lender and sponsor marks are shown with their filings: <a href="#/ts/filings?deal=1">Thomas Scientific · lender filings →</a></div>` : ''}` },
-      { label: 'Data gaps', html: `<ul class="prose small">${toArr(m.data_gaps).map(clean).filter(g => !ts || !MARK_TEXT.test(g)).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` },
+      { label: 'Data gaps', html: `<ul class="prose small">${toArr(m.data_gaps).map(scrub).filter(g => g && (!ts || !MARK_TEXT.test(g))).map(g => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ul>` },
       { label: 'Next public-record pull', html: `<div class="small text-2">${esc(pull || 'Commission a PitchBook / Capital IQ pull for the deal record.')}</div>` },
       { label: 'Sources', html: `<div class="small dim">${esc(srcList(m).join(' · ') || asText(m.method).slice(0, 400))}</div>` },
     ],
@@ -517,7 +512,7 @@ function vehiclesTable(ctx, host, rows) {
   ui.table(host, {
     rows: vrows, pageSize: 12, exportName: 'bsp_form_d_adv_records', sortKey: '_date', rowKey: r => r._key, onRow: r => openItem(ctx, r),
     columns: [
-      { key: 'entity', label: 'Entity', wrap: true, width: '300px', fmt: (v, r) => `<b>${esc(String(v).slice(0, 80))}</b><div class="small dim">${esc(String(r.title || '').slice(0, 90))}</div>` },
+      { key: 'entity', label: 'Entity', wrap: true, width: '300px', fmt: v => `<b>${esc(String(v).slice(0, 70))}</b>` },
       { key: '_bsp', label: 'Owner', fmt: (v, r) => v ? fmt.chip('BSP', 'var(--sys-brand)') : fmt.chip('3rd party', 'var(--sys-mute)') },
       { key: 'category', label: 'Form', fmt: v => v === 'form_adv' ? 'ADV' : 'D' },
       { key: '_offering', label: 'Offering', num: true, fmt: v => typeof v === 'number' ? fmt.money(v) : esc(v ?? '—') },
@@ -547,32 +542,34 @@ async function explorerView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Filings explorer',
-    sub: `${fmt.num(rows.length)} primary records, ${fmt.num(Math.round(hi / rows.length * 100))}% high confidence. Lender schedules and Form D filings carry the hard numbers.`,
     chips: missing.length ? fmt.chip(`Pending: ${missing.join(', ')}`, 'var(--sys-warn)') : '',
   })}
+  <span data-asof="Sept 2026"></span>
   ${ui.kpis([
     { label: 'Records', value: fmt.num(rows.length), sub: `${groups.length} sources`, color: 'var(--c-fin)' },
     { label: 'High confidence', value: `${fmt.num(Math.round(hi / rows.length * 100))}%`, sub: `${fmt.num(hi)} records`, color: 'var(--sys-good)' },
     { label: 'Categories', value: fmt.num(cats.length), sub: `top: ${esc(catLabel(cats[0]))}`, color: 'var(--c-pe)' },
-    { label: 'BDC / lender lines', value: fmt.num(rows.filter(r => /bdc_loan_schedule|lender_press/.test(r._cat)).length), sub: 'debt marks & pricing', color: 'var(--co-ts)' },
-    { label: 'Latest record', value: recent[0] ? fmt.dateShort(recent[0]._date) : '—', sub: recent[0] ? esc(`${recent[0]._coName} · ${catLabel(recent[0]._cat)}`) : '', color: 'var(--sys-brand)' },
+    { label: 'BDC / lender lines', value: fmt.num(rows.filter(r => /bdc_loan_schedule|lender_press/.test(r._cat)).length), sub: '', color: 'var(--co-ts)' },
+    { label: 'Latest record', value: recent[0] ? fmt.dateShort(recent[0]._date) : '—', sub: recent[0] ? esc(`${recent[0]._coName} · ${catShort(recent[0]._cat)}`) : '', color: 'var(--sys-brand)' },
   ])}
+  <div class="mt-12">${ui.panel({ title: 'All filings', body: '<div id="fx-f"></div><div id="fx-t"></div>' })}</div>
   <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Coverage matrix', sub: 'Records by source × category — where the evidence is thick and where it is thin', body: charts.heatgrid(groups.map(g => g.short), topCats.map(catShort), groups.map(g => topCats.map(c => rows.filter(r => r._co === g.id && r._cat === c).length || null)), { fmt: v => v ?? '', color: '139,211,255' }), foot: ui.source('Company public filings and competitor filings', null, 'Sept 2026') })}
-    ${ui.panel({ title: 'Most recent filings', sub: 'Newest dated primary filings (archived web pages excluded) — read these first', foot: ui.source('Company public filings (filing dates)', null, 'Sept 2026'), body: `<div id="fx-recent">${recent.map(r => `<div class="sig" data-k="${esc(r._key)}" style="cursor:pointer">${fmt.chip(r._coName, r._color)}<div class="grow"><div class="t">${esc(r.title.slice(0, 110))}</div><div class="v small">${fmt.date(r._date)} · ${esc(catLabel(r._cat))}</div></div></div>`).join('')}</div>` })}
+    ${ui.panel({ title: 'Coverage matrix', body: charts.heatgrid(groups.map(g => g.short), topCats.map(catShort), groups.map(g => topCats.map(c => rows.filter(r => r._co === g.id && r._cat === c).length || null)), { fmt: v => v ?? '', color: '139,211,255' }) })}
+    ${ui.panel({ title: 'Most recent filings', body: `<div id="fx-recent">${recent.map(r => `<div class="sig" data-k="${esc(r._key)}" style="cursor:pointer">${fmt.chip(r._coName, r._color)}<div class="grow"><div class="t">${esc(clip(r.title, 64))}</div><div class="v small">${fmt.date(r._date)} · ${esc(catLabel(r._cat))}</div></div></div>`).join('')}</div>` })}
   </div>
-  <div class="mt-12">${ui.panel({ title: 'All filings', sub: 'Click a row for key figures, interpretation, source and next action', body: '<div id="fx-f"></div><div id="fx-t"></div>', foot: ui.source('SEC EDGAR · SBA PPP FOIA · state registries · FDDs · BDC 10-Q/10-K', 'https://efts.sec.gov/LATEST/search-index?q=%22Broad%20Sky%22', 'Sept 2026') })}</div>
-  <div class="mt-12">${ui.panel({ title: 'Next actions', sub: 'Turn the index into diligence requests', body: `<div id="fx-acts"></div>`, foot: ui.source('Counts from the filings index above', null, 'Sept 2026') })}</div>
+  ${methodP(`Records by source and category. The most recent list shows the newest dated primary filings; archived web pages are excluded.`)}
+  ${srcP(ctx, 'Company public filings and competitor filings (filing dates)', null, 'Sept 2026')}
+  ${srcP(ctx, 'SEC EDGAR, SBA PPP FOIA, state registries, FDDs, BDC 10-Q and 10-K', 'https://efts.sec.gov/LATEST/search-index?q=%22Broad%20Sky%22', 'Sept 2026')}
   </div>`;
 
   el.querySelectorAll('#fx-recent [data-k]').forEach(n => n.onclick = () => { const r = rows.find(x => x._key === n.dataset.k); if (r) openItem(ctx, r); });
   const columns = [
     { key: '_coName', label: 'Source', fmt: (v, r) => fmt.chip(v, r._color), width: '70px' },
     { key: '_cat', label: 'Category', fmt: v => `<span class="small text-2">${esc(catLabel(v))}</span>` },
-    { key: 'entity', label: 'Entity', wrap: true, fmt: v => `<span class="small">${esc(String(v || '').slice(0, 70))}</span>`, width: '190px' },
-    { key: 'title', label: 'Filing / record', wrap: true, fmt: (v, r) => `<b>${esc(String(v).slice(0, 120))}</b><div class="dim small">${esc(String(r.filer_or_source_agency || '').slice(0, 80))}</div>` },
+    { key: 'entity', label: 'Entity', wrap: true, fmt: v => `<span class="small">${esc(clip(v, 30))}</span>`, width: '190px' },
+    { key: 'title', label: 'Filing / record', wrap: true, fmt: v => `<b>${esc(clip(v, 44))}</b>` },
     { key: '_date', label: 'Dated', num: true, fmt: v => v ? fmt.date(v) : '—', width: '96px' },
-    { key: '_kf', label: 'Key figures', wrap: true, fmt: v => `<span class="num small text-2">${esc(v.slice(0, 170))}</span>` },
+    { key: '_kf', label: 'Key figures', wrap: true, fmt: v => `<span class="num small text-2">${esc(clip(v, 34))}</span>` },
     { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v || 'n/a', confColor(v)) },
     { key: 'source_url', label: 'Src', fmt: v => v ? fmt.link(v, '↗') : '—' },
   ];
@@ -588,17 +585,10 @@ async function explorerView(ctx) {
     const q = (st.q || '').toLowerCase();
     const out = rows.filter(r => (!st.company || r._co === st.company) && (!st.category || r._cat === st.category) && (!st.confidence || r.confidence === st.confidence) && (!st.bsp || isBsp(r)) && (!q || JSON.stringify(r).toLowerCase().includes(q)));
     f.setCount(`${out.length} / ${rows.length}`);
-    tbl ? tbl.update(out) : (tbl = ui.table(el.querySelector('#fx-t'), { columns, rows: out, pageSize: 25, sortKey: '_date', exportName: 'bsp_filings_explorer', rowKey: r => r._key, onRow: r => openItem(ctx, r) }));
+    tbl ? tbl.update(out) : (tbl = ui.table(el.querySelector('#fx-t'), { columns, rows: out, pageSize: 12, sortKey: '_date', exportName: 'bsp_filings_explorer', rowKey: r => r._key, onRow: r => openItem(ctx, r) }));
   }
   apply(f.state);
 
-  const acts = [
-    { chip: 'BDC', color: 'var(--co-ts)', text: `Diary the next BDC 10-Q cycle (early Nov 2026) for the ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co !== 'rival').length} portfolio and ${rows.filter(r => r._cat === 'bdc_loan_schedule' && r._co === 'rival').length} rival loan lines: marks, PIK toggles, non-accruals.` },
-    { chip: 'Form D', color: 'var(--sys-brand)', text: 'Set an EDGAR alert on "BSP-" and "Broad Sky" Form D filings: a new SPV is the earliest public tell of a new company or add-on equity raise.' },
-    { chip: 'UCC', color: 'var(--sys-warn)', text: `Run UCC-1 searches in MA, CT, PA, NJ, DE and MO to identify agent banks where no BDC line exists (${rows.filter(r => r._cat === 'ucc_lien').length} lien records found so far).` },
-    { chip: 'PPP', color: 'var(--co-pp)', text: `Use the ${rows.filter(r => r._cat === 'sba_ppp').length} PPP records as pre-deal payroll anchors and compare them with current headcount to size organic growth since 2020.` },
-  ];
-  el.querySelector('#fx-acts').innerHTML = actionList(ctx, acts);
   app.index(rows.slice(0, 300).map(r => ({ label: `${r.entity}`.slice(0, 80), sub: `${r._coName} · ${catLabel(r._cat)} · ${r.filed_or_dated || ''}`, href: `#/fin/explorer?q=${encodeURIComponent(String(r.entity || '').slice(0, 30))}`, kind: 'Filing', color: 'var(--c-fin)' })));
 }
 
@@ -668,7 +658,7 @@ async function compsView(ctx) {
   const deals = bpiF && rivalF && bpiPlan ? publicAffairsDeals(bpiF, rivalF, bpiPlan) : [];
   const pk = recById(bpiF, 'bpi-022')?.key_figures || {};
   const fig = (l, v, s, tip) => `<div class="sys-kpi st"><div class="sys-kpi-label l" title="${esc(tip || l)}">${esc(l)}</div><div class="sys-kpi-value v">${v}</div>${s ? `<div class="sys-kpi-sub">${s}</div>` : ''}</div>`;
-  let dealsHtml = '';
+  let dealsHtml = '', dealsMeta = '';
   if (deals.length) {
     const bpiEst = toArr(bpiF?.meta?.estimate_table);
     // value bridge: BPI's estimated adj. EBITDA range times the PPHC floor multiple
@@ -678,11 +668,13 @@ async function compsView(ctx) {
     const cmp = bpiEst.filter(e => /revenue|ebitda|headcount|margin|value/i.test(e.metric)).slice(0, 6);
     const hasFgs = deals.some(x => x.id === 'fgs');
     const grew = pk.revenue_2024_usd_m ? sPct(fmt, (pk.revenue_2025_usd_m / pk.revenue_2024_usd_m - 1) * 100) : '';
-    dealsHtml = `<div class="mt-12">${ui.panel({ cls: 'bench bench-wide', title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:var(--co-bpi)"></i>Public-affairs transactions (BPI's primary benchmark)</span>`, sub: 'Valuation floor, ceiling and sponsor-exit analogs. The listed agency holding companies are secondary reference only (ad/marketing holding cos., not public-affairs peers). Click a row for terms, lesson and sources.',
-        body: `<div class="sys-kpis stats">${fig('PPHC EV / adj. EBITDA', esc(pk.implied_EV_to_2025_adj_EBITDA || '—'), `public floor · EV $${esc(pk.implied_EV_usd_m ?? '—')}M`)}${fig('FGS Global EV (KKR, 2024)', hasFgs ? '$1.7B' : '—', hasFgs ? '~12-16x 2023 EBITDA (est.) · ceiling' : 'not available')}${fig('PPHC adj. EBITDA margin', esc(pk.adj_EBITDA_margin_2025 || '—'), `2024 ${esc(pk.adj_EBITDA_margin_2024 || '—')} · BPI est. 18-24%`)}${fig('PPHC organic growth', esc(pk.organic_growth_2025 || '—'), grew ? `2025 · reported ${grew} incl. M&A` : '2025')}</div><div id="cp-deal-tbl"></div>`,
-        foot: ui.source('BPI public filings: PPHC annual report (10-K), competitor filings (WPP 6-K), BPI growth plan templates', recById(bpiF, 'bpi-022')?.source_url, 'October 6, 2026') })}</div>
-      <div class="mt-12">${ui.panel({ title: 'What this implies for BPI', accent: true, body: `<div class="grid grid-2"><ol class="prose small"><li><b>Underwrite to the PPHC floor.</b> ${esc(bridge || 'PPHC trades at ~8.4x 2025 adj. EBITDA.')}</li><li><b>Earn the sponsor premium.</b> FGS, Penta and Teneo cleared above the public multiple on scale, transatlantic reach and proprietary data. BPI needs off-year resilience and recurring retainers to get there.</li><li><b>Match PPHC's disclosure.</b> PPHC reports organic growth and a corporate-affairs segment; BPI's board pack should too.</li></ol><div>${cmp.length ? `<h4 class="sys-card-label">BPI estimates (filings) for comparison</h4><div class="fin-insp sys-table-wrap mt-8"><table class="sys-table"><tbody>${cmp.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(e.metric)}</td><td class="sys-n n">${esc(e.estimate)}</td><td>${fmt.chip(e.confidence || 'n/a', confColor(e.confidence))}</td></tr>`).join('')}</tbody></table></div>` : ''}<div class="small text-2 mt-12">The same sponsors bid against BPI for add-ons and are its likely exit buyers. <a href="#/pe/landscape?overlap=bpi">Sponsors that overlap BPI: Private equity →</a></div></div></div>`,
-        foot: ui.source('Bully Pulpit International public filings estimate table; BPI growth plan, phase 4', null, 'October 6, 2026') })}</div>`;
+    dealsMeta = `
+  ${methodP('Valuation floor, ceiling and sponsor-exit analogs. The listed agency holding companies are secondary reference only: they are ad and marketing holding companies, not public-affairs peers. FGS, Penta and Teneo cleared above the public multiple on scale, transatlantic reach and proprietary data; BPI needs off-year resilience and recurring retainers to get there. The same sponsors bid against BPI for add-ons and are its likely exit buyers.')}
+  ${srcP(ctx, 'BPI public filings: PPHC annual report (10-K), competitor filings (WPP 6-K), BPI growth plan templates', recById(bpiF, 'bpi-022')?.source_url, 'October 6, 2026')}
+  ${srcP(ctx, 'Bully Pulpit International public filings estimate table; BPI growth plan, phase 4', null, 'October 6, 2026')}`;
+    dealsHtml = `<div class="mt-12">${ui.panel({ cls: 'bench bench-wide', title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:var(--co-bpi)"></i>Public-affairs transactions (BPI's primary benchmark)</span>`,
+        body: `<div class="sys-kpis stats">${fig('PPHC EV / adj. EBITDA', esc(pk.implied_EV_to_2025_adj_EBITDA || '—'), `public floor · EV $${esc(pk.implied_EV_usd_m ?? '—')}M`)}${fig('FGS Global EV (KKR, 2024)', hasFgs ? '$1.7B' : '—', hasFgs ? 'ceiling · ~12-16x est.' : 'not available')}${fig('PPHC adj. EBITDA margin', esc(pk.adj_EBITDA_margin_2025 || '—'), `2024 ${esc(pk.adj_EBITDA_margin_2024 || '—')} · BPI est. 18-24%`)}${fig('PPHC organic growth', esc(pk.organic_growth_2025 || '—'), grew ? `2025 · ${grew} with M&A` : '2025')}</div><div id="cp-deal-tbl"></div>` })}</div>
+      <div class="mt-12">${ui.panel({ title: 'What this implies for BPI', accent: true, body: `<div class="grid grid-2"><ol class="prose small"><li><b>Underwrite to the PPHC floor.</b> ${esc(bridge || 'PPHC trades at ~8.4x 2025 adj. EBITDA.')}</li><li><b>Earn the sponsor premium:</b> scale, transatlantic reach and proprietary data.</li><li><b>Match PPHC's disclosure:</b> report organic growth and a corporate-affairs segment.</li></ol><div>${cmp.length ? `<div class="fin-insp sys-table-wrap"><table class="sys-table"><tbody>${cmp.map(e => `<tr title="${esc(Copy.text(e.basis || ''))}"><td>${confDot(e.confidence)}${esc(clip(e.metric, 56))}</td><td class="sys-n n">${esc(clip(e.estimate, 64))}</td><td>${fmt.chip(e.confidence || 'n/a', confColor(e.confidence))}</td></tr>`).join('')}</tbody></table></div>` : ''}<div class="small mt-12"><a href="#/pe/landscape?overlap=bpi">Private equity →</a></div></div></div>` })}</div>`;
   }
   const openDeal = x => inspector.open({ title: esc(x.deal), sub: `${esc(dateWords(x.date))} · ${esc(x.role)}`, color: 'var(--co-bpi)', sections: [
     { label: 'Terms', html: ui.kv({ Buyer: esc(x.buyer), 'Enterprise value': esc(x.evTxt), Multiple: esc(x.mult), Scale: esc(x.scale), Confidence: esc(x.confidence) }) },
@@ -701,35 +693,39 @@ async function compsView(ctx) {
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Public comparables',
-    sub: fastSector ? `Across ${fmt.num(items.length)} public peers, ${esc(SECTORS[fastSector[0]]?.label || fastSector[0])} grows fastest (${sPct(fmt, fastSector[1].median_revenue_growth_latest_pct)} median). Median EBITDA margin is ${pctF(fmt, allM)}.` : `${esc(sentences(pc.meta?.financial_picture, 1))}`,
-    chips: `${fmt.chip(`${items.length} listed peers`, 'var(--c-fin)')}${fmt.chip('SEC XBRL', 'var(--sys-mute)')}${fmt.chip('EBITDA not adjusted', 'var(--sys-warn)')}`,
+    sub: `${fmt.num(items.length)} public peers in ${fmt.num(Object.keys(bm).length)} sectors.`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="${rollup}">Size an add-on in the roll-up model →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/fin/portfolio">Portfolio picture</a>`,
   })}
+  <span data-asof="${esc(pc.meta?.generated || 'Sept 2026')}"></span>
   ${ui.kpis([
-    { label: 'Comps tracked', value: fmt.num(items.length), sub: `${Object.keys(bm).length} sectors · FY2023–latest`, color: 'var(--c-fin)' },
-    { label: 'Median revenue growth', value: sPct(fmt, allG), sub: 'latest FY, all comps', color: 'var(--sys-good)' },
-    { label: 'Median EBITDA margin', value: pctF(fmt, allM), sub: `op. margin ${pctF(fmt, allO)}`, color: 'var(--co-ts)' },
+    { label: 'Median revenue growth', value: sPct(fmt, allG), sub: '', color: 'var(--sys-good)' },
+    { label: 'Median EBITDA margin', value: pctF(fmt, allM), sub: `op. ${pctF(fmt, allO)}`, color: 'var(--co-ts)' },
     { label: 'Fastest sector', value: fastSector ? sPct(fmt, fastSector[1].median_revenue_growth_latest_pct) : '—', sub: fastSector ? esc(SECTORS[fastSector[0]]?.label || fastSector[0]) : '', color: 'var(--co-cet)' },
-    { label: 'Fastest grower', value: best ? esc(best.ticker) : '—', sub: best ? `${sPct(fmt, best.revenue_growth_latest_pct)} · ${esc(best._sector)}` : '', color: 'var(--c-pe)' },
+    { label: 'Fastest grower', value: best ? esc(best.ticker) : '—', sub: best ? `${sPct(fmt, best.revenue_growth_latest_pct)}` : '', color: 'var(--c-pe)' },
   ])}
   <div class="mt-12" id="cp-f"></div>
   <div id="cp-focus"></div>
-  <div class="grid grid-main">
-    ${ui.panel({ title: 'Growth vs EBITDA margin', sub: 'Latest FY · colour = BSP company benchmarked · dashed = median of selection · * = off-scale, clamped · click a dot', body: '<div id="cp-sc"></div><div class="sys-chips legend mt-8" id="cp-leg"></div>', foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
-    ${ui.panel({ title: 'Revenue growth by comp', sub: 'Latest FY y/y · dashed = selection median', body: '<div id="cp-g"></div>', scroll: true, foot: ui.source('SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
+  <div id="cp-bm"></div>
+  <div class="grid grid-main mt-12">
+    ${ui.panel({ title: 'Growth vs EBITDA margin', body: '<div id="cp-sc"></div><div class="sys-chips legend mt-8" id="cp-leg" data-method></div>' })}
+    ${ui.panel({ title: 'Revenue growth by comp', body: '<div id="cp-g"></div>', scroll: true })}
   </div>
-  <div class="grid grid-3 mt-12" id="cp-bm"></div>
   <div id="cp-deals"></div>
-  <div class="mt-12">${ui.panel({ title: 'All comparables', sub: 'Click a row for fiscal-year detail and the 10-K', body: '<div id="cp-t"></div>', foot: ui.source('10-K / 20-F via EDGAR', 'https://www.sec.gov/edgar/search/', pc.meta?.generated) })}</div>
+  <div class="mt-12">${ui.panel({ title: 'All comparables', body: '<div id="cp-t"></div>' })}</div>
   <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Margin structure', sub: 'Operating margin (grey) → EBITDA margin (colour) · D&A intensity is the gap', body: '<div id="cp-db"></div>', scroll: true, foot: ui.source('SEC XBRL companyfacts (operating income, D&A)', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated) })}
-    ${ui.panel({ title: 'Benchmarks to apply', sub: 'What each portfolio company should be measured against', body: '<div id="cp-acts"></div>', foot: `${ui.source('Public comparables: sector benchmarks', null, pc.meta?.generated)} · <a href="#/fin/portfolio">Compare with portfolio estimates →</a>` })}
+    ${ui.panel({ title: 'Margin structure', body: '<div id="cp-db"></div>', scroll: true })}
+    ${ui.panel({ title: 'Benchmarks to apply', body: '<div id="cp-acts"></div>' })}
   </div>
-  <div class="mt-12">${ui.note(`<b>BSP’s edge is multiple arbitrage:</b> buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Analyst assumption: private lower-middle-market add-ons typically trade at about 5–9x EBITDA, below public comps and scaled sponsor companies. Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth. <a href="${rollup}">Size one add-on in the roll-up model →</a>`, 'warn')}</div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Implications for BSP', sub: 'Research synthesis of the public comparables', body: `<div class="small text-2" style="line-height:1.55">${segments(pc.meta?.financial_picture).map(s => `<p class="mb-8">${esc(noSH(clean(s)))}</p>`).join('') || '—'}</div>`, foot: ui.source('Public comparables synthesis (research team)', null, pc.meta?.generated) })}
-    ${ui.panel({ title: 'Benchmark estimate table', sub: 'Metric · estimate · confidence. Click a row for the basis.', body: '<div id="cp-est"></div>', foot: ui.source('Public comparables estimate table · estimates, not reported figures', null, pc.meta?.generated) })}
-  </div>
+  <div class="mt-12">${ui.note(`Add-ons trade at about 5–9x EBITDA (analyst assumption).`, 'warn')}</div>
+  <div class="mt-12">${ui.panel({ title: 'Benchmark estimates', body: '<div id="cp-est"></div>' })}</div>
+  <details class="sys-fold mt-12"><summary><b>Implications for BSP</b><span>Research read-across of the comparables</span></summary>${segments(pc.meta?.financial_picture).map(s => `<p class="small text-2 mb-8">${esc(noSH(scrub(s)))}</p>`).join('') || '—'}</details>
+  ${methodP('Growth vs EBITDA margin: latest fiscal year; colour is the BSP company benchmarked; dashed lines are the median of the selection; * is off-scale and clamped. Revenue growth is latest year on year. Margin structure: operating margin (grey) to EBITDA margin (colour); the gap is D&A intensity. EBITDA is operating income plus D&A, not adjusted. Benchmark estimates are estimates, not reported figures.')}
+  ${methodP(`BSP's edge is multiple arbitrage: buy small add-ons at lower-middle-market prices and sell the combined company nearer scaled-sponsor prices. Add-ons trade below public comps and scaled sponsor companies. Trades (CET, PP) are the growth engine with thin-to-mid margins; lab distribution and agencies are low-growth.`)}
+  ${methodP(`${esc(Object.keys(bm).length)} sectors · FY2023 to latest. ${Object.entries(bm).map(([s, b]) => `${esc(SECTORS[s]?.label || s)}: benchmarks ${esc(benchName(b, coById(SECTORS[s]?.co)))}, ${esc(b.n)} peers (${esc((b.comps || []).join(', '))}).`).join(' ')}`)}
+  ${dealsMeta}
+  ${srcP(ctx, 'SEC XBRL companyfacts', 'https://data.sec.gov/api/xbrl/companyfacts/', pc.meta?.generated)}
+  ${srcP(ctx, '10-K and 20-F via EDGAR', 'https://www.sec.gov/edgar/search/', pc.meta?.generated)}
+  ${srcP(ctx, 'Public comparables: sector benchmarks (median of sector comps, latest FY) and estimate table', null, pc.meta?.generated)}
   </div>`;
 
   const legend = el.querySelector('#cp-leg');
@@ -738,7 +734,7 @@ async function compsView(ctx) {
   const columns = [
     { key: 'ticker', label: 'Ticker', fmt: (v, r) => `<b class="num">${esc(v)}</b>`, width: '64px' },
     { key: 'company', label: 'Company', fmt: v => esc(String(v).slice(0, 34)) },
-    { key: '_sector', label: 'Sector', fmt: (v, r) => fmt.chip(coById(r._co)?.short || '', coById(r._co)?.color) + ` <span class="small dim">${esc(v)}</span>` },
+    { key: '_sector', label: 'Sector', fmt: (v, r) => fmt.chip(coById(r._co)?.short || '', coById(r._co)?.color) },
     { key: 'latest_fy', label: 'FY', num: true, fmt: v => esc(v) },
     { key: '_rev', label: 'Revenue', num: true, fmt: v => fmt.money(v) },
     { key: 'revenue_growth_latest_pct', label: 'Growth', num: true, fmt: v => `<span style="color:${v == null ? 'var(--sys-mute-2)' : v >= 0 ? 'var(--sys-good-ink)' : 'var(--sys-bad-ink)'}">${sPct(fmt, v)}</span>` },
@@ -748,7 +744,6 @@ async function compsView(ctx) {
     { key: '_emp', label: 'Employees', num: true, fmt: v => fmt.num(v) },
     { key: 'revenue_per_employee_usd', label: 'Rev / emp', num: true, fmt: v => fmt.money(v) },
     { key: 'tenk_url', label: '10-K', fmt: (v, r) => v ? fmt.link(v, `${r.tenk_form || '10-K'} ↗`) : fmt.link(r.source_url, 'XBRL ↗') },
-    { key: 'status_note', label: 'Note', wrap: true, fmt: v => v ? `<span class="small dim" style="display:block;min-width:300px">${esc(clip(v, 90))}</span>` : '' },
   ];
   let tbl;
   const openComp = c => {
@@ -768,11 +763,12 @@ async function compsView(ctx) {
   /* One sector's card: six medians, then the read-out under its own heading. wide = the one card of a ?sector= screen. */
   const sectorCard = (s, b, wide) => {
     const co = coById(SECTORS[s]?.co), ov = overlapKey(s);
-    return ui.panel({ cls: `bench${wide ? ' bench-wide' : ''}`, title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`, sub: `Benchmarks ${esc(benchName(b, co))}, ${esc(b.n)} peers · ${esc((b.comps || []).join(', '))}`,
-      body: `<div class="sys-kpis stats">${fig('Growth', sPct(fmt, b.median_revenue_growth_latest_pct))}${fig('3-yr CAGR', sPct(fmt, b.median_revenue_cagr_2023_latest_pct), '', 'Revenue growth a year, FY2023 to latest')}${fig('Op. margin', pctF(fmt, b.median_operating_margin_latest_pct))}${fig('Multi-yr avg', pctF(fmt, b.median_operating_margin_multiyear_avg_pct), '', 'Operating margin, multi-year average')}${fig('EBITDA margin', pctF(fmt, b.median_ebitda_margin_latest_pct))}${fig('Rev / employee', fmt.money(b.median_revenue_per_employee_usd))}</div><h4 class="sys-card-label mb-8">${s === 'communications_agencies' ? 'Holding-company read-across' : `What this implies for ${esc(CO_SAY[co?.id] || co?.name || 'BSP')}`}</h4><div class="sys-card-body imp">${esc(b.what_this_implies_for_bsp || '')}</div>${ov ? `<div class="small text-2 mt-12">Sponsors in this sector bid against BSP for add-ons and are the likely exit buyers: <a href="#/pe/landscape?overlap=${ov}">Private equity →</a></div>` : ''}`,
-      actions: wide ? `<a class="fin-link" href="#/fin/comps" data-all>All sectors →</a>` : `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>`,
-      foot: ui.source('Median of sector comps, latest FY', null, pc.meta?.generated) });
+    return ui.panel({ cls: `bench${wide ? ' bench-wide' : ''}`, title: `<span class="fin-co-head"><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i>${esc(SECTORS[s]?.label || s)}</span>`,
+      body: `<div class="sys-kpis stats">${fig('Growth', sPct(fmt, b.median_revenue_growth_latest_pct))}${fig('3-yr CAGR', sPct(fmt, b.median_revenue_cagr_2023_latest_pct), '', 'Revenue growth a year, FY2023 to latest')}${fig('Op. margin', pctF(fmt, b.median_operating_margin_latest_pct))}${fig('Multi-yr avg', pctF(fmt, b.median_operating_margin_multiyear_avg_pct), '', 'Operating margin, multi-year average')}${fig('EBITDA margin', pctF(fmt, b.median_ebitda_margin_latest_pct))}${fig('Rev / employee', fmt.money(b.median_revenue_per_employee_usd))}</div>${b.what_this_implies_for_bsp ? `<details class="sys-fold mt-8"><summary><b>${s === 'communications_agencies' ? 'Holding-company read-across' : `What this implies for ${esc(CO_SAY[co?.id] || co?.name || 'BSP')}`}</b><span>${esc(b.n)} peers</span></summary><div class="small text-2 imp">${esc(noSH(clean(b.what_this_implies_for_bsp)))}</div></details>` : ''}${ov ? `<div class="small mt-8"><a href="#/pe/landscape?overlap=${ov}">Private equity →</a></div>` : ''}`,
+      actions: wide ? `<a class="fin-link" href="#/fin/comps" data-all>All sectors →</a>` : `<a class="fin-link" href="#/fin/comps?sector=${s}">Filter →</a>` });
   };
+  /* the default view: one row per sector; the read-across for each sector sits in a closed section under the table */
+  const sectorTable = () => `<div class="mt-12">${ui.panel({ title: 'Sector benchmarks', body: `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Sector</th><th class="sys-n n">Peers</th><th class="sys-n n">Growth</th><th class="sys-n n" title="Revenue growth a year, FY2023 to latest">3-yr CAGR</th><th class="sys-n n">Op. margin</th><th class="sys-n n" title="Operating margin, multi-year average">Multi-yr avg</th><th class="sys-n n">EBITDA margin</th><th class="sys-n n">Rev / employee</th><th></th></tr></thead><tbody>${Object.entries(bm).map(([s, b]) => { const co = coById(SECTORS[s]?.co), ov = overlapKey(s); return `<tr><td><i class="sys-dot fin-dot" aria-hidden="true" style="--co:${co?.color}"></i> <a href="#/fin/comps?sector=${s}"><b>${esc(SECTORS[s]?.label || s)}</b></a></td><td class="sys-n n">${esc(b.n)}</td><td class="sys-n n">${sPct(fmt, b.median_revenue_growth_latest_pct)}</td><td class="sys-n n">${sPct(fmt, b.median_revenue_cagr_2023_latest_pct)}</td><td class="sys-n n">${pctF(fmt, b.median_operating_margin_latest_pct)}</td><td class="sys-n n">${pctF(fmt, b.median_operating_margin_multiyear_avg_pct)}</td><td class="sys-n n">${pctF(fmt, b.median_ebitda_margin_latest_pct)}</td><td class="sys-n n">${fmt.money(b.median_revenue_per_employee_usd)}</td><td class="small">${ov ? `<a href="#/pe/landscape?overlap=${ov}">Private equity →</a>` : ''}</td></tr>`; }).join('')}</tbody></table></div>${Object.entries(bm).some(([, b]) => b.what_this_implies_for_bsp) ? `<details class="sys-fold mt-8"><summary><b>Read-across by sector</b><span>What each benchmark implies for BSP</span></summary>${Object.entries(bm).filter(([, b]) => b.what_this_implies_for_bsp).map(([s, b]) => { const co = coById(SECTORS[s]?.co); return `<p class="small text-2 mb-8"><b>${s === 'communications_agencies' ? 'Holding-company read-across' : `What this implies for ${esc(CO_SAY[co?.id] || co?.name || 'BSP')}`}.</b> ${esc(noSH(clean(b.what_this_implies_for_bsp)))}</p>`; }).join('')}</details>` : ''}` })}</div>`;
   const draw = st => {
     const q = (st.q || '').toLowerCase();
     const sel = items.filter(c => (!st.sector || c.sector_tag === st.sector) && (!q || `${c.ticker} ${c.company}`.toLowerCase().includes(q)));
@@ -797,10 +793,10 @@ async function compsView(ctx) {
     focus.innerHTML = !one ? '' : `${one === 'communications_agencies' ? dealsHtml : ''}<div class="mt-12">${cards}</div><div class="mt-12"></div>`;
     // "All sectors →" also clears the picker: when the sector came from the picker the address does not change, so the link alone would do nothing
     const allLink = focus.querySelector('[data-all]'); if (allLink) allLink.onclick = () => { const s = el.querySelector('#cp-f select[data-k="sector"]'); if (s) { s.value = ''; s.dispatchEvent(new Event('change')); } };
-    grid.innerHTML = one ? '' : cards; grid.style.display = one ? 'none' : '';   // not the hidden attribute: .grid{display:grid} in app.css would override it
+    grid.innerHTML = one ? '' : sectorTable(); grid.style.display = one ? 'none' : '';   // not the hidden attribute: .grid{display:grid} in app.css would override it
     dealsEl.innerHTML = one ? '' : dealsHtml;
     wireDeals();   // the transactions table, wherever the block was placed
-    tbl ? tbl.update(sel) : (tbl = ui.table(el.querySelector('#cp-t'), { columns, rows: sel, pageSize: 40, sortKey: 'revenue_growth_latest_pct', exportName: 'bsp_public_comps', rowKey: r => r.id, onRow: openComp }));
+    tbl ? tbl.update(sel) : (tbl = ui.table(el.querySelector('#cp-t'), { columns, rows: sel, pageSize: 12, sortKey: 'revenue_growth_latest_pct', exportName: 'bsp_public_comps', rowKey: r => r.id, onRow: openComp }));
   };
   const f = ui.filters(el.querySelector('#cp-f'), [
     { key: 'sector', label: 'Sector', options: sectorOpts, value: sector0 },
@@ -809,16 +805,16 @@ async function compsView(ctx) {
   draw(f.state);
   if (params.ticker) { const c = items.find(x => x.ticker === params.ticker); if (c) openComp(c); }
 
-  const acts = Object.entries(bm).map(([s, b]) => { const co = coById(SECTORS[s]?.co); return { chip: co?.short, color: co?.color, html: `<b>${esc(benchName(b, co))}</b>: hold to ${fmt.money(b.median_revenue_per_employee_usd)} revenue per employee and a ${pctF(fmt, b.median_ebitda_margin_latest_pct)} EBITDA margin (sector medians across ${esc(b.n)} peers); peer growth is ${sPct(fmt, b.median_revenue_growth_latest_pct)}. Ask management for the same three KPIs on a trailing-12-month basis.` }; });
+  const acts = Object.entries(bm).map(([s, b]) => { const co = coById(SECTORS[s]?.co); return { chip: co?.short, color: co?.color, html: `Hold <b>${esc(benchName(b, co))}</b> to ${fmt.money(b.median_revenue_per_employee_usd)} revenue per employee and a ${pctF(fmt, b.median_ebitda_margin_latest_pct)} EBITDA margin.` }; });
   el.querySelector('#cp-acts').innerHTML = actionList(ctx, acts);
 
   // benchmark estimates (from the comparables research): the basis opens on click
   const bEst = toArr(pc.meta?.estimate_table), estEl = el.querySelector('#cp-est');
-  if (bEst.length) ui.table(estEl, { rows: bEst.map((e, i) => ({ ...e, metric: noSH(e.metric), id: i })), pageSize: 10, exportName: 'bsp_benchmark_estimates', columns: [
-    { key: 'metric', label: 'Metric', wrap: true, fmt: v => `<span class="small">${esc(v)}</span>` },
-    { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<b class="small">${esc(v)}</b>` },
+  if (bEst.length) ui.table(estEl, { rows: bEst.map((e, i) => ({ ...e, metric: noSH(e.metric), id: i })), pageSize: 6, exportName: 'bsp_benchmark_estimates', columns: [
+    { key: 'metric', label: 'Metric', wrap: true, fmt: v => `<span class="small">${esc(clip(v, 64))}</span>` },
+    { key: 'estimate', label: 'Estimate', wrap: true, fmt: v => `<b class="small">${esc(clip(v, 48))}</b>` },
     { key: 'confidence', label: 'Conf.', fmt: v => fmt.chip(v || 'n/a', confColor(v)) },
-  ], onRow: e => inspector.open({ title: esc(e.metric), sub: `Estimate ${esc(e.estimate)}`, color: 'var(--c-fin)', sections: [{ label: 'Basis', html: `<div class="small text-2">${esc(clean(e.basis || '—'))}</div>` }, { label: 'Confidence', html: fmt.chip(e.confidence || 'n/a', confColor(e.confidence)) }] }) });
+  ], onRow: e => inspector.open({ title: esc(e.metric), sub: `Estimate ${esc(e.estimate)}`, color: 'var(--c-fin)', sections: [{ label: 'Metric', html: `<div class="small text-2">${esc(e.metric)}: ${esc(e.estimate)}</div>` }, { label: 'Basis', html: `<div class="small text-2">${esc(clean(e.basis || '—'))}</div>` }, { label: 'Confidence', html: fmt.chip(e.confidence || 'n/a', confColor(e.confidence)) }] }) });
   else estEl.innerHTML = ui.empty('No estimate table');
 
   app.index(items.map(c => ({ label: `${c.ticker} · ${c.company}`, sub: `Public comp · ${c._sector}`, href: `#/fin/comps?ticker=${encodeURIComponent(c.ticker)}`, kind: 'Comp', color: 'var(--c-fin)' })));
@@ -832,7 +828,7 @@ const METHODS = [
   { id: 'ppp', title: 'SBA PPP loans', cats: ['sba_ppp'], formula: 'Annual payroll = loan ÷ 2.5 × 12 · Revenue ≈ payroll ÷ 30–40% labor share', text: 'The PPP FOIA file gives loan amount, jobs reported and lender for 2020–21: a clean pre-deal scale anchor for private companies.', caveat: 'Payroll capped at $100k per employee; describes the predecessor company, pre roll-up.' },
   { id: 'fdd', title: 'FDD Item 19 / franchisee lists', cats: ['fdd_item19', 'fdd_franchisee_list'], formula: 'Revenue ≈ territories operated × Item 19 average unit revenue', text: 'Franchise Disclosure Documents filed with state registries disclose system unit economics (Item 19) and franchisee rosters (Item 20).', caveat: 'System averages; a multi-unit franchisee may run above or below the mean.' },
   { id: 'state', title: 'State, county & court records', cats: ['state_business_filing', 'ucc_lien', 'tax_or_assessment', 'county_deed_or_mortgage', 'litigation', 'osha_dol'], formula: 'UCC-1 secured party → agent bank · SOS → entities & officers', text: 'Secretary of State entity filings, UCC liens, county deeds and assessments, court dockets and OSHA inspections fill in lenders, entities and operating risk.', caveat: 'Coverage varies by state; some registries need manual (browser) lookups.' },
-  { id: 'rating', title: 'Credit ratings', cats: [], re: /credit rating|moody|s&p|kbra|fitch|\bcfr\b/i, formula: 'Rating + leverage commentary → sponsor leverage and headroom', text: 'Moody\'s / S&P / KBRA reports give leverage and liquidity for broadly syndicated borrowers (Wrench, Apex, Consilio, Epiq…).', caveat: 'Not retrieved this cycle (research budget and paywalls); listed in next pulls.' },
+  { id: 'rating', title: 'Credit ratings', cats: [], re: /credit rating|moody|s&p|kbra|fitch|\bcfr\b/i, formula: 'Rating + leverage commentary → sponsor leverage and headroom', text: 'Moody\'s / S&P / KBRA reports give leverage and liquidity for broadly syndicated borrowers (Wrench, Apex, Consilio, Epiq…).', caveat: 'Paywalled: ratings are not in the filings index.' },
   { id: 'comps', title: 'Public comps (XBRL)', cats: ['industry_benchmark'], extra: 'comps', formula: 'EBITDA ≈ operating income + D&A · Rev/employee = revenue ÷ year-end headcount', text: 'SEC companyfacts XBRL for listed peers, FY2023 to latest, as benchmarks for margin, growth and productivity.', caveat: 'GAAP as reported, not adjusted; one-offs depress some latest-year margins.' },
   { id: 'press', title: 'Press, rankings & other', cats: ['press_financial', 'ranking_listing', 'other'], formula: 'Disclosed deal terms, headcount, growth claims', text: 'Company and sponsor releases, trade press, Inc./MSP rankings and UK Companies House accounts supply dated facts.', caveat: 'Self-reported; used for triangulation, not as a primary figure.' },
 ];
@@ -840,16 +836,16 @@ const METHODS = [
 async function methodsView(ctx) {
   const { el, ui, fmt, esc, data, inspector } = ctx;
   injectCss();
-  el.innerHTML = ui.loading('Compiling methods, caveats and gaps…');
+  el.innerHTML = ui.loading('Loading methods and gaps…');
   const D = await loadAll(ctx);
   const dsList = [...D.cos.map(x => ({ id: x.co.id, name: x.co.name, short: x.co.short, color: x.co.color, file: x.co.ds, d: x.d })), { id: 'rival', name: 'Rival companies', short: 'Rival', color: RIVAL.color, file: 'rival_filings', d: D.rival }, { id: 'comps', name: 'Public comparables', short: 'Comps', color: 'var(--c-fin)', file: 'public_comps', d: D.comps }, { id: 'firm', name: 'BSP firm', short: 'BSP', color: 'var(--sys-brand)', file: 'bsp_firm', d: D.firm }];
   const present = dsList.filter(x => x.d);
   const gaps = [], pulls = [], cav = [];
   for (const x of present) {
     const m = x.d.meta || {};
-    toArr(m.data_gaps).forEach(t => gaps.push({ ds: x.short, color: x.color, text: clean(t), kind: 'Data gap' }));
-    toArr(m.next_pulls).forEach(t => pulls.push({ ds: x.short, color: x.color, text: clean(t), kind: 'Next pull' }));
-    toArr(m.caveats).forEach(t => cav.push({ ds: x.short, color: x.color, text: clean(t) }));
+    toArr(m.data_gaps).map(scrub).filter(Boolean).forEach(t => gaps.push({ ds: x.short, color: x.color, text: t, kind: 'Data gap' }));
+    toArr(m.next_pulls).map(scrub).filter(Boolean).forEach(t => pulls.push({ ds: x.short, color: x.color, text: t, kind: 'Next pull' }));
+    toArr(m.caveats).map(scrub).filter(Boolean).forEach(t => cav.push({ ds: x.short, color: x.color, text: t }));
   }
   const allItems = [...D.rows, ...(D.comps?.items || [])];
   const hi = D.rows.filter(r => r.confidence === 'high').length;
@@ -861,38 +857,39 @@ async function methodsView(ctx) {
     { f: 'cet_home_sales_ma', co: 'cet', label: 'Home sales · same 9 MA counties' }, { f: 'cet_home_sales_ct_ri', co: 'cet', label: 'Home sales · 8 CT counties + Cranston RI' },
     { f: 'bpi_sales_dc', co: 'bpi', label: 'District of Columbia (HQ talent market)' }, { f: 'fh_sales_nyc', co: 'fh', label: 'New York County / Manhattan (flagship store)' }, { f: 'ts_sales_gloucester_nj', co: 'ts', label: 'Gloucester County, NJ (Swedesboro HQ)' },
   ];
+  const pend = dsList.filter(x => !x.d).map(x => x.short).join(', ');
 
   el.innerHTML = `<div class="m-fin">${ui.pageHead({
     title: 'Methods & gaps',
-    sub: `Every figure comes from a public filing and a stated formula; private-company revenue, EBITDA and leverage stay estimates. ${fmt.num(gaps.length)} data gaps map to ${fmt.num(pulls.length)} next pulls.`,
+    sub: `${fmt.num(gaps.length)} open gaps, ${fmt.num(pulls.length)} queued pulls.`,
     chips: `${fmt.chip(`${present.length} of ${dsList.length} sources`, present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)')}${fmt.chip('Public records only', 'var(--c-fin)')}`,
     actions: `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/ma/overview">Acquisition engine →</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="#/deal/returns?p=typical">Acquisition model</a>`,
   })}
+  <span data-asof="Sept 2026"></span>
   ${ui.kpis([
-    { label: 'Sources', value: `${present.length}/${dsList.length}`, sub: dsList.filter(x => !x.d).map(x => x.short).join(', ') ? `pending: ${esc(dsList.filter(x => !x.d).map(x => x.short).join(', '))}` : 'all loaded', color: present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
+    { label: 'Sources', value: `${present.length}/${dsList.length}`, sub: pend ? `pending: ${esc(pend)}` : 'all loaded', color: present.length < dsList.length ? 'var(--sys-warn)' : 'var(--sys-good)' },
     { label: 'Records', value: fmt.num(allItems.length), sub: `${fmt.num(D.rows.length)} filings · ${fmt.num(D.comps?.items?.length || 0)} comps`, color: 'var(--c-fin)' },
-    { label: 'High confidence', value: `${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}%`, sub: 'of filing records', color: 'var(--sys-good)' },
-    { label: 'Open data gaps', value: fmt.num(gaps.length), sub: 'across sources', color: 'var(--sys-warn)' },
-    { label: 'Open requests', value: fmt.num(pulls.length), sub: 'queued requests', color: 'var(--sys-brand)' },
+    { label: 'High confidence', value: `${fmt.num(Math.round(hi / Math.max(1, D.rows.length) * 100))}%`, sub: 'of filings', color: 'var(--sys-good)' },
+    { label: 'Open data gaps', value: fmt.num(gaps.length), sub: 'all sources', color: 'var(--sys-warn)' },
+    { label: 'Open requests', value: fmt.num(pulls.length), sub: 'queued', color: 'var(--sys-brand)' },
   ])}
-  <div class="grid grid-3 mt-12">${METHODS.map(mt => {
+  <div class="mt-12">${ui.panel({ title: 'Data gaps & next pulls', body: '<div id="mt-f"></div><div id="mt-t"></div>' })}</div>
+  <div class="grid grid-2 mt-12">
+    ${ui.panel({ title: 'Data sources', body: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Company</th><th>Source</th><th class="sys-n n">Items</th><th>Generated</th></tr></thead><tbody>${dsList.map(x => `<tr><td>${fmt.chip(x.short, x.color)}</td><td class="small ${x.d ? '' : 'miss'}">${esc(Copy.dataset(x.file))}${x.d ? '' : ' — pending'}</td><td class="sys-n n">${x.d ? fmt.num(x.d.items?.length || 0) : '—'}</td><td class="small dim">${esc(x.d?.meta?.generated || '')}</td></tr>`).join('')}</tbody></table></div>` })}
+    ${ui.panel({ title: 'County home-sales & property-transfer records', body: `<div class="fin-insp" id="mt-sales">${ui.loading('Checking files…')}</div>` })}
+  </div>
+  <details class="sys-fold mt-12"><summary><b>Paid sources</b><span>PitchBook, Capital IQ</span></summary>
+    <div class="mth"><div class="d"><b>1. Deal records.</b> Entry EV, EV/EBITDA, debt package and lender list for each BSP anchor and add-on replace the triangulated EV and debt ranges in Portfolio picture.</div><div class="d"><b>2. Private-company financials.</b> CapIQ private-company tearsheets (revenue, employees, credit ratings) for rivals such as Wrench, Apex, Consilio and Epiq replace the headcount × revenue-per-employee estimates.</div><div class="d"><b>3. Loan data.</b> LCD / CapIQ leveraged-loan data give total facility size, pricing and covenant flex, completing the one-lender slice visible in BDC schedules.</div></div></details>
+  ${METHODS.map(mt => {
     const n = mt.cats.length ? D.rows.filter(r => mt.cats.includes(r._cat)).length : D.rows.filter(r => mt.re && mt.re.test(JSON.stringify(r.key_figures || {}) + r.title)).length;
     const nComps = mt.extra === 'comps' ? (D.comps?.items?.length || 0) : 0;
     const by = COS.concat([RIVAL]).map(c => ({ c, n: D.rows.filter(r => r._co === c.id && mt.cats.includes(r._cat)).length })).filter(x => x.n);
-    return ui.panel({ title: esc(mt.title), sub: `${fmt.num(n + nComps)} records${nComps ? ` (incl. ${nComps} comps)` : ''}`, body: `<div class="mth"><div class="f">${esc(Copy.text(mt.formula))}</div><div class="d">${esc(Copy.text(mt.text))}</div><div class="cv">⚠ ${esc(Copy.text(mt.caveat))}</div><div class="ct">${by.map(x => fmt.chip(`${x.c.short} ${x.n}`, x.c.color)).join('') || (n + nComps ? '' : fmt.chip('no records yet', 'var(--sys-warn)'))}</div></div>` });
-  }).join('')}</div>
-  <div class="mt-12">${ui.panel({ title: 'Data gaps & next pulls — merged register', sub: 'Every open gap and queued request across sources · filter, export and assign', body: '<div id="mt-f"></div><div id="mt-t"></div>', foot: ui.source('Data gaps and next pulls listed in each research source', null, 'Sept 2026') })}</div>
-  <div class="grid grid-main mt-12">
-    ${ui.panel({ title: 'Caveats', sub: 'Stated limitations by source — read before quoting a number', body: '<div id="mt-cv"></div>', scroll: true })}
-    <div class="col gap-12">
-      ${ui.panel({ title: 'Data sources', sub: 'Status, date and size of each source', body: `<div class="fin-insp sys-table-wrap"><table class="sys-table"><thead><tr><th>Company</th><th>Source</th><th class="sys-n n">Items</th><th>Generated</th></tr></thead><tbody>${dsList.map(x => `<tr><td>${fmt.chip(x.short, x.color)}</td><td class="small ${x.d ? '' : 'miss'}">${esc(Copy.dataset(x.file))}${x.d ? '' : ' — pending'}</td><td class="sys-n n">${x.d ? fmt.num(x.d.items?.length || 0) : '—'}</td><td class="small dim">${esc(x.d?.meta?.generated || '')}</td></tr>`).join('')}</tbody></table></div>` })}
-      ${ui.panel({ title: 'County home-sales & property-transfer records', sub: 'Deed / assessor sales for the counties each portfolio company serves or recruits from — coverage check across all six companies', body: `<div class="fin-insp" id="mt-sales">${ui.loading('Checking files…')}</div>`, foot: ui.source('County deed and assessor records (state and county sources)', null, 'Sept 2026') })}
-    </div>
-  </div>
-  <div class="grid grid-2 mt-12">
-    ${ui.panel({ title: 'Extending with PitchBook / Capital IQ', sub: 'Where a paid source closes the gap fastest', accent: true, body: `<div class="mth"><div class="d"><b>1. Deal records.</b> Entry EV, EV/EBITDA, debt package and lender list for each BSP anchor and add-on replace the triangulated EV and debt ranges in Portfolio picture.</div><div class="d"><b>2. Private-company financials.</b> CapIQ private-company tearsheets (revenue, employees, credit ratings) for rivals such as Wrench, Apex, Consilio and Epiq replace the headcount × revenue-per-employee estimates.</div><div class="d"><b>3. Loan data.</b> LCD / CapIQ leveraged-loan data give total facility size, pricing and covenant flex, completing the one-lender slice visible in BDC schedules.</div><div class="d"><b>4. Loading it.</b> Records saved in the same columns as the public filings (category, entity, key figures, confidence, source link) flow into the Filings explorer, Portfolio picture and Rival companies automatically.</div></div>` })}
-    ${ui.panel({ title: 'Next actions', sub: 'Sequenced for the next two weeks', body: `<div id="mt-acts"></div>`, foot: ui.source('Derived from the gap register above', null, 'Sept 2026') })}
-  </div>
+    return `<div class="sys-src mth" data-method><b>${esc(mt.title)}</b> · ${fmt.num(n + nComps)} records${nComps ? ` (incl. ${nComps} comps)` : ''}<div class="f">${esc(Copy.text(mt.formula))}</div><div class="d">${esc(Copy.text(mt.text))}</div><div class="cv">${esc(Copy.text(mt.caveat))}</div><div class="ct">${by.map(x => fmt.chip(`${x.c.short} ${x.n}`, x.c.color)).join('') || (n + nComps ? '' : fmt.chip('no records yet', 'var(--sys-warn)'))}</div></div>`;
+  }).join('')}
+  ${cav.length ? `<div class="sys-src" data-method><b>Caveats by source</b>${cav.map(c => `<div class="sig">${fmt.chip(Copy.dataset(c.ds), c.color)}<div class="t" style="color:var(--sys-ink-2)">${esc(Copy.text(c.text))}</div></div>`).join('')}</div>` : ''}
+  ${methodP(`Every figure comes from a public filing and a stated formula; private-company revenue, EBITDA and leverage stay estimates. Frontline's St. Louis City & County, MO sales are not covered: Missouri does not disclose sale prices and the county parcel layer carries no usable deed date, so this needs a licensed MLS or ATTOM feed. Gloucester County, NJ (Thomas Scientific) is covered from the NJ SR1A file.`)}
+  ${srcP(ctx, 'Data gaps and next pulls listed in each research source', null, 'Sept 2026')}
+  ${srcP(ctx, 'County deed and assessor records (state and county sources)', null, 'Sept 2026')}
   </div>`;
 
   // register table
@@ -901,10 +898,10 @@ async function methodsView(ctx) {
   const cols = [
     { key: 'kind', label: 'Type', fmt: v => fmt.chip(v, v === 'Data gap' ? 'var(--sys-warn)' : 'var(--c-fin)'), width: '90px' },
     { key: 'ds', label: 'Source', fmt: (v, r) => fmt.chip(Copy.dataset(v), r.color), width: '70px' },
-    { key: 'text', label: 'Item', wrap: true, fmt: v => `<span class="small text-2">${esc(v)}</span>` },
+    { key: 'text', label: 'Item', wrap: true, fmt: v => `<span class="small text-2">${esc(clip(v, 84))}</span>` },
   ];
-  const openReg = r => inspector.open({ title: esc(r.kind), color: r.color, sub: esc(Copy.dataset(r.ds)), sections: [{ label: 'Detail', html: `<div class="small text-2">${esc(r.text)}</div>` }, { label: 'Next action', html: `<div class="small text-2">${r.kind === 'Data gap' ? 'Assign an owner and match this gap to a pull (paid source, registry search or management request).' : 'Assign to the PRG finance analyst; log the result back into the dataset with source_url and confidence.'}</div>` }] });
-  const applyReg = st => { const q = (st.q || '').toLowerCase(); const out = reg.filter(r => (!st.ds || r.ds === st.ds) && (!st.kind || r.kind === st.kind) && (!q || r.text.toLowerCase().includes(q))); f.setCount(`${out.length} / ${reg.length}`); tbl ? tbl.update(out) : (tbl = ui.table(el.querySelector('#mt-t'), { columns: cols, rows: out, pageSize: 12, exportName: 'bsp_fin_gaps_next_pulls', onRow: openReg })); };
+  const openReg = r => inspector.open({ title: esc(r.kind), color: r.color, sub: esc(Copy.dataset(r.ds)), sections: [{ label: 'Detail', html: `<div class="small text-2">${esc(r.text)}</div>` }] });
+  const applyReg = st => { const q = (st.q || '').toLowerCase(); const out = reg.filter(r => (!st.ds || r.ds === st.ds) && (!st.kind || r.kind === st.kind) && (!q || r.text.toLowerCase().includes(q))); f.setCount(`${out.length} / ${reg.length}`); tbl ? tbl.update(out) : (tbl = ui.table(el.querySelector('#mt-t'), { columns: cols, rows: out, pageSize: 10, exportName: 'bsp_fin_gaps_next_pulls', onRow: openReg })); };
   const f = ui.filters(el.querySelector('#mt-f'), [
     { key: 'q', label: 'Search gaps and pulls…', type: 'search' },
     { key: 'ds', label: 'Source', options: [...new Set(reg.map(r => r.ds))].map(v => ({ value: v, label: Copy.dataset(v) })) },
@@ -912,23 +909,12 @@ async function methodsView(ctx) {
   ], applyReg);
   applyReg(f.state);
 
-  el.querySelector('#mt-cv').innerHTML = cav.length ? `<div>${cav.slice(0, 60).map(c => `<div class="sig">${fmt.chip(Copy.dataset(c.ds), c.color)}<div class="t" style="color:var(--sys-ink-2)">${esc(Copy.text(c.text))}</div></div>`).join('')}</div>` : ui.empty('No caveats recorded');
-
-  el.querySelector('#mt-acts').innerHTML = actionList(ctx, [
-    { chip: 'Paid', color: 'var(--sys-brand)', text: 'License a PitchBook / Capital IQ seat for the PRG finance workstream: deal records for the seven companies BSP has owned and their 23 add-ons close the largest share of gaps.' },
-    { chip: 'UCC', color: 'var(--sys-warn)', text: 'Run manual SOS / UCC searches (MA, CT, PA, NJ, DE, MO) to name agent banks for CET, Punctual Pros and Frontline.' },
-    { chip: 'BDC', color: 'var(--co-ts)', text: 'Refresh BDC schedules after the Sept 30 quarter-end 10-Qs (early Nov 2026): Thomas Scientific and rival marks first.' },
-    { chip: 'FH', color: 'var(--co-fh)', text: D.cos.find(x => x.co.id === 'fh')?.d ? 'Review the Fair Harbor filings track against the apparel DTC comps.' : 'Complete the Fair Harbor filings track (Fair Harbor public filings) so all six companies are covered.' },
-    { chip: 'Ratings', color: 'var(--c-pe)', text: 'Pull Moody\'s / S&P reports for Wrench, Apex, TurnPoint, Consilio and Epiq to replace inferred leverage.' },
-    { chip: 'Sales', color: 'var(--co-fl)', text: 'Close the last county home-sales gap: St. Louis City & County, MO (Frontline HQ). Missouri does not disclose sale prices and the county parcel layer carries no usable deed date, so this needs a licensed MLS / ATTOM feed. Gloucester County, NJ (Thomas Scientific) is now covered from the NJ SR1A file.' },
-  ]);
-
   // HEAD check for sales files (no body download)
   const res = await Promise.all(SALES.map(async s => { if (s.planned) return { ...s, ok: false }; try { const r = await fetch(`data/sales/${s.f}.json`, { method: 'HEAD' }); return { ...s, ok: r.ok, bytes: Number(r.headers.get('content-length')) || null }; } catch { return { ...s, ok: false }; } }));
   const box = el.querySelector('#mt-sales');
   const nOk = res.filter(s => s.ok).length, coOk = new Set(res.filter(s => s.ok).map(s => s.co));
   const missCos = COS.filter(c => !coOk.has(c.id));
-  if (box) box.innerHTML = `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Coverage</th><th>Source</th><th class="sys-n n">Size</th></tr></thead><tbody>${res.map(s => `<tr><td>${fmt.chip(coById(s.co).short, coById(s.co).color)} <span class="small">${esc(s.label)}</span></td><td class="small ${s.ok ? 'ok' : 'miss'}">${s.ok ? '✓' : s.planned ? '✗ not collected' : '✗ pending'} ${esc(Copy.dataset(s.f))}</td><td class="sys-n n" style="white-space:nowrap">${s.ok && s.bytes ? `${fmt.num(s.bytes / 1048576, 1)} MB` : '—'}</td></tr>`).join('')}</tbody></table><div class="small dim mt-8">${fmt.num(nOk)} of ${fmt.num(res.length)} county files present · ${fmt.num(coOk.size)} of ${COS.length} companies covered${missCos.length ? ` · <span style="color:var(--sys-warn-ink)">next pull: ${esc(missCos.map(c => c.short).join(', '))} (county assessor / recorder sales for their HQ counties)</span>` : ''}. Residential (home) sales sit alongside commercial transfers; explore them under ${COS.filter(c => coOk.has(c.id)).map(c => `<a href="#/${c.id}">${esc(c.short)}</a>`).join(', ')}.</div>`;
+  if (box) box.innerHTML = `<div class="sys-table-wrap"><table class="sys-table"><thead><tr><th>Coverage</th><th>Source</th><th class="sys-n n">Size</th></tr></thead><tbody>${res.map(s => `<tr><td>${fmt.chip(coById(s.co).short, coById(s.co).color)} <span class="small">${esc(s.label)}</span></td><td class="small ${s.ok ? 'ok' : 'miss'}">${s.ok ? '✓' : s.planned ? '✗ not collected' : '✗ pending'} ${esc(Copy.dataset(s.f))}</td><td class="sys-n n" style="white-space:nowrap">${s.ok && s.bytes ? `${fmt.num(s.bytes / 1048576, 1)} MB` : '—'}</td></tr>`).join('')}</tbody></table><div class="small dim mt-8">${fmt.num(nOk)} of ${fmt.num(res.length)} county files · ${fmt.num(coOk.size)} of ${COS.length} companies${missCos.length ? ` · <span style="color:var(--sys-warn-ink)">not covered: ${esc(missCos.map(c => c.short).join(', '))}</span>` : ''} · ${COS.filter(c => coOk.has(c.id)).map(c => `<a href="#/${c.id}">${esc(c.short)}</a>`).join(', ')}</div></div>`;
 }
 
 export default {
