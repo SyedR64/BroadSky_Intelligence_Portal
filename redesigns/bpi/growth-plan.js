@@ -12,6 +12,8 @@ const num = v => Number(v).toLocaleString('en-US');
 const monthsBetween = (a, b) => (new Date(b) - new Date(a)) / (1000 * 3600 * 24 * 30.4375);
 const TODAY = '2026-10-06';
 const est = '<span class="sys-est">est.</span>';
+/** Reference text stays on the page but closed: a one-line title, the text behind it. */
+const fold = (title, sub, inner) => `<details class="sys-fold"><summary><b>${title}</b>${sub ? `<span>${sub}</span>` : ''}</summary>${inner}</details>`;
 let FR = null; // Frame module, set in init
 /** Plain English from dataset strings: file paths → human dataset names, record ids dropped. */
 const ID_RX = /\b(?:bpi|rival|kb|ra|ve|vs|lever|tpl|gl|agent|fin|fh|pp|cet|ts|fl|ref|ph|tp|bsp)-(?:[a-z]+-)*(?:[a-z0-9]*\d[a-z0-9]*\b|\*)(?:,?\.\.\d+)?|\bra-(?:bpi|fh|pp|cet|fl|ts)\b|\s?\bmeta\.[a-z_]+/g;
@@ -65,6 +67,7 @@ const AGENT_FILTERS = [
   ['pa', 'Public affairs', /public-affairs|trade-association|DC|Brussels/i], ['clients', 'Clients', /client/i], ['finance', 'Finance & integration', /finance|CFO|integration|all staff/i],
 ];
 const CORE_AGENTS = new Set(['agent-01', 'agent-02', 'agent-03']);
+const AGENT_SHORT = [[/narrative early/i, 'Spots narrative attacks; alerts with a draft statement.'], [/compliance-gated/i, 'Drafts in client voice with claims and legal checks.'], [/synthetic-audience/i, 'Pre-tests messages on simulated audiences in hours.'], [/policy/i, 'Tracks bills and rules; drafts outreach variants.'], [/journalist/i, 'Ranks reporters; drafts personalized pitches.'], [/research/i, 'Turns listening data into weekly client briefings.'], [/knowledge/i, 'Action memos and one shared knowledge base.'], [/outcome/i, 'Builds retainer scorecards automatically.'], [/scope/i, 'Flags over-servicing; drafts change orders.']];
 
 /* ── Returns model (shared by the KPI row, the calculator and the chat FAQ) ──
    All inputs are analyst assumptions (est.). Acquired revenue is cumulative from Oct 2026 and
@@ -104,7 +107,7 @@ function renderKpis(pb) {
     ['Net revenue', M(a.revenue_usd), M(z.revenue_usd), `+${Math.round((z.revenue_usd / a.revenue_usd - 1) * 100)}% · ${cagr(a.revenue_usd, z.revenue_usd)}% CAGR`, r.map(x => x.revenue_usd)],
     ['Adj. EBITDA', M(a.ebitda_usd), M(z.ebitda_usd), `margin ${(a.ebitda_usd / a.revenue_usd * 100).toFixed(0)}% → ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(0)}%`, r.map(x => x.ebitda_usd)],
     ['Headcount', num(a.headcount), num(z.headcount), `${a.locations_or_accounts} → ${z.locations_or_accounts} offices`, r.map(x => x.headcount)],
-    ['Enterprise value', M(ev0), M(ev1), `both at ${MULT0}x · ${(ev1 / ev0).toFixed(1)}x today's EV`, r.map(x => x.ebitda_usd * MULT0)],
+    ['Enterprise value', M(ev0), M(ev1), `${(ev1 / ev0).toFixed(1)}x today's EV`, r.map(x => x.ebitda_usd * MULT0)],
   ];
   $('#kpis').innerHTML = k.map(([l, f, to, d, s]) => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">${esc(l)}</span><span class="sys-kpi-value"><span class="from">${f}</span>${to}${est}</span><span class="sys-kpi-sub"><span class="sys-delta sys-delta--up">▲</span> ${esc(d)}</span>${spark(s)}</div>`).join('');
   $('#kpi-note').innerHTML = `Month 0 = ${esc(my(a.date))}, month 36 = ${esc(my(z.date))}. Today's figures are low-confidence analyst estimates from public filings (FY2025 net revenue $85–125M, adj. EBITDA $17–28M, ~375–425 staff), not company disclosures. Both EVs use the same basis: roadmap EBITDA × ${MULT0}x (midpoint of the 10–13x sponsor range), before any SignalOS premium. <b>Since entry:</b> BSP's $90M of equity (Form D, Apr 2023) implies an entry EV of $150–220M ${est}; the equity return on that check, net of debt and add-on spend, is in the <a href="#returns">returns case</a>. The roadmap is an analyst assumption anchored to the BPI public filings midpoints, not a forecast or company guidance. <b>Source:</b> BPI growth plan KPI roadmap, Oct 2026.`;
@@ -142,7 +145,7 @@ function renderTemplate(pb, firm) {
   el.innerHTML = svg(W, H, g, 'Swimlane timeline: Smith + Howard add-ons and exit versus BPI add-ons to date and planned tuck-ins, by months since entry');
   const shRate = (shAdds.length + 1) / monthsBetween(shEntry, shExit) * 12; // exit release counts 9 add-ons
   const bRate = bAdds.length / monthsBetween(bEntry, bAdds[bAdds.length - 1]?.date || TODAY) * 12;
-  $('#swim-src').innerHTML = `Filled dots are closed add-ons (BPI's "2" is Seven Hills + Message House, closed together). Hollow dashed dots are planned tuck-ins at 2.5 a year ${est}. Smith + Howard: 8 dated add-ons in the portal data, 9 per the exit release. <b>Source:</b> ${src('https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', 'BSP exit release')}, ${src('https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/', 'BPI releases')}, BSP firm profile.`;
+  $('#swim-src').innerHTML = `Filled dots are closed add-ons (BPI's "2" is Seven Hills + Message House, closed together). Hollow dashed dots are planned tuck-ins at 2.5 a year ${est}. Smith + Howard: 8 dated add-ons in the portal data, 9 per the exit release. <b>Source:</b> ${src('https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/', 'BSP exit release')}, ${src('https://bpigroup.com/bpi-strengthens-transatlantic-corporate-affairs-offer-with-acquisition-of-365-sherpas/', 'BPI releases')}, the BPI growth plan and the BSP firm profile, Oct 2026.`;
   const rows = [
     ['Entry', '<b>~100 professionals</b>, 1 Atlanta office (Nov 2022)', `<b>200+ staff</b>, DC-led, $90M equity (Apr 2023)`],
     ['Scale', '<b>~800</b> people, 11 locations at exit', `<b>~400</b> today → <b>~560</b> at month 36 ${est}; 15 → 19 offices`],
@@ -150,12 +153,12 @@ function renderTemplate(pb, firm) {
     ['Geography move', 'Atlanta → Southeast density → Richmond, Carolinas, Dallas, Chicago, India', 'DC → London (#2 hub) → Germany (#3 market) → Brussels, Paris'],
     ['Specialist buys', 'Benefit-plan audit, staffing advisory, cyber-risk SOC (last before sale)', 'Message testing, sports, corporate affairs; next: data, health, energy, AI policy'],
     ['Growth', '~4x revenue over the hold', `$105M → $160M net revenue ${est} (1.5x), before upside from the 2028 cycle`],
-    ['Exit', 'TPG Growth, signed Jun 2026, closed Aug 2026', 'Growth or sector sponsor after the 2028 off-year test (Penta → Shamrock, FGS → KKR)'],
+    ['Exit', 'TPG Growth, signed Jun 2026, closed Aug 2026', 'Growth or sector sponsor after 2028 (Penta → Shamrock, FGS → KKR)'],
   ];
   $('#cmp tbody').innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
   const an = [['tpl-penta-03', 'Penta → Shamrock', '$100M+', 'reported revenue, about half from AI/data'], ['tpl-fgs-03', 'FGS Global → KKR', '$1.7B', 'enterprise value, 1,400+ experts'], ['tpl-teneo-01', 'Teneo → CVC', '9 deals', '3x headcount in ~4 years, reported ~$700M']];
   $('#analogs').innerHTML = an.map(([id, h, big, sub]) => { const it = pb.items.find(i => i.id === id) || {}; const dt = it.date ? new Date(String(it.date).slice(0, 10) + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '';
-    return `<article class="sys-card analog rv"><span class="sys-card-label">Analog exit${dt ? ' · ' + esc(dt) : ''}</span><p class="sys-card-title">${esc(h)}</p><div class="big">${esc(big)}</div><p class="sys-card-body">${esc(sub)}</p><p class="sys-card-body">${ep(it.lesson_for_bpi || '')}</p><p class="sys-src">Confidence: ${esc(it.confidence || '—')} · ${src(it.source_url)}</p></article>`; }).join('');
+    return `<article class="sys-card analog rv"><span class="sys-card-label">Analog exit${dt ? ' · ' + esc(dt) : ''}</span><p class="sys-card-title">${esc(h)}</p><div class="big">${esc(big)}</div><p class="sys-card-body">${esc(sub)}</p>${fold('Read-across', '', `<p class="sys-card-body">${ep(it.lesson_for_bpi || '')}</p><p class="sys-src">Confidence: ${esc(it.confidence || '—')} · ${src(it.source_url)}</p>`)}</article>`; }).join('');
 }
 
 /* ── Phased map ────────────────────────────────────────────────────────── */
@@ -172,8 +175,8 @@ function renderMap(pb, firm, filings, pe) {
   const offices = [...new Set([...offFig, ...newMk, 'Boston', 'Geneva'])].filter(c => GEO[c]);
 
   $('#map-stats').innerHTML = [
-    [`${offices.length}`, 'office cities mapped'], ['6', 'countries, plus APAC via the Mandala alliance'],
-    [M(fedTotal), `ceiling of ${fed.length} federal recompetes`], [`${sponsors.length}`, `private-equity sponsors that overlap BPI (${sponsors.filter(s => s.threat_level === 'high').length} high threat)`],
+    [`${offices.length}`, 'office cities'], ['6', 'countries, plus APAC (Mandala)'],
+    [M(fedTotal), `ceiling, ${fed.length} federal recompetes`], [`${sponsors.length}`, `overlapping sponsors (${sponsors.filter(s => s.threat_level === 'high').length} high threat)`],
   ].map(([b, s]) => `<div class="sys-kpi"><span class="sys-kpi-value">${esc(b)}</span><span class="sys-kpi-sub">${esc(s)}</span></div>`).join('');
 
   const tabs = $('#phase-tabs');
@@ -182,7 +185,7 @@ function renderMap(pb, firm, filings, pe) {
   const showPhase = i => {
     $$('button', tabs).forEach(b => b.setAttribute('aria-selected', String(+b.dataset.i === i)));
     if (i < 0) {
-      body.innerHTML = `<div class="when">Oct 2026 → Sep 2029 · 36 months</div><h3>The whole plan on one map</h3><p>${ep(pb.meta.narrative_sentences?.[0] || '')}</p>${phases.map((p, k) => `<div class="dp" style="cursor:pointer" data-go="${k}"><span><i style="background:${PHASE_C[k]}"></i><b>P${k + 1}</b> ${ep(p.phase)}</span><b>${esc(String(p.months).split(' ')[0])} mo</b></div>`).join('')}<p class="sys-src">Tap a phase row or tab to zoom in.</p>`;
+      body.innerHTML = `<div class="when">Oct 2026 → Sep 2029 · 36 months</div><h3>The whole plan on one map</h3>${phases.map((p, k) => `<div class="dp" style="cursor:pointer" data-go="${k}"><span><i style="background:${PHASE_C[k]}"></i><b>P${k + 1}</b> ${ep(p.phase)}</span><b>${esc(String(p.months).split(' ')[0])} mo</b></div>`).join('')}`;
       $$('[data-go]', body).forEach(d => d.onclick = () => showPhase(+d.dataset.go));
     } else {
       const p = phases[i], kt = p.kpi_targets || {};
@@ -274,10 +277,10 @@ function renderLevers(pb) {
     return `<article class="sys-card lever rv"><div class="lever-top"><h3 class="sys-card-title">${ep(l.lever)}</h3><span class="n">L${k + 1}</span></div>
       <div class="bars"><div class="bar b"><span class="lab">${res ? 'Peer' : 'Today'}</span><div class="track"><div class="fill ${l.baseline == null ? 'unk' : ''}${res ? ' proxy' : ''}" data-w="${w(b)}"></div></div><span class="val">${esc(fv(b, l.baseline))}</span></div>
       <div class="bar t"><span class="lab">Mo 36</span><div class="track"><div class="fill" data-w="${w(tg)}"></div></div><span class="val">${esc(fv(tg, l.target))}</span></div></div>
-      <p class="sys-card-body">${ep(ev)}</p><div class="meta"><span class="sys-src">${res ? 'Net revenue kept in the post-election year (100% plus organic change). Top bar is a peer proxy (Stagwell Comms FY2025), hatched because it is not BPI data' : ep(l.unit)} · ${esc(l.confidence)} confidence · target ${est}</span><span class="sys-src">${src(l.source_url)}</span></div></article>`;
+      ${fold('Evidence', `${esc(l.confidence)} confidence`, `<p class="sys-card-body">${ep(ev)}</p><div class="meta"><span class="sys-src">${res ? 'Net revenue kept in the post-election year (100% plus organic change). Top bar is a peer proxy (Stagwell Comms FY2025), hatched because it is not BPI data' : ep(l.unit)} · ${esc(l.confidence)} confidence · target ${est}</span><span class="sys-src">${src(l.source_url)}</span></div>`)}</article>`;
   }).join('');
   const g = ['lever-09', 'lever-10'].map(id => pb.items.find(i => i.id === id)).filter(Boolean);
-  $('#lever-guard').innerHTML = g.length ? `<b>Guardrails</b> tracked alongside the eight: ${g.map(x => `<b>${ep(x.lever)}</b> target ${x.id === 'lever-09' ? '<' : ''}${esc(x.target)}% ${est} (${ep(x.evidence.split('. ')[0])})`).join('; ')}. <b>Source:</b> BPI growth plan levers, Oct 2026.` : '';
+  $('#lever-guard').innerHTML = `Each lever runs from today to month 36. Hatched bars mean the baseline is undisclosed; targets are anchored to listed peers.` + (g.length ? ` <b>Guardrails</b> tracked alongside the eight: ${g.map(x => `<b>${ep(x.lever)}</b> target ${x.id === 'lever-09' ? '<' : ''}${esc(x.target)}% ${est} (${ep(x.evidence.split('. ')[0])})`).join('; ')}. <b>Source:</b> BPI growth plan levers, Oct 2026.` : '');
 }
 
 /* ── Agents ────────────────────────────────────────────────────────────── */
@@ -288,18 +291,17 @@ function renderAgents(pb) {
   const fmtM = a => a.metric_unit?.includes('correlation') ? a.metric_value.toFixed(2) : a.metric_unit?.startsWith('%') ? `${a.metric_value}%` : num(a.metric_value);
   $('#agent-grid').innerHTML = ag.map((a, i) => `<article class="sys-card agent rv" data-who="${esc(a.who_it_helps)}">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[AGENT_ICON[i % AGENT_ICON.length]]}</svg></div>${CORE_AGENTS.has(a.id) ? '<span class="tag tag--co">★ SignalOS core</span>' : `<span class="tag">${esc(a.weeks_to_deploy)} wks</span>`}</div>
-    <p class="sys-card-title">${ep(a.agent)}</p><p class="sys-card-body">${ep(a.job_to_be_done)}</p>
+    <p class="sys-card-title">${ep(a.agent)}</p><p class="sys-card-body">${esc((AGENT_SHORT.find(x => x[0].test(a.agent)) || [0, plain(a.job_to_be_done)])[1])}</p>
     <div class="metric"><b>${esc(fmtM(a))}</b><span>${ep(a.metric_unit)}</span></div>
-    <p class="sys-card-body" style="font-size:12.5px">${ep(a.metric_claim)}</p>
     <div class="row">${(a.vendor_examples || []).map(v => `<span class="tag">${esc(v)}</span>`).join('')}</div>
     <div class="sys-card-foot"><span><b>Helps:</b> ${ep(a.who_it_helps)}</span></div>
-    <p class="sys-src">${ep(a.cost_model?.model || '')}${a.cost_model?.examples ? ` · ${ep(a.cost_model.examples)}` : ''} · live in ${esc(a.weeks_to_deploy)} wks ${est} · ${src(a.source_url)}</p></article>`).join('');
+    ${fold('Evidence', `live in ${esc(a.weeks_to_deploy)} wks`, `<p class="sys-card-body">${ep(a.job_to_be_done)}</p><p class="sys-card-body">${ep(a.metric_claim)}</p><p class="sys-src">${ep(a.cost_model?.model || '')}${a.cost_model?.examples ? ` · ${ep(a.cost_model.examples)}` : ''} · live in ${esc(a.weeks_to_deploy)} wks ${est} · ${src(a.source_url)}</p>`)}</article>`).join('');
   f.onclick = e => { const b = e.target.closest('button'); if (!b) return; $$('button', f).forEach(x => x.setAttribute('aria-pressed', String(x === b))); const rx = AGENT_FILTERS.find(x => x[0] === b.dataset.k)[2]; $$('.agent').forEach(c => c.classList.toggle('dim', !!rx && !rx.test(c.dataset.who))); };
 }
 
 /* ── Talent ────────────────────────────────────────────────────────────── */
 function renderTalent(pb) {
-  $('#talent-grid').innerHTML = pb.items.filter(i => i.kind === 'talent_program').map((p, i) => `<article class="sys-card tp rv"><span class="sys-card-label">Program ${i + 1} · ${esc(p.confidence)} confidence</span><p class="sys-card-title">${ep(p.program)}</p><p class="sys-card-body"><b>For:</b> ${ep(p.who_it_helps)}</p><p class="sys-card-body">${ep(p.evidence)}</p><div class="sys-note sys-note--co m"><span><b>Measure:</b> ${ep(p.metric)}</span></div><p class="sys-src">${src(p.source_url)}</p></article>`).join('');
+  $('#talent-grid').innerHTML = pb.items.filter(i => i.kind === 'talent_program').map((p, i) => `<article class="sys-card tp rv"><span class="sys-card-label">Program ${i + 1} · ${esc(p.confidence)} confidence</span><p class="sys-card-title">${ep(p.program)}</p><p class="sys-card-body"><b>For:</b> ${ep(p.who_it_helps)}</p><div class="sys-note sys-note--co m"><span><b>Measure:</b> ${ep(p.metric)}</span></div>${fold('Evidence', '', `<p class="sys-card-body">${ep(p.evidence)}</p><p class="sys-src">${src(p.source_url)}</p>`)}</article>`).join('');
 }
 
 /* ── Add-on machine ────────────────────────────────────────────────────── */
@@ -333,17 +335,17 @@ function renderAddons(pb, firm, pe) {
   $('#cadence-src').innerHTML = `Dark line: Smith + Howard (8 dated add-ons, 9 per the exit release). Accent: BPI actual, then the 2.5 a year plan ${est}: 7–8 more deals by Oct 2029, for ${bY.length + 7}–${bY.length + 8} in all. Grey: the current ~2.0 a year pace. Seven Hills and Message House count as two. <b>Source:</b> BPI growth plan (add-on pace lever), BSP firm profile.`;
 
   const T6 = [
-    ['Narrative-intelligence / data shop (US)', 'Penta started from a data firm, and S+H\'s last pre-sale buy was tech-enabled. Brings proprietary data into SignalOS ARR.', '$3–6M'],
-    ['Brussels EU-affairs specialist', 'Lets one retainer cover DC, Brussels and Berlin across the AI Act, energy and trade files. Phase 3.', '$2–5M'],
-    ['Health & life-sciences policy comms (Boston)', 'Builds on the Whiting hire. Regulation produces recurring mandates.', '$3–6M'],
+    ['Narrative-intelligence / data shop (US)', 'Adds proprietary data to SignalOS ARR; Penta began as a data firm.', '$3–6M'],
+    ['Brussels EU-affairs specialist', 'One retainer across DC, Brussels and Berlin. Phase 3.', '$2–5M'],
+    ['Health & life-sciences policy comms (Boston)', 'Builds on the Whiting hire; recurring mandates.', '$3–6M'],
     ['Energy & critical-minerals public affairs', 'DOE SEOSS recompetes and the Mandala critical-minerals focus.', '$2–5M'],
-    ['Paris corporate-affairs boutique', 'France is in the Reputation Resilience Index. Completes the FGS-style triangle.', '$4–8M'],
-    ['Federal comms contractor with schedule vehicles', 'BPI has $0 in federal primes. Buy or team for access to about $250M of recompetes.', '$3–7M'],
+    ['Paris corporate-affairs boutique', 'In the Index; completes the FGS-style triangle.', '$4–8M'],
+    ['Federal comms contractor with schedule vehicles', '$0 federal primes today; access to ~$250M of recompetes.', '$3–7M'],
   ];
   $('#targets tbody').innerHTML = T6.map((r, i) => `<tr><td><span class="pri">${i + 1}</span></td><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="sys-n">${esc(r[2])}${est}</td></tr>`).join('');
   const sp = (pe?.items || []).filter(p => (p.overlap_with_bsp || []).includes('bpi')).sort((a, b) => ({ high: 0, medium: 1, low: 2 }[a.threat_level] - { high: 0, medium: 1, low: 2 }[b.threat_level]));
-  $('#target-note').innerHTML = `Size bands are net revenue per deal, analyst assumptions ${est}. They are sized to reconcile with the roadmap: 7–8 tuck-ins at about $4.5–5M each add roughly $35M of acquired revenue by month 36 (see the acquired column in the returns section). Larger deals would mean fewer of them. These are archetypes to source against; a named BPI target screen (like the CET and PP lists in the portal) is the next data build.`;
-  $('#sponsor-note').innerHTML = `${sp.length} sponsors compete for the same communications add-ons. Pre-agreed delayed-draw capacity lets BPI win on speed.`;
+  $('#target-note').innerHTML = `Targets are archetypes, not named companies. Size bands are net revenue per deal, analyst assumptions ${est}. They are sized to reconcile with the roadmap: 7–8 tuck-ins at about $4.5–5M each add roughly $35M of acquired revenue by month 36 (see the acquired column in the returns section). Larger deals would mean fewer of them. These are archetypes to source against; a named BPI target screen (like the CET and PP lists in the portal) is the next data build.`;
+  $('#sponsor-note').innerHTML = `${sp.length} sponsors compete for the same add-ons.`;
   $('#sponsors').innerHTML = sp.map(s => `<span class="sys-chip${s.threat_level === 'high' ? ' sys-chip--soft' : ''}" title="${esc(s.hq)}">${esc(s.firm.replace(/ - .*/, ''))} · ${esc(s.threat_level)}</span>`).join('');
 }
 
@@ -387,8 +389,8 @@ function renderReturns(pb, ev) {
       <div class="tot"><dt>= Equity value</dt><dd>${M(R.equity)}</dd></div>
       <div><dt>MOIC on the ${M(R.eq0)} Form D equity</dt><dd>${R.moic.toFixed(1)}x</dd></div>
       <div><dt>IRR, ${esc(mon(ENTRY_DATE))} → ${esc(x.label)} (${R.yrs.toFixed(1)} yrs)</dt><dd>${pct(R.irr)}</dd></div>`;
-    $('#exit-cmp').innerHTML = `<b>${esc(x.label)}:</b> ${R.moic.toFixed(1)}x · ${pct(R.irr)} IRR. <b>${esc(xa.label)}:</b> ${alt.moic.toFixed(1)}x · ${pct(alt.irr)} IRR at the same multiple. ` +
-      (month === 36
+    $('#exit-cmp').innerHTML = `<b>${esc(x.label)}:</b> ${R.moic.toFixed(1)}x · ${pct(R.irr)} IRR · <b>${esc(xa.label)}:</b> ${alt.moic.toFixed(1)}x · ${pct(alt.irr)} IRR at the same multiple`;
+    $('#exit-why').innerHTML = (month === 36
         ? (alt.irr > R.irr ? `Waiting through the 2028 cycle adds ${M(R.equity - alt.equity)} of equity and costs about ${Math.round((alt.irr - R.irr) * 100)} pt${Math.round((alt.irr - R.irr) * 100) === 1 ? '' : 's'} of IRR; the reward is an off-year track record a buyer can underwrite.` : `Waiting through the 2028 cycle adds ${M(R.equity - alt.equity)} of equity without costing IRR at these inputs.`)
         : `Selling in Oct 2028 means cycle-peak EBITDA and no off-year proof, so a buyer would likely pay a lower multiple. Drag the multiple down to test it.`);
     const bl = $('#bridge'); const cmp = narrow(bl);
@@ -421,7 +423,7 @@ function renderReturns(pb, ev) {
     'fin-01': 'Form D filed by BSP-BPI Holdings LLC. Implied entry EV $150–220M (est.), depending on how much debt was used at close.',
     'fin-02': 'Credit and Guaranty Agreement dated 7 Dec 2023, amended 29 Oct 2024 (the day the UK add-ons closed). This is the M&A funding line.',
   };
-  $('#stack').innerHTML = pb.items.filter(i => i.kind === 'financing').map(f => `<article class="sys-card rv"><span class="sys-card-label">Financing</span><p class="sys-card-title">${ep(f.source_of_funds)}</p><div class="amt">${ep(f.amount_or_range)}</div><p class="sys-card-body">${ep(FIN_TEXT[f.id] || f.evidence)}</p><p class="sys-src">${esc(f.confidence)} confidence · ${src(f.source_url)}</p></article>`).join('');
+  $('#stack').innerHTML = pb.items.filter(i => i.kind === 'financing').map(f => `<article class="sys-card rv"><span class="sys-card-label">Financing</span><p class="sys-card-title">${ep(f.source_of_funds)}</p><div class="amt">${ep(f.amount_or_range)}</div><p class="sys-src">${esc(f.confidence)} confidence · ${src(f.source_url)}</p>${fold('Terms', '', `<p class="sys-card-body">${ep(FIN_TEXT[f.id] || f.evidence)}</p>`)}</article>`).join('');
 }
 
 /* ── Risks & asks ──────────────────────────────────────────────────────── */
