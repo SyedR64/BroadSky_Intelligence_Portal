@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk · portal console (app.css)
+   Broad Sky OS · the shell (app.css)
    Page CSS for app.html only, loaded after assets/system.css. The portal is the
    website: same surfaces, type, cards, KPI tiles, tables, buttons, chips, notes
    and est. badges, and the same light/dark theme (UNIFIED.md §8).
@@ -84,18 +84,17 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .rail-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .rail-item[aria-current]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
 .rail-item .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
-/* menu foot, one line in the .sys-src face: the "All views" link, then the author and month. The link is a 32px-tall
-   target; the line wraps only if the type falls back to a wider face */
+/* menu foot, one line in the .sys-src face: the "All views" link (firm levels only), then the author and month. The link
+   is a 32px-tall target; the line wraps only if the type falls back to a wider face */
 .rail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-1) var(--sys-sp-5);border-top:1px solid var(--sys-line);font-size:11px}
 .rail-foot a{display:inline-flex;align-items:center;min-height:32px;flex-shrink:0;font-weight:600;color:var(--sys-ink-2)}
 .rail-foot span{white-space:nowrap}
+.rail-foot a[hidden]{display:none}
 /* phone menu: one native picker in place of the list (shown at 900px and narrower, §9) */
 .rail-pick{display:none}
 
 /* view bar: the system sub-nav pattern (module title + view links + actions) */
 #topbar{display:flex;align-items:center;gap:var(--sys-sp-4);height:var(--bar-h);padding:0 var(--sys-gut);flex-shrink:0;background:var(--sys-top-bg);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--sys-line);position:relative;z-index:5}
-.crumb{display:flex;align-items:center;min-width:0;flex-shrink:0}
-:where(#app) .crumb a.sys-subnav-title{color:var(--sys-ink);text-decoration:none}
 .view-tabs{flex:1;min-width:0}
 .view-tabs--one{visibility:hidden}
 /* closed section (<details>): the portal's one disclosure look, a bar on surface-2 with a 7px chevron first. New markup
@@ -108,8 +107,15 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 :where(#app) a.view-tab{text-decoration:none}
 .view-tab{gap:6px}
 .view-tab .n{height:18px;padding:0 5px;font-size:10px}
-/* the bar's one control: "Search" with its shortcut on wide screens, an icon at 1280px and narrower (§9) */
+/* the bar's controls: the as-of chip, "Sources" and "Method" (each only when the screen has one: assets/core.js
+   Drawers), then "Search" with its shortcut on wide screens, an icon at 1280px and narrower (§9) */
 .top-right{margin-left:auto;display:flex;align-items:center;gap:var(--sys-sp-2);flex-shrink:0}
+.top-right [hidden]{display:none!important}
+.asof-chip{white-space:nowrap}
+.drawer-btn{color:var(--sys-ink-2)}
+.drawer-btn[aria-expanded="true"]{background:var(--sys-bg-3);color:var(--sys-ink)}
+#drawer-hold{display:none}
+.drawer-item:first-child{margin-top:var(--sys-sp-3)}
 .search-btn{color:var(--sys-mute);font-weight:500}
 .search-btn:hover{color:var(--sys-ink)}
 .icon-btn{color:var(--sys-ink-2)}
@@ -330,10 +336,11 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
   /* 16px type: a phone browser zooms the page when a control with smaller type takes focus */
   #rail-pick{display:block;width:100%;min-height:44px;font-size:16px;font-weight:600}
   #main{flex:1 1 0;min-height:0}
-  /* one row under the picker: the tabs, then the search icon. The picker already names the module, so the title is not repeated */
-  #topbar{height:auto;padding:var(--sys-sp-2) var(--sys-gut);gap:var(--sys-sp-2)}
-  .crumb{display:none}
-  .view-tabs{margin-left:calc(-1 * var(--sys-gut));padding-left:var(--sys-gut)}
+  /* one row under the picker: the tabs, then the controls; when Sources, Method and the as-of chip do not fit beside
+     the tabs, the controls take a second row, right-aligned */
+  #topbar{height:auto;padding:var(--sys-sp-2) var(--sys-gut);gap:var(--sys-sp-2);flex-wrap:wrap}
+  .view-tabs{flex:1 1 180px;margin-left:calc(-1 * var(--sys-gut));padding-left:var(--sys-gut)}
+  .view-tabs--one{flex-basis:0}
   #inspector.open{position:fixed;right:var(--sys-sp-2);top:var(--sys-sp-2);bottom:var(--sys-sp-2);z-index:1200;margin:0;width:min(calc(100vw - 16px),var(--insp-w));box-shadow:var(--sys-sh-3)}
   #content{padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-6)}
   .page-head h1,.page-head .sub{overflow-wrap:anywhere}

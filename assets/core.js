@@ -1,7 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk — core runtime (ES module, no build step)
+   Broad Sky OS — core runtime of the shell (ES module, no build step)
    Exports: Data, Fmt, UI, Maps, Charts, Live, Tour, App
+   The role in view ("Viewing as") comes from assets/session.js; which screens it opens comes from modules/registry.js
+   LEVELS, handed over by app.html (App.levels).
    ═══════════════════════════════════════════════════════════════════════════ */
+import { Session } from './session.js?v=20261123143257';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -187,7 +190,13 @@ export const UI = {
   note: (html, kind = '') => `<div class="sys-note sys-note--${NOTE_KIND[kind] || 'info'} note${kind ? ' ' + kind : ''}">${html}</div>`,
   kv: obj => `<dl class="kv">${Object.entries(obj).filter(([k, v]) => v != null && v !== '' && !(Array.isArray(v) && !v.length)).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? `<span class="sys-chips">${v.map(x => `<span class="sys-chip chip">${esc(x)}</span>`).join('')}</span>` : v}</dd>`).join('')}</dl>`,
   timeline: items => `<div class="timeline">${items.map(i => `<div class="tl-item" style="${i.color ? `--cc:${i.color}` : ''}"><div class="d">${esc(i.date)}</div><div class="e">${i.html || esc(i.text)}</div></div>`).join('')}</div>`,
-  toast(msg, ms = 2600) { const t = document.createElement('div'); t.className = 'sys-note sys-note--info toast'; t.setAttribute('role', 'status'); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms); },
+  toast(msg, ms = 2600, key = '') { if (key) document.querySelector(`.toast[data-k="${key}"]`)?.remove(); const t = document.createElement('div'); t.className = 'sys-note sys-note--info toast'; if (key) t.dataset.k = key; t.setAttribute('role', 'status'); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), ms); },
+  /** Sources and Method drawers (OS_SPEC 4.8): a screen marks an element data-src or data-method and the shell moves it
+      there after the render; these add one item directly (HTML string or element). setAsOf puts the screen's one as-of
+      chip in the header (an element marked data-asof does the same). All three are cleared on every route change. */
+  addSource: item => Drawers.add('src', item),
+  addMethod: item => Drawers.add('method', item),
+  setAsOf: text => Drawers.setAsOf(text),
   /** Segmented choice: .sys-chip buttons in a .sys-chips group; the pressed one is the selected (ink) chip. */
   seg(el, options, value, onChange) { el.innerHTML = `<div class="sys-chips seg" role="group">${options.map(o => `<button type="button" data-v="${esc(o.value)}" class="sys-chip${o.value === value ? ' active' : ''}" aria-pressed="${o.value === value}">${esc(o.label)}</button>`).join('')}</div>`; $$('button', el).forEach(b => b.onclick = () => { $$('button', el).forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', String(x === b)); }); onChange(b.dataset.v); }); },
   /** Filter bar. filters: [{key,label,type:'select'|'search'|'toggle',options:[{value,label}],value}] → .sys-input / .sys-field / pressed .sys-chip */
@@ -234,6 +243,7 @@ export const Inspector = {
   /** Right-hand drawer (#inspector is a .sys-card): accent bar from `color`, sections with .sys-card-label heads, .sys-btn actions. */
   open({ title, sub, color, sections = [], actions = [] }) {
     const el = $('#inspector'); if (!el) return;
+    Drawers.park();   // a Sources or Method list shown here goes back to its hold before the panel is redrawn
     const c = color || 'var(--mc, var(--sys-brand))';
     el.dataset.co = ''; el.style.setProperty('--co', c); el.style.setProperty('--mc', c);
     el.innerHTML = `<div class="insp-head" style="--mc:${c}"><div class="grow"><h2 class="sys-card-title">${title}</h2>${sub ? `<div class="sys-kpi-sub sub">${sub}</div>` : ''}</div><button class="${btnCls('ghost', 'sm', 'icon-btn')} sys-btn--icon" type="button" data-close title="Close (Esc)" aria-label="Close inspector">${ICON.close}</button></div><div class="insp-body">${sections.map(s => `<section class="insp-sec">${s.label ? `<h4 class="sys-card-label">${esc(s.label)}</h4>` : ''}${s.html}</section>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="${btnCls('secondary', 'sm', 'sm')}" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button type="button" class="${btnCls('secondary', 'sm', 'sm')}" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
@@ -248,10 +258,74 @@ export const Inspector = {
   },
   close() {
     const el = $('#inspector'); if (!el) return;
+    Drawers.park();
     const had = el.contains(document.activeElement);
     el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); setTimeout(() => { if (!el.classList.contains('open')) el.innerHTML = ''; }, 250);
     const back = Inspector._from; Inspector._from = null;
     if (had && back && back.isConnected) back.focus({ preventScroll: true });
+  },
+};
+
+/* ── Sources and Method (OS_SPEC 4.8) ─────────────────────────────────────────
+   Two header controls on every screen, "Sources" and "Method". After a screen renders (and whenever it adds markup
+   later), every element in #content marked data-src moves into the Sources list and every element marked data-method
+   into the Method list; a control shows only while its list has an item. An element marked data-asof becomes the one
+   as-of chip in the header (its attribute value, or its text) and leaves the page. The lists open in the side panel
+   (#inspector); the moved elements keep their own markup and handlers. The assistant widget's own data-src
+   attributes (.ch) and lazy images are not marks. Screens can also add items with ctx.ui.addSource / addMethod /
+   setAsOf. Everything is cleared on each route change. */
+const NOT_A_MARK = /^(IMG|SOURCE|IFRAME|VIDEO|AUDIO|SCRIPT|PICTURE)$/;
+const Drawers = {
+  _l: null, _hold: null, asof: null, shown: null,
+  NAMES: { src: 'Sources', method: 'Method' },
+  lists() {
+    if (!Drawers._l) {
+      const hold = document.createElement('div'); hold.id = 'drawer-hold'; hold.hidden = true; document.body.appendChild(hold);
+      Drawers._hold = hold; Drawers._l = {};
+      for (const k of ['src', 'method']) { const d = document.createElement('div'); d.className = 'drawer-list'; d.dataset.drawer = k; hold.appendChild(d); Drawers._l[k] = d; }
+    }
+    return Drawers._l;
+  },
+  add(kind, item) {
+    if (item == null || item === '') return;
+    const sec = document.createElement('section'); sec.className = 'insp-sec drawer-item';
+    if (typeof item === 'string') sec.innerHTML = item; else sec.appendChild(item);
+    Drawers.lists()[kind].appendChild(sec); Drawers.paint();
+  },
+  setAsOf(text) { Drawers.asof = text == null || text === '' ? null : String(text).replace(/\s+/g, ' ').trim(); Drawers.paint(); },
+  collect(root) {
+    if (!root || !root.querySelectorAll) return;
+    let hit = false;
+    for (const el of root.querySelectorAll('[data-src],[data-method],[data-asof]')) {
+      if (!root.contains(el) || NOT_A_MARK.test(el.tagName) || el.closest('.ch,#drawer-hold')) continue;
+      hit = true;
+      if (el.hasAttribute('data-asof')) { if (!Drawers.asof) Drawers.asof = (el.getAttribute('data-asof') || el.textContent || '').replace(/\s+/g, ' ').trim() || null; el.remove(); continue; }
+      const kind = el.hasAttribute('data-src') ? 'src' : 'method';
+      const sec = document.createElement('section'); sec.className = 'insp-sec drawer-item';
+      sec.appendChild(el);
+      Drawers.lists()[kind].appendChild(sec);
+    }
+    if (hit) Drawers.paint();
+  },
+  reset() { const l = Drawers.lists(); Drawers.park(); for (const k in l) l[k].replaceChildren(); Drawers.asof = null; Drawers.paint(); },
+  count: k => Drawers.lists()[k].childElementCount,
+  paint() {
+    const t = document.getElementById('topbar'); if (!t) return;
+    for (const k of ['src', 'method']) { const b = t.querySelector(`[data-drawer-btn="${k}"]`); if (b) { b.hidden = !Drawers.count(k); b.setAttribute('aria-expanded', String(Drawers.shown === k)); } }
+    const c = t.querySelector('.asof-chip');
+    if (c) { c.hidden = !Drawers.asof; c.textContent = !Drawers.asof ? '' : /^as of\b/i.test(Drawers.asof) ? Drawers.asof.replace(/^as of/i, 'As of') : `As of ${Drawers.asof}`; }
+  },
+  toggle(k) {
+    if (Drawers.shown === k) return Inspector.close();
+    Inspector.open({ title: Drawers.NAMES[k], sections: [{ html: '<div data-drawer-slot></div>' }] });
+    $('#inspector [data-drawer-slot]')?.appendChild(Drawers.lists()[k]);
+    Drawers.shown = k; Drawers.paint();
+  },
+  /** put a list shown in the side panel back in its hold (the panel is about to be closed or redrawn) */
+  park() {
+    if (!Drawers._l) return;
+    for (const k in Drawers._l) if (Drawers._l[k].parentElement !== Drawers._hold) Drawers._hold.appendChild(Drawers._l[k]);
+    if (Drawers.shown) { Drawers.shown = null; Drawers.paint(); }
   },
 };
 
@@ -537,11 +611,67 @@ export const Tour = {
 
 /* ── App shell / router ───────────────────────────────────────────────────── */
 const searchIndex = [], SCREEN = 'Screen';   // the search box's tag for a screen
+/* Levels (modules/registry.js LEVELS and its rules): app.html hands the tables over through App.levels. Until it does,
+   every screen is a firm screen and the firm menu is drawn. */
+const FIRM_LEVELS = ['firm_leadership', 'firm_team'];
+const ACCESS = { table: {}, only: {}, menus: {}, names: {}, param: {}, companies: [] };
+const HOME = '#/home/overview', DENIED = 'Not in this view.';
 export const App = {
-  modules: [], aliases: {}, current: null, view: null, params: {}, state: {}, _unmount: null, _warned: new Set(),
+  modules: [], aliases: {}, current: null, view: null, params: {}, state: {}, _unmount: null, _warned: new Set(), _recent: [],
   /** The forwarding table for merged screens ('module/view' → 'module/view?params', modules/registry.js ALIASES).
       app.html hands it over, so this file never imports the registry (that would be an import cycle). */
   alias(table) { App.aliases = { ...(table || {}) }; },
+  /** The level tables from modules/registry.js: { table: LEVELS, only: ONLY, menus: MENUS, names: MENU_NAMES,
+      param: OWN_PARAM, companies: COMPANIES }. */
+  levels(cfg) { Object.assign(ACCESS, cfg || {}); },
+  /** The rule for one screen: its own key, else its module's, else firm levels only. */
+  rule(mid, vid) { const t = ACCESS.table; return (vid && t[`${mid}/${vid}`]) || t[mid] || { to: FIRM_LEVELS }; },
+  /** True if the role in view (or `role`) opens module mid, screen vid. */
+  can(mid, vid, role = Session.role()) {
+    const only = ACCESS.only[role.id];
+    if (only && !only.includes(mid) && !only.includes(`${mid}/${vid}`)) return false;
+    const r = App.rule(mid, vid);
+    if (!(r.to || []).includes(role.level) && !(r.plus || []).includes(role.id)) return false;
+    return !(r.own && role.co && ACCESS.companies.includes(mid) && mid !== role.co);
+  },
+  /** The address parameters a company role gets on an own-company screen (ma/pipeline?platform=pp …); else `params`. */
+  ownParams(mid, vid, params = {}, role = Session.role()) {
+    const r = App.rule(mid, vid); if (!r.own || !r.param || !role.co) return params;
+    const f = ACCESS.param[r.param], want = f ? f(role.co) : role.co;
+    return want == null || params[r.param] === want ? params : { ...params, [r.param]: want };
+  },
+  /** The first screen of a module the role opens (tabbed screens first). */
+  firstView(m, role = Session.role()) { const ok = (m.views || []).filter(v => App.can(m.id, v.id, role)); return ok.find(v => v.menu !== false) || ok[0] || null; },
+  /** Address of a screen for the role in view, own-company parameters included. */
+  href(mid, vid, params = {}) { const p = App.ownParams(mid, vid, params); const q = new URLSearchParams(p).toString(); return `#/${mid}/${vid}${q ? '?' + q : ''}`; },
+  /** True if the role in view opens this address (a screen it can open, with its own company's parameter if any). */
+  canHref(href, role = Session.role()) {
+    const h = String(href || ''); if (!h.startsWith('#/')) return true;
+    const r = App.resolve(h); if (r.miss || !r.m || !r.v) return false;
+    if (!App.can(r.m.id, r.v.id, role)) return false;
+    const rule = App.rule(r.m.id, r.v.id);
+    return !(rule.own && rule.param && role.co && r.params[rule.param] != null && App.ownParams(r.m.id, r.v.id, r.params, role) !== r.params);
+  },
+  /** The menu of the role in view: [{ name, items: [{ key, m, v, label, href }] }]. Firm levels: the RAIL groups
+      (module flags set by modules/registry.js), filtered. Company levels: MENUS for the level, with '<co>' filled in. */
+  menu(role = Session.role()) {
+    const list = role.co ? ACCESS.menus[role.level] : null;
+    const modItem = (m, key, label) => { const fv = App.firstView(m, role); return fv ? { key, m, v: null, label: label || m.name, href: App.href(m.id, fv.id) } : null; };
+    if (list) {
+      const items = list.map(raw => {
+        const key = raw.replace('<co>', role.co), [mid, vid] = key.split('/');
+        const m = App.modules.find(x => x.id === mid); if (!m) return null;
+        if (!vid) return modItem(m, key, ACCESS.names[raw]);
+        const v = m.views.find(x => x.id === vid);
+        return v && App.can(mid, vid, role) ? { key, m, v, label: ACCESS.names[raw] || v.name, href: App.href(mid, vid) } : null;
+      }).filter(Boolean);
+      return [{ name: '', items }];
+    }
+    const shown = App.modules.filter(m => m.rail !== false).sort((a, b) => (a.railPos ?? 1e9) - (b.railPos ?? 1e9));
+    return [...new Set(shown.map(m => m.group || 'Portfolio'))]
+      .map(g => ({ name: g, items: shown.filter(m => (m.group || 'Portfolio') === g).map(m => modItem(m, m.id)).filter(Boolean) }))
+      .filter(g => g.items.length);
+  },
   register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: v.name === m.name ? m.name : `${m.name} · ${v.name}`, kind: SCREEN, href: `#/${m.id}/${v.id}`, color: m.color })); },
   /** Modules call this to make entities searchable in ⌘K: items [{label, sub, href, kind}]. A module that tags an entry
       'View' means a screen; the search box shows one word for it. */
@@ -568,12 +698,29 @@ export const App = {
   },
   go(mod, view, params) { const q = params ? '?' + new URLSearchParams(params).toString() : ''; location.hash = App.resolve(`#/${mod}/${view || ''}${q}`).hash; },
   async route() {
-    const r = App.resolve(); const { m, v, params } = r; if (!m) return;
+    if (!Session.catalog()) await Session.ready();   // the first route waits for the role list (Session.role() is then final)
+    const role = Session.role();
+    let r = App.resolve();
+    if (!r.m) return;
     // a merged screen's old address: show the new one in its place (replace, not push, so Back returns to where the visitor was)
     if (r.forwarded) history.replaceState(history.state, '', r.hash);
-    else if (r.miss && !App._warned.has(r.miss)) { App._warned.add(r.miss); console.warn(`BSP Desk: no screen at #/${r.miss}; showing #/${m.id}/${v.id} instead.`); }
+    else if (r.miss && !App._warned.has(r.miss)) { App._warned.add(r.miss); console.warn(`Broad Sky OS: no screen at #/${r.miss}; showing #/${r.m.id}/${r.v.id} instead.`); }
+    // an address with no screen named opens the module's first screen this role has
+    if (!App.parse().view) { const fv = App.firstView(r.m, role); if (fv) r = { ...r, v: fv }; }
+    const quiet = App._quiet; App._quiet = false;
+    if (!App.can(r.m.id, r.v.id, role)) {
+      // a screen this level does not have: the role's home, with one line (none after a "Viewing as" change)
+      if (!quiet) UI.toast(DENIED, 4000, 'denied');
+      history.replaceState(history.state, '', HOME);
+      r = App.resolve(HOME);
+    } else {
+      const own = App.ownParams(r.m.id, r.v.id, r.params, role);
+      if (own !== r.params) { r = { ...r, params: own }; history.replaceState(history.state, '', App.href(r.m.id, r.v.id, own)); }
+    }
+    const { m, v, params } = r;
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
-    App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote();
+    App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote(); Drawers.reset();
+    App._recent = [`${m.id}/${v.id}`, ...App._recent.filter(k => k !== `${m.id}/${v.id}`)].slice(0, 12);
     document.documentElement.style.setProperty('--mc', m.color);
     // the module accent drives .sys-card[data-co] bars, .sys-chip--soft, .sys-note--co and the current view tab (system.css §3)
     const main = $('#main'); if (main) { main.dataset.co = m.id; main.style.setProperty('--co', m.color); }
@@ -582,48 +729,72 @@ export const App = {
     const ctx = { el: content, module: m, view: v, params, data: Data, ui: UI, maps: Maps, charts: Charts, fmt: Fmt, live: Live, inspector: Inspector, app: App, esc, $, $$ };
     try { const un = await v.render(ctx); if (typeof un === 'function') App._unmount = un; }
     catch (e) { console.error(e); content.innerHTML = `<div class="empty">This screen failed to load.<br><span class="mono small">${esc(e.message)}</span></div>`; }
-    document.title = `${m.name} · ${v.name} — BSP Desk`;
+    if (App.current === m && App.view === v) Drawers.collect(content);
+    document.title = `${m.name} · ${v.name} · Broad Sky OS`;
   },
   renderRail() {
     const nav = $('#rail .rail-nav'); if (!nav) return;
-    // drawn from the flags modules/registry.js sets, on a filtered and sorted COPY (App.modules keeps its order): a module
-    // off the menu shows only while it is open, and items follow railPos. The open one is a 15th item, so it gets a rule
-    // above it and no heading of its own (a fourth heading does not fit a laptop screen; app.css .rail-group--open)
-    const shown = App.modules.filter(m => m.rail !== false || m === App.current).sort((a, b) => (a.railPos ?? 1e9) - (b.railPos ?? 1e9));
-    const groups = [...new Set(shown.map(m => m.group || 'Portfolio'))].map(g => { const ms = shown.filter(m => (m.group || 'Portfolio') === g); return { name: g, ms, off: ms.every(m => m.rail === false) }; });
+    // drawn at every route and every "Viewing as" change from the role's menu (App.menu: the registry's RAIL for the firm,
+    // MENUS for a company level), filtered by LEVELS. App.modules keeps its order. A module that is open but not on the
+    // menu is drawn as one more item under a rule, with no heading (app.css .rail-group--open)
+    const role = Session.role(), groups = App.menu(role), items = groups.flatMap(g => g.items);
+    let act = items.find(i => i.v && i.m === App.current && i.v === App.view) || items.find(i => !i.v && i.m === App.current) || null;
+    if (!act && App.current && App.view) { act = { key: App.current.id, m: App.current, v: null, label: App.current.name, href: App.href(App.current.id, App.view.id, App.params) }; groups.push({ name: '', off: true, items: [act] }); }
+    App._railAct = act ? act.key : '';
     const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render
-    const item = m => `<a class="rail-item${m === App.current ? ' active' : ''}" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color};--mc:${m.color}" data-mod="${m.id}"${m === App.current ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(m.name)}</span></a>`;
-    nav.innerHTML = groups.map(g => `<div class="rail-group${g.off ? ' rail-group--open' : ''}">${g.off ? '' : `<div class="sys-card-label rail-section">${esc(g.name)}</div>`}${g.ms.map(item).join('')}</div>`).join('');
-    $$('.rail-item', nav).forEach(el => { el.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(el.dataset.mod); }; el.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); App.go(el.dataset.mod); } }; });
-    if (refocus) $(`.rail-item[data-mod="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
+    const item = i => `<a class="rail-item${i === act ? ' active' : ''}" href="${esc(i.href)}" data-co="" style="--co:${i.m.color};--mc:${i.m.color}" data-k="${esc(i.key)}" data-mod="${esc(i.m.id)}"${i === act ? ' aria-current="page"' : ''}><span class="sys-dot" aria-hidden="true"></span><span class="ellipsis">${esc(i.label)}</span></a>`;
+    // a group that holds one item of its own name ("Home") needs no heading
+    const head = g => g.name && !g.off && !(g.items.length === 1 && g.items[0].label === g.name);
+    nav.innerHTML = groups.map(g => `<div class="rail-group${g.off ? ' rail-group--open' : ''}">${head(g) ? `<div class="sys-card-label rail-section">${esc(g.name)}</div>` : ''}${g.items.map(item).join('')}</div>`).join('');
+    const open = h => { location.hash = App.resolve(h).hash; };
+    $$('.rail-item', nav).forEach(el => { el.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); open(el.getAttribute('href')); }; el.onkeydown = e => { if (e.key === ' ') { e.preventDefault(); open(el.getAttribute('href')); } }; });
+    if (refocus) $(`.rail-item[data-k="${CSS.escape(App._railKey)}"]`, nav)?.focus({ preventScroll: true });
     // a short window: keep the current item in view
     const cur = $('.rail-item.active', nav); if (cur && nav.scrollHeight > nav.clientHeight + 4) { const a = cur.getBoundingClientRect(), b = nav.getBoundingClientRect(); if (a.top < b.top || a.bottom > b.bottom) nav.scrollTop += a.top - b.top - (b.height - a.height) / 2; }
-    // phone: the same menu as one native picker (app.css shows it at 900px and narrower). Groups on the menu are
-    // optgroups, a module off the menu is listed only while it is open, and the menu foot's link ("All views") comes last.
+    // the menu foot's "All views" (every page and screen) is for the firm levels only
+    const all = $('#rail .rail-foot a[href]'); if (all) all.hidden = !!role.co;
+    // phone: the same menu as one native picker (app.css shows it at 900px and narrower). Headed groups are optgroups,
+    // the open module off the menu is one more option, and the firm's "All views" comes last.
     const pick = $('#rail-pick'); if (!pick) return;
-    const opt = m => `<option value="${esc(m.id)}"${m === App.current ? ' selected' : ''}>${esc(m.name)}</option>`;
-    const all = $('#rail .rail-foot a[href]');
-    pick.innerHTML = groups.map(g => g.off ? g.ms.map(opt).join('') : `<optgroup label="${esc(g.name)}">${g.ms.map(opt).join('')}</optgroup>`).join('')
-      + (all ? `<option value="" data-href="${esc(all.getAttribute('href'))}">${esc(all.textContent.trim())}</option>` : '');
-    if (App.current) pick.value = App.current.id;
+    const opt = i => `<option value="${esc(i.key)}" data-hash="${esc(i.href)}"${i === act ? ' selected' : ''}>${esc(i.label)}</option>`;
+    pick.innerHTML = groups.map(g => head(g) ? `<optgroup label="${esc(g.name)}">${g.items.map(opt).join('')}</optgroup>` : g.items.map(opt).join('')).join('')
+      + (all && !role.co ? `<option value="" data-href="${esc(all.getAttribute('href'))}">${esc(all.textContent.trim())}</option>` : '');
+    pick.value = App._railAct;
   },
   renderTop() {
     const m = App.current, v = App.view; const t = $('#topbar');
-    $('.crumb', t).innerHTML = `<a class="sys-subnav-title" href="#/${esc(m.id)}/" data-co="" style="--co:${m.color}">${esc(m.name)}</a><span class="sys-sr"> · ${esc(v.name)}</span>`;
-    // tabs are a filtered and sorted COPY of m.views (never the array itself): a screen flagged menu:false keeps its address
+    // the tab names the screen (the module is named once, in the menu). Tabs are a filtered and sorted COPY of m.views
+    // (never the array itself): a screen the level cannot open is left out; a screen flagged menu:false keeps its address
     // and shows its tab only while it is open; m.tabOrder puts the ids it lists first and the rest keep their place after
     const ord = m.tabOrder || [], pos = x => { const i = ord.indexOf(x.id); return i < 0 ? ord.length : i; };
-    const shown = m.views.filter(x => x.menu !== false || x === v).sort((a, b) => pos(a) - pos(b));
-    $('.view-tabs', t).innerHTML = shown.map(x => `<a class="view-tab" href="#/${esc(m.id)}/${esc(x.id)}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
+    const shown = m.views.filter(x => (x.menu !== false || x === v) && (x === v || App.can(m.id, x.id))).sort((a, b) => pos(a) - pos(b));
+    $('.view-tabs', t).innerHTML = shown.map(x => `<a class="view-tab" href="${esc(x === v ? App.href(m.id, x.id, App.params) : App.href(m.id, x.id))}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
     $('.view-tabs', t).classList.toggle('view-tabs--one', shown.length < 2);   // one screen: the title already names it, so no tab is drawn
-    $$('.view-tab', t).forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(m.id, b.dataset.v); });
+    $$('.view-tab', t).forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); if (b.dataset.v !== App.view?.id) location.hash = b.getAttribute('href'); });
     const cur = $('.view-tab[aria-current]', t), tabs = $('.view-tabs', t); if (cur && tabs.scrollWidth > tabs.clientWidth) { const a = cur.getBoundingClientRect(), b = tabs.getBoundingClientRect(); if (a.left < b.left || a.right > b.right - 24) tabs.scrollLeft += a.left - b.left - 24; }
+    Drawers.paint();
   },
   palette() {
     let el = $('#palette'); if (el) return el.remove();
-    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search the portal'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search screens, companies, targets, opportunities…" aria-label="Search screens, companies, targets and opportunities" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
+    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search" aria-label="Search screens, companies and records" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
     const inp = $('input', el), list = $('.pal-list', el); let items = [], active = 0;
-    const draw = () => { const q = inp.value.trim().toLowerCase(); items = (q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q)) : searchIndex.filter(i => i.kind === SCREEN)).slice(0, 40); active = 0; list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}"><span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span><span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`; $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); }); };
+    const role = Session.role();
+    // the empty box: six screens at most, for the level in view: the ones opened last, then the menu's
+    const screens = () => {
+      const seen = new Set(), out = [];
+      const add = (k, href, label, color) => { if (out.length >= 6 || seen.has(k)) return; seen.add(k); out.push({ label, href, kind: SCREEN, color }); };
+      for (const k of App._recent) { const [mid, vid] = k.split('/'); const m = App.modules.find(x => x.id === mid), v = m?.views.find(x => x.id === vid); if (m && v && App.can(mid, vid, role)) add(k, App.href(mid, vid), v.name === m.name ? m.name : `${m.name} · ${v.name}`, m.color); }
+      for (const i of App.menu(role).flatMap(g => g.items)) { const v = i.v || App.firstView(i.m, role); if (v) add(`${i.m.id}/${v.id}`, i.href, i.label, i.m.color); }
+      return out;
+    };
+    const draw = () => {
+      const q = inp.value.trim().toLowerCase();
+      items = q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q) && App.canHref(i.href, role)).slice(0, 40) : screens();
+      active = 0;
+      const tag = new Set(items.map(i => i.kind || '')).size > 1;   // the kind is shown only when the results mix kinds
+      list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}">${tag ? `<span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span>` : `<span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>`}<span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`;
+      $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); });
+    };
     inp.oninput = draw; draw(); inp.focus();
     inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { location.hash = items[active].href; el.remove(); } $$('.pal-item', list).forEach((x, k) => { x.classList.toggle('active', k === active); x.setAttribute('aria-selected', String(k === active)); if (k === active) x.scrollIntoView({ block: 'nearest' }); }); };
     el.onclick = e => { if (e.target === el) el.remove(); };
@@ -632,17 +803,28 @@ export const App = {
     window.addEventListener('hashchange', App.route);
     document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); App.palette(); } if (e.key === 'Escape' && !(e.target.closest && e.target.closest('.ch'))) { if ($('#palette')) $('#palette').remove(); else Inspector.close(); } });
     // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
-    $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.mod : null; });
+    $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.k : null; });
     $('#search-btn').onclick = App.palette;
+    // Sources and Method: the two header controls open their lists in the side panel; marks added after the render
+    // (a table filled later, a panel drawn on a click) are collected as they land
+    $$('#topbar [data-drawer-btn]').forEach(b => { b.onclick = () => Drawers.toggle(b.dataset.drawerBtn); });
+    const content = $('#content');
+    if (content && typeof MutationObserver !== 'undefined') {
+      let raf = 0;
+      new MutationObserver(muts => {
+        if (raf || !muts.some(mu => [...mu.addedNodes].some(n => n.nodeType === 1 && (n.matches('[data-src],[data-method],[data-asof]') || n.querySelector('[data-src],[data-method],[data-asof]'))))) return;
+        raf = requestAnimationFrame(() => { raf = 0; Drawers.collect(content); });
+      }).observe(content, { childList: true, subtree: true });
+    }
     // phone menu: one native picker (renderRail fills it); the option carrying a link leaves the portal, the rest open a
-    // module. A choice made by touch, by mouse or in the open list opens at once. An arrow key or a typed letter on the
+    // screen. A choice made by touch, by mouse or in the open list opens at once. An arrow key or a typed letter on the
     // closed picker changes it one item at a time (Windows, Linux): that is a walk through the list, so it waits for
     // Enter, and Esc or leaving the picker puts it back. Walking never opens every item on the way or leaves the portal.
     const pick = $('#rail-pick');
     if (pick) {
       let walking = 0, pending = false;
-      const here = () => { pending = false; pick.value = App.current?.id || ''; };
-      const open = () => { pending = false; const to = pick.selectedOptions[0]?.dataset.href; if (to) { here(); location.href = to; } else if (pick.value && pick.value !== App.current?.id) App.go(pick.value); };
+      const here = () => { pending = false; pick.value = App._railAct || ''; };
+      const open = () => { pending = false; const o = pick.selectedOptions[0], to = o?.dataset.href; if (to) { here(); location.href = to; } else if (o?.dataset.hash && pick.value !== App._railAct) location.hash = App.resolve(o.dataset.hash).hash; };
       pick.onchange = () => { if (walking) pending = true; else open(); };   // a change inside a keystroke is a walk
       pick.onkeydown = e => {
         clearTimeout(walking); walking = 0;
@@ -656,7 +838,12 @@ export const App = {
     Theme.apply(Theme.get());
     Theme.watch(t => Maps.retheme(t));
     const sb = $('#search-btn .sys-kbd'); if (sb && !/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)) sb.textContent = 'Ctrl K';
-    App.route();
+    // the first route waits for the role list; after that a "Viewing as" change redraws the menu, the tabs and the screen
+    // (a screen the new level does not have goes to its home, with no notice: the visitor chose the change)
+    Session.ready().then(() => {
+      Session.onChange((role, what) => { if (what === 'role') { App._quiet = true; App.route(); } });
+      App.route();
+    });
   },
 };
 // Guard: assets/components.js imports ./core.js?v=20261123143257 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
