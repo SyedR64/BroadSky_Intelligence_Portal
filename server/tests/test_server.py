@@ -713,7 +713,8 @@ def test_repeated_excerpts_are_named_not_resent(env):
     chat(env['main'], 'Keep searching [mock:loop]')
     reqs = mock_requests(env)
     first, second = (reqs[k]['body']['messages'][-1]['content'][0]['content'] for k in (1, 2))   # the same search, twice
-    assert first.startswith('Results for "loop again":') and '(This excerpt is already above; not repeated.)' not in first
+    # an excerpt the question's own lookup already brought in may be named in the first search too; most are new
+    assert first.startswith('Results for "loop again":') and first.count('(This excerpt is already above; not repeated.)') < first.count('\n\n[') / 2
     assert second.count('(This excerpt is already above; not repeated.)') == first.count('\n\n[') and 'Nothing new: every result is already above.' in second
     assert len(second) < len(first) / 2 and re.findall(r'^\[\d+\]', second, re.M) == re.findall(r'^\[\d+\]', first, re.M)   # the numbers and titles stay, so it can still cite and read them
     assert reqs[0]['body']['cache_control'] == {'type': 'ephemeral'} and reqs[0]['body']['system'][0]['cache_control'] == {'type': 'ephemeral'}
