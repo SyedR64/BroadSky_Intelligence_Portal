@@ -1,5 +1,5 @@
 {
- "about": "Floor sketch cards captured from server/workspace.py site_brief (sandbox data, fictional customers) for the 3D house view and scripts/check_house3d.py.",
+ "about": "Floor sketch cards for the 3D house view and scripts/check_house3d.py. The first three were captured from server/workspace.py site_brief (company example data and the public branch). The cards whose id starts fs-live are live-shaped fixtures built from design_live_address.md sections 2.5 and 3 (made-up street names, no lookup made); recorded live cards replace them later.",
  "samples": [
   {
    "role": "pp-hvac-technician",
@@ -614,6 +614,1299 @@
     "sources": [
      1
     ]
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "sink repair",
+   "shape": "live: parcel, assessor storeys, L-shaped outline, likely height",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-live0001",
+    "title": "Floor sketch",
+    "address": "100 Fixture Rd, Lititz, PA 17543",
+    "issue": "Sink repair",
+    "basis": "likely",
+    "as_of": "2026-11-23",
+    "area": {
+     "status": "in",
+     "label": "Lancaster County"
+    },
+    "house": {
+     "text": "Two stories over a basement. Built 1973.",
+     "year": 1973,
+     "year_basis": "public",
+     "stories": 2,
+     "foundation": "basement",
+     "basement": "full",
+     "fuel": "gas",
+     "fuel_basis": "likely"
+    },
+    "focus": [
+     "fixture_shutoffs",
+     "main_water"
+    ],
+    "floors": [
+     {
+      "id": "basement",
+      "name": "Basement",
+      "w": 56,
+      "h": 30,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 56,
+        "h": 30,
+        "label": "Unfinished basement",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "MA",
+        "basis": "likely",
+        "focus": true,
+        "note": "Likely on the front basement wall",
+        "detail": null,
+        "x": 10,
+        "y": 29
+       },
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 30,
+        "y": 4
+       },
+       {
+        "kind": "furnace",
+        "label": "Furnace",
+        "short": "FU",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 34,
+        "y": 8
+       },
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "PA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 2,
+        "y": 6
+       },
+       {
+        "kind": "sewer_cleanout",
+        "label": "Sewer cleanout",
+        "short": "SE",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 20,
+        "y": 29.5
+       },
+       {
+        "kind": "sump_pump",
+        "label": "Sump pump",
+        "short": "SU",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 48,
+        "y": 4
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          10,
+          29
+         ],
+         [
+          10,
+          6
+         ],
+         [
+          30,
+          4
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          30,
+          2
+         ],
+         [
+          20,
+          29.5
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "gas",
+        "label": "Gas",
+        "points": [
+         [
+          55,
+          20
+         ],
+         [
+          34,
+          8
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          34,
+          8
+         ],
+         [
+          34,
+          20
+         ],
+         [
+          10,
+          20
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "wire",
+        "label": "Wire",
+        "points": [
+         [
+          2,
+          6
+         ],
+         [
+          2,
+          28
+         ],
+         [
+          20,
+          28
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     },
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 56,
+      "h": 30,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 12,
+        "label": "Family room",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 18,
+        "label": "Living room",
+        "basis": "likely"
+       },
+       {
+        "x": 24,
+        "y": 0,
+        "w": 16,
+        "h": 14,
+        "label": "Kitchen",
+        "basis": "likely"
+       },
+       {
+        "x": 24,
+        "y": 14,
+        "w": 16,
+        "h": 16,
+        "label": "Dining room",
+        "basis": "likely"
+       },
+       {
+        "x": 40,
+        "y": 12,
+        "w": 16,
+        "h": 18,
+        "label": "Garage",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "fixture_shutoffs",
+        "label": "Sink shutoffs",
+        "short": "FI",
+        "basis": "likely",
+        "focus": true,
+        "note": "Likely under the kitchen sink",
+        "detail": null,
+        "x": 32,
+        "y": 1.5
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          32,
+          6
+         ],
+         [
+          32,
+          1.5
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          32,
+          1.5
+         ],
+         [
+          32,
+          10
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "wire",
+        "label": "Wire",
+        "points": [
+         [
+          0.5,
+          12
+         ],
+         [
+          24,
+          12
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     },
+     {
+      "id": "second",
+      "name": "Second floor",
+      "w": 56,
+      "h": 30,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 14,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 16,
+        "y": 0,
+        "w": 10,
+        "h": 10,
+        "label": "Bath",
+        "basis": "likely"
+       },
+       {
+        "x": 26,
+        "y": 0,
+        "w": 14,
+        "h": 14,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 14,
+        "w": 20,
+        "h": 16,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 20,
+        "y": 14,
+        "w": 20,
+        "h": 16,
+        "label": "Primary bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 40,
+        "y": 12,
+        "w": 16,
+        "h": 18,
+        "label": "Bonus room",
+        "basis": "likely"
+       }
+      ],
+      "items": [],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          20,
+          6
+         ],
+         [
+          20,
+          2
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          30,
+          20
+         ],
+         [
+          10,
+          20
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     }
+    ],
+    "outside": [
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "basement",
+      "side": "right",
+      "at": 0.6,
+      "basis": "likely",
+      "focus": false,
+      "note": "Likely outside on a side wall"
+     },
+     {
+      "kind": "condenser",
+      "label": "AC condenser",
+      "short": "AC",
+      "floor": "basement",
+      "side": "rear",
+      "at": 0.85,
+      "basis": "likely",
+      "focus": false,
+      "note": "Likely on a pad behind the house"
+     }
+    ],
+    "front": "bottom",
+    "place": {
+     "label": "100 Fixture Rd, Lititz, PA 17543",
+     "lat": 40.157,
+     "lon": -76.307,
+     "precision": "parcel",
+     "geocoder": "parcel centroid",
+     "basis": "public",
+     "src": 1
+    },
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -76.307,
+       "lat": 40.157
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        -3.34,
+        4.31
+       ],
+       [
+        8.56,
+        1.67
+       ],
+       [
+        7.77,
+        -1.9
+       ],
+       [
+        12.53,
+        -2.95
+       ],
+       [
+        11.34,
+        -8.31
+       ],
+       [
+        -5.32,
+        -4.62
+       ]
+      ],
+      "area_m2": 138.2,
+      "w_ft": 56,
+      "d_ft": 30,
+      "rot_deg": 12.5,
+      "basis": "public",
+      "src": 3,
+      "as_of": "2024-08-03",
+      "method": "outline from imagery",
+      "outbuildings": [
+       {
+        "ring_m": [
+         [
+          17.15,
+          12.26
+         ],
+         [
+          20.13,
+          11.6
+         ],
+         [
+          19.47,
+          8.62
+         ],
+         [
+          16.49,
+          9.28
+         ]
+        ],
+        "basis": "public"
+       }
+      ]
+     },
+     "height": {
+      "eave_m": 5.4,
+      "ridge_m": 8.0,
+      "from": "storeys",
+      "basis": "likely",
+      "src": 3
+     },
+     "storeys": {
+      "n": 2,
+      "basis": "public",
+      "src": 2
+     },
+     "parcel": {
+      "ring_m": [
+       [
+        -4.68,
+        26.46
+       ],
+       [
+        23.89,
+        20.13
+       ],
+       [
+        16.3,
+        -14.09
+       ],
+       [
+        -12.26,
+        -7.76
+       ]
+      ],
+      "area_m2": 1026,
+      "basis": "public",
+      "src": 2
+     },
+     "front": {
+      "bearing_deg": 192.5,
+      "basis": "public"
+     }
+    },
+    "facts": [
+     {
+      "k": "year_built",
+      "v": 1973,
+      "basis": "public",
+      "src": 2,
+      "as_of": "2026-11-23"
+     },
+     {
+      "k": "storeys",
+      "v": 2,
+      "basis": "public",
+      "src": 2,
+      "as_of": "2026-11-23"
+     }
+    ],
+    "source_line": "",
+    "sources": []
+   }
+  },
+  {
+   "role": "pp-hvac-technician",
+   "issue": "no heat",
+   "shape": "live: outline only, imagery 2010, typed point, no rot_deg",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-live0002",
+    "title": "Floor sketch",
+    "address": "7 Sample Ln, Ephrata, PA 17522",
+    "issue": "No heat",
+    "basis": "likely",
+    "as_of": "2026-11-23",
+    "area": {
+     "status": "in",
+     "label": "Lancaster County"
+    },
+    "house": {
+     "text": "One storey on a slab. (likely)",
+     "year": 1962,
+     "year_basis": "likely",
+     "stories": 1,
+     "foundation": "slab",
+     "basement": "none",
+     "fuel": "gas",
+     "fuel_basis": "likely"
+    },
+    "focus": [
+     "air_handler",
+     "panel"
+    ],
+    "floors": [
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 44,
+      "h": 28,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 10,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 14,
+        "y": 0,
+        "w": 8,
+        "h": 8,
+        "label": "Bath",
+        "basis": "likely"
+       },
+       {
+        "x": 22,
+        "y": 0,
+        "w": 12,
+        "h": 12,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 10,
+        "w": 20,
+        "h": 18,
+        "label": "Living room",
+        "basis": "likely"
+       },
+       {
+        "x": 20,
+        "y": 12,
+        "w": 14,
+        "h": 16,
+        "label": "Kitchen",
+        "basis": "likely"
+       },
+       {
+        "x": 34,
+        "y": 0,
+        "w": 10,
+        "h": 28,
+        "label": "Utility",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "PA",
+        "basis": "likely",
+        "focus": true,
+        "note": "",
+        "detail": null,
+        "x": 43,
+        "y": 4
+       },
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 40,
+        "y": 10
+       },
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "MA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 38,
+        "y": 27.5
+       },
+       {
+        "kind": "fixture_shutoffs",
+        "label": "Sink shutoffs",
+        "short": "FI",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 27,
+        "y": 27
+       },
+       {
+        "kind": "air_handler",
+        "label": "Furnace",
+        "short": "AI",
+        "basis": "likely",
+        "focus": true,
+        "note": "In the attic",
+        "detail": null,
+        "x": 30,
+        "y": 14
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          38,
+          27.5
+         ],
+         [
+          40,
+          10
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          27,
+          27
+         ],
+         [
+          24,
+          14
+         ],
+         [
+          18,
+          4
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "wire",
+        "label": "Wire",
+        "points": [
+         [
+          43,
+          4
+         ],
+         [
+          34,
+          4
+         ],
+         [
+          34,
+          26
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "wire",
+        "label": "Wire",
+        "points": [
+         [
+          43,
+          4
+         ],
+         [
+          43,
+          27
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          30,
+          14
+         ],
+         [
+          10,
+          14
+         ],
+         [
+          10,
+          5
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     }
+    ],
+    "outside": [
+     {
+      "kind": "condenser",
+      "label": "AC condenser",
+      "short": "AC",
+      "floor": "first",
+      "side": "rear",
+      "at": 0.7,
+      "basis": "likely",
+      "focus": false,
+      "note": "Likely on a pad behind the house"
+     },
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "first",
+      "side": "right",
+      "at": 0.5,
+      "basis": "likely",
+      "focus": false,
+      "note": "Likely outside on a side wall"
+     }
+    ],
+    "front": "bottom",
+    "place": {
+     "label": "7 Sample Ln, Ephrata, PA 17522",
+     "lat": 40.18,
+     "lon": -76.18,
+     "precision": "typed",
+     "geocoder": "Census",
+     "basis": "public",
+     "src": 1
+    },
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -76.18,
+       "lat": 40.18
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        -13.94,
+        9.34
+       ],
+       [
+        -2.33,
+        16.05
+       ],
+       [
+        1.94,
+        8.66
+       ],
+       [
+        -9.67,
+        1.95
+       ]
+      ],
+      "area_m2": 114.4,
+      "basis": "public",
+      "src": 2,
+      "as_of": "2010-08-17",
+      "method": "outline from imagery",
+      "outbuildings": []
+     },
+     "height": {
+      "eave_m": 2.7,
+      "ridge_m": 4.9,
+      "from": "storeys",
+      "basis": "likely",
+      "src": 2
+     },
+     "storeys": {
+      "n": 1,
+      "basis": "likely"
+     },
+     "front": {
+      "bearing_deg": 150,
+      "basis": "public"
+     }
+    },
+    "facts": [],
+    "source_line": "",
+    "sources": []
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "no hot water",
+   "shape": "live: public height, front at the top, porch, one connected company record",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-live0003",
+    "title": "Floor sketch",
+    "address": "55 Probe Ave, Toms River, NJ 08753",
+    "issue": "No hot water",
+    "basis": "mixed",
+    "example": false,
+    "as_of": "2026-11-23",
+    "area": {
+     "status": "in",
+     "label": "Ocean County"
+    },
+    "house": {
+     "text": "Two stories on a slab. Built 1988.",
+     "year": 1988,
+     "year_basis": "public",
+     "stories": 2,
+     "foundation": "slab",
+     "basement": "none",
+     "fuel": "gas",
+     "fuel_basis": "likely"
+    },
+    "focus": [
+     "water_heater"
+    ],
+    "floors": [
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 38,
+      "h": 28,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 4,
+        "w": 18,
+        "h": 12,
+        "label": "Living room",
+        "basis": "likely"
+       },
+       {
+        "x": 18,
+        "y": 4,
+        "w": 20,
+        "h": 12,
+        "label": "Kitchen",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 16,
+        "w": 20,
+        "h": 12,
+        "label": "Family room",
+        "basis": "likely"
+       },
+       {
+        "x": 20,
+        "y": 16,
+        "w": 18,
+        "h": 12,
+        "label": "Dining room",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WA",
+        "basis": "record",
+        "focus": true,
+        "note": "",
+        "detail": "Installed 2019, 50 gallons",
+        "x": 36,
+        "y": 26
+       },
+       {
+        "kind": "panel",
+        "label": "Electrical panel",
+        "short": "PA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 1,
+        "y": 24
+       },
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "MA",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 20,
+        "y": 4.5
+       },
+       {
+        "kind": "furnace",
+        "label": "Furnace",
+        "short": "FU",
+        "basis": "likely",
+        "focus": false,
+        "note": "",
+        "detail": null,
+        "x": 34,
+        "y": 24
+       }
+      ],
+      "runs": [
+       {
+        "kind": "gas",
+        "label": "Gas",
+        "points": [
+         [
+          38,
+          22
+         ],
+         [
+          34,
+          24
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "wire",
+        "label": "Wire",
+        "points": [
+         [
+          1,
+          24
+         ],
+         [
+          1,
+          6
+         ],
+         [
+          18,
+          6
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          34,
+          24
+         ],
+         [
+          20,
+          16
+         ],
+         [
+          6,
+          10
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          20,
+          4.5
+         ],
+         [
+          36,
+          26
+         ]
+        ],
+        "basis": "record"
+       }
+      ]
+     },
+     {
+      "id": "second",
+      "name": "Second floor",
+      "w": 38,
+      "h": 28,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 4,
+        "w": 14,
+        "h": 12,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 14,
+        "y": 4,
+        "w": 10,
+        "h": 8,
+        "label": "Bath",
+        "basis": "likely"
+       },
+       {
+        "x": 24,
+        "y": 4,
+        "w": 14,
+        "h": 12,
+        "label": "Bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 12,
+        "label": "Primary bedroom",
+        "basis": "likely"
+       },
+       {
+        "x": 24,
+        "y": 16,
+        "w": 14,
+        "h": 12,
+        "label": "Bath",
+        "basis": "likely"
+       }
+      ],
+      "items": [],
+      "runs": [
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          34,
+          24
+         ],
+         [
+          10,
+          24
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          20,
+          26
+         ],
+         [
+          20,
+          18
+         ]
+        ],
+        "basis": "likely"
+       }
+      ]
+     }
+    ],
+    "outside": [
+     {
+      "kind": "gas_meter",
+      "label": "Gas meter",
+      "short": "G",
+      "floor": "first",
+      "side": "right",
+      "at": 0.7,
+      "basis": "likely",
+      "focus": false,
+      "note": "Likely outside on a side wall"
+     }
+    ],
+    "front": "top",
+    "place": {
+     "label": "55 Probe Ave, Toms River, NJ 08753",
+     "lat": 39.97,
+     "lon": -74.2,
+     "precision": "parcel",
+     "geocoder": "parcel by address",
+     "basis": "public",
+     "src": 1
+    },
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -74.2,
+       "lat": 39.97
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        3.95,
+        9.88
+       ],
+       [
+        4.89,
+        6.35
+       ],
+       [
+        6.07,
+        6.67
+       ],
+       [
+        7.17,
+        2.54
+       ],
+       [
+        6.0,
+        2.23
+       ],
+       [
+        6.94,
+        -1.3
+       ],
+       [
+        -0.12,
+        -3.2
+       ],
+       [
+        -3.12,
+        7.99
+       ]
+      ],
+      "area_m2": 89.9,
+      "w_ft": 38,
+      "d_ft": 28,
+      "rot_deg": 75.0,
+      "basis": "public",
+      "src": 3,
+      "as_of": "2024-08-03",
+      "method": "outline from imagery",
+      "outbuildings": []
+     },
+     "height": {
+      "eave_m": 5.6,
+      "ridge_m": 8.4,
+      "from": "source",
+      "basis": "public",
+      "src": 3
+     },
+     "storeys": {
+      "n": 2,
+      "basis": "public",
+      "src": 2
+     },
+     "parcel": {
+      "ring_m": [
+       [
+        12.77,
+        16.98
+       ],
+       [
+        18.14,
+        -3.04
+       ],
+       [
+        -17.19,
+        -12.51
+       ],
+       [
+        -22.56,
+        7.51
+       ]
+      ],
+      "area_m2": 758,
+      "basis": "public",
+      "src": 2
+     },
+     "front": {
+      "bearing_deg": 75,
+      "basis": "public"
+     }
+    },
+    "facts": [
+     {
+      "k": "year_built",
+      "v": 1988,
+      "basis": "public",
+      "src": 2,
+      "as_of": "2026-11-23"
+     }
+    ],
+    "source_line": "",
+    "sources": []
    }
   }
  ]
