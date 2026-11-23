@@ -1,0 +1,38 @@
+/* Globe renderer (assets/godseye-cesium.js). Tokens and classes from assets/system.css only.
+   The bottom strip (--gx-credit-h) belongs to the imagery attribution: nothing of ours sits over it. */
+.gx-globe{position:relative;width:100%;height:100%;min-height:320px;overflow:hidden;background:#04070c;border-radius:inherit;--gx-credit-h:28px;isolation:isolate}
+.gx-stage,.gx-stage .cesium-viewer,.gx-stage .cesium-widget,.gx-stage .cesium-widget canvas{width:100%;height:100%}
+.gx-stage{position:absolute;inset:0}
+.gx-stage .cesium-widget canvas{display:block;touch-action:none}
+.gx-stage .cesium-viewer-bottom{z-index:3}
+.gx-stage .cesium-widget-credits{max-width:calc(100% - 16px);padding:2px 6px;border-radius:var(--sys-r-xs);background:rgba(4,7,12,.55)}  /* a backdrop for legibility; it covers nothing */
+.gx-ui{position:absolute;inset:0 0 calc(var(--gx-credit-h) + 6px) 0;pointer-events:none;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:12px;gap:12px}
+.gx-ui>*{pointer-events:auto}
+.gx-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px}
+.gx-modes{display:flex;flex-wrap:wrap;gap:6px}
+.gx-chip{min-height:32px;cursor:pointer;background:color-mix(in srgb,var(--sys-surface) 88%,transparent);backdrop-filter:blur(6px)}
+.gx-chip:focus-visible,.gx-acts .sys-btn:focus-visible,.gx-open:focus-visible{outline:none;box-shadow:var(--sys-ring)}
+.gx-acts{display:flex;gap:6px;margin-left:auto}
+.gx-acts [hidden]{display:none}
+.gx-acts .sys-btn{background:color-mix(in srgb,var(--sys-surface) 88%,transparent);backdrop-filter:blur(6px)}
+.gx-card{align-self:flex-start;width:min(360px,100%);max-height:calc(100% - 56px);overflow:auto;gap:8px;padding:16px 18px;box-shadow:var(--sys-sh-2);background:color-mix(in srgb,var(--sys-surface) 94%,transparent);backdrop-filter:blur(8px)}
+.gx-card[hidden]{display:none}
+.gx-card-title{margin:0}
+.gx-sub{margin:0;font-size:var(--sys-fs-sm);line-height:1.45;color:var(--sys-ink-2)}
+.gx-figs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:1px;margin:2px 0 0;background:var(--sys-line);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);overflow:hidden}
+.gx-fig{display:flex;flex-direction:column;gap:4px;padding:8px 10px;background:var(--sys-surface);min-width:0}
+.gx-fig dd{margin:0}
+.gx-fig-v{font:600 16px/1.15 var(--sys-mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--sys-ink);overflow-wrap:anywhere}
+.gx-card .sys-card-foot{padding-top:10px;margin-top:2px}
+.gx-fallback{align-self:stretch;margin:auto 0;padding:16px 18px;border:1px solid var(--sys-line);border-radius:var(--sys-r);background:var(--sys-surface);color:var(--sys-ink)}
+.gx-fallback-line{margin:0;font-weight:600}
+.gx-list{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+.gx-list b{color:var(--sys-ink)}
+.gx-globe--flat{background:var(--sys-bg-2)}
+.gx-globe--flat .gx-ui{inset:0}
+@media (max-width:767px){
+  .gx-ui{padding:8px;gap:8px}
+  .gx-card{align-self:stretch;width:auto;max-height:46%}
+  .gx-chip{min-height:30px;padding:0 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){.gx-chip,.gx-acts .sys-btn{transition:none}}
