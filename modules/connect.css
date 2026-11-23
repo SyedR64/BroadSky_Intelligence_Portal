@@ -1,1 +1,12 @@
 /* Connections screen. Layout only; look comes from assets/system.css. */
+.cx-filter{margin:var(--sys-sp-4) 0 var(--sys-sp-6)}
+.cx-groups{display:flex;flex-direction:column;gap:var(--sys-sp-7)}
+.cx-group-head{display:flex;align-items:center;gap:var(--sys-sp-2);margin:0 0 var(--sys-sp-4)}
+.cx-group:not([data-co]) .cx-group-head .sys-dot{--co:var(--sys-brand)}
+.cx-tile .sys-card-title{overflow-wrap:anywhere}
+.cx-tile .sys-card-body{margin:0}
+.cx-tile .sys-card-foot{padding-top:var(--sys-sp-3)}
+.cx-tile .sys-card-foot>:only-child{margin-right:auto}
+.cx-planned{border-style:dashed}
+.cx-method,.cx-sources{margin-top:var(--sys-sp-7)}
+.cx-sources .sys-card-list a{overflow-wrap:anywhere}
