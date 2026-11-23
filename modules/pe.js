@@ -118,7 +118,7 @@ const range = (ctx, r) => r && (r.min != null || r.max != null) ? `${r.min != nu
 
 const PLAY = {
   punctual_pros: 'run proprietary outreach to sub-$3M EBITDA HVAC/plumbing/electrical shops in the overlapping PA/NJ counties and use Authority Brands territory rights before this portfolio company reaches them',
-  cet: 'lock up New England electrical, wastewater and energy-efficiency contractors (Horton-style) before this sponsor\'s portfolio company enters the six-state footprint',
+  cet: 'lock up New England electrical, wastewater and energy-efficiency contractors (Horton-style) before this sponsor\'s portfolio company reaches CET\'s markets',
   frontline: 'secure law-firm MSP and billing/RCM add-ons before a generalist consolidator builds a legal vertical',
   thomas_scientific: 'treat as the primary rival bidder for US lab consumables, chromatography and line-card add-ons; move early on proprietary targets',
   bpi: 'benchmark valuation and talent moves against their comms portfolio company; pursue sub-scale public-affairs boutiques they overlook',

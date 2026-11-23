@@ -10,7 +10,7 @@ import * as Copy from './copy.js?v=20261123143257';
    ═══════════════════════════════════════════════════════════════════════════ */
 const injectCss = () => { if (!document.getElementById('css-techos')) { const l = document.createElement('link'); l.id = 'css-techos'; l.rel = 'stylesheet'; l.href = 'modules/techos.css?v=20261123143257'; document.head.appendChild(l); } };
 
-const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="index.html" title="Broad Sky OS landing page">Landing</a><a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Concepts: company websites, software pages and growth plans">Concepts</a>`;
+const OUT_LINKS = `<a class="sys-btn sys-btn--secondary sys-btn--sm btn sm" href="redesigns/index.html" title="Concepts: company websites, software pages and growth plans">Concepts</a>`;
 /* ── Platform / OS definitions (copy + calculator wiring) ────────────────── */
 const ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const ICON = {
@@ -36,7 +36,7 @@ const OS = {
   },
   cet: {
     os: 'GridOS', co: 'CET', color: 'var(--co-cet)', hex: 'var(--co-cet)', rgb: '76,141,255', module: 'cet', page: 'redesigns/cet/gridos.html', filings: 'cet_filings', bench: 'commercial_electrical_energy', basis: 'ebitda',
-    sub: 'CET + NuWave + Horton · electrical, solar, W/WW · New England and Mid-Atlantic (reported)',
+    sub: 'CET and six add-ons (four reported) · electrical, solar, W/WW · about ten states (reported)',
     promise: 'Bid only winnable work, run every job on one record, sell monitoring.',
     pick: { rev: [/^Pro forma (?:platform|portfolio company|company)/i, 0], ebitda: [/^Pro forma (?:platform|portfolio company|company)/i, 1], debt: [/^Pro forma senior debt/i, 0] },
     mult: { v: 10.0, short: 'Entry est. 9–12x EBITDA.', basis: 'Est. entry 9–12x EBITDA (CET public filings estimate table); PKF grid rewards service mix and retention.' },

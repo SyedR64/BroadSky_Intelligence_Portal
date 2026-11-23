@@ -87,7 +87,7 @@ const RIVALS = [
 /* White-space candidate sectors: regexes run over pe_landscape platforms_relevant + deals_2025_2026. */
 const WS = [
   { id: 'tic', name: 'Fire, life-safety & testing / inspection (TIC)', re: /fire|life.safety|inspection|testing|certification|calibration/i, bspSector: 'Testing, Inspection & Certification Services', adj: 'cet', adjScore: 22, bench: null,
-    why: 'Non-discretionary, code-mandated recurring revenue; CET already holds electrical licences in all six New England states and fire-alarm/low-voltage capability shows up in its target pool.', next: 'Pull NE fire-alarm, sprinkler inspection and electrical-testing contractors (25–250 staff) and score with the CET rubric.' },
+    why: 'Non-discretionary, code-mandated recurring revenue; CET is licensed in about ten states (reported) and fire-alarm/low-voltage capability shows up in its target pool.', next: 'Pull NE fire-alarm, sprinkler inspection and electrical-testing contractors (25–250 staff) and score with the CET rubric.' },
   { id: 'facility', name: 'Commercial facility & building-exterior services', re: /facility|access solutions|janitorial|building exterior|moisture|re-roofing|roofing/i, bspSector: 'Commercial & Facility Services', adj: 'cet', adjScore: 15, bench: null,
     why: 'BSP names Commercial & Facility Services as a target sector but holds no portfolio company; route-density and technician-productivity approaches from PP and CET transfer directly.', next: 'Map Northeast facility-services operators with >60% contracted/recurring revenue; test founder succession signals.' },
   { id: 'grounds', name: 'Commercial landscaping & vegetation management', re: /landscap|grounds management|vegetation/i, bspSector: 'Commercial & Facility Services', adj: 'pp', adjScore: 10, bench: null,
@@ -665,7 +665,7 @@ async function overview(ctx) {
 /* Smith + Howard benchmark: add-on pace and headcount by years since BSP entry, S+H against each held platform. */
 const HEADCOUNT = { // parsed from BSP firm profile employees_est (estimates); S+H from the BSP exit release
   sh: { from: 100, to: 800, note: '~100 → ~800 professionals at exit (BSP release)' },
-  'bsp-cet': { from: 140, to: 260, note: '~140 (Oct 2025) → ~260+ with Horton’s 120+ staff (Sep 2026)' },
+  'bsp-cet': { from: 140, to: 400, note: '~140 (Oct 2025) → 400+ professionals (company site, Nov 2026)' },
   'bsp-pp': { from: 113, to: null, note: '~113 at acquisition; current headcount not disclosed' },
   'bsp-fl': { from: 1000, to: 1100, note: '~1,000 at investment → ~1,100 (Jan 2026)' },
   'bsp-bpi': { from: 200, to: 250, note: '200+ at entry (Apr 2023), plus 50+ from BOLDT and later deals' },
@@ -758,8 +758,11 @@ async function pipeline(ctx) {
   const dens = rows.filter(t => !t._affil && t._reach === 'Density tuck-in').length, hub = rows.filter(t => !t._affil && t._reach === 'New-hub anchor').length;
   const passParams = { ...(sel !== 'all' ? { platform: sel } : {}), ...(q ? { q } : {}), ...(showPass ? {} : { pass: '1' }) };
   const asOfP = meta?.generated || b.pp?.meta?.generated;
-  const lc = rows.some(t => t._src === 'sba') ? (b.sba?.meta?.caveats || []).filter(c => /^(Revenue|Staff) for loan-screen/.test(c)) : [];
-  const caveats = (() => { const rest = (sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).filter(c => !lc.includes(c)).slice(0, sel === 'all' ? 2 : 5)); return [...lc, ...rest].map(c => `<li>${esc(clip(ceoFix(c), lc.includes(c) ? 900 : 260))}</li>`).join(''); })();
+  // the loan-screen revenue method is told once, on the SBA loan screen; here it is one line that links there
+  const lcAll = rows.some(t => t._src === 'sba') ? (b.sba?.meta?.caveats || []).filter(c => /^(Revenue|Staff) for loan-screen/.test(c)) : [];
+  const lc = lcAll.filter(c => !/^Revenue for loan-screen/.test(c));
+  const revLine = lcAll.length > lc.length ? `<li>Loan-screen revenue is modelled, not reported. <a href="#/ma/screen">Revenue method on the SBA loan screen</a></li>` : '';
+  const caveats = (() => { const rest = (sel === 'all' ? [b.cet?.meta, b.pp?.meta, b.flts?.meta, b.sba?.meta] : [meta, ...(PKEYS.includes(sel) && b.sba ? [b.sba.meta] : [])]).filter(Boolean).flatMap(m => (m.caveats || []).filter(c => !lcAll.includes(c)).slice(0, sel === 'all' ? 2 : 5)); return revLine + [...lc, ...rest].map(c => `<li>${esc(clip(ceoFix(c), lc.includes(c) ? 900 : 260))}</li>`).join(''); })();
   el.innerHTML = `<div class="m-ma">` + ui.pageHead({
     title: `Add-on pipeline${P ? ` · ${esc(P.label)}` : ''}`,
     sub: rows.length ? `<b>${fmt.num(rows.length)} target${rows.length === 1 ? '' : 's'}${q ? ` matching “${esc(q)}”` : ''} · ${fmt.num(t1)} Tier 1 · ${fmt.num(t2)} Tier 2${inPlay.length ? ` · ${fmt.num(inPlay.length)} in play` : ''}</b>` : 'No targets match the filter.',
