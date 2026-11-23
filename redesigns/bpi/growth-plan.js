@@ -339,7 +339,7 @@ function renderAddons(pb, firm, pe) {
     ['Brussels EU-affairs specialist', 'One retainer across DC, Brussels and Berlin. Phase 3.', '$2–5M'],
     ['Health & life-sciences policy comms (Boston)', 'Builds on the Whiting hire; recurring mandates.', '$3–6M'],
     ['Energy & critical-minerals public affairs', 'DOE SEOSS recompetes and the Mandala critical-minerals focus.', '$2–5M'],
-    ['Paris corporate-affairs boutique', 'In the Index; completes the FGS-style triangle.', '$4–8M'],
+    ['Paris corporate-affairs boutique', 'France is in the Index; completes the FGS-style triangle.', '$4–8M'],
     ['Federal comms contractor with schedule vehicles', '$0 federal primes today; access to ~$250M of recompetes.', '$3–7M'],
   ];
   $('#targets tbody').innerHTML = T6.map((r, i) => `<tr><td><span class="pri">${i + 1}</span></td><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="sys-n">${esc(r[2])}${est}</td></tr>`).join('');
@@ -459,6 +459,7 @@ function renderRisksAsks(pb) {
     'The Teneo valuation (~$700M) comes from press summaries. The CVC release confirms 800+ staff, 19 offices and 9 acquisitions since 2015, but not the price.',
     'AI-agent metrics come from vendor-commissioned studies or vendor case studies and are self-selected upper bounds. The Writer study also shows clients cutting agency scope by 50%, a substitution risk for BPI.',
     'The $250M federal opportunity total sums contract ceilings and is dominated by the NASA recompete ($202.6M with all options). Eligibility and set-aside status are unverified.',
+    'No ask assumes new equity; add-ons run on the existing senior facility. Risks are ranked by how badly each would hurt the exit: the biggest is the election cycle, the newest is AI replacing agency work.',
     'International revenue share (~15–20% today) is an analyst estimate from UK Companies House staff counts at an assumed GBP/USD of 1.27. Germany and Nordics revenue is not public.',
   ];
   $('#caveats').innerHTML = CAVEATS.map(c => `<li>${esc(c)}</li>`).join('') + '<li><b>Sources:</b> BPI public filings (Form D, FEC, Companies House), the BSP firm profile, public comparables, the private-equity landscape, OS program evidence and competitor filings (FGS, Precision Strategies, Stagwell), plus public releases and research read in October 2026. <b>Method:</b> phase data points are computed from those sources (add-on cadences, ratios, sums of contract ceilings); KPI targets and the 36-month roadmap are analyst assumptions anchored to the midpoints of the public-filings estimates.</li>';
