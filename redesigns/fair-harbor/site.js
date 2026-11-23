@@ -129,7 +129,7 @@ function fit() {
     $('#fit-out').innerHTML = `<div class="fo-top"><div class="fo-size${last !== r.size ? ' pop' : ''}" aria-label="Recommended size ${r.size}">${r.size}</div>
       <div><p class="fo-k">Your size</p><p class="fo-prod">${esc(r.product)} · ${r.inseam}"</p><p class="fo-conf"><i class="${conf >= 60 ? 'conf-hi' : 'conf-lo'}"></i>${conf}% confidence · waist ${r.waist.toFixed(1)}"<span class="sys-est">est.</span></p></div></div>
       <div class="dist" role="img" aria-label="Probability by size: ${r.probs.map(x => `${x.size} ${Math.round(x.p * 100)}%`).join(', ')}">${r.probs.map(x => `<div class="${x.size === r.size ? 'on' : ''}"><em>${Math.round(x.p * 100)}%</em><i style="height:${Math.max(3, (x.p / max) * 100)}%"></i><span>${x.size}</span></div>`).join('')}</div>
-      <ul class="sys-card-list">${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}<li>Shirts and polos: start with <b>${r.top}</b>.</li></ul>
+      <details class="sys-fold"><summary><b>Why this size</b></summary><ul class="sys-card-list">${r.notes.map(n => `<li>${esc(n)}</li>`).join('')}<li>Shirts and polos: start with <b>${r.top}</b>.</li></ul></details>
       <div class="fo-actions"><button class="sys-btn sys-btn--primary" type="button" data-add="${pid}">Add ${esc(r.size)} to bag · $${p.price}</button><span class="meta">Free exchange if it's off.</span></div>`;
     $('#fit-out [data-add]').onclick = () => addToBag(pid, r.size);
     last = r.size;
@@ -180,7 +180,8 @@ function channels() {
     ['campus', 'Campus stores', 'Licensed collegiate trunks and shirts for alumni weekends and spring break.', 'Michigan · Syracuse · Purdue · Colgate · Fairfield (2026)'],
     ['custom', 'Corporate and custom', 'Embroidered trunks, shirts and sweatshirts for companies, clubs, hotels and wedding parties.', 'B2B custom program (2025–26)'],
   ];
-  $('#channels').innerHTML = C.map(([k, t, d, f]) => `<article class="sys-card chan"><span class="fh-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg></span><p class="sys-card-title">${t}</p><p class="sys-card-body">${d}</p><p class="sys-card-foot chan-fact">${f}</p></article>`).join('');
+  $('#channels').innerHTML = C.map(([k, t, d, f]) => `<article class="sys-card chan"><span class="fh-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg></span><p class="sys-card-title">${t}</p><p class="sys-card-foot chan-fact">${f}</p></article>`).join('');
+  $('#chan-ev').innerHTML = `<ul class="sys-card-list">${C.map(([, t, d]) => `<li><b>${t}.</b> ${d}</li>`).join('')}</ul>`;
 }
 
 /* ── reviews (illustrative) ──────────────────────────────────────────── */
@@ -201,7 +202,7 @@ function reviews() {
 /* ── FAQ ─────────────────────────────────────────────────────────────── */
 function faq() {
   const pick = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11];
-  $('#faq-list').innerHTML = pick.map((i, k) => `<details${k === 0 ? ' open' : ''}><summary>${esc(FAQ[i].q.replace(/\?.*$/, '?'))}</summary><div class="a">${FAQ[i].a}</div></details>`).join('');
+  $('#faq-list').innerHTML = pick.map((i, k) => `<details><summary>${esc(FAQ[i].q.replace(/\?.*$/, '?'))}</summary><div class="a">${FAQ[i].a}</div></details>`).join('');
 }
 
 /* ── email ───────────────────────────────────────────────────────────── */
