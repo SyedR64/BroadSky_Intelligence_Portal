@@ -650,6 +650,143 @@ ERAS = [{'to': 1939, 'name': 'pre-1940', 'style': 'older two-story', 'stories': 
         {'to': 2100, 'name': '2000s or later', 'style': 'two-story', 'stories': 2}]
 
 
+# ---- Wave 3: rooms, wet walls, heights, roofs and power lines (trade rules of thumb, always "likely", confidence low).
+# Coordinates are fractions of one level's rectangle: x 0 is the left wall and 1 the right; y 0 is the rear wall and 1 the front
+# (the plan's front is at the bottom), the same frame as SPOTS. Every layout's first floor has a kitchen box holding the kitchen
+# spot and a bath box holding the bath spot, so the existing likely items and runs land in the right rooms.
+SPOTS_W3 = {'riser': [0.55, 0.3],           # where supply and drain lines rise between floors (a pipe chase by the kitchen and bath)
+            'kitchen-sink': [0.25, 0.06],   # the kitchen sink on the rear wall
+            'entry-left': [0.06, 0.3], 'entry-right': [0.94, 0.3]}   # where the electric service enters a side wall
+
+ROOM_LAYOUTS = {
+    'ranch': {'label': 'One-level ranch', 'floors': {
+        'first': [('Kitchen', 0, 0, 0.45, 0.45), ('Living room', 0, 0.45, 0.45, 0.55), ('Laundry and utility', 0.58, 0, 0.42, 0.18),
+                  ('Bath', 0.58, 0.18, 0.3, 0.22), ('Bedroom', 0.58, 0.4, 0.42, 0.3), ('Bedroom', 0.58, 0.7, 0.42, 0.3)]}},
+    'cape': {'label': 'Cape Cod, bedrooms under the roof', 'floors': {
+        'first': [('Kitchen', 0, 0, 0.45, 0.45), ('Living room', 0, 0.45, 0.55, 0.55), ('Bath', 0.6, 0.18, 0.28, 0.22),
+                  ('Bedroom', 0.6, 0.4, 0.4, 0.6)],
+        'second': [('Bedroom', 0, 0.15, 0.45, 0.7), ('Bath', 0.6, 0.18, 0.28, 0.22), ('Bedroom', 0.6, 0.42, 0.4, 0.43)]}},
+    'two_story': {'label': 'Two-story, bedrooms upstairs', 'floors': {
+        'first': [('Kitchen', 0, 0, 0.5, 0.42), ('Laundry', 0.62, 0, 0.38, 0.18), ('Half bath', 0.62, 0.18, 0.16, 0.2),
+                  ('Dining room', 0, 0.42, 0.42, 0.58), ('Living room', 0.5, 0.42, 0.5, 0.58)],
+        'second': [('Bedroom', 0, 0, 0.45, 0.5), ('Bath', 0.62, 0.18, 0.24, 0.24), ('Bedroom', 0, 0.5, 0.45, 0.5),
+                   ('Main bedroom', 0.55, 0.5, 0.45, 0.5)]}},
+    'older_two_story': {'label': 'Older two-story, one bath upstairs', 'floors': {
+        'first': [('Kitchen', 0, 0, 0.5, 0.4), ('Pantry or half bath', 0.62, 0.18, 0.16, 0.2), ('Dining room', 0, 0.4, 0.5, 0.6),
+                  ('Living room', 0.5, 0.4, 0.5, 0.6)],
+        'second': [('Bedroom', 0, 0, 0.45, 0.5), ('Bath', 0.62, 0.15, 0.3, 0.27), ('Bedroom', 0, 0.5, 0.45, 0.5), ('Bedroom', 0.55, 0.5, 0.45, 0.5)]}},
+    'rowhome': {'label': 'Row or town house, rooms front to back', 'floors': {
+        'first': [('Kitchen', 0, 0, 0.62, 0.38), ('Mudroom', 0.62, 0, 0.38, 0.18), ('Half bath', 0.62, 0.18, 0.38, 0.2),
+                  ('Dining room', 0, 0.38, 1, 0.3), ('Living room', 0, 0.68, 1, 0.32)],
+        'second': [('Bedroom', 0, 0, 0.55, 0.45), ('Bath', 0.6, 0.12, 0.4, 0.3), ('Bedroom', 0, 0.55, 1, 0.45)]}},
+}
+# Which layout: the first row that matches wins. type is the building type (attached for a row or town house, detached otherwise);
+# eras are ERAS names (the era rule), styles are recorded or published style words (lower case, whole word), min_stories the storeys.
+ROOM_SELECT = [{'type': 'attached', 'layout': 'rowhome'},
+               {'styles': ['ranch', 'split-level', 'split level', 'bi-level', 'raised ranch'], 'layout': 'ranch'},
+               {'styles': ['cape cod', 'cape'], 'layout': 'cape'},
+               {'eras': ['pre-1940'], 'min_stories': 2, 'layout': 'older_two_story'},
+               {'eras': ['1940s-50s'], 'layout': 'cape'},
+               {'eras': ['1960s-70s'], 'max_stories': 1, 'layout': 'ranch'},
+               {'min_stories': 2, 'layout': 'two_story'},
+               {'layout': 'ranch'}]
+# Wet walls: where supply and drain lines most likely run inside a wall, per layout. a and b are the wall's ends (fractions).
+WET_WALLS = {
+    'ranch': [('first', [0.05, 0], [0.42, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+              ('first', [0.58, 0.18], [0.88, 0.18], ['Bath', 'Laundry and utility'], 'Bath backs onto the laundry')],
+    'cape': [('first', [0.05, 0], [0.42, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+             ('first', [0.6, 0.18], [0.6, 0.4], ['Bath'], 'Bath supply and drain wall'),
+             ('second', [0.6, 0.18], [0.6, 0.4], ['Bath'], 'Upstairs bath over the first-floor bath')],
+    'two_story': [('first', [0.05, 0], [0.45, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+                  ('first', [0.62, 0.18], [0.78, 0.18], ['Half bath', 'Laundry'], 'Half bath backs onto the laundry'),
+                  ('second', [0.62, 0.18], [0.62, 0.42], ['Bath'], 'Upstairs bath over the half bath')],
+    'older_two_story': [('first', [0.05, 0], [0.45, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+                        ('second', [0.62, 0.15], [0.62, 0.42], ['Bath'], 'Bath stacked near the kitchen below')],
+    'rowhome': [('first', [0.05, 0], [0.58, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+                ('first', [0.62, 0.18], [0.62, 0.38], ['Half bath'], 'Half bath supply and drain wall'),
+                ('second', [0.6, 0.12], [0.6, 0.42], ['Bath'], 'Bath over the kitchen side')],
+}
+# Typical heights in inches (the 3D model and the wall list): levels floor to ceiling; items above their floor.
+HEIGHTS = {'levels': {'basement': 96, 'first': 108, 'second': 96},
+           'items': {'outlet': 16, 'counter_outlet': 44, 'switch': 48, 'panel': 60, 'sink_supply': 20, 'sink_drain': 18,
+                     'fixture_shutoffs': 8, 'basement_lines': 90}}
+# Roof by era (3D massing only; never a fact about a house).
+ROOFS = [{'to': 1939, 'roof': 'gable'}, {'to': 1959, 'roof': 'gable'}, {'to': 1979, 'roof': 'gable or hip'}, {'to': 2100, 'roof': 'gable or hip'}]
+# Power lines a plan may draw as likely: the service line from the entry wall to the panel. Branch circuits are never inferred.
+POWER_RUNS = {'basement': {'kind': 'power', 'label': 'Service line', 'floor': 'basement', 'via': ['entry-left', 'side-left'], 'needs': ['panel'],
+                           'material': 'copper cable'},
+              'crawl': {'kind': 'power', 'label': 'Service line', 'floor': 'first', 'via': ['entry-right', 'garage'], 'needs': ['panel'],
+                        'material': 'copper cable'},
+              'slab': {'kind': 'power', 'label': 'Service line', 'floor': 'first', 'via': ['entry-right', 'garage'], 'needs': ['panel'],
+                       'material': 'copper cable'}}
+
+
+def _box_has(box, pt):
+    _, x, y, w, h = box
+    return x <= pt[0] <= x + w and y <= pt[1] <= y + h
+
+
+def _on_edge(box, a, b):
+    """True when the segment a-b lies on one edge of the box (fractions, 0.001 slack)."""
+    _, x, y, w, h = box
+    e = 0.001
+    if abs(a[1] - b[1]) < e:   # horizontal
+        return any(abs(a[1] - yy) < e for yy in (y, y + h)) and x - e <= min(a[0], b[0]) and max(a[0], b[0]) <= x + w + e
+    if abs(a[0] - b[0]) < e:   # vertical
+        return any(abs(a[0] - xx) < e for xx in (x, x + w)) and y - e <= min(a[1], b[1]) and max(a[1], b[1]) <= y + h + e
+    return False
+
+
+def _overlap(p, q):
+    _, x1, y1, w1, h1 = p
+    _, x2, y2, w2, h2 = q
+    return min(x1 + w1, x2 + w2) - max(x1, x2) > 0.001 and min(y1 + h1, y2 + h2) - max(y1, y2) > 0.001
+
+
+def check_room_rules(layouts, wet, spots):
+    """Layouts and wet walls agree with the spots the likely items use. Fails the build otherwise."""
+    for lid, lay in layouts.items():
+        first = lay['floors']['first']
+        kit = [b for b in first if b[0] == 'Kitchen']
+        bath = [b for b in first if 'bath' in b[0].lower()]
+        need(len(kit) == 1 and _box_has(kit[0], spots['kitchen']) and _box_has(kit[0], spots['kitchen-sink']),
+             'room rules %s: the kitchen box must hold the kitchen and sink spots' % lid)
+        need(len(bath) == 1 and _box_has(bath[0], spots['bath']), 'room rules %s: the first-floor bath must hold the bath spot' % lid)
+        for f, boxes in lay['floors'].items():
+            need(f in ('first', 'second'), 'room rules %s: unknown floor %s' % (lid, f))
+            for i, b in enumerate(boxes):
+                need(0 <= b[1] and 0 <= b[2] and b[1] + b[3] <= 1.0001 and b[2] + b[4] <= 1.0001 and b[3] > 0 and b[4] > 0,
+                     'room rules %s %s: %s is outside the level' % (lid, f, b[0]))
+                for c in boxes[i + 1:]:
+                    need(not _overlap(b, c), 'room rules %s %s: %s overlaps %s' % (lid, f, b[0], c[0]))
+        need(lid in wet and wet[lid], 'room rules %s: no wet wall' % lid)
+        for f, a, bb, rooms, _ in wet.get(lid, []):
+            boxes = {b[0]: b for b in lay['floors'].get(f, [])}
+            need(all(r in boxes for r in rooms), 'wet wall %s %s: names a room the layout does not have' % (lid, f))
+            need(any(_on_edge(boxes[r], a, bb) for r in rooms if r in boxes), 'wet wall %s %s: not on an edge of %s' % (lid, f, rooms))
+    for row in ROOM_SELECT:
+        need(row['layout'] in layouts, 'room rules: select names an unknown layout %s' % row['layout'])
+        need(all(e in [x['name'] for x in ERAS] for e in row.get('eras', [])), 'room rules: select names an unknown era')
+    for r in POWER_RUNS.values():
+        need(all(v in spots for v in r['via']), 'power rule: unknown spot in %s' % r['via'])
+
+
+def room_rules():
+    spots = dict(SPOTS, **SPOTS_W3)
+    check_room_rules(ROOM_LAYOUTS, WET_WALLS, spots)
+    note = 'Trade rules of thumb by building type and era. Always likely; confirm on site. Scan before you cut.'
+    rooms = {'basis': 'likely', 'confidence': 'low', 'note': note, 'frame': 'fractions of the level; y 0 rear, y 1 front',
+             'select': ROOM_SELECT,
+             'layouts': {lid: {'label': lay['label'],
+                               'floors': {f: [{'name': b[0], 'x': b[1], 'y': b[2], 'w': b[3], 'h': b[4]} for b in boxes]
+                                          for f, boxes in lay['floors'].items()}}
+                         for lid, lay in ROOM_LAYOUTS.items()}}
+    wet = {'basis': 'likely', 'confidence': 'low', 'note': note,
+           'by_layout': {lid: [{'floor': f, 'a': a, 'b': b, 'rooms': rs, 'what': what} for f, a, b, rs, what in rows]
+                         for lid, rows in WET_WALLS.items()}}
+    return rooms, wet
+
+
 def build_likely_rules():
     locations = {f: {k: {'floor': v[0], 'spot': v[1], 'note': v[2]} for k, v in sorted(t.items())} for f, t in LOC.items()}
     for f in LOC:
@@ -667,7 +804,7 @@ def build_likely_rules():
             'foundation': {'PA': [{'to': 2100, 'type': 'basement'}], 'NJ': [{'to': 1969, 'type': 'crawl'}, {'to': 2100, 'type': 'slab'}]},
             'heating': {f: HEAT_TYPES[t]['kinds'] for f, t in HEAT_OF_FUEL.items()},
             'heat_types': HEAT_TYPES, 'heat_of_fuel': HEAT_OF_FUEL, 'heat_words': HEAT_WORDS,
-            'spots': SPOTS, 'outside_spots': OUTSIDE_SPOTS,
+            'spots': dict(SPOTS, **SPOTS_W3), 'outside_spots': OUTSIDE_SPOTS,
             'kinds': {k: {'label': v[0], 'short': v[1]} for k, v in KINDS.items()},
             'locations': locations, 'runs': runs,
             'materials': [{'kind': 'water', 'to': 1959, 'text': 'galvanized steel'}, {'kind': 'water', 'to': 2100, 'text': 'copper or PEX'},
@@ -675,7 +812,15 @@ def build_likely_rules():
                           {'kind': 'drain', 'to': 2100, 'text': 'PVC'}],
             'era_flags': [{'from': 1965, 'to': 1973, 'text': 'Aluminum branch wiring is possible in homes built 1965 to 1973.'},
                           {'from': 1800, 'to': 1949, 'text': 'Fuses or early wiring are possible in homes built before 1950.'},
-                          {'from': 1800, 'to': 1959, 'text': 'Galvanized supply lines and cast-iron drains are common in homes built before 1960.'}]}
+                          {'from': 1800, 'to': 1959, 'text': 'Galvanized supply lines and cast-iron drains are common in homes built before 1960.'}],
+            **wave3_rules()}
+
+
+def wave3_rules():
+    """Keys added in wave 3 (new keys only; every earlier key and value is unchanged except spots, which gains four names)."""
+    rooms, wet = room_rules()
+    return {'spots_added': sorted(SPOTS_W3), 'rooms': rooms, 'wet_wall': wet, 'heights': dict(HEIGHTS, unit='in', basis='likely'),
+            'roofs': ROOFS, 'power_runs': POWER_RUNS}
 
 
 # ------------------------------------------------------------------------------------------------ issues
@@ -834,6 +979,26 @@ ISSUES = [
       ['Main water off first', 'Find the split', 'Heat tape or insulation on outside walls'],
       [('Repair couplings',), ('Torch or press tool',), ('Pipe insulation',), ('3/4 in ball valve', 'ball-valve-34')],
       ['water', 'electric'], ['frozen_pipe_repair', 'main_valve', 'diag']),
+    # Sink and faucet calls ("sink repair", "kitchen sink leaking", "faucet dripping"). They sit after the drain, sewer and burst-pipe
+    # issues, so "sink won't drain" stays a clog and "the pipe under the sink burst" stays a burst pipe; faucet before sink, so a
+    # dripping faucet at a sink is a faucet call.
+    I('faucet', 'Faucet dripping', ['plumbing'],
+      ['faucet', 'spigot', '\\btap\\b.*(drip|leak|running)', '(drip|drips|dripping) (from|at) the (tap|spout)'],
+      ['fixture_shutoffs', 'main_water'],
+      [('Worn cartridge or washer inside the faucet', 3), ('Loose packing nut or O-ring at the handle', 2),
+       ('High water pressure wearing the seals', 1)],
+      ['Which handle drips: hot, cold or both', 'Faucet brand, for the cartridge', 'Fixture shutoffs close fully', 'Pressure at a hose bib'],
+      [('Cartridge and washer kit',), ('Handle puller',), ('Quarter-turn fixture valves',), ('Pressure gauge',)],
+      ['water'], ['faucet', 'fixture_valves', 'prv', 'club_total']),
+    I('sink_leak', 'Sink leaking', ['plumbing'],
+      ['^(?!.*(drain|clog|backing|backed|stopped|slow|burst|frozen)).*\\bsinks?\\b', 'p.?trap', 'vanity (is )?leak'],
+      ['fixture_shutoffs', 'main_water', 'sewer_cleanout'],
+      [('Loose slip nut or worn washer at the trap', 3), ('Supply line or its nut under the sink is leaking', 2),
+       ('Faucet base or sprayer hose leaking into the cabinet', 2), ('Drain basket or disposer seal has failed', 1)],
+      ['Where the water comes from: supply, trap, faucet base or basket', 'Fixture shutoffs under the sink close fully',
+       'Cabinet floor for water damage', 'Main water shutoff if a fixture valve will not close'],
+      [('Slip nuts, washers and a trap kit',), ('Braided supply lines',), ('Quarter-turn fixture valves',), ('Bucket and towels',)],
+      ['water'], ['fixture_valves', 'faucet', 'diag', 'club_total']),
     I('thermostat', 'Thermostat blank', ['hvac'],
       ['thermostat (is )?(blank|dead|off)', 'screen (is )?blank', 'thermostat'],
       ['furnace', 'service_switch'],
@@ -889,7 +1054,15 @@ ISSUE_CASES = [('furnace not igniting', 'no_heat', 'furnace'), ("furnace won't i
                ('no heat, heat pump', 'no_heat', 'heat_pump'), ('heat pump not heating', 'heat_pump', 'heat_pump'),
                ("water heater won't ignite", 'no_hot_water', None), ('water heater not heating', 'no_hot_water', None),
                ('The furnace makes a loud bang when it starts.', 'noise', 'furnace'), ('The kitchen breaker trips when the microwave runs.', 'breaker', None),
-               ('The carbon monoxide alarm went off near the furnace.', 'co_alarm', 'furnace')]
+               ('The carbon monoxide alarm went off near the furnace.', 'co_alarm', 'furnace'),
+               # Sink and faucet calls; the owner's own sentence is the first one.
+               ('going to 418 Wexcombe Ln, Lititz for a sink repair, give me the floor plans, view', 'sink_leak', None),
+               ('sink repair', 'sink_leak', None), ('kitchen sink leaking', 'sink_leak', None), ('leak under the bathroom sink', 'sink_leak', None),
+               ('faucet dripping', 'faucet', None), ('the kitchen faucet drips', 'faucet', None), ('leaky faucet at the sink', 'faucet', None),
+               ("sink won't drain", 'drain_clog', None), ('clogged kitchen sink', 'drain_clog', None),
+               # Drain words keep a sink off the leak issue (these two fall back to the booked job's issue).
+               ('The kitchen sink will not drain.', None, None), ('bathroom sink is slow', None, None),
+               ('the pipe under the sink burst', 'frozen_pipe', None)]
 
 
 # ------------------------------------------------------------------------------------------------ organisations and apps
@@ -1966,6 +2139,110 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
     jobs.sort(key=lambda j: (j['day'], j['start'], j['number']))
     return {'co': 'pp', 'technicians': techs, 'customers': customers, 'equipment': equipment, 'jobs': jobs,
             'pricebook': pricebook, 'parts': parts, 'rebates': reb}
+
+
+# ------------------------------------------------------------------------------------------------ flagship houses (wave 3)
+
+# Hand-authored rooms, wire runs, risers and wet walls for the two flagship example customers only, in their own file
+# (pp_houses.json): pp_servicetitan.json is near its size cap, and no random draw is made, so no existing record moves.
+# Rooms are "from a prior visit sketch" (record, example data). Wire runs are records. The first-floor risers stay likely.
+# Fractions of the level, y 0 rear and y 1 front, as in likely_rules spots. The attached garage the plan draws (front corner) is
+# left clear of rooms.
+FLAGSHIP_HOUSES = {
+    'st-cus-0001': {   # 418 Wexcombe Ln, Lititz: two-story, full basement, garage attached right; the HVAC technician's job
+        'roof': 'gable',
+        'rooms': {'first': [('Kitchen', 0, 0, 0.48, 0.42), ('Laundry', 0.62, 0, 0.38, 0.18), ('Half bath', 0.62, 0.18, 0.16, 0.2),
+                            ('Mudroom', 0.78, 0.18, 0.22, 0.36), ('Dining room', 0, 0.42, 0.48, 0.2), ('Living room', 0, 0.62, 0.74, 0.38)],
+                  'second': [('Bedroom', 0, 0, 0.45, 0.5), ('Bath', 0.62, 0.18, 0.24, 0.24), ('Bedroom', 0, 0.5, 0.45, 0.5),
+                             ('Main bedroom', 0.55, 0.5, 0.45, 0.5)]},
+        # Service line only: the kitchen wall has no wiring on record.
+        'runs': [('power', 'basement', 'Service line', ['entry-left', 'side-left'], 'copper cable', 'record',
+                  'Service enters the left side wall to the panel'),
+                 ('water', 'first', 'Kitchen supply', ['riser', 'kitchen-sink'], 'copper', 'likely',
+                  'Rises from the basement and runs to the sink on the kitchen rear wall'),
+                 ('drain', 'first', 'Kitchen drain', ['kitchen-sink', 'riser'], 'cast iron', 'likely',
+                  'From the sink down to the basement drain')],
+        'wet_wall': [('first', [0.05, 0], [0.45, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+                     ('first', [0.62, 0.18], [0.78, 0.18], ['Half bath', 'Laundry'], 'Half bath backs onto the laundry'),
+                     ('second', [0.62, 0.18], [0.62, 0.42], ['Bath'], 'Upstairs bath over the half bath')]},
+    'st-cus-0002': {   # 27 Brindlemoor Ct, Red Lion: split-level drawn as two plain levels, full basement, garage attached left
+        'roof': 'hip',
+        'rooms': {'first': [('Kitchen', 0, 0, 0.45, 0.5), ('Laundry', 0.62, 0, 0.38, 0.15), ('Bath', 0.62, 0.15, 0.25, 0.25),
+                            ('Living room', 0.26, 0.5, 0.74, 0.5)],
+                  'second': [('Bedroom', 0, 0, 0.4, 0.5), ('Bath', 0.62, 0.15, 0.25, 0.25), ('Bedroom', 0, 0.5, 0.5, 0.5),
+                             ('Main bedroom', 0.5, 0.5, 0.5, 0.5)]},
+        'runs': [('power', 'basement', 'Service line', ['entry-right', 'side-right'], 'copper cable', 'record',
+                  'Service enters the right side wall to the panel'),
+                 ('power', 'basement', 'Sump pump circuit, 15 A', ['side-right', 'rear-wall-right'], 'copper cable', 'record',
+                  'From the panel along the right wall to the sump pit'),
+                 ('water', 'first', 'Kitchen supply', ['riser', 'kitchen-sink'], 'copper', 'likely',
+                  'Rises from the basement and runs to the sink on the kitchen rear wall'),
+                 ('drain', 'first', 'Kitchen drain', ['kitchen-sink', 'riser'], 'PVC', 'likely', 'From the sink down to the basement drain')],
+        'wet_wall': [('first', [0.05, 0], [0.45, 0], ['Kitchen'], 'Kitchen sink on the rear wall'),
+                     ('first', [0.62, 0.15], [0.87, 0.15], ['Bath', 'Laundry'], 'Bath backs onto the laundry'),
+                     ('second', [0.62, 0.15], [0.62, 0.4], ['Bath'], 'Upstairs bath over the first-floor bath')]},
+}
+GARAGE_ZONE = {'attached-right': ('Garage', 0.74, 0.54, 0.26, 0.46), 'attached-left': ('Garage', 0, 0.54, 0.26, 0.46)}
+
+
+def build_pp_houses(st):
+    """pp_houses.json: the flagship pair's rooms, wire runs, risers and wet walls, checked against their customer and equipment records."""
+    spots = dict(SPOTS, **SPOTS_W3)
+    custs = {c['id']: c for c in st['customers']}
+    out = {}
+    for cid, h in FLAGSHIP_HOUSES.items():
+        c = custs.get(cid)
+        need(c is not None, 'pp houses: %s is not a customer' % cid)
+        if c is None:
+            continue
+        hs = c['house']
+        eq = [e for e in st['equipment'] if e['customer'] == cid]
+        floors = set(h['rooms'])
+        need(floors == ({'first', 'second'} if hs['stories'] >= 2 else {'first'}), 'pp houses %s: room floors do not match %s storeys' % (cid, hs['stories']))
+        garage = GARAGE_ZONE.get(hs.get('garage'))
+        for f, boxes in h['rooms'].items():
+            for i, b in enumerate(boxes):
+                need(0 <= b[1] and 0 <= b[2] and b[1] + b[3] <= 1.0001 and b[2] + b[4] <= 1.0001, 'pp houses %s: %s outside the level' % (cid, b[0]))
+                for o in boxes[i + 1:]:
+                    need(not _overlap(b, o), 'pp houses %s %s: %s overlaps %s' % (cid, f, b[0], o[0]))
+                if f == 'first' and garage:
+                    need(not _overlap(b, garage), 'pp houses %s: %s overlaps the attached garage' % (cid, b[0]))
+        first = h['rooms']['first']
+        kit = [b for b in first if b[0] == 'Kitchen'][0]
+        for e in eq:
+            if e['floor'] == 'first' and e['spot'] in spots:
+                box = kit if e['spot'] == 'kitchen' else next((b for b in first if 'bath' in b[0].lower()), None) if e['spot'] == 'bath' else None
+                need(box is None or _box_has(box, spots[e['spot']]), 'pp houses %s: %s is not inside its room' % (cid, e['kind']))
+        need(_box_has(kit, spots['kitchen']) and _box_has(kit, spots['kitchen-sink']), 'pp houses %s: kitchen box misses the sink' % cid)
+        panel = [e for e in eq if e['kind'] == 'panel']
+        for kind, fl, label, via, mat, basis, note in h['runs']:
+            need(all(v in spots for v in via), 'pp houses %s: unknown spot in %s' % (cid, via))
+            need(basis in ('record', 'likely'), 'pp houses %s: basis %s' % (cid, basis))
+            if kind == 'power':
+                need(basis == 'record' and panel and panel[0]['spot'] in via and panel[0]['floor'] == fl,
+                     'pp houses %s: power run %s does not reach the recorded panel' % (cid, label))
+            if fl == 'first':
+                need(basis == 'likely', 'pp houses %s: a first-floor riser line must stay likely' % cid)
+        for f, a, b, rooms, _ in h['wet_wall']:
+            boxes = {x[0]: x for x in h['rooms'][f]}
+            need(all(r in boxes for r in rooms) and any(_on_edge(boxes[r], a, b) for r in rooms), 'pp houses %s: wet wall off its room' % cid)
+        rec_src = 'Prior visit sketch'
+        out[cid] = {
+            'customer': cid, 'co': 'pp', 'for': c.get('for') or [], 'team': c['team'], 'address': c['address']['line'] + ', ' + c['address']['town'],
+            'split_level': hs.get('style') == 'split-level',
+            'roof': {'type': h['roof'], 'basis': 'record'},
+            'rooms': [{'floor': f, 'name': b[0], 'x': b[1], 'y': b[2], 'w': b[3], 'h': b[4], 'basis': 'record', 'src': rec_src}
+                      for f in ('first', 'second') for b in h['rooms'].get(f, [])],
+            'runs': [dict({'kind': k, 'floor': fl, 'label': lab, 'via': via, 'material': mat, 'basis': bas, 'note': note},
+                          **({'rise': {'from': 'basement', 'to': 'first', 'at': 'riser'}} if 'riser' in via else {}))
+                     for k, fl, lab, via, mat, bas, note in h['runs']],
+            'wet_wall': [{'floor': f, 'a': a, 'b': b, 'rooms': rs, 'what': what, 'basis': 'likely'} for f, a, b, rs, what in h['wet_wall']]}
+        need(not any(r['kind'] == 'power' and r['floor'] == 'first' for r in out[cid]['runs']) or cid != 'st-cus-0001',
+             'pp houses: 418 Wexcombe Ln must have no wiring on record by the kitchen')
+    return {'version': 1, 'co': 'pp',
+            'note': 'Flagship example customers only. Rooms from a prior visit sketch and wire runs are company records (example data); '
+                    'risers and wet walls are likely.',
+            'frame': 'fractions of the level; y 0 rear, y 1 front', 'houses': out}
 
 
 # ------------------------------------------------------------------------------------------------ finance (all modeled, est.)
@@ -3818,6 +4095,153 @@ def read_lines(role, app, sets, org_name):
     return read, wont
 
 
+# ------------------------------------------------------------------------------------------------ signature questions (wave 3)
+
+# One signature per role (wave 3 rulings 7 to 10; SIGNATURE_DESIGN.md 4.3 as corrected by its skeptic's check).
+# role: (question, view, source, draft action, draft title, data). source "live" reads a real public file on the site; "records"
+# reads the company's own system (example records here). data: "app.set" for records; a site file, with "#id" naming a tour, an
+# item id or a top-level key in it, for live data.
+SIG_VIEWS = ('floor_plan', 'house_model', 'globe_tour', 'scorecard', 'bridge', 'heatmap', 'pipeline_board', 'ranked_bars')
+SIG_ADDRESS = {'pp-hvac-technician': '418 Wexcombe Ln, Lititz, PA 17543', 'pp-plumber': '27 Brindlemoor Ct, Red Lion, PA 17356',
+               'pp-dispatcher': '418 Wexcombe Ln, Lititz, PA 17543'}
+_CEO = ('Which numbers are off plan this month?', 'scorecard', 'records', 'chat_post', 'Post the off-plan figures to leadership',
+        ['financials.kpis', 'financials.pnl'])
+_CFO = ('What moved margin against plan last month?', 'bridge', 'records', 'reply_email', 'Reply to the controller with the margin bridge',
+        ['financials.pnl', 'adp.payroll'])
+_SITE = ['servicetitan.customers', 'servicetitan.equipment']
+SIGNATURES = {
+    'bsp-managing-partner': ('Point out the best 3 acquisition targets.', 'globe_tour', 'live', 'chat_post',
+                             'Post the three targets to the partners channel', ['data/research/globe_tours.json#best3']),
+    'bsp-partner': ('Where do my live deals stand?', 'pipeline_board', 'records', 'crm_stage', 'Move the LOI deal to Diligence',
+                    ['dealcloud.deals']),
+    'bsp-operating-partner': ('Which companies are off plan this month?', 'scorecard', 'records', 'calendar_hold',
+                              'Hold 30 minutes with the company furthest off plan', ['financials.kpis', 'financials.pnl']),
+    'bsp-senior-associate': ('Bridge Punctual Pros value from entry to exit.', 'bridge', 'live', 'chat_post',
+                             'Post the value bridge in the deal team channel', ['data/research/deal_model.json#pp']),
+    'bsp-associate': ('Rank the best add-on targets for each company.', 'ranked_bars', 'live', 'chat_post',
+                      'Post the top target for each company to the deal team',
+                      ['data/research/ma_targets_pp.json', 'data/research/ma_targets_cet.json', 'data/research/ma_targets_fl_ts.json']),
+    'bsp-fund-cfo': ('Which covenant tests and reports come due first?', 'ranked_bars', 'records', 'calendar_hold',
+                     'Hold prep time before the first covenant test', ['financials.debt', 'financials.packs', 'financials.fund']),
+    'bsp-investor-relations': ('Draft the answer to the open investor question.', 'scorecard', 'records', 'reply_email',
+                               'Reply to the investor with the Fund I figures', ['email.threads', 'financials.fund']),
+    'pp-ceo': ('How did each hub do against plan last month?', 'scorecard', 'records', 'chat_post', 'Post the hub scorecard to leadership',
+               ['financials.kpis', 'financials.pnl']),
+    'pp-cfo': ('What moved margin against plan last month?', 'bridge', 'records', 'chat_post', 'Post the margin bridge in the finance channel',
+               ['financials.pnl', 'adp.payroll']),
+    'pp-vp-operations': ('Which hubs face the coldest nights this week?', 'heatmap', 'live', 'chat_post',
+                         'Post the cold-night staffing plan to the hub managers', ['data/live/forecast_hubs.json']),
+    'pp-sales': ('Where are the newest homeowners in our territory?', 'globe_tour', 'live', 'chat_post',
+                 'Post the top three towns for the new-homeowner mailer', ['data/pp_sales_90d.json', 'data/pp_zips.json']),
+    'pp-hvac-technician': ('Show me 418 Wexcombe Ln before I get there.', 'house_model', 'records', 'order_part',
+                           'Order the hot-surface ignitor from the Lancaster hub', _SITE),
+    'pp-plumber': ('Going to 27 Brindlemoor Ct. Where are the pipes?', 'floor_plan', 'records', 'text_customer',
+                   'Text the customer to clear the path to the water heater', _SITE),
+    'pp-dispatcher': ("What's behind the kitchen wall at 418 Wexcombe Ln?", 'floor_plan', 'records', 'book_job',
+                      'Book a plumber for the kitchen wall, plan attached', _SITE),
+    'pp-location-gm': ("What does today's Lancaster board look like?", 'pipeline_board', 'records', 'book_job',
+                       'Assign the waiting member job to a free technician', ['servicetitan.jobs', 'servicetitan.technicians']),
+    'cet-ceo': _CEO, 'cet-cfo': _CFO,
+    'cet-vp-operations': ('Which projects burned the most crew hours this week?', 'heatmap', 'records', 'chat_post',
+                          'Post the at-risk projects to the project managers', ['procore.projects']),
+    'cet-sales': ('Which wastewater plants should we call first?', 'globe_tour', 'live', 'calendar_hold', 'Hold an hour to call the first plant',
+                  ['data/research/globe_tours.json#cet-opps', 'data/research/cet_wwtp_targets.json']),
+    'cet-estimator': ('Which public bids are due in the next 30 days?', 'pipeline_board', 'live', 'calendar_hold',
+                      'Hold two hours to price the first bid due', ['data/cet_ne_rfps.json']),
+    'cet-project-manager': ("What's due on my projects in the next two weeks?", 'ranked_bars', 'records', 'rfi',
+                            'Draft an RFI for the first open item', ['procore.projects']),
+    'cet-field-electrician': ("Who is on today's site?", 'pipeline_board', 'records', 'daily_log', "Add today's work to the daily log",
+                              ['procore.projects']),
+    'fl-ceo': _CEO, 'fl-cfo': _CFO,
+    'fl-vp-operations': ('Which desk has the oldest open tickets?', 'heatmap', 'records', 'chat_post', 'Post the past-due count to the desk leads',
+                         ['servicedesk.tickets']),
+    'fl-sales': ('Which mid-size law firms should we call first?', 'ranked_bars', 'live', 'calendar_hold',
+                 'Hold an hour to call the top three firms', ['data/research/fl_midsize_firms.json', 'data/fl_lawfirms.json']),
+    'fl-help-desk-engineer': ('Walk me through the fix for my next ticket.', 'pipeline_board', 'records', 'ticket_update',
+                              'Update the ticket with the step finished', ['servicedesk.tickets', 'servicedesk.runbooks']),
+    'fl-billing-specialist': ('Why are invoices rejected, and how much is stuck?', 'ranked_bars', 'records', 'reply_email',
+                              'Reply to the client billing contact about rejected invoices', ['financials.invoices']),
+    'ts-ceo': _CEO, 'ts-cfo': _CFO,
+    'ts-vp-operations': ('Which center is behind on orders this week?', 'heatmap', 'records', 'chat_post', 'Post the late orders to the center leads',
+                         ['financials.orders', 'financials.kpis']),
+    'ts-sales': ('Which research sites should we win next?', 'globe_tour', 'live', 'chat_post', 'Post the top three sites to the sales team',
+                 ['data/ts_sites.json', 'data/live/nih_awards.json']),
+    'ts-inside-sales': ('Which accounts stopped ordering, and how big are they?', 'ranked_bars', 'records', 'calendar_hold',
+                        'Hold time to call the largest slipping account', ['salesforce.accounts', 'financials.orders']),
+    'ts-warehouse-lead': ('What runs out first at Swedesboro?', 'ranked_bars', 'records', 'chat_post', 'Post the five lowest items to purchasing',
+                          ['financials.inventory']),
+    'bpi-ceo': _CEO, 'bpi-cfo': _CFO,
+    'bpi-vp-operations': ('Which office runs hot or cold on utilization?', 'heatmap', 'records', 'chat_post',
+                          'Post the utilization heatmap to the office leads', ['financials.kpis']),
+    'bpi-sales': ('Which public contracts should we go after first?', 'ranked_bars', 'live', 'calendar_hold',
+                  'Hold an hour to plan the largest recompete', ['data/research/bsp_firm.json#bpi_opportunities']),
+    'bpi-account-director': ('Which retainers are over their hours?', 'ranked_bars', 'records', 'reply_email', 'Send the client a status note on hours',
+                             ['salesforce.accounts']),
+    'fh-ceo': _CEO, 'fh-cfo': _CFO,
+    'fh-vp-operations': ('What are customers returning, and why?', 'ranked_bars', 'records', 'chat_post', 'Post the top return reason to the product team',
+                         ['shopify.returns']),
+    'fh-sales': ('What growth opportunities are open for us?', 'pipeline_board', 'live', 'chat_post', 'Post the first opportunity to chase to marketing',
+                 ['data/research/bsp_firm.json#fh_opportunities']),
+    'fh-ecommerce-manager': ('Which products sell out in the next two weeks?', 'ranked_bars', 'records', 'chat_post',
+                             'Post the low-stock list to merchandising', ['shopify.products']),
+}
+
+
+def _live_ref_ok(ref):
+    """A live data reference: the site file exists and, after '#', names a tour id, an item id or a top-level key in it."""
+    path, _, key = ref.partition('#')
+    p = ROOT / path
+    if not path.startswith('data/') or not p.exists():
+        return False
+    if not key:
+        return True
+    d = json.loads(p.read_text())
+    if isinstance(d, dict) and key in d:
+        return True
+    rows = (d.get('tours') or d.get('items') or []) if isinstance(d, dict) else d
+    return any(isinstance(r, dict) and r.get('id') == key for r in rows)
+
+
+def signature_of(r):
+    q, view, source, action, title, data = SIGNATURES[r['id']]
+    sig = {'question': q, 'view': view, 'source': source, 'draft': {'action': action, 'title': title}, 'data': list(data)}
+    if r['id'] in SIG_ADDRESS:
+        sig['address'] = SIG_ADDRESS[r['id']]
+    return sig
+
+
+def check_signatures(roles, pool, st):
+    """Every role has one signature: a question of 12 words at most, a known view, a source, a draft from the role's own actions,
+    data the role can read (records) or a real site file (live), and a flagship address the role can see."""
+    ids = {r['id'] for r in roles}
+    need(set(SIGNATURES) == ids, 'signatures: roles without one %s, unknown %s' % (sorted(ids - set(SIGNATURES)), sorted(set(SIGNATURES) - ids)))
+    for r in roles:
+        if r['id'] not in SIGNATURES:
+            continue
+        s = signature_of(r)
+        rid = r['id']
+        need(len(s['question'].split()) <= 12 and s['question'][-1] in '.?', 'signature %s: question over 12 words or unended' % rid)
+        need(s['view'] in SIG_VIEWS, 'signature %s: view %s is not one of the eight' % (rid, s['view']))
+        need(s['source'] in ('live', 'records'), 'signature %s: source %s' % (rid, s['source']))
+        need(s['draft']['action'] in r['actions'], 'signature %s: draft %s is not in the role\'s actions' % (rid, s['draft']['action']))
+        t = s['draft']['title']
+        need(len(t.split()) <= 15 and t[0].isupper() and not t.endswith('.'), 'signature %s: draft title "%s"' % (rid, t))
+        need(len(s['data']) >= 1, 'signature %s: no data' % rid)
+        for ref in s['data']:
+            if s['source'] == 'live':
+                need(_live_ref_ok(ref), 'signature %s: live data %s is not a site file' % (rid, ref))
+            else:
+                app, _, set_ = ref.partition('.')
+                need(set_ in r['apps'].get(app, {}), 'signature %s: the role cannot read %s' % (rid, ref))
+                need(set_ in r['apps'].get(app, {}) and len(vis(pool, r, app, set_)) > 0, 'signature %s: no visible record in %s' % (rid, ref))
+        if s['view'] in ('floor_plan', 'house_model'):
+            line = s.get('address', '').split(',')[0]
+            seen = [c for c in vis(pool, r, 'servicetitan', 'customers') if c['address']['line'] == line]
+            need(len(seen) == 1, 'signature %s: the address %s is not one customer the role sees' % (rid, line))
+    # The owner's ask (wave 3 ruling 13): the managing partner's question runs the best 3 add-on targets tour.
+    need(SIGNATURES['bsp-managing-partner'][1] == 'globe_tour', 'signature: the managing partner should open the globe tour')
+
+
 def build_catalog(roles, pool, st, org_files):
     apps_used = {}
     for r in roles:
@@ -3842,7 +4266,8 @@ def build_catalog(roles, pool, st, org_files):
                           'level': r['level'],
                           'key_app': r['key_app'], 'desc': r['desc'], 'placeholder': r['placeholder'], 'chips': r['chips'],
                           'action_chips': r['action_chips'], 'apps': apps, 'unavailable': unavailable, 'numbers_text': r['numbers_text'],
-                          'public': pub, 'actions': [ACTIONS[a][0] for a in r['actions']], 'home': home_for(r, pool, st, org_files)})
+                          'public': pub, 'actions': [ACTIONS[a][0] for a in r['actions']], 'home': home_for(r, pool, st, org_files),
+                          'signature': signature_of(r)})
     tech = [c for c in cat_roles if c['id'] == 'pp-hvac-technician'][0]
     stc = {s['id']: s['count'] for a in tech['apps'] if a['id'] == 'servicetitan' for s in a['sets']}
     need(stc.get('jobs') == 25 and stc.get('customers') == 23, 'catalogue: HVAC technician should see Jobs 25, Customers 23 (got %s)' % stc)
@@ -3881,6 +4306,7 @@ def build_roles_json(roles):
         x = {k: r[k] for k in ('label', 'label_a', 'company', 'dept', 'order', 'style', 'level', 'team', 'key_app', 'desc', 'apps', 'numbers', 'numbers_text',
                                'public', 'tools', 'actions', 'action_apps', 'denied_hint')}
         x['team_name'] = TEAM_NAME[r['team']] if r['id'] in team_roles else None
+        x['signature'] = signature_of(r)
         out[r['id']] = x
     return {'version': 1,
             'companies': {o: {'name': ORG_NAME[o], 'co': None if o == 'bsp' else o, 'sells': SELLS[o], 'lines': LINES[o], 'depts': DEPTS[o]} for o in ORGS},
@@ -3993,6 +4419,7 @@ def copy_scan(cat):
     for r in cat['roles']:
         texts = [r[f] for f in fields]
         texts += [c['label'] for c in r['action_chips']]
+        texts += [r['signature']['question'], r['signature']['draft']['title']]
         texts += [v for _, v in walk_strings(r['home']) if v not in APP_ORDER] + [x for a in r['apps'] for x in a['read'] + a['wont']]
         flat = []
         for t in texts:
@@ -4160,7 +4587,9 @@ def generate(streets):
             need('part' not in b or b['part'] in parts, 'issue %s: part %s is not in the parts list' % (i['id'], b.get('part')))
         for c in i['offers']:
             need(c in codes, 'issue %s: offer %s is not in the price book' % (i['id'], c))
-    need(len(ISSUES) == 18, 'issues: expected 18')
+    need(len(ISSUES) == 20, 'issues: expected 20')
+    for iid in ('sink_leak', 'faucet'):
+        need('fixture_shutoffs' in next(i for i in ISSUES if i['id'] == iid)['focus'], 'issue %s: the sink shutoffs are not in focus' % iid)
     for g, m in WHO.items():
         titles = {t[0] for t in CAL[g]} | {t[0] for sw in CAL_SWAP.values() for (gg, _), t in sw.items() if gg == g}
         for t, who_ in m.items():
@@ -4195,9 +4624,11 @@ def generate(streets):
                     need(isinstance(r, dict) and 'id' in r and 'co' in r, '%s %s.%s: record without id or co' % (o, a, s))
     pool_ = Pool(org_files, st)
     check_chips(roles, pool_, st)
+    check_signatures(roles, pool_, st)
     catalog = build_catalog(roles, pool_, st, org_files)
     roles_json = build_roles_json(roles)
-    out = {'roles.json': roles_json, 'service_area.json': sa, 'likely_rules.json': rules, 'issues.json': issues, 'pp_servicetitan.json': st}
+    out = {'roles.json': roles_json, 'service_area.json': sa, 'likely_rules.json': rules, 'issues.json': issues, 'pp_servicetitan.json': st,
+           'pp_houses.json': build_pp_houses(st)}
     for o in ORGS:
         out['%s.json' % o] = org_files[o]
     out['streets.json'] = streets
