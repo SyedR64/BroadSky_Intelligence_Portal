@@ -47,3 +47,6 @@
 .m-fl .m-fl-fil>.grid-main .sys-table td{white-space:normal;min-width:90px}
 @media (max-width:1180px){.m-fl .m-fl-fil>.grid-main{grid-template-columns:minmax(0,1fr)}}
 .m-fl .heat th,.m-fl .heat td{padding:8px 6px}
+
+/* a card whose source line moved to the Sources drawer keeps no empty foot */
+.m-fl .panel-foot:empty { display: none; }
