@@ -110,17 +110,18 @@ function heroConsole() {
   const feed = $('#hero-feed'); if (!feed) return;
   const T = [['t0', 'T0', 'MFA reset for associate, NYC office', '0:31'], ['l1', 'L1', 'iManage workspace access, M&A team', '3:48'], ['t0', 'T0', 'Password unlock, Toledo staff', '0:22'], ['t0', 'T0', 'Printer queue cleared, 14th floor', '0:40'], ['l2', 'L2', 'VPN appliance patch, London', '22:10'], ['t0', 'T0', 'Outlook profile rebuild, partner', '1:05'], ['l1', 'L1', 'Elite time-entry sync error', '6:12'], ['t0', 'T0', 'New-hire laptop provisioning started', '0:55']];
   let i = 0; const now = new Date();
-  const add = () => { const t = T[i % T.length]; const d = new Date(now.getTime() + i * 47000); const el = document.createElement('div'); el.className = 'feed-i'; el.innerHTML = `<span class="tm">${d.toTimeString().slice(0, 5)}</span><span class="tg ${t[0]}">${t[1]}</span><span class="tx">${t[2]}</span><span class="tm" style="margin-left:auto;text-align:right">${t[3]}</span>`; feed.prepend(el); while (feed.children.length > 3) feed.lastChild.remove(); i++; };
-  add(); add(); add();
+  const add = () => { const t = T[i % T.length]; const d = new Date(now.getTime() + i * 47000); const el = document.createElement('div'); el.className = 'feed-i'; el.innerHTML = `<span class="tm">${d.toTimeString().slice(0, 5)}</span><span class="tg ${t[0]}">${t[1]}</span><span class="tx">${t[2]}</span><span class="tm" style="margin-left:auto;text-align:right">${t[3]}</span>`; feed.prepend(el); while (feed.children.length > 2) feed.lastChild.remove(); i++; };
+  add(); add();
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(add, 2600);
-  let m = 2; setInterval(() => { m = m >= 5 ? 1 : m + 1; const u = $('#upd'); if (u) u.textContent = `Updated ${m} min ago`; }, 30000);
+  let m = 2; setInterval(() => { m = m >= 5 ? 1 : m + 1; const u = $('#upd'); if (u) u.textContent = `${m} min ago`; }, 30000);
 }
 
 function assessment() {
   const list = $('#qs'); if (!list) return;
   const ans = store.get('fl-posture', {}) || {};
   const opts = [['1', 'Yes'], ['0.5', 'Partly'], ['0', 'No']];
-  list.innerHTML = QUESTIONS.map((q, i) => `<li class="q" data-id="${q.id}"><div class="qt" title="${q.d}">${i + 1}. ${q.q}</div><div class="seg" role="group" aria-label="Answer for question ${i + 1}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div></li>`).join('');
+  list.innerHTML = QUESTIONS.map((q, i) => `<li class="q" data-id="${q.id}"><div class="qt">${i + 1}. ${q.q}</div><div class="seg" role="group" aria-label="Answer for question ${i + 1}">${opts.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div></li>`).join('');
+  if (!$('#q-notes')) { const nt = document.createElement('details'); nt.className = 'sys-fold'; nt.id = 'q-notes'; nt.innerHTML = '<summary><b>Question notes</b><span>what each control covers</span></summary><ol>' + QUESTIONS.map(q => `<li>${q.d}</li>`).join('') + '</ol>'; list.after(nt); }
   const render = () => {
     $$('.q', list).forEach(li => { const v = ans[li.dataset.id]; li.classList.toggle('done', v != null); $$('button', li).forEach(b => b.setAttribute('aria-pressed', String(v != null && +b.dataset.v === v))); });
     const { score, answered } = postureScore(ans);

@@ -76,20 +76,20 @@
           <div class="sys-card console" role="img" aria-label="Illustrative FirmOS client console showing a security posture score of 87, service desk activity and eBilling metrics">
             <div class="top">
               <svg width="22" height="22" aria-hidden="true"><use href="#i-logo"/></svg>
-              <div><div class="t">Firm health</div><div class="s">Hartwell &amp; Pryce LLP · fictional client</div></div>
-              <span class="console-upd"><span id="upd" class="hide-m">Updated 2 min ago</span><span class="sys-est sys-est--live">live</span></span>
+              <div><div class="t">Firm health</div><div class="s">Hartwell &amp; Pryce · fictional</div></div>
+              <span class="console-upd"><span id="upd" class="hide-m">2 min ago</span><span class="sys-est sys-est--live">live</span></span>
             </div>
             <div class="body">
               <div class="ring" id="hero-ring"></div>
               <div class="rows">
-                <div class="row"><span class="ic"><svg><use href="#i-desk"/></svg></span><span class="l"><b>Service desk</b>Tickets this week</span><span class="n" id="h-tk">412<small>38% Tier-0</small></span></div>
-                <div class="row"><span class="ic"><svg><use href="#i-shield"/></svg></span><span class="l"><b>Endpoints protected</b>EDR + MDR coverage</span><span class="n">1,284<small>99.5%</small></span></div>
-                <div class="row"><span class="ic"><svg><use href="#i-invoice"/></svg></span><span class="l"><b>eBilling</b>LEDES · 31 client portals</span><span class="n">2,906<small>96% first-pass</small></span></div>
+                <div class="row"><span class="ic"><svg><use href="#i-desk"/></svg></span><span class="l"><b>Service desk</b>This week</span><span class="n" id="h-tk">412<small>38% Tier-0</small></span></div>
+                <div class="row"><span class="ic"><svg><use href="#i-shield"/></svg></span><span class="l"><b>Endpoints protected</b>EDR + MDR</span><span class="n">1,284<small>99.5%</small></span></div>
+                <div class="row"><span class="ic"><svg><use href="#i-invoice"/></svg></span><span class="l"><b>eBilling</b>31 client portals</span><span class="n">2,906<small>96% first-pass</small></span></div>
               </div>
             </div>
             <div class="feed" id="hero-feed" aria-hidden="true"></div>
           </div>
-          <div class="float f1"><span>Avg. time to resolve, Tier-0</span><b>38 sec</b></div>
+          <div class="float f1"><span>Tier-0 resolve time</span><b>38 sec</b></div>
           <p class="sys-src console-cap">FirmOS client view <span class="sys-est sys-est--illus">illustrative</span></p>
         </div>
       </div>
@@ -258,11 +258,12 @@
       </div>
       <div class="sys-card roi rv">
         <div class="in" id="roi-in">
-          <div class="field" title="Users supported are typically about twice the attorney count."><label for="r-att">Attorneys <output id="o-att"></output></label><input type="range" id="r-att" min="25" max="2500" step="25" value="300"></div>
-          <div class="field" title="Includes tickets raised by assistants on an attorney&#39;s behalf. Illustrative default."><label for="r-tpa">Tickets per attorney per month <output id="o-tpa"></output></label><input type="range" id="r-tpa" min="0.5" max="5" step="0.1" value="1.8"></div>
-          <div class="field" title="Share of tickets resolved by automation without an analyst: password resets, MFA, access requests, printer queues."><label for="r-def">Tier-0 deflection <output id="o-def"></output></label><input type="range" id="r-def" min="0" max="60" step="1" value="30"></div>
-          <div class="field" title="Wait plus context-switch time. Tier-0 resolves in about 1 minute."><label for="r-min">Attorney minutes lost per ticket <output id="o-min"></output></label><input type="range" id="r-min" min="5" max="45" step="1" value="14"></div>
-          <div class="field" title="Blended partner and associate rate."><label for="r-rate">Average standard rate <output id="o-rate"></output></label><input type="range" id="r-rate" min="200" max="1500" step="25" value="650"></div>
+          <div class="field"><label for="r-att">Attorneys <output id="o-att"></output></label><input type="range" id="r-att" min="25" max="2500" step="25" value="300"></div>
+          <div class="field"><label for="r-tpa">Tickets per attorney per month <output id="o-tpa"></output></label><input type="range" id="r-tpa" min="0.5" max="5" step="0.1" value="1.8"></div>
+          <div class="field"><label for="r-def">Tier-0 deflection <output id="o-def"></output></label><input type="range" id="r-def" min="0" max="60" step="1" value="30"></div>
+          <div class="field"><label for="r-min">Attorney minutes lost per ticket <output id="o-min"></output></label><input type="range" id="r-min" min="5" max="45" step="1" value="14"></div>
+          <div class="field"><label for="r-rate">Average standard rate <output id="o-rate"></output></label><input type="range" id="r-rate" min="200" max="1500" step="25" value="650"></div>
+          <details class="sys-fold"><summary><b>Inputs</b><span>what each slider sets</span></summary><ul><li>Attorneys: Users supported are typically about twice the attorney count.</li><li>Tickets per attorney per month: Includes tickets raised by assistants on an attorney&#39;s behalf. Illustrative default.</li><li>Tier-0 deflection: Share of tickets resolved by automation without an analyst: password resets, MFA, access requests, printer queues.</li><li>Attorney minutes lost per ticket: Wait plus context-switch time. Tier-0 resolves in about 1 minute.</li><li>Average standard rate: Blended partner and associate rate.</li></ul></details>
         </div>
         <div class="out" data-sys-theme="dark" aria-live="polite">
           <span class="sys-card-label">Annual value returned <span class="sys-est">est.</span></span>
