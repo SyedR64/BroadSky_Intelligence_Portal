@@ -81,7 +81,7 @@ if GAZ and os.path.exists(GAZ):
         zipll[row['GEOID']] = (float(row['INTPTLAT']), float(row['INTPTLONG']))
     print(f"loaded {len(zipll):,} ZCTA centroids")
 
-# ── CET / NuWave (New England only; NYC data archived in legacy) ──────────────
+# ── CET / NuWave (New England data sets) ──────────────────────────────────────
 print("CET")
 c = read('cet-nuwave.html')
 terr = literal(c, 'NE_TERRITORY')
@@ -93,11 +93,6 @@ save('cet_ne_development.json', dev, 'Municipal development logs (Cambridge, Bos
 rfps = literal(c, 'NE_RFPS')
 save('cet_ne_rfps.json', rfps, 'COMMBUYS (MA), CTsource (CT), state portals — compiled Apr–May 2026',
      'Public procurement notices tagged for CET fit. Verify due dates on the portal before pursuit.')
-bids = literal(c, 'BID_OPPS')
-nyc_summary = {"total": len(bids), "by_tier": collections.Counter(b['priority_tier'] for b in bids),
-               "by_borough": collections.Counter(b['borough'] for b in bids),
-               "note": "NYC pipeline archived: CET/NuWave has no plans to expand into NYC (CEO guidance, Sept 2026). Full dataset remains in legacy/tools/cet-nuwave.html."}
-save('cet_nyc_archive_summary.json', nyc_summary, 'Legacy CET tool (NYC DOB NOW filings)', 'Summary only.', fields=list(nyc_summary.keys()))
 
 # ── Punctual Pros ─────────────────────────────────────────────────────────────
 print("PUNCTUAL PROS")
