@@ -3,6 +3,7 @@ import { dataset, srcLabel } from './copy.js?v=20261123143257';
 import { loadScoreboard, templateExit } from './fin.js?v=20261123143257';
 import { Session } from '../assets/session.js?v=20261123143257';
 import { embedView } from './embed.js?v=20261123143257';
+import { Counter } from '../assets/counter.js?v=20261123143257';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', entry: '2024-04' },
@@ -59,7 +60,7 @@ const APPROVALS_KEY = 'bsp-os-approvals';   // drafts the agent made that wait f
 const AGENT = '#/home/agent';                // never with a question in the address (OS spec 9.4)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 /** {month:-1} in the catalogue becomes last month's short name (the agent page fills it the same way). */
-const fill = t => String(t ?? '').replace(/\{month:(-?\d+)\}/g, (_, n) => MONTHS[((new Date().getMonth() + Number(n)) % 12 + 12) % 12]).replace(/\btoday's route\b/gi, "today's jobs");
+const fill = t => String(t ?? '').replace(/\{month:(-?\d+)\}/g, (_, n) => MONTHS[((new Date().getMonth() + Number(n)) % 12 + 12) % 12]);
 const FUND_ONLY = new Set(['bsp-investor-relations']);   // firm team, but the fund and documents only (OS spec 3)
 const homeKind = r => FUND_ONLY.has(r.id) ? 'company' : r.level === 'firm_leadership' || r.level === 'firm_team' ? 'firm' : r.level === 'co_leadership' ? 'company' : 'role';
 
@@ -71,13 +72,13 @@ const itemChip = (t, esc) => `<span class="sys-chip ${/urgent|late|past due/i.te
 function todayHTML(role, esc, max = 6) {
   const h = role.home || {}, list = Array.isArray(h.list) ? h.list : [];
   const rows = list.map((x, i) => `<li${i >= max ? ' class="hm-hide"' : ''}><a class="hm-item" href="${AGENT}"><span class="hm-time sys-num">${esc(fill(x.time))}</span><span class="hm-main"><b>${esc(fill(x.title))}</b><span>${esc(fill(x.where))}</span></span>${x.chip ? itemChip(x.chip, esc) : ''}</a></li>`).join('');
-  return `<section class="sys-card hm-card" aria-labelledby="hm-today-h"><h2 class="sys-h3" id="hm-today-h">${esc(fill(h.list_title || 'Today'))}</h2>${list.length
+  return `<section class="sys-card hm-card" aria-labelledby="hm-today-h"><h2 class="sys-card-title" id="hm-today-h">${esc(fill(h.list_title || 'Today'))}</h2>${list.length
     ? `<ul class="hm-list" id="hm-today">${rows}</ul>${list.length > max ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm hm-show" data-hm="all">All ${list.length}</button>` : ''}`
     : '<p class="hm-empty">Nothing today.</p>'}</section>`;
 }
 function waitingHTML(role, esc) {
   const xs = waiting(role);
-  return `<section class="sys-card hm-card" aria-labelledby="hm-wait-h" id="hm-wait"><h2 class="sys-h3" id="hm-wait-h">Waiting for approval${xs.length ? ` <span class="sys-chip sys-chip--warn">${xs.length}</span>` : ''}</h2>${xs.length
+  return `<section class="sys-card hm-card" aria-labelledby="hm-wait-h" id="hm-wait"><h2 class="sys-card-title" id="hm-wait-h">Waiting for approval${xs.length ? ` <span class="sys-chip sys-chip--warn">${xs.length}</span>` : ''}</h2>${xs.length
     ? `<ul class="hm-list">${xs.slice(0, 5).map(x => `<li><a class="hm-item" href="${AGENT}"><span class="hm-time">${esc(x.app || 'Draft')}</span><span class="hm-main"><b>${esc(x.title || 'Draft')}</b></span><span class="sys-chip">Not sent</span></a></li>`).join('')}</ul>`
     : '<p class="hm-empty">Nothing waiting.</p>'}</section>`;
 }
@@ -136,7 +137,9 @@ async function firmHome(ctx, role, live) {
       <p class="sys-src hm-src" data-src>Company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures) and the BSP firm profile, as of ${esc(firm?.meta?.generated || 'Sept 2026')}. <a href="#/fin/portfolio">Value and exit table</a></p>
       <p class="sys-src hm-src" data-method>Revenue is the current or pro forma estimate; entry value is the enterprise value at BSP's entry. Status: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 or more, exit prep. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years. Reported add-ons were named in the trade press, not announced by the company.</p>
     </section>
-    <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div></div>`;
+    <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
+    <section class="hm-sec hm-figs" aria-labelledby="hm-figs-h"><h2 class="sys-card-title" id="hm-figs-h">Figures</h2>
+      ${ui.kpis([{ label: 'Strategy and operations', value: '<span class="hm-run sys-num" aria-live="off">—</span>', sub: 'Open value today, est.' }])}</section></div>`;
   wire(el);
 
   // a row opens the side panel: the full next action, the add-ons under BSP and the estimates behind the figures
@@ -156,6 +159,13 @@ async function firmHome(ctx, role, live) {
   });
   // search: the six companies and their add-ons
   app.index([...COS.map(c => ({ label: c.name, sub: c.sector, href: `#/${c.id}`, kind: 'Company', color: c.hex })), ...COS.flatMap(c => addOnsOf(firm, c.id).filter(a => !a.unid).map(a => ({ label: a.name, sub: `${c.short} add-on${a.year ? ` · ${a.year}` : ''}`, href: `#/${c.id}`, kind: 'Add-on', color: c.hex })))]);
+  // the running estimate (assets/counter.js, from the portal's sourced rates); its levers and notes go to the Method drawer
+  const run = el.querySelector('.hm-run');
+  const clock = await Counter.live(run, { baseline: 'today' }).catch(e => { console.error(e); return null; });
+  if (!clock) { if (run.isConnected) run.textContent = '—'; return; }
+  if (!live() || !run.isConnected) { clock.destroy(); return; }
+  if (clock.method) { const m = document.createElement('div'); m.className = 'hm-src'; m.dataset.method = ''; m.innerHTML = `<p class="sys-card-label">Strategy and operations</p>${clock.method}`; el.querySelector('.hm-figs').appendChild(m); }
+  return clock.destroy;
 }
 
 /* Company leadership (and investor relations, for the fund): four figures, today, waiting for approval. The menu already

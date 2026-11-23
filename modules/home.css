@@ -42,6 +42,10 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-empty{margin:0;font-size:var(--sys-fs-sm);color:var(--sys-mute)}
 .hm-show{align-self:flex-start}
 
+/* Figures: one quiet tile (the running estimate), not a banner */
+.hm-figs .sys-kpis{margin-top:0;align-self:flex-start;grid-template-columns:minmax(220px,300px)}
+.hm-figs .sys-kpi-value{font-size:var(--sys-fs-xl)}
+
 /* the button into the agent screen */
 .hm-ask{align-self:flex-start}
 
@@ -64,6 +68,7 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-item .hm-main{grid-area:main}
   .hm-item>.sys-chip{grid-area:chip}
   .hm-ask{align-self:stretch}
+  .hm-figs .sys-kpis{align-self:stretch;grid-template-columns:minmax(0,1fr)}
   /* the company table becomes one block per company: name and status, then the three figures, then what moves it */
   .hm-cos .sys-table-wrap{overflow:visible}
   .hm-cos .sys-table,.hm-cos tbody{display:block}
