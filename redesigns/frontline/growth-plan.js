@@ -33,6 +33,8 @@ const sents = (t, n) => String(t || '').split(/(?<=[a-z0-9%)]{3}\.)\s+(?=[A-Z(])
 /* ── small helpers ─────────────────────────────────────────────────────── */
 const M = v => v == null ? '—' : '$' + (Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(1) + 'B' : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(Math.abs(v) >= 1e8 ? 0 : 1).replace(/\.0$/, '') + 'M' : Math.abs(v) >= 1e3 ? Math.round(v / 1e3) + 'K' : Math.round(v));
 const N = (v, d = 0) => v == null || isNaN(v) ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
+const fold = (title, html, sub) => `<details class="sys-fold"><summary><b>${title}</b>${sub ? `<span>${sub}</span>` : ''}</summary>${html}</details>`;
+let DEC_BASIS = '';
 const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return 'source'; } };
 const src = (u, label) => u ? `<a class="pb-src" href="${escRaw(u)}" target="_blank" rel="noopener">${esc(label || host(u))} ↗</a>` : '';
 /* Design-system colours, read once the stylesheet has loaded (Leaflet's canvas needs real colour strings). */
@@ -163,7 +165,7 @@ function renderKpis(D) {
     { l: 'Revenue', f: M(a.revenue_usd), t: M(z.revenue_usd), d: `+${Math.round((z.revenue_usd / a.revenue_usd - 1) * 100)}% · ~$55M acquired`, s: r.map(x => x.revenue_usd), c: PHASE_COLORS[0] },
     { l: 'Adj. EBITDA', f: M(a.ebitda_usd), t: M(z.ebitda_usd), d: `${(a.ebitda_usd / a.revenue_usd * 100).toFixed(1)}% → ${(z.ebitda_usd / z.revenue_usd * 100).toFixed(1)}% margin`, s: r.map(x => x.ebitda_usd), c: PHASE_COLORS[1] },
     { l: 'People', f: N(a.headcount), t: N(z.headcount), d: `revenue per head ${M(a.revenue_usd / a.headcount)} → ${M(z.revenue_usd / z.headcount)}`, s: r.map(x => x.headcount), c: INK },
-    { l: 'Law-firm clients', f: N(a.locations_or_accounts), t: N(z.locations_or_accounts), d: `+${N(z.locations_or_accounts - a.locations_or_accounts)} firms, mid-market + intl`, s: r.map(x => x.locations_or_accounts), c: PHASE_COLORS[3] },
+    { l: 'Law-firm clients', f: N(a.locations_or_accounts), t: N(z.locations_or_accounts), d: `+${N(z.locations_or_accounts - a.locations_or_accounts)} firms`, s: r.map(x => x.locations_or_accounts), c: PHASE_COLORS[3] },
   ];
   $('#kpis').innerHTML = k.map(x => `<div class="sys-kpi" data-co="fl"><span class="sys-kpi-label">${esc(x.l)}</span><span class="sys-kpi-value"><span class="from">${esc(x.f)}</span><span class="arr">→</span>${esc(x.t)}</span><span class="sys-kpi-sub">${esc(x.d)}</span>${spark(x.s, x.c)}</div>`).join('');
 }
@@ -173,11 +175,11 @@ function renderStrip(D) {
   const fitHi = D.mid.filter(m => m.frontline_fit_score >= 65).length;
   const att = D.mid.reduce((s, m) => s + (m.attorney_count || 0), 0);
   const cells = [
-    [`${an.amlaw200_share_pct ?? 50}%`, 'of the AM Law 200 served'],
-    [N(D.law.length), 'AM Law prospects scored for upsell'],
-    [N(D.mid.length), `mid-size firms screened · ${fitHi} fit 65+`],
-    [N(D.tg.length), 'add-on targets in four lanes'],
-    [`~${(r1.ebitda_usd / r0.ebitda_usd).toFixed(1)}x`, `EBITDA in 36 months (${M(r0.ebitda_usd)} → ${M(r1.ebitda_usd)})`, true],
+    [`${an.amlaw200_share_pct ?? 50}%`, 'AM Law 200 served'],
+    [N(D.law.length), 'AM Law prospects scored'],
+    [N(D.mid.length), `mid-size firms, ${fitHi} fit 65+`],
+    [N(D.tg.length), 'add-on targets'],
+    [`~${(r1.ebitda_usd / r0.ebitda_usd).toFixed(1)}x`, `EBITDA in 36 months`, true],
   ];
   $('#hero-strip').innerHTML = cells.map(c => `<div class="sys-kpi" role="listitem"><span class="sys-kpi-value">${esc(c[0])}${c[2] ? '<span class="sys-est">est.</span>' : ''}</span><span class="sys-kpi-sub">${esc(c[1])}</span></div>`).join('');
 }
@@ -197,26 +199,28 @@ function verdict(exitX, e1, rev1) {
 function verdictHtml(v, exitX, e1, rev1, short) {
   const head = v.clears
     ? `<b>Clears the ${RET.hurdleX}x / ${RET.hurdleIrr}% hurdle</b> at ${v.R.moic.toFixed(1)}x and ~${Math.round(v.R.irr)}% IRR.`
-    : `<b>Below a ${RET.hurdleX}x / ${RET.hurdleIrr}% hurdle:</b> ${v.R.moic.toFixed(1)}x and ~${Math.round(v.R.irr)}% IRR is a weak base case for lower-middle-market PE. Closing the gap takes ~${M(v.viaMargin)} more month-36 EBITDA (${M(e1 + v.viaMargin)} at ${exitX.toFixed(1)}x).`;
-  if (short) return `<div><p class="verdict-line">${head}</p>${v.clears ? '' : `<p class="three-x">Levers that close it: add-on EBITDA bought at 5–7x and sold at 12x+, and margin to 20%+. A 3x needs ${M(v.need3)} of EBITDA at ${exitX.toFixed(1)}x.</p>`}</div>`;
+    : `<b>Below a ${RET.hurdleX}x / ${RET.hurdleIrr}% hurdle:</b> needs ~${M(v.viaMargin)} more month-36 EBITDA (${M(e1 + v.viaMargin)} at ${exitX.toFixed(1)}x).`;
+  if (short) return `<div><p class="verdict-line">${v.clears ? '<b>Clears the hurdle.</b>' : `<b>Below a ${RET.hurdleX}x / ${RET.hurdleIrr}% hurdle.</b>`}</p></div>`;
+  const weak = v.clears ? '' : `<p>${v.R.moic.toFixed(1)}x and ~${Math.round(v.R.irr)}% IRR is a weak base case for lower-middle-market PE.</p>`;
   const levers = v.clears ? '' : `<ul class="gap-levers">
       <li><b>Add-on arbitrage:</b> EBITDA bought at 5-7x and sold at ${exitX.toFixed(1)}x. About ${M(v.viaAddon)} of debt-funded add-on EBITDA at ~${RET.addonBuyX}x closes the gap alone.</li>
       <li><b>Margin to 20%+:</b> each point on ${M(rev1)} of revenue is ${M(rev1 / 100)} of EBITDA. Margin alone would need ~${v.marginTo.toFixed(1)}%.</li>
       <li><b>Mix (realistic):</b> margin to 20% (+${M(v.m20)}) plus ~${M(v.mixAddon)} of add-on EBITDA bought at ~${RET.addonBuyX}x.</li></ul>`;
-  return `<div><p class="verdict-line">${head}</p>${levers}<p class="three-x"><b>What has to be true for 3x</b> (~${Math.round(v.irr3)}% IRR): ${M(v.need3)} of month-36 EBITDA at ${exitX.toFixed(1)}x, or a ${v.x3.toFixed(1)}x exit on ${M(e1)}. Smith + Howard's MOIC is not public; it grew revenue ~4x over its hold, while this plan grows EBITDA ~2x, so add-on arbitrage has to do more of the work.</p></div>`;
+  return `<div><p class="verdict-line">${head}</p>${fold('Closing the gap', weak + levers + `<p class="three-x"><b>What has to be true for 3x</b> (~${Math.round(v.irr3)}% IRR): ${M(v.need3)} of month-36 EBITDA at ${exitX.toFixed(1)}x, or a ${v.x3.toFixed(1)}x exit on ${M(e1)}. Smith + Howard's MOIC is not public; it grew revenue ~4x over its hold, while this plan grows EBITDA ~2x, so add-on arbitrage has to do more of the work.</p>`)}</div>`;
 }
 function renderDecision(D) {
   const r = D.meta.kpi_roadmap || [], z = r[r.length - 1] || { ebitda_usd: 41e6, revenue_usd: 215e6 };
   const ra = D.ra, inv = ra ? `${M(ra.investment_usd[0])}-${M(ra.investment_usd[1])}` : '$1.5-3M';
   const asks = [
-    ['Approve the add-on budget and pre-clear a co-invest top-up', 'Now', `~$50-80M of add-on spend over 36 months; $20-45M of equity on standby so Phase 2 deals are not lost on timing.`],
-    ['Fund FirmOS, starting with a 90-day HELIX Tier-0 pilot', 'Months 0-3', `${inv} est. build cost. Pilot on 3-5 AM Law clients with a control group: 20% autonomous resolution by month 12, 30% by month 36.`],
-    ['Run a 30-day diligence-gap sprint', 'Month 0-1', 'No new capital. Client count, churn, recurring mix and revolver terms; rebase this model on management accounts.'],
+    ['Approve the add-on budget and pre-clear a co-invest top-up', 'Now', `~$50-80M of add-on spend over 36 months; $20-45M of equity on standby.`],
+    ['Fund FirmOS, starting with a 90-day HELIX Tier-0 pilot', 'Months 0-3', `${inv} est. Pilot on 3-5 AM Law clients with a control group; 20% autonomous by month 12, 30% by month 36.`],
+    ['Run a 30-day diligence-gap sprint', 'Month 0-1', 'No new capital. Client count, churn, recurring mix and revolver terms; rebase on management accounts.'],
   ];
   $('#dec-asks').innerHTML = asks.map((a, i) => `<li class="sys-card"><span class="dn">${i + 1}</span><div><b>${esc(a[0])}</b><span class="when">${esc(a[1])}</span><p>${esc(a[2])}</p></div></li>`).join('');
   const exitX = 13, v = verdict(exitX, z.ebitda_usd, z.revenue_usd);
+  DEC_BASIS = `Base case (est.): 12x exit + 1 turn FirmOS premium on ${M(z.ebitda_usd)} month-36 EBITDA, ~${M(RET.netDebt)} net debt, ~${M(RET.eqIn)} equity, ~${RET.holdYrs} year hold.`;
   $('#dec-ret').innerHTML = `<div class="dec-nums"><div><b>${v.R.moic.toFixed(1)}x</b><span>gross MOIC</span></div><div><b>~${Math.round(v.R.irr)}%</b><span>gross IRR</span></div><div><b>${M(v.R.ev)}</b><span>month-36 EV</span></div></div>
-    <p class="dec-basis">Base case<span class="sys-est">est.</span>: 12x exit + 1 turn FirmOS premium on ${M(z.ebitda_usd)} month-36 EBITDA, ~${M(RET.netDebt)} net debt, ~${M(RET.eqIn)} equity, ~${RET.holdYrs} year hold.</p>
+    <p class="dec-basis">Base case<span class="sys-est">est.</span></p>
     <div class="sys-note ${v.clears ? 'sys-note--good' : 'sys-note--warn'} dec-verdict">${verdictHtml(v, exitX, z.ebitda_usd, z.revenue_usd, true)}</div>
     <a class="sys-btn sys-btn--secondary sys-btn--sm" href="#returns">Stress the returns →</a>`;
 }
@@ -246,13 +250,12 @@ function renderTemplate(D) {
       return `<li class="tl ${an ? 'analog' : ''} ${exit ? 'exit' : ''}"><span class="node" aria-hidden="true">${an ? '≈' : i + 1}</span><div class="sys-card box">
         <div class="meta"><span class="sys-card-label">${d}</span><span class="sys-chip ${an ? '' : 'sys-chip--soft'}">${esc(mt)}</span><span class="sys-muted" style="font-size:13px">${esc(t.location)}</span></div>
         <h3 class="sys-card-title">${esc(t.company)}</h3><p class="metric">${esc(t.metric)}</p>
-        <div class="sys-note sys-note--co lesson"><span><b>For Frontline:</b> ${esc(t.lesson_for_frontline)}</span></div>${src(t.source_url)}</div></li>`;
+        ${fold('For Frontline', `<p>${esc(t.lesson_for_frontline)}</p>`)}${src(t.source_url)}</div></li>`;
     }).join('');
   };
   draw('sh');
   if (more) more.onclick = () => { open = !open; draw(filt); if (!open) $('#template').scrollIntoView({ block: 'start' }); };
   $$('#tpl-seg button').forEach(b => b.onclick = () => { $$('#tpl-seg button').forEach(x => x.setAttribute('aria-selected', x === b)); draw(b.dataset.f); });
-  $('#tpl-caveat').textContent = 'Smith + Howard figures are BSP\'s own claims; Frontline figures are analyst estimates.';
   const r = D.meta.kpi_roadmap || [], a = r[0] || {}, z = r[r.length - 1] || {}, y2 = r.find(x => x.month === 24);
   const rows = [
     ['Starting point', '1 Atlanta office, ~100 professionals', `National: 9 offices, ~${N(D.meta.anchors?.employees_jan_2026 || 1100)} staff, ${esc(D.meta.anchors?.law_firm_clients || '900+')} clients`],
@@ -265,9 +268,8 @@ function renderTemplate(D) {
     ['Pre-exit capability', 'Geels Norton (SOC 2 / ISO) ~4 mo. before signing', 'Cyber-attestation product by month 18'],
     ['Buyer story', 'Multi-line, 7-state company (TPG Growth)', 'Legal IT + RCM + cyber + AI, US + UK/Canada'],
   ];
-  $('#compare').innerHTML = `<h3 class="sys-card-title">Smith + Howard vs the Frontline plan</h3><p class="sys-card-body">What transfers is the order of moves, not the 4x multiple.</p>
-    <div class="sys-table-wrap"><table class="sys-table cmp"><thead><tr><th>Measure</th><th>Smith + Howard (actual)</th><th>Frontline (plan)</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="f">${r[2]}</td></tr>`).join('')}</tbody><caption>Source: BSP and Smith + Howard releases; Frontline growth plan KPI roadmap.</caption></table></div>
-    <div class="sys-note sys-note--co"><span>The single move most worth copying is <b>Geels Norton</b>: Smith + Howard bought SOC 2 and ISO cyber-assurance capability months before TPG signed. Frontline should own the same capability before any sale process.</span></div>`;
+  $('#compare').innerHTML = `<h3 class="sys-card-title">Smith + Howard vs the Frontline plan</h3>
+    <div class="sys-table-wrap"><table class="sys-table cmp"><thead><tr><th>Measure</th><th>Smith + Howard (actual)</th><th>Frontline (plan)</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="f">${r[2]}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
 /* ── map ───────────────────────────────────────────────────────────────── */
@@ -327,11 +329,11 @@ function renderMap(D) {
   const views = {
     all: {
       bounds: US_BOUNDS, layers: () => [lawLayer({ small: true }), midLayer('fit'), tgLayer(['msp', 'rcm', 'intl', 'cap']), offLayer(['hq', 'on', 'intl', 'off'])],
-      legend: [['c', PHASE_COLORS[0], 'AM Law prospects (by HQ city)'], ['c', PHASE_COLORS[1], 'Mid-size firms (solid = fit 65+)'], ['d', PHASE_COLORS[1], 'Add-on targets (colour = lane)'], ['o', INK, 'Frontline offices (Phase 4 shows London, Toronto and the offshore hubs)']],
+      legend: [['c', PHASE_COLORS[0], 'AM Law prospects'], ['c', PHASE_COLORS[1], 'Mid-size firms (solid = fit 65+)'], ['d', PHASE_COLORS[1], 'Add-on targets'], ['o', INK, 'Frontline offices']],
     },
     0: {
       bounds: US_BOUNDS, layers: () => [lawLayer({}), offLayer(['hq', 'on'])],
-      legend: [['c', PHASE_COLORS[0], 'AM Law prospects, sized by count per HQ city'], ['o', INK, 'Frontline US offices']],
+      legend: [['c', PHASE_COLORS[0], 'AM Law prospects'], ['o', INK, 'Frontline US offices']],
       stats: () => [[N(D.law.length), 'AM Law firms scored'], [N(D.law.filter(f => /1/.test(f.priority_tier)).length), 'Tier 1 priority'], [N(D.law.filter(f => (f.cyber_urgency_score || 0) >= 4).length), 'cyber urgency 4+'], [N(D.law.filter(f => /planning|partial/.test(f.ai_opportunity_signal)).length), 'AI programs planned or partial']],
     },
     1: {
@@ -341,7 +343,7 @@ function renderMap(D) {
     },
     2: {
       bounds: US_BOUNDS, layers: () => [midLayer('ins'), tgLayer(['rcm']), offLayer(['hq', 'on'])],
-      legend: [['c', PHASE_COLORS[2], 'Insurance-related mid-size firms (solid)'], ['d', LANES.rcm.color, 'RCM & billing targets'], ['o', INK, 'Frontline offices']],
+      legend: [['c', PHASE_COLORS[2], 'Insurance-related mid-size firms'], ['d', LANES.rcm.color, 'RCM & billing targets'], ['o', INK, 'Frontline offices']],
       stats: () => [[N(ins.length), 'insurance-related mid-size firms'], [N(D.mid.filter(m => /bundle|ebilling/.test(m.recommended_offer)).length), 'firms where eBilling or the bundle leads'], ['11% → 18%', 'e-billing rejection rate, 2024 → 2025 (Elite)'], [`${totals('rcm').length} · ${M(sumRev(totals('rcm')))}`, 'RCM targets · ZoomInfo rev. (overstated)']],
     },
     3: {
@@ -369,21 +371,20 @@ function renderMap(D) {
     if (key === 'all') {
       const max = 42;
       panel.innerHTML = `<span class="pp-tag">All phases · 42 months</span><h3 class="sys-card-title">Defend the core, land the mid-market, roll up the revenue cycle, then go abroad.</h3>
-        <p class="thesis">The phases overlap on purpose. Each one funds and staffs the next, and acquisitions start in month 6.</p>
+        <p class="thesis">Phases overlap: each funds and staffs the next; acquisitions start in month 6.</p>
         <div class="gantt" role="img" aria-label="Phase timeline, months 0 to 42, with the exit marked at month 36">${phases.map((p, i) => `<div class="ph-row" style="--pc:${PHASE_COLORS[i]}"><b>Phase ${i + 1}</b><div class="ph-track"><i style="left:${p.month_start / max * 100}%;width:${(p.month_end - p.month_start) / max * 100}%"></i></div></div>`).join('')}
         <div class="ph-axis"><span></span><span>${[0, 12, 24, 36, 42].map(m => `<span style="left:${m / max * 100}%;transform:translateX(${m === 0 ? '0' : m === 42 ? '-100%' : '-50%'})">${m}</span>`).join('')}</span></div>
         <div class="gantt-exit" style="left:calc(80px + (100% - 80px) * ${36 / max})" aria-hidden="true"><span>Exit</span></div></div>
-        <p class="fine" style="margin:0">The exit is modelled at month 36 (Oct 2029). Phase 4 runs on to month 42 and is sold as the buyer's growth story; only the first UK or Canada add-on is in month-36 EBITDA.</p>
-        <div class="kt"><h4>What each phase delivers</h4><ul>${phases.map((p, i) => `<li><b style="color:var(--sys-ink)">Phase ${i + 1}:</b> ${esc(p.phase.replace(/^Phase \d+ - /, ''))}</li>`).join('')}</ul></div>
-        <p class="fine">Pick a phase or press Play. Points are prospects and targets from the portal's data; AM Law prospects are grouped by headquarters city.</p>`;
+        <p class="fine" style="margin:0">Exit modelled at month 36 (Oct 2029); Phase 4 runs to month 42.</p>
+        <div class="kt"><h4>What each phase delivers</h4><ul>${phases.map((p, i) => `<li><b style="color:var(--sys-ink)">Phase ${i + 1}:</b> ${esc(p.phase.replace(/^Phase \d+ - /, ''))}</li>`).join('')}</ul></div>`;
     } else {
       const p = phases[key];
       const kt = Object.entries(p.kpi_targets || {}).filter(([k]) => k !== 'label').map(([k, v]) => { const tk = Object.keys(v).find(x => /^target/.test(x)); return `<li>${esc(KT_LABEL[k] || HZ(human(k)))}: <b class="sys-num">${v.baseline == null ? '—' : esc(fmtVal(v.baseline))} → ${esc(fmtVal(v[tk]))}</b> <span class="muted">by ${esc(monthOf(tk))}</span></li>`; }).join('');
-      const thesis = sents(p.thesis, 3);
-      panel.innerHTML = `<span class="pp-tag">Phase ${+key + 1} · months ${esc(String(p.months).replace('-', '–'))}</span><h3 class="sys-card-title">${esc(p.phase.replace(/^Phase \d+ - /, ''))}</h3><p class="thesis">${esc(thesis)}</p>
+      const thesis = sents(p.thesis, 1), thesisMore = String(sents(p.thesis, 3)).slice(thesis.length).trim();
+      panel.innerHTML = `<span class="pp-tag">Phase ${+key + 1} · months ${esc(String(p.months).replace('-', '–'))}</span><h3 class="sys-card-title">${esc(p.phase.replace(/^Phase \d+ - /, ''))}</h3><p class="thesis">${esc(thesis)}</p>${thesisMore ? fold('Detail', `<p>${esc(thesisMore)}</p>`) : ''}
         <div class="stats">${v.stats().map(s => `<div class="stat"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('')}</div>
         <div class="kt"><h4>KPI targets <span class="sys-est">est.</span></h4><ul>${kt}</ul></div>
-        ${+key === phases.length - 1 ? `<div class="sys-note sys-note--warn"><span>Exit is modelled at month 36 (Oct 2029). Targets dated month 42 sit after it: Phase 4 is sold as the buyer's growth story, and only the first UK or Canada add-on is in month-36 EBITDA.</span></div>` : ''}
+        ${+key === phases.length - 1 ? `<div class="sys-note sys-note--warn"><span>Month-42 targets sit after the month-36 exit.</span></div>` : ''}
         <div class="kt"><h4>Geography</h4><p class="fine" style="margin:0">${esc((p.geography || []).join(' · '))}</p></div>
         <p class="fine">${(p.source_urls || [p.source_url]).slice(0, 3).map(u => src(u)).join(' · ')}</p>`;
     }
@@ -435,7 +436,7 @@ function renderLevers(D) {
       <div class="bars"><div class="bar-row"><span class="bl">Baseline</span><div class="track ${l.baseline == null ? 'na' : ''}"><i style="width:${bw}%"></i></div><span class="bv">${esc(fmt(l.baseline, l.unit))}</span></div>
       <div class="bar-row"><span class="bl">Target <small>month ${dt.m}</small></span><div class="track trk-t"><i style="width:${tw}%"></i></div><span class="bv">${esc(fmt(l.target, l.unit))}</span></div></div>${way}
       <span class="tag ${l.baseline == null ? '' : 'ok'}">${esc(gap)}</span>
-      <p class="ev">${esc(ev)}</p>${src(l.source_url)}</article>`;
+      ${fold('Evidence', `<p class="ev">${esc(ev)}</p>${src(l.source_url)}`)}</article>`;
   }).join('');
 }
 
@@ -464,17 +465,17 @@ function renderAgents(D) {
   $('#ag-seg').innerHTML = WHO.map((w, i) => `<button type="button" role="tab" aria-selected="${i === 0}" data-k="${w.k}">${esc(w.l)}<span class="n">${w.k === 'all' ? ag.length : ag.filter(a => tags(a).includes(w.k)).length}</span></button>`).join('');
   const fm = (v, u) => /USD/.test(u) ? `$${v}` : /^x /.test(u) ? `${v}x` : /%/.test(u) ? `${v}%` : /days/.test(u) ? `${v} days` : /hours/.test(u) ? `${N(v)} hours` : N(v);
   const unitOf = u => String(u || '').replace(/^(?:USD|x|days|hours|%)\s+/, '');
+  const SHORTJOB = { 'Tier-0 service desk agent': 'Resolve routine IT requests in Teams, email and voice; route the rest.', 'Identity / password self-service agent': 'Verify the user, then reset passwords, unlock accounts and re-enroll MFA.', 'Phishing triage agent': 'Triage reported phishing, quarantine and close; analysts approve edge cases.', 'SOC alert investigation copilot': 'Summarize incidents; draft remediation steps and client incident reports.', 'AR follow-up / collections agent': 'Prioritize the A/R worklist, send dunning, log promises-to-pay, escalate aged items.', 'eBilling rejection & appeals agent': 'Read rejection codes, categorize, draft the corrected invoice or appeal, resubmit.', 'OCG pre-bill compliance agent': 'Check each time entry against client guidelines before submission.', 'Time-capture agent': 'Rebuild billable time from email, documents, calls and calendar into draft entries.', 'User lifecycle & billing-reconciliation automation agent': 'Automate joiners, movers, leavers, license true-ups and PSA-to-invoice reconciliation.', 'Legal-AI enablement concierge': 'Move Copilot and genAI from pilots to firm-wide use.' };
   $('#agent-grid').innerHTML = ag.map(a => `<article class="sys-card agent" data-tags="${tags(a).join(' ')}"><div class="ah"><span class="aic"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">${AIC[aicOf(a)]}</svg></span><div><h3 class="sys-card-title">${esc(a.agent)}</h3></div></div>
-    <p class="sys-card-body">${esc(a.job_to_be_done)}</p>
-    <div class="metric"><b>${esc(fm(a.metric_value, a.metric_unit))}</b><span>${esc(unitOf(a.metric_unit))}</span></div>
-    <p class="sys-card-body">${esc(a.metric_claim)}</p>
-    <p class="sys-card-body who"><b>Helps:</b> ${esc(a.who_it_helps)}</p>
+    <p class="sys-card-body">${esc(SHORTJOB[a.agent] || sents(a.job_to_be_done, 1))}</p>
+    <div class="metric"><b>${esc(fm(a.metric_value, a.metric_unit))}</b><span>${esc(unitOf(a.metric_unit))}</span><span class="sys-est">vendor claim</span></div>
     <div class="sys-chips">${(a.vendor_examples || []).slice(0, 4).map(v => `<span class="sys-chip">${esc(v)}</span>`).join('')}</div>
-    <div class="sys-card-foot"><span>Pilot in about ${a.weeks_to_deploy} weeks<span class="sys-est">est.</span></span>${src(a.source_url)}</div></article>`).join('');
+    <div class="sys-card-foot"><span>Pilot in about ${a.weeks_to_deploy} weeks<span class="sys-est">est.</span></span></div>
+    ${fold('Detail', `<p class="sys-card-body">${esc(a.job_to_be_done)}</p><p class="sys-card-body">${esc(a.metric_claim)}</p><p class="sys-card-body who"><b>Helps:</b> ${esc(a.who_it_helps)}</p>${src(a.source_url)}`)}</article>`).join('');
   const sorted = [...ag].sort((a, b) => a.weeks_to_deploy - b.weeks_to_deploy); const mx = Math.max(...ag.map(a => a.weeks_to_deploy));
-  $('#runway').innerHTML = `<h3 class="sys-card-title">Pilot runway</h3><p class="sys-card-body">Weeks to a pilot on Frontline tooling (analyst assumption). Fastest payback goes first.</p>` +
+  $('#runway').innerHTML = `<h3 class="sys-card-title">Pilot runway <span class="sys-est">est.</span></h3>` +
     sorted.map(a => `<div class="rw" data-tags="${tags(a).join(' ')}"><div class="rn">${esc(a.agent.replace(/ agent$/i, ''))}<span>${a.weeks_to_deploy} wk</span></div><div class="rb"><i style="width:${a.weeks_to_deploy / mx * 100}%"></i></div></div>`).join('') +
-    `<div class="rw-axis"><span>0</span><span>${Math.round(mx / 2)} wk</span><span>${mx} wk</span></div><p class="sys-src">Source: Frontline growth plan AI agents (vendor case studies; timelines are analyst estimates).</p>`;
+    `<div class="rw-axis"><span>0</span><span>${Math.round(mx / 2)} wk</span><span>${mx} wk</span></div>`;
   $$('#ag-seg button').forEach(b => b.onclick = () => {
     $$('#ag-seg button').forEach(x => x.setAttribute('aria-selected', x === b)); const k = b.dataset.k;
     $$('#agent-grid .agent, #runway .rw').forEach(el => el.classList.toggle('off', k !== 'all' && !el.dataset.tags.split(' ').includes(k)));
@@ -487,8 +488,8 @@ function renderTalent(D) {
   $('#footprint').innerHTML = OFFICES.map(o => `<div class="fp ${o.type}"><b>${esc(o.name)}</b><span>${esc(o.note)}</span><br><span class="fpt">${esc(tl[o.type])}</span></div>`).join('');
   const ic = ['<path d="M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>', '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16" fill="none" stroke="currentColor" stroke-width="1.6"/>', '<path d="M5 19l4-4 3 3 7-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 10h4v4" fill="none" stroke="currentColor" stroke-width="2"/>', '<path d="M12 4l9 4-9 4-9-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 10v5c3 2 7 2 10 0v-5" fill="none" stroke="currentColor" stroke-width="2"/>', '<path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>', '<circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 20c0-2.5 1-4.5 3-4.5s3 1.5 3 4" fill="none" stroke="currentColor" stroke-width="2"/>'];
   $('#programs').innerHTML = D.kind('talent_program').map((p, i) => `<article class="sys-card prog rv"><span class="pi"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">${ic[i % ic.length]}</svg></span>
-    <h3 class="sys-card-title">${esc(p.program)}</h3><p class="sys-src" style="margin:0">For ${esc(p.who_it_helps)}</p><p class="sys-card-body">${esc(p.evidence)}</p>
-    <div class="sys-note sys-note--co"><span><b>Target:</b> ${esc(String(p.metric || '').replace(/^Target:?\s*/i, ''))}</span></div>${src(p.source_url)}</article>`).join('');
+    <h3 class="sys-card-title">${esc(p.program)}</h3><p class="sys-src" style="margin:0">For ${esc(p.who_it_helps)}</p>
+    ${(() => { const tm = String(p.metric || '').replace(/^Target:?\s*/i, ''); const m = tm.match(/^(.*?)\s*\((analyst assumption[^)]*)\)\s*$/); const main = m ? m[1] : tm, note = m ? m[2] : ''; return `<div class="sys-note sys-note--co"><span><b>Target:</b> ${esc(main)}${m ? ' <span class="sys-est">est.</span>' : ''}</span></div>${fold('Evidence', `<p class="sys-card-body">${esc(p.evidence)}</p>${note ? `<p class="sys-card-body">${esc(note)}</p>` : ''}${src(p.source_url)}`)}`; })()}</article>`).join('');
 }
 
 /* ── add-ons ───────────────────────────────────────────────────────────── */
@@ -499,11 +500,10 @@ function renderAddons(D) {
   const card = (t, r) => {
     const ln = LANES[laneOf(t)]; const comp = /subsidiary of|owned by/i.test(String(t.ownership) + (t.risk_flags || []).join(' ')) && /new charter|BNC|ccs/i.test(String(t.ownership) + (t.risk_flags || []).join(' '));
     return `<article class="sys-card tgt" style="--lc:${ln.color}"><span class="rank">#${r}</span><span class="lane">${esc(ln.name)} · ${esc(ln.phase)}</span>
-      <h3 class="sys-card-title">${esc(t.company)}</h3><p class="sys-src" style="margin:0">${esc([t.hq_city, t.state, t.country !== 'United States' ? t.country : ''].filter(Boolean).join(', ') || 'HQ not public')} · ${esc(t.ownership || '')}</p>
+      <h3 class="sys-card-title">${esc(t.company)}</h3><p class="sys-src" style="margin:0">${esc([t.hq_city, t.state, t.country !== 'United States' ? t.country : ''].filter(Boolean).join(', ') || 'HQ not public')}</p>
       <div class="fit"><b>${t.fit_score}</b><div class="track"><i style="width:${t.fit_score}%"></i></div></div>
       <div class="facts">${t.employees ? `<div>${N(t.employees)} <span>staff</span></div>` : ''}${t.revenue_est_usd ? `<div>${M(t.revenue_est_usd)}<span class="sys-est">est.</span> <span>ZoomInfo revenue</span></div>` : ''}${t.founded_year ? `<div>${t.founded_year} <span>founded</span></div>` : ''}</div>
-      <p class="sys-card-body">${esc(sents(t.strategic_rationale, 2))}</p>
-      ${(t.risk_flags || []).length ? `<div class="sys-note sys-note--warn"><span>${comp ? '<b>Carve-out or competitor:</b> ' : '<b>Watch:</b> '}${esc(t.risk_flags.slice(0, 2).join('; '))}</span></div>` : ''}
+      ${fold('Why and watch', `<p class="sys-src" style="margin:0">${esc(t.ownership || '')}</p><p class="sys-card-body">${esc(sents(t.strategic_rationale, 2))}</p>${(t.risk_flags || []).length ? `<div class="sys-note sys-note--warn"><span>${comp ? '<b>Carve-out or competitor:</b> ' : '<b>Watch:</b> '}${esc(t.risk_flags.slice(0, 2).join('; '))}</span></div>` : ''}`)}
       ${src(t.website, 'Website')}</article>`;
   };
   const draw = k => {
@@ -515,8 +515,9 @@ function renderAddons(D) {
 
   const sum = a => a.reduce((s, t) => s + (t.revenue_est_usd || 0), 0);
   $('#lanes').innerHTML = `<div class="card-h"><h3 class="sys-card-title">Four lanes, one budget</h3><span class="sys-est">est.</span></div>` +
-    Object.entries(LANES).map(([k, l]) => { const a = D.tg.filter(t => laneOf(t) === k); return `<div class="lane-row" style="--lc:${l.color}"><span class="ln"><i></i>${esc(l.name)} <span class="muted" style="font-weight:500">· ${esc(l.phase)}</span></span><span class="lv">${a.length} · ${M(sum(a))}</span><span class="ld">${esc(l.desc)}. Best fit: ${esc(a.slice(0, 2).map(t => t.company.replace(/ \(.*\)$/, '').replace(/,? Inc\.?$/, '')).join(', '))}.</span></div>`; }).join('') +
-    `<p class="fine">Plan: ~$55M acquired revenue by month 36 at an estimated $50–80M cost (blended 5–10x EBITDA). Already done under BV Investment Partners: ${esc((D.tgMeta.platform_context?.prior_acquisitions || ['InvoicePrep', 'Glasser Tech', 'Logicforce', 'LANsultants']).map(x => x.replace(/ \(.*/, '')).join(', '))}. KL Software (Aug 2026) is a partnership, not an acquisition.</p>`;
+    Object.entries(LANES).map(([k, l]) => { const a = D.tg.filter(t => laneOf(t) === k); return `<div class="lane-row" style="--lc:${l.color}"><span class="ln"><i></i>${esc(l.name)} <span class="muted" style="font-weight:500">· ${esc(l.phase)}</span></span><span class="lv">${a.length} · ${M(sum(a))}</span><span class="ld">Best fit: ${esc(a.slice(0, 2).map(t => t.company.replace(/ \(.*\)$/, '').replace(/,? Inc\.?$/, '')).join(', '))}.</span></div>`; }).join('') +
+    fold('Lane notes', `<ul>${Object.values(LANES).map(l => `<li><b>${esc(l.name)}:</b> ${esc(l.desc)}.</li>`).join('')}</ul>`) +
+    `<p class="fine">Plan: ~$55M acquired revenue by month 36 for an est. $50–80M (5–10x EBITDA). Done under BV Investment Partners: ${esc((D.tgMeta.platform_context?.prior_acquisitions || ['InvoicePrep', 'Glasser Tech', 'Logicforce', 'LANsultants']).map(x => x.replace(/ \(.*/, '')).join(', '))}. KL Software (Aug 2026) is a partnership.</p>`;
 
   const steps = [
     ['Day 0–30: keep the brand, lock the people', 'Retain the founder and local brand for 12 months, as Smith + Howard did with Market Street Partners. Sign retention for the top 10 consultants.'],
@@ -524,12 +525,12 @@ function renderAddons(D) {
     ['Day 60–90: cross-sell the bundle', 'Offer cyber posture, eBilling and A/R and AI enablement to every acquired client. Track attach rate by cohort.'],
     ['Day 90–100: report the synergy', 'Report revenue per head, net first-level resolution and churn against the deal model to the PRG, then reuse the integration plan on the next deal.'],
   ];
-  $('#hundred').innerHTML = `<h3 class="sys-card-title">The first 100 days of every deal</h3><ol class="steps">${steps.map(s => `<li><b>${esc(s[0])}</b><span>${esc(s[1])}</span></li>`).join('')}</ol>`;
+  $('#hundred').innerHTML = `<h3 class="sys-card-title">The first 100 days of every deal</h3><ol class="steps">${steps.map(s => `<li><b>${esc(s[0])}</b></li>`).join('')}</ol>${fold('Day-by-day detail', `<ol>${steps.map(s => `<li>${esc(s[1])}</li>`).join('')}</ol>`)}`;
 
   const ord = { high: 0, medium: 1, low: 2 };
   const rel = p => FL_RX(String(p.threat_rationale || '')) ? 0 : 1;
   const rv = [...D.rivals].sort((a, b) => rel(a) - rel(b) || (ord[a.threat_level] ?? 3) - (ord[b.threat_level] ?? 3)).slice(0, 6);
-  $('#rivals').innerHTML = `<h3 class="sys-card-title">Who bids against us</h3>${rv.map(p => `<div class="riv"><b>${esc(p.firm)}</b><span class="lvl ${esc(p.threat_level)}">${esc(String(p.threat_level || '—').replace(/^\w/, c => c.toUpperCase()))}</span><p>${esc(flLine(p))}</p></div>`).join('')}<p class="sys-src">Source: private-equity landscape (${D.rivals.length} sponsors overlap with Frontline).</p>`;
+  $('#rivals').innerHTML = `<h3 class="sys-card-title">Who bids against us</h3>${rv.map(p => `<div class="riv"><b>${esc(p.firm)}</b><span class="lvl ${esc(p.threat_level)}">${esc(String(p.threat_level || '—').replace(/^\w/, c => c.toUpperCase()))}</span></div>`).join('')}${fold('Why they compete', `<ul>${rv.map(p => `<li><b>${esc(p.firm)}:</b> ${esc(flLine(p))}</li>`).join('')}</ul>`)}`;
 }
 
 const FL_RX = s => /frontline|legal|law firm|managed services|managed IT|IT services|IT managed/i.test(s) || /\bIT\b|\bMSPs?\b/.test(s);
@@ -539,7 +540,7 @@ const flLine = p => { const ss = String(p.threat_rationale || '').split(/(?<=[a-
 function renderFinance(D) {
   const fin = D.kind('financing');
   const label = ['Equity at close', 'Senior debt', 'Add-on debt', 'Debt pricing', 'Equity top-up', 'Exit frame'];
-  $('#fin-grid').innerHTML = fin.map((f, i) => `<article class="sys-card fin rv"><span class="sys-card-label">${esc(label[i] || 'Financing')}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><p class="amt">${esc(f.amount_or_range)}</p><p class="sys-card-body">${esc(sents(f.evidence, 2))}</p>${src(f.source_url)}</article>`).join('');
+  $('#fin-grid').innerHTML = fin.map((f, i) => `<article class="sys-card fin rv"><span class="sys-card-label">${esc(label[i] || 'Financing')}</span><h3 class="sys-card-title">${esc(f.source_of_funds)}</h3><p class="amt">${esc(f.amount_or_range)}</p>${fold('Evidence', `<p class="sys-card-body">${esc(sents(f.evidence, 2))}</p>${src(f.source_url)}`)}</article>`).join('');
 
   /* roadmap chart */
   const r = D.meta.kpi_roadmap || [];
@@ -560,8 +561,8 @@ function renderFinance(D) {
     <div class="chart-legend"><span><i style="background:var(--co)"></i>Revenue</span><span><i style="background:color-mix(in srgb,var(--sys-good) 40%,var(--sys-surface))"></i>Adj. EBITDA</span><span><i style="background:var(--sys-good);border-radius:50%"></i>EBITDA margin (right axis)</span></div>`;
   };
   drawRoad();
-  $('#road-table').innerHTML = `<div class="sys-table-wrap rt-wrap"><table class="sys-table rt"><thead><tr><th>Month</th><th class="sys-n">Revenue</th><th class="sys-n">Adj. EBITDA</th><th class="sys-n">Margin</th><th class="sys-n">People</th><th class="sys-n">Revenue per head</th><th class="sys-n">Clients</th></tr></thead><tbody>${r.map((x, i) => `<tr class="${i === r.length - 1 ? 'hl' : ''}"><td>${x.month === 0 ? 'Today (Oct 2026)' : 'Month ' + x.month}</td><td class="sys-n">${M(x.revenue_usd)}</td><td class="sys-n">${M(x.ebitda_usd)}</td><td class="sys-n">${(x.ebitda_usd / x.revenue_usd * 100).toFixed(1)}%</td><td class="sys-n">${N(x.headcount)}</td><td class="sys-n">${M(x.revenue_usd / x.headcount)}</td><td class="sys-n">${N(x.locations_or_accounts)}</td></tr>`).join('')}</tbody><caption>Source: Frontline growth plan KPI roadmap. Every figure is an analyst estimate.</caption></table></div>
-    <p class="fine">${esc(String(r[r.length - 1]?.note || '').replace(/^ASSUMPTION\.\s*/, 'Assumption: '))}</p>`;
+  $('#road-table').innerHTML = `<details class="sys-fold"><summary><b>Table</b><span>by month</span></summary><div class="sys-table-wrap rt-wrap"><table class="sys-table rt"><thead><tr><th>Month</th><th class="sys-n">Revenue</th><th class="sys-n">Adj. EBITDA</th><th class="sys-n">Margin</th><th class="sys-n">People</th><th class="sys-n">Revenue per head</th><th class="sys-n">Clients</th></tr></thead><tbody>${r.map((x, i) => `<tr class="${i === r.length - 1 ? 'hl' : ''}"><td>${x.month === 0 ? 'Today (Oct 2026)' : 'Month ' + x.month}</td><td class="sys-n">${M(x.revenue_usd)}</td><td class="sys-n">${M(x.ebitda_usd)}</td><td class="sys-n">${(x.ebitda_usd / x.revenue_usd * 100).toFixed(1)}%</td><td class="sys-n">${N(x.headcount)}</td><td class="sys-n">${M(x.revenue_usd / x.headcount)}</td><td class="sys-n">${N(x.locations_or_accounts)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="fine">${esc(String(r[r.length - 1]?.note || '').replace(/^ASSUMPTION\.\s*/, 'Assumption: '))}</p></details>`;
 
   /* value bridge */
   const an = D.meta.anchors || {}; const entryMid = (an.entry_ev_ebitda_est_x || [12, 15]).reduce((a, b) => a + b, 0) / 2;
@@ -596,9 +597,9 @@ function renderFinance(D) {
     const [i0, i1] = ra.investment_usd, [u0, u1] = ra.ebitda_impact_usd, [t0, t1] = ra.multiple_expansion_turns;
     /* Like-for-like midpoint: FirmOS EBITDA is already inside the month-36 roadmap EBITDA, and its turns are the bridge's FirmOS slider. */
     const um = (u0 + u1) / 2, im = (i0 + i1) / 2, vEb = um * bx, vPrem = ot * e1, vm = vEb + vPrem;
-    $('#os-case').innerHTML = `<div><span class="sys-card-label">FirmOS thesis <span class="sys-est">est.</span></span><h3 class="sys-card-title" style="margin-top:8px">The multiple-expansion case for ${esc(ra.os_name)}</h3><p>${esc(sents(String(ra.rationale || '').replace(/already entered at an estimated 12-15x, so FirmOS defends the premium rather than creating one/, 'is estimated from public filings to have entered at 12-15x. If so, FirmOS defends that multiple rather than creating a new one'), 3))}</p><p><a class="sys-link" href="firmos.html">See FirmOS →</a></p></div>
-      <div class="os-flow"><div><b>${M(i0)}–${M(i1)}</b><span>investment</span></div><div><b>+${M(u0)}–${M(u1)}</b><span>EBITDA (${ra.ebitda_impact_pct_revenue.join('–')}% of revenue), already inside the ${M(e1)} month-36 EBITDA</span></div><div><b>+${t0}–${t1}x</b><span>turns: the same turns as the bridge's FirmOS slider (now ${ot.toFixed(2).replace(/0$/, '')}), not extra value</span></div><div><b>~${M(vm)}</b><span>of the month-36 EV attributable to FirmOS at midpoint (${M(um)} × ${bx.toFixed(1)}x + ${ot.toFixed(2).replace(/0$/, '')} turns × ${M(e1)}), ~${Math.round(vm / im)}x the ${M(im)} midpoint spend</span></div></div>
-      <p class="fine os-note">This is a slice of the bridge above, not value on top of it. Drop the FirmOS slider to 0 to see the plan without the premium.</p>`;
+    $('#os-case').innerHTML = `<div><span class="sys-card-label">FirmOS thesis <span class="sys-est">est.</span></span><h3 class="sys-card-title" style="margin-top:8px">The multiple-expansion case for ${esc(ra.os_name)}</h3>${fold('Thesis', `<p>${esc(sents(String(ra.rationale || '').replace(/already entered at an estimated 12-15x, so FirmOS defends the premium rather than creating one/, 'is estimated from public filings to have entered at 12-15x. If so, FirmOS defends that multiple rather than creating a new one'), 3))}</p>`)}<p><a class="sys-link" href="firmos.html">See FirmOS →</a></p></div>
+      <div class="os-flow"><div><b>${M(i0)}–${M(i1)}</b><span>investment</span></div><div><b>+${M(u0)}–${M(u1)}</b><span>EBITDA (${ra.ebitda_impact_pct_revenue.join('–')}% of revenue), inside the ${M(e1)} month-36 figure</span></div><div><b>+${t0}–${t1}x</b><span>turns (bridge slider, now ${ot.toFixed(2).replace(/0$/, '')}); not extra value</span></div><div><b>~${M(vm)}</b><span>of month-36 EV from FirmOS at midpoint, ~${Math.round(vm / im)}x the ${M(im)} spend</span></div></div>
+      ${fold('Midpoint arithmetic', `<p>${M(um)} × ${bx.toFixed(1)}x + ${ot.toFixed(2).replace(/0$/, '')} turns × ${M(e1)} = ~${M(vm)}. This is a slice of the bridge above, not value on top of it. Drop the FirmOS slider to 0 to see the plan without the premium.</p>`)}`;
   };
   mx.oninput = drawBridge; os.oninput = drawBridge; if (en) en.oninput = drawBridge; drawBridge();
   let rw = window.innerWidth, rt;
@@ -608,20 +609,17 @@ function renderFinance(D) {
 /* ── risks & asks ──────────────────────────────────────────────────────── */
 function renderRisks() {
   const risks = [
-    ['The numbers are estimates, not disclosures', 'Revenue ($100-140M), EBITDA ($16-20M) and margin come from leverage and headcount assumptions.', 'Rebase the KPI roadmap on monthly management accounts within 30 days.'],
-    ['The entry multiple may not hold at exit', 'If entry was in the ~12-15x range implied by public filings, it sits above MSP deal comps (9.9-11.2x by size), so the exit multiple may compress.', 'Defend it with recurring mix above 50%, churn below 10% and cyber attach. Let EBITDA growth carry the return.'],
-    ['The add-on plan outruns the debt', 'About $50-80M of add-on spend against ~$15-35M of incremental debt capacity at sector-norm leverage.', 'Plan a co-invest top-up of $20–45M now, starting with the $7.5M of unsold capacity in the Frontline co-invest vehicle.'],
-    ['Client count and churn are unreconciled', 'Press releases say 800-900+ firms while the homepage says 300. Churn and recurring mix are not public.', 'Reconcile both, and disclose the revolver or delayed-draw facility, before any lender or sale process.'],
-    ['Consolidators bid up legal MSPs', 'Alpine (Evergreen), New Charter, CIVC and EagleTree all buy in IT or legal services.', 'Move first on founder-owned targets (Tabush, Garver, Legal Billing Group) and keep local brands, as S+H did.'],
-    ['AI results are vendor claims', 'Moveworks (25-35%), HighRadius and Laurel figures are vendor-published, and HELIX has no published deflection metric yet.', 'Run every pilot against a control group and publish deflection and DSO monthly.'],
-    ['International is a foothold, not a business', 'The UK subsidiary booked ~GBP 0.58M in 2024. SRA-regulated clients raise the bar.', 'Buy, don\'t build: acquire Quiss or ALB and staff UK hours from Cape Town.'],
+    ['The numbers are estimates, not disclosures', 'Revenue ($100-140M), EBITDA ($16-20M) and margin are leverage and headcount assumptions.', 'Rebase the KPI roadmap on monthly management accounts within 30 days.'],
+    ['The entry multiple may not hold at exit', 'Entry at ~12-15x sits above MSP deal comps (9.9-11.2x by size); the exit multiple may compress.', 'Hold recurring mix above 50%, churn below 10% and cyber attach; EBITDA growth carries the return.'],
+    ['The add-on plan outruns the debt', '~$50-80M of add-on spend against ~$15-35M of incremental debt capacity.', 'Plan a $20–45M co-invest top-up now, starting with the $7.5M unsold in the Frontline co-invest vehicle.'],
+    ['Client count and churn are unreconciled', 'Press releases say 800-900+ firms; the homepage says 300. Churn and recurring mix are not public.', 'Reconcile both and disclose the revolver or delayed-draw facility before any sale process.'],
+    ['Consolidators bid up legal MSPs', 'Alpine (Evergreen), New Charter, CIVC and EagleTree all buy in IT or legal services.', 'Move first on founder-owned targets (Tabush, Garver, Legal Billing Group); keep local brands, as Smith + Howard did.'],
+    ['AI results are vendor claims', 'Moveworks (25-35%), HighRadius and Laurel figures are vendor-published; HELIX has no published deflection metric.', 'Run every pilot against a control group; publish deflection and DSO monthly.'],
+    ['International is a foothold, not a business', 'The UK subsidiary booked ~GBP 0.58M in 2024; SRA-regulated clients raise the bar.', 'Buy, don\'t build: acquire Quiss or ALB; staff UK hours from Cape Town.'],
   ];
   $('#risk-list').innerHTML = risks.map(r => `<li><b>${esc(r[0])}</b>${esc(r[1])}<br><span class="mit"><b>Mitigation:</b> ${esc(r[2])}</span></li>`).join('');
   const asks = [
-    ['Approve the add-on budget and co-invest top-up', 'Now', 'About $50-80M over 36 months; pre-clear $20-45M of equity so Phase 2 deals are not lost on timing.'],
-    ['Fund a 90-day HELIX Tier-0 pilot', 'Month 0-3', 'Pilot on 3-5 AM Law clients with a control group; target 20% autonomous resolution by month 12 and 30% by month 36.'],
-    ['Run a 30-day diligence-gap sprint', 'Month 0-1', 'Client count, churn, recurring mix and revolver or delayed-draw terms; correct the KL Software record (a partnership).'],
-    ['Name an offshore delivery leader', 'Quarter 1', 'Hyderabad, Goa and Cape Town under one leader with a go-to-market and integration mandate, as S+H did for India.'],
+    ['Name an offshore delivery leader', 'Quarter 1', 'Hyderabad, Goa and Cape Town under one leader with a go-to-market and integration mandate.'],
     ['Open founder doors through the BSP network', 'Months 3-12', 'Introductions to Kraft Kennedy, Tabush, Innovative Computing Systems, Garver Group and Helm360.'],
     ['Own a cyber-attestation capability before the sale process', 'By month 18', 'Buy or build SOC 2 / ISO / OCG security attestations (the Geels Norton move); PSM Partners, STS and Lumifi are on the screen.'],
   ];
@@ -635,7 +633,16 @@ function renderSources(D) {
   const g = groups.map(([l, k]) => { const urls = D.kind(k).flatMap(x => x.source_urls || [x.source_url]).filter(u => u && !seen.has(u) && seen.add(u)); return `<h4>${esc(l)}</h4><ul>${urls.map(u => `<li><a href="${escRaw(u)}" target="_blank" rel="noopener">${esc(host(u))} ↗</a></li>`).join('')}</ul>`; }).join('');
   const method = String(D.meta.method || '').split(/(?<=\.)\s+(?=Items marked)/)[0].replace(/ was fetched on (\d{4})-(\d{2})-\d{2}/, ' was read in October $1');
   const gen = /^\d{4}-\d{2}-\d{2}$/.test(D.meta.generated || '') ? Fmt.date(D.meta.generated) : 'Oct 2026';
-  $('#src-body').innerHTML = `<p>${esc(method)} Phase figures were computed from the portal's own data, listed below. Targets are explicit analyst assumptions.</p><h4>Caveats</h4><ul>${(D.meta.caveats || []).map(c => `<li>${esc(clean(c))}</li>`).join('')}</ul>
+  const SEC = ['<li>At a glance: Frontline growth plan KPI roadmap. Today is the Oct 2026 run-rate; month 36 is the plan. Analyst assumptions anchored to Form D filings, UK Companies House accounts and press releases, not company guidance. Frontline growth plan; AM Law prospect list; mid-size law firms research; Frontline and Thomas Scientific add-on targets (Sept–Oct 2026).</li>',
+    '<li>Decision: ' + esc(DEC_BASIS) + '</li>',
+    '<li>Template: Smith + Howard figures are BSP\'s own claims; Frontline figures are analyst estimates. Source: BSP and Smith + Howard releases; Frontline growth plan KPI roadmap.</li>',
+    '<li>Phases: Frontline growth plan phases; AM Law prospect list; mid-size law firms research; Frontline add-on targets; private-equity landscape. Map tiles by Esri. Phase 4 is sold as the buyer\'s growth story; only the first UK or Canada add-on is in month-36 EBITDA. AM Law prospects are grouped by headquarters city.</li>',
+    '<li>Levers: Frontline growth plan growth levers; OS program evidence (Elite research, MetricNet); public comparables. Targets are analyst assumptions. Where Frontline\'s own figure is not public, the baseline is an industry benchmark and flagged.</li>',
+    '<li>AI agents: Frontline growth plan AI agents (vendor case studies; timelines are analyst estimates). Each agent names its vendors, a published result and a pilot timeline. Vendor results are upper bounds.</li>',
+    '<li>Talent: Frontline public filings and company releases (offices); Frontline growth plan talent programs. Targets are analyst assumptions. Smith + Howard named a director for its India operations; Frontline\'s larger hubs in Hyderabad, Goa and Cape Town need the same.</li>',
+    '<li>Add-ons: Frontline and Thomas Scientific add-on targets (ZoomInfo estimates, company websites); private-equity landscape, Sept 2026 (' + D.rivals.length + ' sponsors overlap with Frontline). Ranked from the portal\'s add-on screen, fit out of 100. Revenue figures are modelled.</li>',
+    '<li>Returns: Frontline growth plan financing items (SEC Form D, lender releases); KPI roadmap; OS program evidence (Aventis, Capstone and IMAP). All outputs are estimates. Source: Frontline growth plan KPI roadmap. Every figure is an analyst estimate.</li>'].join('');
+  $('#src-body').innerHTML = `<h4>By section</h4><ul>${SEC}</ul><p>${esc(method)} Phase figures were computed from the portal's own data, listed below. Targets are explicit analyst assumptions.</p><h4>Caveats</h4><ul>${(D.meta.caveats || []).map(c => `<li>${esc(clean(c))}</li>`).join('')}</ul>
     <h4>Portal data used</h4><ul><li>Frontline growth plan (${D.it.length} items, ${esc(gen)})</li><li>AM Law prospect list (${D.law.length} firms, grouped by headquarters city)</li><li>Mid-size law firms research (${D.mid.length} firms)</li><li>Frontline and Thomas Scientific add-on targets (${D.tg.length} Frontline targets)</li><li>Private-equity landscape (${D.rivals.length} overlapping sponsors)</li><li>BSP firm profile, Frontline public filings, public comparables and OS program evidence (valuation and KPI benchmarks)</li></ul>${g}`;
 }
 
