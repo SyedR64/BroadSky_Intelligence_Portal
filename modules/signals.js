@@ -505,6 +505,7 @@ async function overview(ctx) {
     const salesL = L.filter(f => f.sens.kind === 'sales'), marginL = L.filter(f => f.sens.kind === 'margin');
     const net = a => smoney(a.reduce((t, f) => t + (f.sens.nowUsd || 0), 0));
     const step = L.slice().sort((a, b) => Math.abs(b.sens.unitUsd || 0) - Math.abs(a.sens.unitUsd || 0))[0];
+    root.querySelector('#sg-co-lead').dataset.co = 'all';   // the knowledge build waits on this mark
     root.querySelector('#sg-co-lead').innerHTML = `${L.length} levers ${EST}: ${salesL.length} sales ${net(salesL)} a year, ${marginL.length} margin ${net(marginL)} a year.${step ? ` Biggest step ${smoney(step.sens.unitUsd)}, ${h(CO_NAME[step.co])}.` : ''}`;
     const bars = now.slice(0, 14).map(f => ({ label: `${CO_NAME[f.co]} · ${f.name}`, value: Math.abs(f.sens.nowUsd), color: f.sens.nowUsd >= 0 ? 'var(--sys-good)' : 'var(--sys-bad)' }));
     root.querySelector('#sg-all').innerHTML = `<h4 class="sys-card-label mb-8">Effect of today’s readings</h4>${bars.length ? charts.hbar(bars, { fmt: v => money(v), labelW: phone() ? 150 : 300 }) : ui.empty('No live changes to size today')}${methodMark(`Each bar is a year of sales or margin at today’s change against a year ago ${EST}. Green adds sales, red costs margin.`)}`;
@@ -529,6 +530,7 @@ async function overview(ctx) {
     allBox.innerHTML = '';
     const rows = F.filter(f => f.co === co).map(f => ({ ...f, reading: `${f.read.v}${f.read.d ? ` (${f.read.d})` : ''}${f.read.src ? ` · ${f.read.src}${f.read.date ? `, ${f.read.date}` : ''}` : ''}`, effect_now: DIR[f.read.dir].t, size: f.sens ? `${f.sens.now || ''}${f.sens.now ? '. ' : ''}${f.sens.unit}` : '', _w: f.w * 10 + (f.read.dir < 0 ? 2 : f.read.dir > 0 ? 1 : 0) }));
     const hu = rows.filter(r => r.read.dir < 0).length, he = rows.filter(r => r.read.dir > 0).length;
+    root.querySelector('#sg-co-lead').dataset.co = co;
     root.querySelector('#sg-co-lead').innerHTML = `${rows.length} forces, ${hu} hurting, ${he} helping. Revenue ${h(D.revTxt[co])}`;
     const host = root.querySelector('#sg-tbl');
     if (phone()) {   // phone: one card per force instead of a five-column table

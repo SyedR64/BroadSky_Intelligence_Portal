@@ -818,7 +818,7 @@ def merged_views(page, base, js):
     target = 'app.html#/signals/overview?co=all'
     try:
         page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
-        page.wait_for_function("() => ((document.querySelector('#sg-co-lead') || {}).innerText || '').startsWith('All six:')"
+        page.wait_for_function("() => ((document.querySelector('#sg-co-lead') || {}).dataset || {}).co === 'all'"
                                " && document.querySelectorAll('#sg-tbl tbody tr').length > 0", timeout=20000)
         page.wait_for_timeout(600)
         r = page.evaluate("""() => {
@@ -991,8 +991,8 @@ def src_rendered():
             try:
                 page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
                 # the view redraws after the address changes, so wait for this company's own table, not the one left on screen
-                page.wait_for_function("name => ((document.querySelector('#sg-co-lead') || {}).innerText || '').startsWith(name + ':')"
-                                       " && document.querySelectorAll('#sg-tbl tbody tr').length > 0", arg=name, timeout=20000)
+                page.wait_for_function("co => ((document.querySelector('#sg-co-lead') || {}).dataset || {}).co === co"
+                                       " && document.querySelectorAll('#sg-tbl tbody tr').length > 0", arg=co, timeout=20000)
                 page.wait_for_timeout(600)
                 r = page.evaluate("""() => {
                   const lines = el => el.innerText.split('\\n').map(t => t.replace(/\\s+/g, ' ').trim()).filter(Boolean);
