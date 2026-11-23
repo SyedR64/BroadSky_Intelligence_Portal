@@ -1778,7 +1778,7 @@ def build_servicetitan(rng, people, streets, techs_os, sa):
                (C[1], ('10:30', '12:30'), pick_type('HVAC', 'heat_pump'), None, None),
                (C[2], ('13:00', '15:00'), pick_type('HVAC', 'thermostat'), None, None),
                (C[3], ('15:30', '17:30'), pick_type('HVAC', 'noise'), None, None)]
-    # Members on today's route: 2; open recommendations on today's customers: 3 (spec 3.4).
+    # Members on today's jobs: 2; open recommendations on today's customers: 3 (spec 3.4).
     C[1]['member'] = {'plan': 'Total Home', 'since_m': -11, 'renew_d': 203, 'visits_due': 1}
     C[2]['member'] = None
     C[3]['member'] = None
@@ -2750,7 +2750,7 @@ EMAIL = {
            ('Investor question on add-on pace', 'Investor relations lead', 'investor question', ['An investor asked how many add-ons we expect across the portfolio next year. Draft answer attached for your review.'])],
     'partner': [('Re: {deal3} process letter', '*Banker', 'seller', ['The seller wants indications by the end of next week. Management meetings follow for the top three.', 'We will submit. Send the data room access when ready.']),
                 ('{deal4}: first financials', 'Senior associate', None, ['Revenue and margin are in line with the teaser. Customer concentration is the open question.']),
-                ('Add-on screen for CET', 'Associate', None, ['Twelve electrical contractors in New England fit the size range. Four are worth a call.']),
+                ('Add-on screen for CET', 'Associate', None, ['Twelve electrical contractors in New England and the Mid-Atlantic fit the size range. Four are worth a call.']),
                 ('IC memo draft: {deal1}', 'Senior associate', None, ['Memo draft is in the data room folder. The model shows a 2.6x base case. Comments by tomorrow?']),
                 ('Lender feedback', '*Lender', None, ['We can support 3.5x on the add-on at current pricing. Term sheet to follow.']),
                 ('Management meeting logistics', 'Managing partner', None, ['Can you lead the management meeting? I will join for the first hour.'])],
@@ -2929,7 +2929,7 @@ CAL = {
                ('Pipeline review', '{office}', ['CEO'], 'Top deals by stage.'),
                ('Month-end close review', '{office}', ['Controller'], 'Open items.'),
                ('Hiring sync', 'Video call', ['*Recruiter'], 'Open roles.'),
-               ('Customer visit', 'On site', ['*Client contact'], 'Relationship check-in.'),
+               ('Site visit', 'On site', ['*Client contact'], 'Relationship check-in.'),
                ('Budget working session', '{office}', ['CFO'], "Next year's plan."),
                ('Board update prep', '{office}', ['CEO', 'CFO'], 'Two pages.'),
                ('Safety walk', 'On site', ['*Safety lead'], 'Two sites.'),
@@ -2985,7 +2985,7 @@ WHO = {
             'Investor letter review': {'ir', 'mp'}, 'Annual meeting planning': {'ir'}, 'Capital call planning': {'fundcfo', 'mp'},
             'Investor data requests': {'ir', 'fundcfo'}},
     'leader': {'KPI review': {'ceo', 'cfo', 'vp'}, 'Check-in with BSP': {'ceo', 'cfo', 'vp'}, 'Pipeline review': {'ceo', 'sales'},
-               'Month-end close review': {'cfo'}, 'Hiring sync': {'ceo', 'vp', 'sales'}, 'Customer visit': {'ceo', 'vp', 'sales'},
+               'Month-end close review': {'cfo'}, 'Hiring sync': {'ceo', 'vp', 'sales'}, 'Site visit': {'ceo', 'vp', 'sales'},
                'Wholesale account visit': {'ceo', 'sales'}, 'Budget working session': {'ceo', 'cfo', 'vp'}, 'Board update prep': {'ceo', 'cfo'},
                'Safety walk': {'ceo', 'vp'}, 'Staffing review': {'ceo', 'vp'}, 'Desk operations review': {'ceo', 'vp'},
                'Fulfillment walk': {'ceo', 'vp'}, 'Vendor review': {'cfo', 'vp'}, 'Lender call': {'ceo', 'cfo'}, 'Growth review': {'ceo', 'sales'},
@@ -3085,7 +3085,7 @@ DOCS = {
             ('Diligence request list: {deal2}', 'Diligence', 'Request list', 'deal', 'Open and answered requests.'),
             ('Data room index: {deal1}', 'Data room', 'Index', 'deal', 'Folders and what is missing.'),
             ('Data room index: {deal2}', 'Data room', 'Index', 'deal', 'Folders and what is missing.'),
-            ('Add-on screen: CET', 'Deals', 'Spreadsheet', 'deal', 'New England electrical contractors in the size range.'),
+            ('Add-on screen: CET', 'Deals', 'Spreadsheet', 'deal', 'Electrical contractors in the size range, New England and Mid-Atlantic.'),
             ('Add-on screen: Punctual Pros', 'Deals', 'Spreadsheet', 'deal', 'Residential service companies near the hubs.'),
             ('Public comps table', 'Deals', 'Spreadsheet', 'deal', 'Listed peers and multiples.'),
             ('Portfolio KPI pack, {month:-1}', 'Portfolio', 'Deck', 'prg', 'KPIs for all six companies against plan.'),
@@ -3635,7 +3635,7 @@ def home_for(role, pool, st, org_files):
                   'lead': '%d jobs today. First at %s in %s.' % (len(today), t12(today[0]['start']), c0['address']['town'])})
         recs = sum(1 for j in today for x in cust[j['customer']]['recs'] if x['status'] == 'open')
         h['kpis'] = [tile('Jobs today', len(today), 'First at %s' % t12(today[0]['start']), 'servicetitan'),
-                     tile("Members on today's route", sum(1 for j in today if j['member']), 'Comfort Club', 'servicetitan'),
+                     tile("Members on today's jobs", sum(1 for j in today if j['member']), 'Comfort Club', 'servicetitan'),
                      tile('Open recommendations', recs, "On today's customers", 'servicetitan')]
         rows = []
         for j in today:
@@ -3947,7 +3947,7 @@ def privacy_scan(files, banned_full, techs_os):
             if 'Smith + Howard' in s:
                 msgs.append('%s %s: Smith + Howard' % (name, p))
             if name == 'cet.json' and re.search(r'New York|NYC|Manhattan|Brooklyn|Queens', s):
-                msgs.append('%s %s: CET stays in New England: %s' % (name, p, s[:60]))
+                msgs.append('%s %s: CET has no New York City plan: %s' % (name, p, s[:60]))
         for p, n, role in walk_people(obj):
             if n is None or n == 'You':
                 pass
