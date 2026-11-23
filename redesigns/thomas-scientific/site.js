@@ -87,7 +87,7 @@ function wireTable() {
     const c = catById(id); const rows = PRODUCTS.filter(p => p.cat === id);
     $$('.ts-el', pt).forEach(b => { const on = b.dataset.cat === id; b.classList.toggle('on', on); b.setAttribute('aria-expanded', on); });
     shelf.hidden = false; shelf.style.setProperty('--h', c.hue);
-    shelf.innerHTML = `<div class="ts-shelf-h"><div><span class="ts-el-sym sm">${c.sym}</span><h3 class="sys-card-title">${esc(c.name)}</h3><span class="sys-kpi-sub">${rows.length} featured lines · catalog numbers are illustrative</span></div><button type="button" class="ts-link" data-shelf-x>Close ✕</button></div><div class="sys-table-wrap"><table class="sys-table"><thead><tr><th scope="col">Catalog no.</th><th scope="col">Product</th><th scope="col" class="ts-hide-s">Specification</th><th scope="col" class="ts-hide-s">Pack</th><th scope="col">Availability</th><th scope="col"><span class="sys-sr">Add</span></th></tr></thead><tbody>${rows.map(p => `<tr><td class="sys-num">${esc(p.id)}</td><td><b>${esc(p.name)}</b><span class="ts-show-s">${esc(p.spec)}</span></td><td class="ts-hide-s">${esc(p.spec)}</td><td class="ts-hide-s">${esc(p.pack)}</td><td>${stockBadge(p)}</td><td><button class="ts-add" data-add="${esc(p.id)}" aria-label="Add ${esc(p.name)}">${p.stock === 'quote' ? 'Quote' : 'Add'}</button></td></tr>`).join('')}</tbody><caption>Source: concept catalog for this site; products, packs and catalog numbers are illustrative.</caption></table></div>`;
+    shelf.innerHTML = `<div class="ts-shelf-h"><div><span class="ts-el-sym sm">${c.sym}</span><h3 class="sys-card-title">${esc(c.name)}</h3><span class="sys-kpi-sub">${rows.length} featured lines <span class="sys-est sys-est--illus">illustrative</span></span></div><button type="button" class="ts-link" data-shelf-x>Close ✕</button></div><div class="sys-table-wrap"><table class="sys-table"><thead><tr><th scope="col">Catalog no.</th><th scope="col">Product</th><th scope="col" class="ts-hide-s">Specification</th><th scope="col" class="ts-hide-s">Pack</th><th scope="col">Availability</th><th scope="col"><span class="sys-sr">Add</span></th></tr></thead><tbody>${rows.map(p => `<tr><td class="sys-num">${esc(p.id)}</td><td><b>${esc(p.name)}</b><span class="ts-show-s">${esc(p.spec)}</span></td><td class="ts-hide-s">${esc(p.spec)}</td><td class="ts-hide-s">${esc(p.pack)}</td><td>${stockBadge(p)}</td><td><button class="ts-add" data-add="${esc(p.id)}" aria-label="Add ${esc(p.name)}">${p.stock === 'quote' ? 'Quote' : 'Add'}</button></td></tr>`).join('')}</tbody></table></div>`;
     $('[data-shelf-x]', shelf).onclick = () => { shelf.hidden = true; $$('.ts-el', pt).forEach(b => { b.classList.remove('on'); b.setAttribute('aria-expanded', 'false'); }); };
     shelf.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   };
@@ -134,13 +134,12 @@ function wireFinder() {
     if (st.need.has('cold') && !picks.some(p => p.cat === 'coldchain')) picks = [...picks.slice(0, 5), PRODUCTS.find(p => p.id === 'TS-K200-DL')];
     const svcs = NEEDS.filter(n => st.need.has(n.id));
     const S = SITES || SITES_FALLBACK; const like = v.siteKey.reduce((a, k) => a + (S.vertical[k] || 0), 0);
-    out.innerHTML = `<div class="ts-fo-h"><p class="sys-kicker">Your starter list</p><h3 class="sys-h3">${esc(v.name)} · ${esc(f.name)}</h3><p class="sys-card-body">${esc(v.fix)}</p></div>
+    out.innerHTML = `<div class="ts-fo-h"><p class="sys-kicker">Your starter list</p><h3 class="sys-h3">${esc(v.name)} · ${esc(f.name)}</h3></div>
       <div class="ts-fo-sec"><h4 class="sys-card-label">Category mix</h4>${bars}</div>
       <div class="ts-fo-sec"><h4 class="sys-card-label">Start with these lines</h4><ul class="ts-fo-p">${picks.map(p => `<li><span class="sys-num">${esc(p.id)}</span><b>${esc(p.name)}</b>${stockBadge(p)}<button class="ts-add" data-add="${esc(p.id)}" aria-label="Add ${esc(p.name)}">Add</button></li>`).join('')}</ul></div>
       ${svcs.length ? `<div class="ts-fo-sec"><h4 class="sys-card-label">Services for you</h4><ul class="ts-fo-s">${svcs.map(n => `<li><b>${esc(n.svc || n.name)}</b><span>${esc(n.note)}</span></li>`).join('')}</ul></div>` : ''}
       <div class="ts-fo-like"><span class="sys-num">${like ? num(like) : num(S.total)}</span><p>${like ? `${esc(v.likeLabel)} mapped in LabOS: labs like yours` : 'US lab sites mapped in LabOS across research, clinical and industry'}</p></div>
-      <div class="sys-actions"><button type="button" class="sys-btn sys-btn--primary" data-add-all>Add all ${picks.length} to quote</button><a class="sys-btn sys-btn--secondary" href="#reps">Talk to your regional team</a></div>
-      <p class="sys-src"><b>Source:</b> Thomas Scientific lab sites (CMS, CLIA and NPPES registries), Oct 2026; product picks from the illustrative concept catalog.</p>`;
+      <div class="sys-actions"><button type="button" class="sys-btn sys-btn--primary" data-add-all>Add all ${picks.length} to quote</button><a class="sys-btn sys-btn--secondary" href="#reps">Talk to your regional team</a></div>`;
     $('[data-add-all]', out).onclick = () => { picks.forEach(p => addToCart(p.id, 1, true)); toast(`<b>${picks.length} lines</b> added to your quote cart`); };
   };
   box.addEventListener('click', e => {
@@ -163,16 +162,16 @@ const ICON = {
   contract: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
 };
 const SERVICES = [
-  { i: 'vmi', t: 'Vendor-managed inventory', d: 'We own min/max in the stockrooms you choose, count on a schedule and replenish automatically. Consignment for critical items.' },
-  { i: 'punch', t: 'Punchout & eProcurement', d: 'Shop our catalog with your contract pricing inside Coupa, SAP Ariba or Jaggaer. cXML, OCI and EDI invoicing.' },
-  { i: 'kit', t: 'Kitting & assembly', d: 'Specimen-collection, evidence and gowning kits built to your protocol and sold under one catalog number.' },
-  { i: 'standing', t: 'Standing orders', d: 'Lot-controlled, scheduled shipments for the lines you never want to think about again.' },
+  { i: 'vmi', t: 'Vendor-managed inventory', d: 'Min/max owned by us, scheduled counts, automatic replenishment, consignment for critical items.' },
+  { i: 'punch', t: 'Punchout & eProcurement', d: 'Contract pricing inside Coupa, SAP Ariba or Jaggaer; cXML, OCI and EDI invoicing.' },
+  { i: 'kit', t: 'Kitting & assembly', d: 'Specimen, evidence and gowning kits built to your protocol, one catalog number.' },
+  { i: 'standing', t: 'Standing orders', d: 'Lot-controlled, scheduled shipments for lines you never want to think about.' },
   { i: 'cold', t: 'Cold-chain logistics', d: 'Dry-ice and insulated shippers with data loggers for frozen and 2–8 °C lines.' },
   { i: 'contract', t: 'Contract pricing & spend reports', d: 'One price file across sites, monthly usage reports and supplier-consolidation reviews.' },
 ];
 function wireServices() {
   $('[data-services]').innerHTML = SERVICES.map(s => `<article class="sys-card ts-sv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[s.i]}</svg><h3 class="sys-card-title">${esc(s.t)}</h3><p class="sys-card-body">${esc(s.d)}</p></article>`).join('');
-  $('[data-verticals]').innerHTML = VERTICALS.map((v, i) => `<article class="sys-card ts-vt" data-reveal><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>0${i + 1}</span><h3 class="sys-card-title">${esc(v.name)}</h3><p class="sys-card-body"><b>The job:</b> ${esc(v.pain)}</p><p class="sys-card-body"><b>How we help:</b> ${esc(v.fix)}</p><span class="sys-card-foot"><button type="button" class="ts-link" data-vfind="${v.id}">Build a starter list →</button></span></article>`).join('');
+  $('[data-verticals]').innerHTML = VERTICALS.map((v, i) => `<article class="sys-card ts-vt" data-reveal><span class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>0${i + 1}</span><h3 class="sys-card-title">${esc(v.name)}</h3><p class="sys-card-body"><b>How we help:</b> ${esc(v.fix)}</p><details class="sys-fold"><summary><b>The job</b><span></span></summary><p class="sys-card-body">${esc(v.pain)}</p></details><span class="sys-card-foot"><button type="button" class="ts-link" data-vfind="${v.id}">Build a starter list →</button></span></article>`).join('');
 }
 
 /* ── Rep match by state (aggregated lab sites) ───────────────────────────── */
@@ -217,8 +216,7 @@ function wireReps(finder) {
       ${SITES ? `<div class="ts-rp-num"><div><b class="sys-num">${num(d?.n || 0)}</b><span>lab sites mapped in ${esc(STATE_NAMES[cur])}${rank ? ` · #${rank} of ${states.length}` : ''}</span></div><div><b class="sys-num">${num(regSites)}</b><span>across the ${esc(reg.name)} region</span></div></div>
       ${vm.length ? `<h4 class="sys-card-label">Lab mix in ${esc(STATE_NAMES[cur])}</h4><div class="ts-rp-bars">${vm.slice(0, 5).map(([k, n]) => `<div class="ts-fb"><span>${esc(k)}</span><i style="--w:${Math.max(2, Math.round(n / d.n * 100))}%"></i><b class="sys-num">${num(n)}</b></div>`).join('')}</div>` : ''}
       ${am.length ? `<p class="ts-rp-arche"><b>Most common lab profiles:</b> ${am.map(([k]) => esc(k.toLowerCase())).join(' · ')}</p>` : ''}` : `<div class="ts-skel"><i></i><i></i><i></i><span>Loading the lab-site map…</span></div>`}
-      <div class="sys-actions"><a class="sys-btn sys-btn--primary" href="#quote" data-rp-call>Request a call</a><a class="sys-btn sys-btn--secondary" href="#services">Set up punchout</a></div>
-      <p class="sys-src"><b>Source:</b> Thomas Scientific lab sites, aggregated by state, Oct 2026. Team roles are illustrative.</p>`;
+      <div class="sys-actions"><a class="sys-btn sys-btn--primary" href="#quote" data-rp-call>Request a call</a><a class="sys-btn sys-btn--secondary" href="#services">Set up punchout</a></div>`;
     $('[data-rp-call]', out).onclick = () => { const s = $('[data-qt-state]'); if (s) s.value = cur; };
   };
   map.addEventListener('click', e => { const t = e.target.closest('.ts-tile'); if (t) { cur = t.dataset.st; draw(); } });
@@ -256,12 +254,12 @@ async function wireRationale() {
     { v: k3 ? `${k3.target}% vs ${k3.baseline}%` : '15.6% vs 2.1%', l: 'Digital vs rep-led channel growth', s: 'Grainger FY2025', u: k3?.source_url },
     { v: '< 30 s', l: 'Time-to-SKU target for this design', s: 'Design target', u: null, est: true },
   ];
-  $('[data-dr-kpis]').innerHTML = `<h3 class="sys-h3">KPIs this site is built to move</h3><div class="sys-grid sys-grid--4">${kp.map(k => `<div class="sys-kpi" data-co="ts"><span class="sys-kpi-label">${esc(k.l)}</span><span class="sys-kpi-value">${esc(k.v)}${k.est ? '<span class="sys-est">est.</span>' : ''}</span><span class="sys-kpi-sub">${k.u ? `<a href="${esc(k.u)}" target="_blank" rel="noopener">${esc(k.s)}</a>` : esc(k.s)}</span></div>`).join('')}</div><p class="sys-src">Thomas Scientific's own digital share is not disclosed (a data gap in the OS program evidence); LabOS instruments it from day one.</p>`;
+  $('[data-dr-kpis]').innerHTML = `<h3 class="sys-h3">KPIs this site is built to move</h3><div class="sys-grid sys-grid--4">${kp.map(k => `<div class="sys-kpi" data-co="ts"><span class="sys-kpi-label">${esc(k.l)}</span><span class="sys-kpi-value">${esc(k.v)}${k.est ? '<span class="sys-est">est.</span>' : ''}</span><span class="sys-kpi-sub">${k.u ? `<a href="${esc(k.u)}" target="_blank" rel="noopener">${esc(k.s)}</a>` : esc(k.s)}</span></div>`).join('')}</div>`;
 }
 
 /* ── FAQ, quote form, nav ───────────────────────────────────────────────── */
 function wireFaq() {
-  $('[data-faq]').innerHTML = FAQ.map((f, i) => `<details class="ts-fq"${i === 0 ? ' open' : ''}><summary>${esc(f.q)}<i aria-hidden="true"></i></summary><div class="ts-fq-a">${f.a}</div></details>`).join('');
+  $('[data-faq]').innerHTML = FAQ.map((f, i) => `<details class="ts-fq"><summary>${esc(f.q)}<i aria-hidden="true"></i></summary><div class="ts-fq-a">${f.a}</div></details>`).join('');
 }
 function wireQuote() {
   const f = $('[data-quote]');
