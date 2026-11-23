@@ -289,11 +289,10 @@ export function targets(items) {
 /** Frame.humanize passthrough for modules that host third-party text (the theater captions). */
 export const humanize = root => Frame.humanize(root);
 
-/* ── one h1 pattern for every portal view ─────────────────────────────────────
-   "<Module name> · <view name in sentence case>"; company modules lead with the
-   company name ("Punctual Pros · operating picture"). Renderers keep writing their
-   own pageHead titles; retitle() runs after every render (app.html) and rewrites
-   the view's first h1 so every module reads the same way. Proper nouns and
+/* ── the window title of every screen ───────────────────────────────────────
+   "<Module name> · <view name in sentence case>" (document.title, set by app.html); company modules lead with the
+   company name ("Punctual Pros · operating picture"). On the screen itself the name appears once (copy rule 9): the
+   tab names it, so the shell no longer rewrites a screen's heading to this pattern (retitle below). Proper nouns and
    acronyms keep their case; everything else is lower case after the dot. */
 export const VIEW_TITLES = {
   'home/overview': 'portfolio overview', 'home/firm': 'BSP profile',
@@ -317,12 +316,18 @@ const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Front
 /** Sentence-case a view name: first letter lower unless it starts with an acronym or a proper noun. */
 export const sentence = s => { const t = String(s || '').replace(/\s*&\s*/g, ' and ').replace(/\s*→\s*/g, ' to ').trim(); return KEEP_CASE.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1); };
 /** The h1 text for a module view. */
-export const viewTitle = (m, v) => `${m.name} · ${VIEW_TITLES[`${m.id}/${v.id}`] || sentence(v.name)}`;
-/** Rewrite the first h1 under root to the shared pattern (idempotent; safe inside a MutationObserver). */
+export const viewTitle = (m, v) => { const t = VIEW_TITLES[`${m.id}/${v.id}`] || sentence(v.name); return plain(t) === plain(m.name) ? m.name : `${m.name} · ${t}`; };
+/** The screen name appears once (copy rule 9). The tab names the screen, so a screen's own first heading that only
+    repeats the current tab (or this screen's name) is kept for screen readers and hidden from view. A heading that says
+    something else, and every heading on a screen with no tab row, stays as written. Runs after every render (app.html);
+    idempotent, safe inside a MutationObserver. */
+const plain = s => String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
 export function retitle(root, m, v) {
   if (!root || !m || !v) return;
   const h = root.querySelector('.page-head h1, .side-head h1'); // the 3D map's h1 is a per-scene caption, not a page title: left alone
   if (!h) return;
-  const want = viewTitle(m, v);
-  if (h.textContent !== want) { h.textContent = want; h.dataset.viewTitle = '1'; }
+  const tab = document.querySelector('#topbar .view-tabs:not(.view-tabs--one) .view-tab[aria-current]');
+  const said = plain(h.textContent);
+  const same = !!tab && !!said && [tab.firstChild?.textContent, v.name, VIEW_TITLES[`${m.id}/${v.id}`]].some(x => plain(x) === said);
+  if (h.classList.contains('sys-sr') !== same) h.classList.toggle('sys-sr', same);
 }
