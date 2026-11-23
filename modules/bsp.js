@@ -154,7 +154,7 @@ async function viewDeals(ctx) {
     ${srcMark(ui, SRC_METH, 'Oct 2026')}
     <p class="sys-src" data-src>Releases and SEC filings, retrieved Oct 6, 2026.</p>
     <span data-asof="Oct 6, 2026"></span>
-    ${metaMark(`Seven anchors in ${yrs} years; the median gap runs Jan 2022 to Feb 2025. Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale. First exit: Smith + Howard to TPG Growth. Weights and strengths are analyst inference from the public record, not BSP’s internal criteria. Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.`)}
+    ${metaMark(`${c.platforms} anchors in ${yrs} years; the median gap runs Jan 2022 to Feb 2025. Thomas Scientific uses the Jan 2022 announcement; CET uses the Feb 2025 Form D first sale. First exit: Smith + Howard to TPG Growth. Weights and strengths are analyst inference from the public record, not BSP’s internal criteria. Form ADV: the filing every investment adviser makes with the SEC (Securities and Exchange Commission). PIK: interest paid in more debt instead of cash.`)}
   </div>`;
   const root = el.querySelector('.m-bsp');
   root.querySelectorAll('.bsp-mk').forEach(g => { const go = () => { const d = b.dealById.get(g.dataset.deal); root.querySelectorAll('.bsp-mk').forEach(x => x.classList.toggle('sel', x === g)); openDeal(ctx, b, d); }; g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
