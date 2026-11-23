@@ -45,7 +45,7 @@ async function play(ctx) {
       // keep the deep link current without re-routing (replaceState does not fire hashchange)
       if (!host.isConnected) return;
       host.querySelector('.bt-cap')?.classList.remove('is-open');   // a caption opened on a phone closes when the scene changes
-      const h = `#/theater/play?scene=${id}${autoplay ? '' : '&autoplay=0'}`;
+      const h = `#/theater/play?scene=${id}${autoplay ? '' : '&autoplay=0'}${params.fallback === '1' ? '&fallback=1' : ''}`;
       if (location.hash !== h) history.replaceState(null, '', h);
     },
   });
@@ -76,7 +76,9 @@ async function play(ctx) {
     { label: '3D map · New England grid', sub: 'CET opportunities and wastewater plants', href: '#/theater/play?scene=S4', kind: 'Scene', color: 'var(--co-fh)' },
     { label: '3D map · Storm', sub: 'Live National Weather Service alerts over the Punctual Pros territory', href: '#/theater/play?scene=S5', kind: 'Scene', color: 'var(--co-fh)' },
   ]);
-  return () => { mo.disconnect(); document.removeEventListener('keydown', onEsc); try { Theater.destroy(); } catch { } };
+  // removing the map aborts its pending style and tile requests; the style is detached from the map first, so its
+  // abort errors reach no listener and the map library prints them to the console. Listen on the style to keep it quiet.
+  return () => { mo.disconnect(); document.removeEventListener('keydown', onEsc); try { Theater.map?.style?.on?.('error', () => { }); } catch { } try { Theater.destroy(); } catch { } };
 }
 
 export default {

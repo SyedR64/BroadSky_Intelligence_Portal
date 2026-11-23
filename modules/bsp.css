@@ -116,4 +116,5 @@
 .m-bsp .bsp-nx-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px var(--sys-sp-3)}
 .m-bsp .bsp-nx-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-5)}
 .m-bsp .bsp-nx-grid>div{display:flex;flex-direction:column;gap:var(--sys-sp-2)}
+.m-bsp .bsp-nx .sys-chip{white-space:normal;max-width:100%;text-align:left;padding-top:4px;padding-bottom:4px}
 @media (max-width:900px){.m-bsp .bsp-nar,.m-bsp .bsp-critd,.m-bsp .bsp-nx-grid{grid-template-columns:minmax(0,1fr)}}
