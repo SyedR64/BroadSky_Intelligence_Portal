@@ -506,10 +506,16 @@ def test_area_of(mini):
 def test_site_brief_address_forms(sb):
     ws = ws_for(TECH, apps=['servicetitan'])
     for a in ('418 Wexcombe Lane, Lititz, PA 17543', '418 Wexcombe Ln Lititz', '418 Wexcombe Ln, Lititz', '418 Wexcombe Lane, Lititz',
-              '418 Wexcomb Ln, Lititz', '418 wax comb lane lititz no heat', 'my next job', "my 8 o'clock", 'my 8 am', 'this job'):
+              'going to 418 Wexcombe Ln, Lititz for a sink repair, give me the floor plans, view', 'my next job', "my 8 o'clock",
+              'my 8 am', 'this job'):
         text, err, cards, _ = run('site_brief', {'address': a}, ws)
         assert not err and 'MATCHED: your 8:00 am job today, L-2187, 418 Wexcombe Ln, Lititz.' in text, (a, text[:400])
-        assert cards and cards[0]['kind'] == 'floor_sketch'
+        assert cards and cards[0]['kind'] == 'floor_sketch' and 'example' not in cards[0] and 'fictional' in cards[0]['source_line']
+    # WAVE3 ruling 6: a near miss is not the customer's address, so no company record answers it
+    for a in ('418 Wexcomb Ln, Lititz', '418 wax comb lane lititz no heat'):
+        text, err, cards, _ = run('site_brief', {'address': a}, ws)
+        assert not err and 'MATCHED' not in text and '(record)' not in text and 'No company record for this address.' in text, (a, text[:400])
+        assert all(c.get('example') is not True for c in cards)
     text, _, cards, _ = run('site_brief', {'address': '100 Fakename St, Nowhereville'}, ws)
     assert text == 'SERVICE AREA: unknown. Ask for the ZIP or the town.' and not cards
     text, _, _, _ = run('site_brief', {'address': '100 Fakename St, Lancaster, PA 17603'}, ws)
@@ -1236,12 +1242,13 @@ def test_likely_gas_meter_on_the_recorded_side(real):
 
 def test_house_style_and_assessor_reading_stay_likely(sb, monkeypatch):
     """ADDR-3: an inferred reading of the assessor's shorthand is never "(public record)"; no house style is stated as fact."""
-    brief = ('PROPERTY BRIEF: 120 NEWINGTON LN\n- Year built: 2001 [recorded: NJ parcels]\n- Living area: 3,680 sq ft [recorded]\n'
-             '- Building description (assessor shorthand): "2F2G 3634" [recorded: NJ parcels and tax list]. Likely reading: 2 stories, frame, '
-             '2-car garage [inferred]')
-    monkeypatch.setattr(homes, 'ready', lambda: True)
-    monkeypatch.setattr(homes, 'run_property_brief', lambda a: (brief, [{'title': 'NJ parcels', 'url': 'https://example.gov/p', 'publisher': 'NJ',
-                                                                          'date': '', 'kind': 'data'}]))
+    def f(k, v):
+        return {'k': k, 'label': k, 'v': v, 'basis': 'public', 'src': 'nj_parcels', 'as_of': '2026-06-04'}
+    live = {'status': 'found', 'precision': 'parcel', 'label': '120 Newington Ln, Toms River, NJ 08755', 'line': '120 Newington Lane',
+            'point': [-74.2, 39.97], 'record': None, 'parcel': None, 'building': None, 'outbuildings': [], 'permits': [], 'geocode': None,
+            'town_place': None, 'choose': [], 'degraded': [],
+            'facts': [f('year_built', 2001), f('living_area_sqft', 3680), f('building_desc', '2F2G 3634')]}
+    monkeypatch.setattr(workspace.site_module(), 'lookup', lambda *a, **k: live)   # the public ladder, as server/site.py returns it
     text, err, cards, _ = run('site_brief', {'address': '120 Newington Lane, Toms River NJ 08755', 'issue': 'water heater leaking'},
                               ws_for(TECH))
     house = next(l for l in text.split('\n') if l.startswith('HOUSE: '))
