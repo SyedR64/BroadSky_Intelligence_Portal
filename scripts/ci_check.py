@@ -383,15 +383,15 @@ class Collector:
         self._warn('external', f'{reason} {req.url}', req.url)
 
 
-# One role per level (data/agent/catalog.json ids), and what its menu must hold (OS_SPEC 3): 'must' items are always
-# there, 'may' items only once their screen exists (each company's Plan and Tools are built in their own lane).
+# One role per level (data/agent/catalog.json ids), and what its menu must hold (OS_SPEC 3): company leadership has its
+# company's Plan and Tools, the office level its Tools.
 LEVEL_ROLES = [('firm_leadership', 'bsp-managing-partner'), ('firm_team', 'bsp-investor-relations'),
                ('co_leadership', 'pp-ceo'), ('co_office', 'pp-dispatcher'), ('co_field', 'pp-hvac-technician')]
 LEVEL_MENU = {
     'bsp-managing-partner': {'must': ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh', 'ma', 'deal', 'pe', 'bsp', 'signals', 'fin', 'techos', 'connect'], 'may': []},
     'bsp-investor-relations': {'must': ['home', 'fin', 'connect'], 'may': []},
-    'pp-ceo': {'must': ['home', 'pp', 'ma/pipeline', 'signals/overview', 'connect'], 'may': ['pp/plan', 'pp/tools']},
-    'pp-dispatcher': {'must': ['home', 'pp', 'connect'], 'may': ['pp/tools']},
+    'pp-ceo': {'must': ['home', 'pp', 'ma/pipeline', 'signals/overview', 'pp/plan', 'pp/tools', 'connect'], 'may': []},
+    'pp-dispatcher': {'must': ['home', 'pp', 'pp/tools', 'connect'], 'may': []},
     'pp-hvac-technician': {'must': ['home'], 'may': []},
 }
 
@@ -475,6 +475,29 @@ async def check_routes(ctx, base, routes, settle, aliases=None):
     await page.close()
     unknown = [f'{m}/{v}' for m, v in routes if [m, v] not in live]
     return results, unknown, forwarded
+
+
+def parse_level_keys():
+    """The keys of `export const LEVELS = {...}` in modules/registry.js ('module' or 'module/screen'), plus the two
+    screens the loop below the table adds for every company ('<co>/tools', '<co>/plan')."""
+    src = _read('modules/registry.js')
+    m = re.search(r'export\s+const\s+LEVELS\s*=\s*\{(.*?)\n\};', src, re.S)
+    keys = set(re.findall(r'''^\s*['"]([\w-]+(?:/[\w-]+)?)['"]\s*:''', m.group(1), re.M)) if m else set()
+    co = re.search(r'export\s+const\s+COMPANIES\s*=\s*\[([^\]]*)\]', src)
+    for c in re.findall(r"'([\w-]+)'", co.group(1) if co else ''):
+        if re.search(r'LEVELS\[`\$\{co\}/tools`\]', src): keys.add(f'{c}/tools')
+        if re.search(r'LEVELS\[`\$\{co\}/plan`\]', src): keys.add(f'{c}/plan')
+    return keys
+
+
+def level_rule_errors(live):
+    """Every module has a LEVELS rule (a screen with no key of its own takes its module's), and every key names a module
+    or screen that exists. `live` is [[module, screen], ...] from the portal."""
+    keys, mods = parse_level_keys(), {m for m, _ in live}
+    screens = {f'{m}/{v}' for m, v in live}
+    errs = [f'module {m} has no LEVELS rule (modules/registry.js)' for m in sorted(mods - keys)]
+    errs += [f'LEVELS names {k}, which is not a module or screen' for k in sorted(keys) if k not in mods and k not in screens]
+    return [{'kind': 'levels', 'text': e} for e in errs]
 
 
 async def check_levels(browser, base, settle):
@@ -598,6 +621,8 @@ async def run(args):
         route_results, unknown, forwarded = (await check_routes(ctx, args.base, routes, args.route_settle, None if args.only else aliases)) if routes else ([], [], [])
         # the five levels: on a full run, or with --levels-only
         level_results = await check_levels(browser, args.base, args.route_settle) if (not args.only and not args.no_levels) or args.levels_only else []
+        if level_results:   # and the table itself: a rule for every module, no rule for a screen that does not exist
+            level_results.insert(0, {'target': 'modules/registry.js LEVELS: a rule for every module', 'errors': level_rule_errors(all_routes), 'warnings': [], 'ignored': 0, 'seconds': 0})
         # one retry for failing standalone pages: a deterministic error reproduces; a timing flake is reported but not fatal
         page_results = list(page_results)
         for _ in range(args.retries):
