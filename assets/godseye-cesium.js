@@ -1,9 +1,13 @@
 /* Globe renderer on CesiumJS (photorealistic when a key is configured).
 
    Steers the same map command as assets/godseye.js:
-     { title, steps:[{lat,lon,label,sub,figures,href,zoom,pitch,bearing,hold_ms,kind}], marks:[{lat,lon,label}], source }
+     { title, steps:[{lat,lon,label,sub,figures,href,zoom,pitch,bearing,hold_ms,kind,precision,outline,parcel,height_m}],
+       marks:[{lat,lon,label}], source }
 
-   export createGlobe(container, opts) -> { ready, tiles, run(cmd), fly(step), mark(points), clear(), mode(name), destroy(), state() }
+   export createGlobe(container, opts) -> { ready, tiles, run(cmd), fly(step), mark(points), clear(), mode(name), destroy(), state(),
+                                            goTo(i), next(), prev(), pause(), resume(), home() }
+     opts: { maps, listen, mode, controls (false: no Next and Reset buttons, the host screen has its own),
+             onStop(i, step), onEnd() }
    export openGlobe(container, opts)   -> the same instance for the whole page view (one metered session).
 
    Nothing is fetched when this module is imported. CesiumJS (pinned, unpkg then jsdelivr) and any tiles load only
@@ -22,6 +26,12 @@
    Camera language (adapted from the MIT-licensed reference listed in THIRD_PARTY_NOTICES.md): orbit height, a
    great-circle flight, a descent that tilts to oblique, a slow orbit around the stop while its card shows, then on.
    prefers-reduced-motion cuts instead of flying. A step that is not a surveyed address never comes below FLOOR_M.
+
+   A 'site' step (a real address typed by a visitor, assets/mapcmd.js) is labelled with the typed address. Its floor
+   follows how well the point is known, as the zoom ceiling does in mapcmd.js: parcel 150 m (zoom 19), typed 900 m
+   (zoom 16.5), town 12,000 m (zoom 12.5). With a parcel match its outline is drawn extruded to its height (the roof
+   edge dashed when the height is likely) and the parcel edge as a thin line. The 3,000 m floor and the "Example
+   address" chip are for kind 'address' only (example records).
 */
 
 export const CESIUM_VERSION = '1.146.0';
@@ -33,11 +43,14 @@ export const GOOGLE_ROOT = 'https://tile.googleapis.com/v1/3dtiles/root.json';
 export const ION_GOOGLE_ASSET = 2275207;
 
 /* One line for the screen's Method material (OS_SPEC 7.4). */
-export const GLOBE_METHOD = 'Photorealistic imagery is Google’s. Example addresses are never shown at house level.';
+export const GLOBE_METHOD = 'Photorealistic imagery is Google’s. Example addresses are never shown at house level; a typed address comes as close as its match allows.';
 
 /* Lowest camera height above the ground, in metres, by kind of stop. At 3,000 m a house is a few pixels wide. */
-export const FLOOR_M = { address: 3000, area: 3000, surveyed: 300 };
-const SURVEYED = new Set(['surveyed', 'record', 'typed']);
+export const FLOOR_M = { address: 3000, area: 3000, surveyed: 300, parcel: 150, typed: 900, town: 12000 };
+/* The closest map zoom for a 'site' step, by precision (the same table as assets/mapcmd.js SITE_CEILING). */
+export const SITE_CEILING = { parcel: 19, typed: 16.5, town: 12.5 };
+const SITE_ZOOM = { parcel: 18.5, typed: 16.5, town: 12 };
+const SURVEYED = new Set(['surveyed', 'record']);
 
 export const MODES = [
   { id: 'natural', label: 'Natural' },
@@ -127,24 +140,54 @@ const str = (v, n = 120) => (typeof v === 'string' ? v.trim().slice(0, n) : (typ
 const num = (v, lo, hi, d) => (typeof v === 'number' && isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
 const safeHref = (h) => (typeof h === 'string' && /^#\/[\w\-/?=&.%,:+]*$/.test(h.trim()) ? h.trim() : '');
 
+function cleanRing(r, lon0, lat0, max) {
+  if (!Array.isArray(r)) return null;
+  const pts = r.slice(0, max).map((p) => (Array.isArray(p) ? [Number(p[0]), Number(p[1])] : [NaN, NaN]))
+    .filter(([x, y]) => isFinite(x) && isFinite(y) && Math.abs(x - lon0) <= 0.01 && Math.abs(y - lat0) <= 0.01);
+  return pts.length >= 3 && pts.length === Math.min(r.length, max) ? pts : null;
+}
+
 export function cleanStep(s) {
   if (!s || typeof s !== 'object') return null;
   const lat = Number(s.lat), lon = Number(s.lon);
   if (!isFinite(lat) || !isFinite(lon) || lat < -85 || lat > 85 || lon < -180 || lon > 180) return null;
   const kind = str(s.kind, 24) || 'area';
-  const surveyed = SURVEYED.has(kind) || SURVEYED.has(str(s.precision, 24));
-  return {
+  const site = kind === 'site';
+  const prec = str(s.precision, 24);
+  // a site step with no known precision counts as a town; any step that names a precision takes its floor
+  const precision = site ? (Object.hasOwn(SITE_CEILING, prec) ? prec : 'town') : (Object.hasOwn(SITE_CEILING, prec) ? prec : '');
+  const surveyed = SURVEYED.has(kind) || SURVEYED.has(prec);
+  const floor = kind === 'address' ? FLOOR_M.address : precision ? FLOOR_M[precision] : surveyed ? FLOOR_M.surveyed : FLOOR_M.area;
+  const ceiling = precision ? SITE_CEILING[precision] : 19;
+  const out = {
     lat, lon, kind,
     label: str(s.label, 80), sub: str(s.sub, 120),
     figures: Array.isArray(s.figures) ? s.figures.filter((f) => Array.isArray(f) && f.length >= 2)
       .slice(0, 3).map((f) => [str(f[0], 40), str(f[1], 40)]).filter((f) => f[0] && f[1]) : [],
     href: safeHref(s.href),
-    zoom: num(s.zoom, 2, 19, 12.5),
+    zoom: num(s.zoom, 2, ceiling, site ? SITE_ZOOM[precision] : Math.min(12.5, ceiling)),
     pitch: num(s.pitch, 0, 70, 50),
     bearing: num(s.bearing, -360, 360, 0),
     hold_ms: num(s.hold_ms, 1500, 30000, HOLD_MS),
-    floor: kind === 'address' ? FLOOR_M.address : surveyed ? FLOOR_M.surveyed : FLOOR_M.area,
+    floor,
   };
+  if (precision) out.precision = precision;
+  if (site && precision === 'parcel') {
+    const outline = cleanRing(s.outline, lon, lat, 48), parcel = cleanRing(s.parcel, lon, lat, 40);
+    if (outline) {
+      out.outline = outline;
+      out.height_m = num(s.height_m, 2, 120, 8);
+      out.height_basis = s.height_basis === 'public' ? 'public' : 'likely';
+    }
+    if (parcel) out.parcel = parcel;
+  }
+  return out;
+}
+
+/* A town-level site step right before the address it stages: skipped under reduced motion (nothing to fly). */
+function viaTown(s, next) {
+  return !!(s && next && s.kind === 'site' && s.precision === 'town' && next.kind === 'site' && next.precision !== 'town'
+    && Math.abs(s.lat - next.lat) < 0.05 && Math.abs(s.lon - next.lon) < 0.05);
 }
 
 export function cleanCommand(cmd) {
@@ -331,6 +374,8 @@ export function createGlobe(container, opts = {}) {
   let markEntities = [];
   let pendingNext = null;          // resolves the hold early (Next button)
   let cmdNow = null;
+  let siteEntities = [];
+  let stepIndex = -1, userPaused = false;
   const stats = { minHeightAbove: Infinity, flights: 0, cuts: 0 };
 
   /* UI: card, controls, fallback */
@@ -339,7 +384,7 @@ export function createGlobe(container, opts = {}) {
     MODES.map((m) => el('button', { type: 'button', class: 'sys-chip gx-chip', 'data-mode': m.id, 'aria-pressed': m.id === 'natural' ? 'true' : 'false', text: m.label })));
   const btnNext = el('button', { type: 'button', class: 'sys-btn sys-btn--secondary sys-btn--sm gx-next', text: 'Next', hidden: true });
   const btnReset = el('button', { type: 'button', class: 'sys-btn sys-btn--secondary sys-btn--sm gx-reset', text: 'Reset' });
-  const bar = el('div', { class: 'gx-bar' }, [modes, el('div', { class: 'gx-acts' }, [btnNext, btnReset])]);
+  const bar = el('div', { class: 'gx-bar' }, [modes, el('div', { class: 'gx-acts' }, opts.controls === false ? [] : [btnNext, btnReset])]);
   ui.append(bar, card);
 
   on(modes, 'click', (e) => { const b = e.target.closest('[data-mode]'); if (b) api.mode(b.dataset.mode); });
@@ -484,7 +529,7 @@ export function createGlobe(container, opts = {}) {
           logo.showOnScreen = true;
           viewer.creditDisplay.addStaticCredit(logo);
         }
-        for (const p of pins.concat(markEntities)) setClamp(p);
+        for (const p of pins.concat(markEntities)) if (p) setClamp(p);
         viewer.scene.requestRender();
         return { route: name };
       } catch (e) { errors.push(String(e && e.message || e)); }
@@ -494,7 +539,8 @@ export function createGlobe(container, opts = {}) {
   }
 
   function setClamp(entity) {
-    const ref = tileset ? C.HeightReference.CLAMP_TO_GROUND : C.HeightReference.NONE;
+    // a pin on a drawn building sits on its roof, whatever the ground is
+    const ref = entity._onRoof ? C.HeightReference.RELATIVE_TO_GROUND : tileset ? C.HeightReference.CLAMP_TO_GROUND : C.HeightReference.NONE;
     if (entity.billboard) entity.billboard.heightReference = ref;
     if (entity.label) entity.label.heightReference = ref;
   }
@@ -568,7 +614,8 @@ export function createGlobe(container, opts = {}) {
   function viewFor(step) {
     const px = Math.max(viewer.canvas.clientWidth, viewer.canvas.clientHeight) || 1024;
     const fov = (viewer.camera.frustum && viewer.camera.frustum.fov) || Math.PI / 3;
-    const h = Math.max(step.floor + 50, heightForZoom(step.zoom, step.lat, px, fov));
+    // a site step's zoom is on the 512-pixel tile scale its ceiling is written in (assets/mapcmd.js, MapLibre): one level closer here
+    const h = Math.max(step.floor + 50, heightForZoom(step.kind === 'site' ? step.zoom + 1 : step.zoom, step.lat, px, fov));
     const pitch = -C.Math.toRadians(90 - step.pitch);
     const range = h / Math.sin(-pitch);
     return { h, pitch, range, heading: C.Math.toRadians(step.bearing) };
@@ -641,7 +688,7 @@ export function createGlobe(container, opts = {}) {
         // no orbit; the card stays until the time is up or Next
         const tm = { left };
         anim = {
-          tick(dt) { if (token !== runToken) return false; if (!paused) tm.left -= dt; return tm.left > 0 && left > 0; },
+          tick(dt) { if (token !== runToken) return false; if (!paused && !userPaused) tm.left -= dt; return tm.left > 0 && left > 0; },
           done: finish,
         };
         viewer.scene.requestRender();
@@ -650,6 +697,7 @@ export function createGlobe(container, opts = {}) {
       anim = {
         tick(dt) {
           if (token !== runToken) return false;
+          if (userPaused) return left > 0;     // the card stays, the camera holds still
           left -= dt;
           hpr.heading += C.Math.toRadians(ORBIT_DEG_S) * dt;
           viewer.camera.lookAt(at.target, hpr);
@@ -681,7 +729,7 @@ export function createGlobe(container, opts = {}) {
 
   function home() {
     if (!viewer) return;
-    floorM = 0; groundM = 0; current = null;
+    floorM = 0; groundM = 0; current = null; stepIndex = -1;
     viewer.scene.screenSpaceCameraController.minimumZoomDistance = 150;
     const dest = C.Cartesian3.fromDegrees(START.lon, START.lat, START.height);
     if (reducedMotion()) viewer.camera.setView({ destination: dest });
@@ -692,8 +740,9 @@ export function createGlobe(container, opts = {}) {
   /* ── pins and card ── */
 
   function addPin(step, n) {
+    const roof = step.outline ? step.height_m || 8 : 0;
     const e = viewer.entities.add({
-      position: C.Cartesian3.fromDegrees(step.lon, step.lat, 0),
+      position: C.Cartesian3.fromDegrees(step.lon, step.lat, roof),
       billboard: {
         image: pinCanvas(String(n), '#f0874a', 34), verticalOrigin: C.VerticalOrigin.BOTTOM,
         disableDepthTestDistance: Number.POSITIVE_INFINITY, scale: 1,
@@ -707,6 +756,7 @@ export function createGlobe(container, opts = {}) {
         distanceDisplayCondition: undefined,
       },
     });
+    if (roof) { e._onRoof = true; e._pinScale = 0.7; e.billboard.scale = 0.7; e.label.pixelOffset = new C.Cartesian2(0, -36); }
     setClamp(e);
     return e;
   }
@@ -727,8 +777,34 @@ export function createGlobe(container, opts = {}) {
     return e;
   }
 
+  /* a real address: the outline extruded to its height (roof edge dashed when the height is likely), the parcel edge */
+  function addSite(step) {
+    const out = [];
+    const g = groundAt(step.lon, step.lat);
+    const pos = (ring, h) => C.Cartesian3.fromDegreesArrayHeights(ring.concat([ring[0]]).flatMap(([x, y]) => [x, y, h]));
+    if (step.parcel) {
+      out.push(viewer.entities.add({ polyline: { positions: pos(step.parcel, g + 0.3), width: 2,
+        material: C.Color.fromCssColorString('#ffd479').withAlpha(0.95), arcType: C.ArcType.NONE } }));
+    }
+    if (step.outline) {
+      const h = step.height_m || 8, likely = step.height_basis !== 'public';
+      out.push(viewer.entities.add({ polygon: {
+        hierarchy: C.Cartesian3.fromDegreesArray(step.outline.flat()), height: g, extrudedHeight: g + h,
+        material: C.Color.fromCssColorString('#f0874a').withAlpha(likely ? 0.42 : 0.62), outline: false, perPositionHeight: false } }));
+      out.push(viewer.entities.add({ polyline: { positions: pos(step.outline, g + 0.3), width: 3, material: C.Color.WHITE, arcType: C.ArcType.NONE } }));
+      out.push(viewer.entities.add({ polyline: { positions: pos(step.outline, g + h), width: 2, arcType: C.ArcType.NONE,
+        material: likely ? new C.PolylineDashMaterialProperty({ color: C.Color.WHITE, dashLength: 10 }) : C.Color.WHITE } }));
+    }
+    return out;
+  }
+  function clearSites() {
+    if (!viewer || viewer.isDestroyed()) { siteEntities = []; return; }
+    for (const e of siteEntities) viewer.entities.remove(e);
+    siteEntities = [];
+  }
+
   function highlight(i) {
-    pins.forEach((p, k) => { p.billboard.scale = k === i ? 1.25 : 0.9; });
+    pins.forEach((p, k) => { if (p) p.billboard.scale = (p._pinScale || 1) * (k === i ? 1.25 : 0.9); });
   }
 
   function showCard(step, i, n, title) {
@@ -748,15 +824,16 @@ export function createGlobe(container, opts = {}) {
 
   function clearPins() {
     if (!viewer || viewer.isDestroyed()) return;
-    for (const p of pins) viewer.entities.remove(p);
+    for (const p of pins) if (p) viewer.entities.remove(p);
     pins = [];
   }
 
   /* ── public ── */
 
   async function playStep(step, i, n, title, token) {
-    current = step;
+    current = step; stepIndex = i;
     highlight(i);
+    try { opts.onStop && opts.onStop(i, step); } catch {}
     viewer.scene.screenSpaceCameraController.minimumZoomDistance = Math.max(150, step.floor);
     card.hidden = true;
     const at = await flight(step, token);
@@ -764,6 +841,20 @@ export function createGlobe(container, opts = {}) {
     showCard(step, i, n, title);
     await hold(at, step, token);
     return token === runToken;
+  }
+
+  async function play(from) {
+    const c = cmdNow, token = runToken;
+    for (let i = from; i < c.steps.length; i++) {
+      if (reducedMotion() && viaTown(c.steps[i], c.steps[i + 1])) continue;
+      const ok = await playStep(c.steps[i], i, c.steps.length, c.title, token);
+      if (!ok) return { done: false };
+    }
+    if (token === runToken) {
+      release(); viewer.scene.requestRenderMode = true; viewer.scene.requestRender();
+      try { opts.onEnd && opts.onEnd(); } catch {}
+    }
+    return { done: token === runToken };
   }
 
   const api = {
@@ -779,19 +870,25 @@ export function createGlobe(container, opts = {}) {
       if (dead) return { done: false };
       if (!r.ok) { showFallback(c); return { done: false, fallback: true }; }
       stop();
-      const token = runToken;
-      clearPins();
+      clearPins(); clearSites();
       card.hidden = true;
       root.dataset.source = c.source || '';
       if (c.marks.length) api.mark(c.marks);
-      pins = c.steps.map((s, k) => addPin(s, k + 1));
-      for (let i = 0; i < c.steps.length; i++) {
-        const ok = await playStep(c.steps[i], i, c.steps.length, c.title, token);
-        if (!ok) return { done: false };
-      }
-      if (token === runToken) { release(); viewer.scene.requestRenderMode = true; viewer.scene.requestRender(); }
-      return { done: token === runToken };
+      // a town step that only stages its own address gets no pin of its own (the two would sit on one spot)
+      pins = c.steps.map((s, k) => (viaTown(s, c.steps[k + 1]) ? null : addPin(s, k + 1)));
+      for (const s of c.steps) if (s.kind === 'site') siteEntities.push(...addSite(s));
+      return play(0);
     },
+
+    /** Play the current command from stop i (the screen's stop list and its Previous and Next). */
+    goTo(i) { if (cmdNow && cmdNow.steps[i] && viewer) { stop(); userPaused = false; play(i); } },
+    next() { if (!cmdNow) return; if (pendingNext && stepIndex >= 0 && stepIndex < cmdNow.steps.length - 1) { userPaused = false; pendingNext(); } else api.goTo(Math.min(cmdNow.steps.length - 1, stepIndex + 1)); },
+    prev() { if (cmdNow) api.goTo(Math.max(0, stepIndex - 1)); },
+    pause() { userPaused = true; if (viewer) viewer.scene.requestRender(); },
+    resume() { userPaused = false; if (viewer) viewer.scene.requestRender(); },
+    home() { api.clear(); home(); },
+
+    get index() { return stepIndex; },
 
     async fly(step) {
       const s = cleanStep(step);
@@ -818,7 +915,7 @@ export function createGlobe(container, opts = {}) {
     clear() {
       if (!viewer) { card.hidden = true; return; }
       stop();
-      clearPins();
+      clearPins(); clearSites(); stepIndex = -1; userPaused = false;
       for (const m of markEntities) viewer.entities.remove(m);
       markEntities = [];
       card.hidden = true;
@@ -845,7 +942,8 @@ export function createGlobe(container, opts = {}) {
 
     state() {
       const out = { ready: !!viewer, keyed, route, mode: currentMode, paused, running: !!anim || !!pendingNext,
-        floor: floorM, ground: groundM, flights: stats.flights, cuts: stats.cuts,
+        floor: floorM, ground: groundM, userPaused, index: stepIndex, siteEntities: siteEntities.length,
+        precision: current ? current.precision || null : null, flights: stats.flights, cuts: stats.cuts,
         minHeightAboveDuringFloor: isFinite(stats.minHeightAbove) ? stats.minHeightAbove : null,
         step: current ? current.label : null };
       if (viewer && !viewer.isDestroyed()) {
@@ -854,6 +952,7 @@ export function createGlobe(container, opts = {}) {
         out.resolutionScale = viewer.resolutionScale;
         out.canvasScale = viewer.canvas.width / Math.max(1, viewer.canvas.clientWidth);
         out.globeShown = viewer.scene.globe.show;
+        out.sitesDrawn = siteEntities.length > 0 && viewer.dataSourceDisplay.ready;
         out.tilesLoaded = viewer.scene.globe.show ? viewer.scene.globe.tilesLoaded : !!(tileset && tileset.tilesLoaded);
       }
       return out;
