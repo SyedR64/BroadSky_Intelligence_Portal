@@ -803,9 +803,98 @@ def signal_companies():
     return re.findall(r"id: '(\w+)', name: '([^']+)'", m.group(1)) if m else []
 
 
+MA_COMPANIES = [('cet', 'CET'), ('pp', 'Punctual Pros'), ('fl', 'Frontline'), ('ts', 'Thomas Scientific'), ('bpi', 'BPI'), ('fh', 'Fair Harbor')]
+
+
+def merged_views(page, base, js):
+    """The states of three screens that hold what merged screens used to show, each read as its own document (in this
+    order): Local signals with All six chosen (the former Sales levers), the Private equity county section (the former Sector
+    heatmap's rival presence by county), and the add-on pipeline for each company plus its county section (the former
+    add-on target screens and company theses). A plain render of those screens opens on the default state, so none of
+    this would be read. `js` is src_rendered()'s reader; a block that fails logs one line and adds no document."""
+    out = []
+    stamp = lambda target: dict(publisher='BSP Desk', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10])
+    # every sized lever across all six companies (the overview's "All six" choice; it replaced the Sales levers screen)
+    target = 'app.html#/signals/overview?co=all'
+    try:
+        page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
+        page.wait_for_function("() => ((document.querySelector('#sg-co-lead') || {}).innerText || '').startsWith('All six:')"
+                               " && document.querySelectorAll('#sg-tbl tbody tr').length > 0", timeout=20000)
+        page.wait_for_timeout(600)
+        r = page.evaluate("""() => {
+          const lines = el => el.innerText.split('\\n').map(t => t.replace(/\\s+/g, ' ').trim()).filter(Boolean);
+          const rows = [...document.querySelectorAll('#sg-tbl tbody tr')].map(tr => [...tr.cells].map(lines));
+          const heads = [...document.querySelectorAll('#sg-tbl thead th')].map(th => th.textContent.replace(/\\s+/g, ' ').trim());
+          const bars = [...document.querySelectorAll('#sg-all .col > .row')].map(b => lines(b).join(': '));
+          const note = document.querySelector('#sg-est-note');
+          return { lead: (document.querySelector('#sg-co-lead') || {}).innerText || '', heads, rows, bars, note: note ? note.innerText : '' };
+        }""")
+    except Exception as e:
+        log('render failed', target, str(e)[:120])
+        r = None
+    if r and r['rows']:
+        stop = lambda t: t if t[-1:] in '.!?' else t + '.'
+        blocks = []
+        for row in r['rows']:   # one short paragraph per lever: its name and company, the move, then each column under its heading
+            if len(row) < 3 or not row[0] or not row[1]:
+                continue
+            parts = [f'{row[1][0]} ({row[0][0]}).'] + [stop(t) for t in row[1][1:]]
+            for head, cell in zip(r['heads'][2:], row[2:]):
+                if cell:
+                    parts.append(f"{re.sub(r' est[.]$', ' (est.)', head)}: " + ' '.join(stop(t) for t in cell))
+            blocks.append(' '.join(parts))
+        text = ('Sales levers and margin risks across all six portfolio companies: every force that carries a dollar size, ranked by the effect of '
+                "today's readings, with the size of one step and the assumption behind it.\n\n" + norm_ws(r['lead'])
+                + ("\n\nEffect of today's readings, a year of sales or margin at today's change vs a year ago (est.), largest first: "
+                   + '; '.join(r['bars']) + '.' if r['bars'] else '')
+                + '\n\n' + '\n\n'.join(blocks) + ('\n\n' + norm_ws(r['note']) if r['note'] else ''))
+        out.append(doc('portal', 'portal-view', 'Portal: Local signals · sales levers across all six companies', SITE + target, text, **stamp(target)))
+
+    def section(target, wait, sel, title, wait_ms=60000):
+        """One closed section, opened by its address parameter: wait for its table, then read that section only."""
+        try:
+            page.goto('about:blank')
+            page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
+            page.wait_for_selector(wait, timeout=wait_ms)
+            page.wait_for_timeout(600)
+            page.evaluate(js)   # marks block and cell boundaries on the live page
+            t = page.evaluate("""sel => { const c = document.querySelector(sel).cloneNode(true);
+                c.querySelectorAll('svg,[aria-hidden="true"],select').forEach(e => e.remove()); return c.innerText; }""", sel)
+            if len(norm_ws(t)) > 200:
+                out.append(doc('portal', 'portal-view', title, SITE + target, t, **stamp(target)))
+            else:
+                log('render empty, dropped', target)
+        except Exception as e:
+            log('render failed', target, str(e)[:120])
+
+    # the Private equity county section (closed and unloaded on the plain screen; it replaced the Sector heatmap's county table)
+    section('app.html#/pe/landscape?show=counties', '#pe-counties[open] #pe-cbody table tbody tr', '#pe-counties',
+            'Portal: Private equity · rival presence by county (Punctual Pros)')
+    # the add-on pipeline for one company: its thesis, facts and target list (the former <company>/targets screens and company theses)
+    for co, name in MA_COMPANIES:
+        target = f'app.html#/ma/pipeline?platform={co}'
+        try:
+            page.goto('about:blank')   # the screen redraws on a hash change: a fresh load so the previous company's text cannot pass the wait
+            page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
+            page.wait_for_selector(f'#ma-co[data-co="{co}"][data-mode="brief"]', timeout=30000)
+            page.wait_for_selector('#tg-table tbody tr', timeout=30000)
+            page.wait_for_timeout(600)
+            t = page.evaluate(js)['text']   # the page h1 is the same for every company, so the title is set here
+        except Exception as e:
+            log('render failed', target, str(e)[:120])
+            continue
+        if len(norm_ws(t)) > 200:
+            out.append(doc('portal', 'portal-view', f'Portal: Acquisition engine · add-on targets and thesis for {name}', SITE + target, t, **stamp(target)))
+    # the pipeline's county section: home sales by county against the target pool
+    section('app.html#/ma/pipeline?counties=1', '#ma-house-tbl tbody tr', '#ma-county',
+            'Portal: Acquisition engine · county home sales against the target pool')
+    return out
+
+
 def src_rendered():
     """Every page and app route, rendered in headless Chromium; the visible text of the main content. Local signals shows one
-    company's forces at a time, so each company's table is read as its own document."""
+    company's forces at a time, and All six together, so each company's table and the All six ranking are read as their own
+    documents; merged_views() reads the other screen states that hold merged screens' content."""
     sys.path.insert(0, os.path.join(ROOT, 'scripts'))
     import ci_check   # page and route discovery shared with the CI check
     from playwright.sync_api import sync_playwright
@@ -897,7 +986,7 @@ def src_rendered():
                 title = f'Portal: {title}' if not title.lower().startswith('portal') else title
             out.append(doc('portal', 'portal-view' if '#/' in target else 'site-page', title, SITE + target.replace('index.html', ''), text,
                            publisher='BSP Desk', date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
-        for co, name in signal_companies():   # the forces table for each company (the view opens on the first one)
+        for co, name in signal_companies():   # the forces table for each company, one at a time (the view opens on the first one; All six follows below)
             target = f'app.html#/signals/overview?co={co}'
             try:
                 page.goto(base + target, wait_until='domcontentloaded', timeout=30000)
@@ -931,6 +1020,7 @@ def src_rendered():
                    + norm_ws(r['lead']) + '\n\n' + '\n\n'.join(blocks)
             out.append(doc('portal', 'portal-view', f'Portal: Local signals · what moves sales at {name}', SITE + target, text, publisher='BSP Desk',
                            date=dt.date.today().isoformat(), key='page-' + hashlib.sha1(target.encode()).hexdigest()[:10]))
+        out += merged_views(page, base, js)   # All six, the Private equity county section, the pipeline per company and its county section
         browser.close()
     srv.shutdown()
     log(f'portal: {len(out)} pages and views rendered')
