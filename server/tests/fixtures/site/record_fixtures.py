@@ -187,7 +187,7 @@ def fact_val(facts, *keys):
 
 
 def build_card(sc, place, parcel, buildings, extra_facts, permits):
-    facts = list(parcel['facts']) + list(extra_facts)
+    facts = [dict(f) for f in list(parcel['facts']) + list(extra_facts)]      # copies: the adapter output stays as returned
     sources = []
 
     def n_of(src, date=None):

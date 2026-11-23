@@ -750,8 +750,7 @@
        "source": "York County parcels and assessment (OPEN_DATA Parcels)",
        "as_of": "2026-11-23",
        "date_kind": "retrieved",
-       "note": "commercial building record",
-       "n": 1
+       "note": "commercial building record"
       },
       {
        "k": "floor_area_sqft",
@@ -762,8 +761,7 @@
        "source": "York County parcels and assessment (OPEN_DATA Parcels)",
        "as_of": "2026-11-23",
        "date_kind": "retrieved",
-       "note": "commercial building record",
-       "n": 1
+       "note": "commercial building record"
       },
       {
        "k": "land_use",
@@ -773,8 +771,7 @@
        "src": "pa_york",
        "source": "York County parcels and assessment (OPEN_DATA Parcels)",
        "as_of": "2026-11-23",
-       "date_kind": "retrieved",
-       "n": 1
+       "date_kind": "retrieved"
       },
       {
        "k": "utilities",
@@ -784,8 +781,7 @@
        "src": "pa_york",
        "source": "York County parcels and assessment (OPEN_DATA Parcels)",
        "as_of": "2026-11-23",
-       "date_kind": "retrieved",
-       "n": 1
+       "date_kind": "retrieved"
       }
      ],
      "building_facts": true,
@@ -1161,8 +1157,7 @@
     "src": "usgs_epqs",
     "source": "Elevation Point Query Service (3DEP)",
     "as_of": "2026-11-23",
-    "date_kind": "retrieved",
-    "n": 2
+    "date_kind": "retrieved"
    }
   }
  },

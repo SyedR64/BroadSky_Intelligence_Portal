@@ -161,6 +161,7 @@ def test_nj_full_parcel_facts_permits_outline_and_ground():
     (p,) = a['parcels']['parcels']
     assert p['match'] == 'exact' and p['id']['muni_code'] == '1508' and p['id']['block'] == '663' and p['id']['lot'] == '1'
     facts = {f['k']: f['v'] for f in p['facts']}
+    assert all(set(f) <= {'k', 'label', 'v', 'basis', 'src', 'source', 'as_of', 'date_kind', 'note'} for f in p['facts'])
     assert facts['stories'] == 2 and facts['floor_area_sqft'] == 15226 and facts['facility'] == 'TOWN HALL'
     assert 'year_built' not in facts                      # YR_CONSTR is 0 on this row: no year is invented
     assert len(p['ring_ll']) >= 4 and p['ring_ll'][0] == p['ring_ll'][-1]

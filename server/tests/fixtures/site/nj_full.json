@@ -238,49 +238,41 @@
     "features": [
      {
       "attributes": {
-       "BUILD_ID": 9520271,
+       "BUILD_ID": 9520278,
        "OCC_CLS": "Government",
        "PRIM_OCC": "General Services",
        "OUTBLDG": null,
        "HEIGHT": null,
-       "SQMETERS": 3447.562,
+       "SQMETERS": 90.00056,
        "SOURCE": "ORNL",
        "IMAGE_DATE": 1722643200000,
        "PROD_DATE": 1750118400000,
        "VAL_METHOD": "Spatial Intersect",
-       "LONGITUDE": -74.19670272678587,
-       "LATITUDE": 39.95177906082682
+       "LONGITUDE": -74.19707319510671,
+       "LATITUDE": 39.95213475378459
       },
       "geometry": {
        "rings": [
         [
          [
-          -74.196816,
-          39.9521175
+          -74.1970538,
+          39.9520728
          ],
          [
-          -74.1968409,
-          39.9521241
+          -74.1971371,
+          39.9520942
          ],
          [
-          -74.1968126,
-          39.952188
+          -74.1970926,
+          39.9521967
          ],
          [
-          -74.196314,
-          39.9520574
+          -74.1970093,
+          39.9521753
          ],
          [
-          -74.1966167,
-          39.951373
-         ],
-         [
-          -74.1970904,
-          39.9514971
-         ],
-         [
-          -74.196816,
-          39.9521175
+          -74.1970538,
+          39.9520728
          ]
         ]
        ]
@@ -374,41 +366,49 @@
      },
      {
       "attributes": {
-       "BUILD_ID": 9520278,
+       "BUILD_ID": 9520271,
        "OCC_CLS": "Government",
        "PRIM_OCC": "General Services",
        "OUTBLDG": null,
        "HEIGHT": null,
-       "SQMETERS": 90.00056,
+       "SQMETERS": 3447.562,
        "SOURCE": "ORNL",
        "IMAGE_DATE": 1722643200000,
        "PROD_DATE": 1750118400000,
        "VAL_METHOD": "Spatial Intersect",
-       "LONGITUDE": -74.19707319510671,
-       "LATITUDE": 39.95213475378459
+       "LONGITUDE": -74.19670272678587,
+       "LATITUDE": 39.95177906082682
       },
       "geometry": {
        "rings": [
         [
          [
-          -74.1970538,
-          39.9520728
+          -74.196816,
+          39.9521175
          ],
          [
-          -74.1971371,
-          39.9520942
+          -74.1968409,
+          39.9521241
          ],
          [
-          -74.1970926,
-          39.9521967
+          -74.1968126,
+          39.952188
          ],
          [
-          -74.1970093,
-          39.9521753
+          -74.196314,
+          39.9520574
          ],
          [
-          -74.1970538,
-          39.9520728
+          -74.1966167,
+          39.951373
+         ],
+         [
+          -74.1970904,
+          39.9514971
+         ],
+         [
+          -74.196816,
+          39.9521175
          ]
         ]
        ]
@@ -729,8 +729,7 @@
        "src": "nj_parcels",
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
-       "date_kind": "published",
-       "n": 1
+       "date_kind": "published"
       },
       {
        "k": "building_desc",
@@ -740,8 +739,7 @@
        "src": "nj_parcels",
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
-       "date_kind": "published",
-       "n": 1
+       "date_kind": "published"
       },
       {
        "k": "stories",
@@ -752,8 +750,7 @@
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
        "date_kind": "published",
-       "note": "read from the assessor building description",
-       "n": 1
+       "note": "read from the assessor building description"
       },
       {
        "k": "material",
@@ -764,8 +761,7 @@
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
        "date_kind": "published",
-       "note": "read from the assessor building description",
-       "n": 1
+       "note": "read from the assessor building description"
       },
       {
        "k": "floor_area_sqft",
@@ -776,8 +772,7 @@
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
        "date_kind": "published",
-       "note": "read from the assessor building description",
-       "n": 1
+       "note": "read from the assessor building description"
       },
       {
        "k": "assessed_improvements",
@@ -787,8 +782,7 @@
        "src": "nj_parcels",
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
-       "date_kind": "published",
-       "n": 1
+       "date_kind": "published"
       },
       {
        "k": "lot_acres",
@@ -798,8 +792,7 @@
        "src": "nj_parcels",
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
-       "date_kind": "published",
-       "n": 1
+       "date_kind": "published"
       },
       {
        "k": "facility",
@@ -809,8 +802,7 @@
        "src": "nj_parcels",
        "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
        "as_of": "2026-06-04",
-       "date_kind": "published",
-       "n": 1
+       "date_kind": "published"
       }
      ],
      "match": "exact",
@@ -825,42 +817,34 @@
    "buildings": [
     {
      "src": "structures",
-     "build_id": 9520271,
+     "build_id": 9520278,
      "ring_ll": [
       [
-       -74.196816,
-       39.9521175
+       -74.1970538,
+       39.9520728
       ],
       [
-       -74.1968409,
-       39.9521241
+       -74.1971371,
+       39.9520942
       ],
       [
-       -74.1968126,
-       39.952188
+       -74.1970926,
+       39.9521967
       ],
       [
-       -74.196314,
-       39.9520574
+       -74.1970093,
+       39.9521753
       ],
       [
-       -74.1966167,
-       39.951373
-      ],
-      [
-       -74.1970904,
-       39.9514971
-      ],
-      [
-       -74.196816,
-       39.9521175
+       -74.1970538,
+       39.9520728
       ]
      ],
      "centroid": [
-      -74.1967027,
-      39.9517791
+      -74.1970732,
+      39.9521348
      ],
-     "area_m2": 3447.6,
+     "area_m2": 90.0,
      "height_m": null,
      "height_checked": false,
      "occupancy": "Government",
@@ -961,34 +945,42 @@
     },
     {
      "src": "structures",
-     "build_id": 9520278,
+     "build_id": 9520271,
      "ring_ll": [
       [
-       -74.1970538,
-       39.9520728
+       -74.196816,
+       39.9521175
       ],
       [
-       -74.1971371,
-       39.9520942
+       -74.1968409,
+       39.9521241
       ],
       [
-       -74.1970926,
-       39.9521967
+       -74.1968126,
+       39.952188
       ],
       [
-       -74.1970093,
-       39.9521753
+       -74.196314,
+       39.9520574
       ],
       [
-       -74.1970538,
-       39.9520728
+       -74.1966167,
+       39.951373
+      ],
+      [
+       -74.1970904,
+       39.9514971
+      ],
+      [
+       -74.196816,
+       39.9521175
       ]
      ],
      "centroid": [
-      -74.1970732,
-      39.9521348
+      -74.1967027,
+      39.9517791
      ],
-     "area_m2": 90.0,
+     "area_m2": 3447.6,
      "height_m": null,
      "height_checked": false,
      "occupancy": "Government",
@@ -1130,8 +1122,7 @@
     "src": "usgs_epqs",
     "source": "Elevation Point Query Service (3DEP)",
     "as_of": "2026-11-23",
-    "date_kind": "retrieved",
-    "n": 2
+    "date_kind": "retrieved"
    }
   }
  },
@@ -1392,6 +1383,31 @@
      {
       "ring_m": [
        [
+        -29.96,
+        32.69
+       ],
+       [
+        -37.07,
+        35.08
+       ],
+       [
+        -33.27,
+        46.49
+       ],
+       [
+        -26.16,
+        44.1
+       ],
+       [
+        -29.96,
+        32.69
+       ]
+      ],
+      "basis": "public"
+     },
+     {
+      "ring_m": [
+       [
         22.84,
         52.49
        ],
@@ -1454,31 +1470,6 @@
        [
         22.84,
         52.49
-       ]
-      ],
-      "basis": "public"
-     },
-     {
-      "ring_m": [
-       [
-        -29.96,
-        32.69
-       ],
-       [
-        -37.07,
-        35.08
-       ],
-       [
-        -33.27,
-        46.49
-       ],
-       [
-        -26.16,
-        44.1
-       ],
-       [
-        -29.96,
-        32.69
        ]
       ],
       "basis": "public"
