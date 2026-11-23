@@ -14,8 +14,8 @@
      Frame.mount({ variant: 'minimal', theme: 'dark' });   // a full-bleed stage
 
    Embedded: any page opened with ?embed=1 in its address (the shell shows it in an iframe, modules/embed.js) is drawn
-   with variant 'embed' whatever the page asked for: no top bar, footer, crumb row or floating Ask button, and
-   <html data-embed>. Pages need no change.
+   with variant 'embed' whatever the page asked for: no top bar, footer, crumb row, concept tag, page sub-bar or
+   floating Ask button, and <html data-embed>. A link that leaves the page opens in the top window. Pages need no change.
 
    Options (all optional):
      active   'home'|'agent'|'connect'|'concepts'|'os'|'playbooks'  (auto from URL; 'os' and 'playbooks' mark Concepts)
@@ -228,18 +228,19 @@ function bindViewAs(top) {
   btn.addEventListener('click', e => { isOpen() ? close(false) : open(e.detail === 0); });   // keyboard activation moves focus inside
   btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !isOpen()) { e.preventDefault(); open(true); } });
   levelsEl.addEventListener('click', e => {
-    const b = e.target.closest('[data-level]'); if (!b) return;
+    const b = e.target.closest('button[data-level]'); if (!b) return;
     level = b.dataset.level; paintLevels(); paintRoles();
     levelsEl.querySelector(`[data-level="${level}"]`)?.focus();
   });
   rolesEl.addEventListener('click', e => {
-    const b = e.target.closest('[data-role]'); if (!b) return;
+    const b = e.target.closest('button[data-role]'); if (!b) return;
     Session.setRole(b.dataset.role);
     close(true);
   });
   pop.addEventListener('keydown', e => {
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); return; }
-    const inLevels = e.target.closest('[data-level]'), inRoles = e.target.closest('[data-role]');
+    // <html> carries data-level and data-role too (assets/session.js), so only the switch's own buttons count
+    const inLevels = e.target.closest('button[data-level]'), inRoles = e.target.closest('button[data-role]');
     const step = (list, el, d) => { const i = list.indexOf(el); const n = list[(i + d + list.length) % list.length]; if (n) { e.preventDefault(); n.focus(); } };
     if (inLevels && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) step([...levelsEl.querySelectorAll('[data-level]')], inLevels, e.key === 'ArrowRight' ? 1 : -1);
     if (inRoles && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) step([...rolesEl.querySelectorAll('[data-role]')], inRoles, e.key === 'ArrowDown' ? 1 : -1);
@@ -381,7 +382,7 @@ function bindHotkey(spec) {
 export const LABELS = {
   // portal datasets (data/)
   cet_ne_counties: 'CET New England county scores', cet_ne_development: 'New England development activity', cet_ne_rfps: 'New England public bids',
-  cet_nyc_archive_summary: 'CET legacy archive summary', fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
+  fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
   pp_sales_90d: 'Punctual Pros home sales, January to April 2026', pp_zips: 'Punctual Pros ZIP-code model', ts_parents: 'Thomas Scientific parent accounts', ts_sites: 'Thomas Scientific lab sites',
   // deed records (data/sales/)
   pp_sales_pa_a: 'Punctual Pros deed records (Lancaster, York, Dauphin, Cumberland)', pp_sales_pa_b: 'Punctual Pros deed records (Berks, Lebanon, Franklin, Adams, Perry, Chester, Montgomery)', pp_sales_nj: 'Punctual Pros deed records (NJ)',
@@ -646,6 +647,15 @@ function mountEmbed(opts, w) {
   const co = opts.co !== undefined ? opts.co : w.co;
   if (co && !body.dataset.co) body.dataset.co = co;
   document.querySelector('[data-sys-footer]')?.remove();
+  // a link that leaves this page (the shell, another page, another site) opens in the top window, never in the frame;
+  // a link within the page (#section) and one that already opens a new tab keep their behaviour
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
+    if (!/^https?:$/.test(u.protocol) || (u.origin === location.origin && u.pathname === location.pathname && u.search === location.search)) return;
+    a.target = '_top';
+  }, true);
   finishMount(body, opts);
   state.mounted = { top: null, banner: null, footer: null, root: ROOT, page: w, nav: [], variant: 'embed', embed: true, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
   return state.mounted;
