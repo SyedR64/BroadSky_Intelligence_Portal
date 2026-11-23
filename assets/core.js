@@ -113,7 +113,7 @@ export const Data = {
     if (name === 'manifest') return Data.manifest();
     const p = (async () => {
       // Legacy tables live in data/; everything else (research datasets) lives in data/research/. No probing → no 404 noise.
-      const LEGACY = new Set(['cet_ne_counties', 'cet_ne_development', 'cet_ne_rfps', 'cet_nyc_archive_summary', 'pp_zips', 'pp_meta', 'pp_sales_90d', 'fl_lawfirms', 'ts_sites', 'ts_parents', 'manifest']);
+      const LEGACY = new Set(['cet_ne_counties', 'cet_ne_development', 'cet_ne_rfps', 'pp_zips', 'pp_meta', 'pp_sales_90d', 'fl_lawfirms', 'ts_sites', 'ts_parents', 'manifest']);
       const path = name.includes('/') ? `data/${name}.json` : LEGACY.has(name) ? `data/${name}.json` : `data/research/${name}.json`;
       const r = await fetch(BASE + path, { cache: 'no-cache' });
       if (!r.ok) throw new Error(`Dataset ${name} not found (${r.status})`);
@@ -181,7 +181,8 @@ export const UI = {
   kpis: items => `<div class="sys-kpis kpis">${items.map(UI.kpi).join('')}</div>`,
   /** Card with a head (title, sub, actions), a body and a source line. accent → the module accent bar (.sys-card[data-co]). */
   panel: ({ title, sub, actions, body, foot, cls = '', id = '', accent = false, flush = false, scroll = false }) => `<section class="sys-card panel${accent ? ' accent' : ''}${cls ? ' ' + cls : ''}"${accent ? ' data-co=""' : ''}${id ? ` id="${id}"` : ''}>${title ? `<div class="panel-head"><div class="panel-title"><h3 class="sys-card-title">${title}</h3>${sub ? `<div class="sys-card-body sub">${sub}</div>` : ''}</div>${actions ? `<div class="actions">${actions}</div>` : ''}</div>` : ''}<div class="panel-body${flush ? ' flush' : ''}${scroll ? ' scroll' : ''}">${body}</div>${foot ? `<div class="sys-src panel-foot">${foot}</div>` : ''}</section>`,
-  source: (text, url, asof) => `<span class="src">Source: ${url ? Fmt.link(url, text) : esc(text)}${asof ? ` · as of ${esc(asof)}` : ''}</span>`,
+  /** A source line, marked data-src: the shell moves it into the Sources drawer (copy rule 4), never left on the page. */
+  source: (text, url, asof) => `<span class="src" data-src>${url ? Fmt.link(url, text) : esc(text)}${asof ? ` · as of ${esc(asof)}` : ''}</span>`,
   /** View heading: .sys-h1 + .sys-lead, status chips in .sys-chips, buttons in .sys-actions. */
   pageHead: ({ title, sub, actions, chips }) => `<header class="page-head"><div class="page-head-copy"><h1 class="sys-h1">${title}</h1>${sub ? `<div class="sys-lead sub">${sub}</div>` : ''}${chips ? `<div class="sys-chips chips">${chips}</div>` : ''}</div>${actions ? `<div class="sys-actions actions">${actions}</div>` : ''}</header>`,
   empty: msg => `<div class="empty">${esc(msg || 'No data')}</div>`,
@@ -240,13 +241,32 @@ export const UI = {
 
 /* ── Inspector (right panel) ──────────────────────────────────────────────── */
 export const Inspector = {
-  /** Right-hand drawer (#inspector is a .sys-card): accent bar from `color`, sections with .sys-card-label heads, .sys-btn actions. */
-  open({ title, sub, color, sections = [], actions = [] }) {
+  /** Right-hand drawer (#inspector is a .sys-card): accent bar from `color`, sections with .sys-card-label heads, .sys-btn actions.
+      Copy rule (OS_SPEC 7, side panel): open, it shows the name, four figures and the next action. The first section
+      stays open with its first four figures (a .kv list), and so does a section labelled "Next action"; every other
+      section, and the rest of the figures, sit in a closed "Details" section, source sections in a closed "Sources".
+      `fold: false` shows every section open (the Sources and Method lists use it). */
+  open({ title, sub, color, sections = [], actions = [], fold = true }) {
     const el = $('#inspector'); if (!el) return;
     Drawers.park();   // a Sources or Method list shown here goes back to its hold before the panel is redrawn
     const c = color || 'var(--mc, var(--sys-brand))';
     el.dataset.co = ''; el.style.setProperty('--co', c); el.style.setProperty('--mc', c);
-    el.innerHTML = `<div class="insp-head" style="--mc:${c}"><div class="grow"><h2 class="sys-card-title">${title}</h2>${sub ? `<div class="sys-kpi-sub sub">${sub}</div>` : ''}</div><button class="${btnCls('ghost', 'sm', 'icon-btn')} sys-btn--icon" type="button" data-close title="Close (Esc)" aria-label="Close inspector">${ICON.close}</button></div><div class="insp-body">${sections.map(s => `<section class="insp-sec">${s.label ? `<h4 class="sys-card-label">${esc(s.label)}</h4>` : ''}${s.html}</section>`).join('')}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="${btnCls('secondary', 'sm', 'sm')}" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button type="button" class="${btnCls('secondary', 'sm', 'sm')}" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
+    const sec = s => `<section class="insp-sec">${s.label ? `<h4 class="sys-card-label">${esc(s.label)}</h4>` : ''}${s.html}</section>`;
+    const list = sections.filter(s => s && s.html != null && s.html !== '');
+    const isAct = s => /^(recommended )?next (action|step)s?$/i.test(String(s.label || '').trim()), isSrc = s => /^sources?$/i.test(String(s.label || '').trim());
+    const shut = fold ? list.slice(1).filter(s => !isAct(s)) : [];
+    const foldHTML = (name, items, cls) => items.length ? `<details class="sys-fold insp-fold ${cls}"><summary><span>${name}</span></summary>${items.map(sec).join('')}</details>` : '';
+    const body = fold ? [list[0], ...list.slice(1).filter(isAct)].filter(Boolean).map(sec).join('') + foldHTML('Details', shut.filter(s => !isSrc(s)), 'insp-more') + foldHTML('Sources', shut.filter(isSrc), 'insp-srcs') : list.map(sec).join('');
+    el.innerHTML = `<div class="insp-head" style="--mc:${c}"><div class="grow"><h2 class="sys-card-title">${title}</h2>${sub ? `<div class="sys-kpi-sub sub">${sub}</div>` : ''}</div><button class="${btnCls('ghost', 'sm', 'icon-btn')} sys-btn--icon" type="button" data-close title="Close (Esc)" aria-label="Close inspector">${ICON.close}</button></div><div class="insp-body">${body}</div>${actions.length ? `<div class="insp-actions">${actions.map(a => a.href ? `<a class="${btnCls('secondary', 'sm', 'sm')}" href="${esc(a.href)}" target="_blank" rel="noopener">${a.label}</a>` : `<button type="button" class="${btnCls('secondary', 'sm', 'sm')}" data-act="${esc(a.id)}">${a.label}</button>`).join('')}</div>` : ''}`;
+    // the first section's figures past the fourth go to the top of Details
+    const first = fold && $('.insp-body > .insp-sec', el), dl = first && $(':scope > dl.kv', first), pairs = dl ? $$(':scope > dt', dl) : [];
+    if (pairs.length > 4) {
+      const extra = document.createElement('dl'); extra.className = 'kv';
+      for (const dt of pairs.slice(4)) { const dd = dt.nextElementSibling; extra.appendChild(dt); if (dd && dd.tagName === 'DD') extra.appendChild(dd); }
+      let more = $('.insp-more', el);
+      if (!more) { more = document.createElement('details'); more.className = 'sys-fold insp-fold insp-more'; more.innerHTML = '<summary><span>Details</span></summary>'; $$('.insp-body > .insp-sec', el).pop().after(more); }
+      const s2 = document.createElement('section'); s2.className = 'insp-sec'; s2.appendChild(extra); $('summary', more).after(s2);
+    }
     const wasOpen = el.classList.contains('open');
     el.classList.add('open'); el.setAttribute('aria-hidden', 'false');
     // keyboard: remember what opened the inspector and move focus to its close button; Esc or close hands focus back
@@ -317,7 +337,7 @@ const Drawers = {
   },
   toggle(k) {
     if (Drawers.shown === k) return Inspector.close();
-    Inspector.open({ title: Drawers.NAMES[k], sections: [{ html: '<div data-drawer-slot></div>' }] });
+    Inspector.open({ title: Drawers.NAMES[k], sections: [{ html: '<div data-drawer-slot></div>' }], fold: false });
     $('#inspector [data-drawer-slot]')?.appendChild(Drawers.lists()[k]);
     Drawers.shown = k; Drawers.paint();
   },
@@ -700,6 +720,7 @@ export const App = {
   async route() {
     if (!Session.catalog()) await Session.ready();   // the first route waits for the role list (Session.role() is then final)
     const role = Session.role();
+    App._at = location.hash;   // the address this route draws (Back and Forward compare against it: start below)
     let r = App.resolve();
     if (!r.m) return;
     // a merged screen's old address: show the new one in its place (replace, not push, so Back returns to where the visitor was)
@@ -718,6 +739,7 @@ export const App = {
       if (own !== r.params) { r = { ...r, params: own }; history.replaceState(history.state, '', App.href(r.m.id, r.v.id, own)); }
     }
     const { m, v, params } = r;
+    App._at = location.hash;
     if (App._unmount) { try { App._unmount(); } catch { } App._unmount = null; }
     App.current = m; App.view = v; App.params = params; Inspector.close(); clearSnapshotNote(); Drawers.reset();
     App._recent = [`${m.id}/${v.id}`, ...App._recent.filter(k => k !== `${m.id}/${v.id}`)].slice(0, 12);
@@ -800,7 +822,15 @@ export const App = {
     el.onclick = e => { if (e.target === el) el.remove(); };
   },
   start() {
-    window.addEventListener('hashchange', App.route);
+    window.addEventListener('hashchange', () => { if (location.hash !== App._at) App.route(); });
+    // Back and Forward: a step between two entries whose ?role= differs (a "Viewing as" change sits between them) fires
+    // popstate and often no hashchange. The address wins, as on a first load: its role is put back in view (that change
+    // redraws the screen), else a screen that differs from the one drawn is routed. One route per step.
+    window.addEventListener('popstate', () => setTimeout(() => {
+      const want = new URLSearchParams(location.search).get('role');
+      if (want && want !== Session.role().id && Session.setRole(want)) return;
+      if (location.hash !== App._at) App.route();
+    }, 0));
     document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); App.palette(); } if (e.key === 'Escape' && !(e.target.closest && e.target.closest('.ch'))) { if ($('#palette')) $('#palette').remove(); else Inspector.close(); } });
     // keep keyboard focus on the chosen rail item when the rail re-renders after a route change
     $('#rail .rail-nav')?.addEventListener('focusin', e => { const it = e.target.closest('.rail-item'); App._railKey = it ? it.dataset.k : null; });
