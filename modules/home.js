@@ -273,14 +273,14 @@ async function firmView(ctx) {
 
   el.innerHTML = ui.pageHead({
     title: 'Firm profile',
-    sub: `Fund I: ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${fmt.num(stats.current_holdings ?? 6)} companies, ${fmt.num(allAdds)} add-ons, ${fmt.num(stats.exits)} exit.`,
+    sub: `Fund I: ${fund ? fmt.money(fund) : '—'} from ${cap?.investors ?? '—'} investors. ${fmt.num(stats.current_holdings ?? 6)} companies, ${fmt.num(allAdds - repAdds)} add-ons${repAdds ? ` and ${fmt.num(repAdds)} reported` : ''}, ${fmt.num(stats.exits)} exit.`,
   }) +
   `${firm.meta?.generated ? `<span data-asof>${esc(fmt.date(firm.meta.generated))}</span>` : ''}` +
   ui.kpis([
     { label: 'Fund I sold (Form D)', value: fund ? fmt.money(fund) : '—', sub: `${cap?.investors ?? '—'} investors · ${cap?.as_of ? esc(monYr(cap.as_of)) : ''}` },
     { label: 'Deal-vehicle capital', value: spvSum ? fmt.money(spvSum) : '—', sub: `${spvs.length} single-deal vehicles` },
     { label: 'Companies', value: fmt.num(stats.platforms), sub: `${fmt.num(stats.current_holdings ?? 6)} held · ${fmt.num(stats.exits)} exited` },
-    { label: 'Add-ons', value: fmt.num(allAdds), sub: sh ? `${fmt.num(heldAdds)} held · ${fmt.num(sh.addons)} at S+H` : '' },
+    { label: 'Add-ons', value: fmt.num(allAdds - repAdds), sub: [repAdds ? `${fmt.num(repAdds)} more reported` : '', sh ? `${fmt.num(sh.addons)} at S+H` : ''].filter(Boolean).join(' · ') },
     { label: 'Investment team', value: fmt.num((f.team || []).length), sub: `${fmt.num(prg?.members?.length || 0)} in Resource Group` },
   ]) +
   `<p class="sys-src" data-method>Add-ons are counted from the table: ${fmt.num(heldAdds)} under the current holdings (${fmt.num(repAdds)} of them reported in the trade press, not announced) and ${fmt.num(sh?.addons || 0)} at Smith + Howard. BSP stated ${fmt.num(stats.add_ons)} on 6 Aug 2026, before CET's October deals. Deal-vehicle capital is co-investment beside Fund I, not part of it.</p>

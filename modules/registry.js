@@ -22,10 +22,11 @@ import techos from './techos.js?v=20261123143257';
 import theater from './theater.js?v=20261123143257';
 import briefing from './briefing.js?v=20261123143257';
 import connect from './connect.js?v=20261123143257';
+import globe from './globe.js?v=20261123143257';
 /* Menu names. The window title reads "<module name> · <view title>" (modules/copy.js VIEW_TITLES), so a module name
    must not repeat a word of its own view titles ("PE landscape · sponsor landscape"). Ids never change. */
 const NAMES = { home: 'Home', cases: 'Sponsor precedents', pe: 'Private equity', national: 'US expansion', fin: 'Fundamentals', briefing: 'Narrated tour' };
-export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing, connect];
+export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing, connect, globe];
 for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
 
 /* ── The firm's side menu (OS_SPEC 4.3): Home, then three groups, one item per module, in this order ──────────
@@ -34,7 +35,7 @@ for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
    open. The firm levels see this menu filtered by LEVELS below (investor relations: Home, Fundamentals, Connections);
    the company levels use MENUS instead. It must fit with no scrolling at 1440x900 and at 1280x800.
    scripts/make_sitemap.py reads RAIL by regex: keep it one statement of ['Group name', ['id', …]] pairs. */
-const RAIL = [['Home', ['home']], ['Portfolio', ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos', 'connect']]];
+const RAIL = [['Home', ['home']], ['Portfolio', ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos', 'connect', 'globe']]];
 /* The modules off the menu. In the portal the open one is drawn as a 15th item under a rule, with no heading (a fourth
    heading does not fit a laptop screen); this name is the heading they share on the "All pages" page (make_sitemap.py). */
 const OFF_MENU_GROUP = 'More';
@@ -134,6 +135,7 @@ export const LEVELS = {
   'theater': { to: LEAD },
   'briefing': { to: OFFICE },
   'connect': { to: OFFICE },
+  'globe': { to: ALL },   // every level opens it; the field level reaches it only through an address step and never sees it in its menu
 };
 for (const co of COMPANIES) { LEVELS[`${co}/tools`] = { to: OFFICE, own: true }; LEVELS[`${co}/plan`] = { to: LEAD, own: true }; }
 /* the value an own-company parameter takes for a company (see `param` above) */
@@ -144,7 +146,7 @@ export const ONLY = { 'bsp-investor-relations': ['home', 'fin/portfolio', 'conne
    module, '<co>/plan' one screen of it. An item names a module or one screen; a screen item opens with its own-company
    parameter. An item the role cannot open, or whose screen does not exist yet, is left out. The firm levels use RAIL. */
 export const MENUS = {
-  co_leadership: ['home', '<co>', 'fin/portfolio', 'ma/pipeline', 'signals/overview', '<co>/plan', '<co>/tools', 'connect'],
+  co_leadership: ['home', '<co>', 'fin/portfolio', 'ma/pipeline', 'signals/overview', '<co>/plan', '<co>/tools', 'connect', 'globe'],
   co_office: ['home', '<co>', '<co>/tools', 'connect'],
   co_field: ['home'],
 };
