@@ -5,6 +5,7 @@ const tok = (n, fb) => { try { return getComputedStyle(document.body).getPropert
 const T = { co: tok('--co', '#3fd0e0'), ink: tok('--sys-ink', '#0c1320'), mute: tok('--sys-mute', '#5f6774'), mute2: tok('--sys-mute-2', '#9aa1ab'), line: tok('--sys-line', '#e8e5de'), bad: tok('--sys-bad', '#c62828'), warn: tok('--sys-warn', '#b45309'), orange: tok('--sys-orange', '#f2832f'), good: tok('--sys-good', '#15803d') };
 
 const $ = (s, r = document) => r.querySelector(s);
+const addSrc = h => { const e = document.getElementById('src-all'); if (e) e.insertAdjacentHTML('beforeend', `<p class="sys-src">${h}</p>`); };
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const pct = (v, d = 1) => `${(+v).toFixed(d).replace(/\.0$/, '')}%`;
 const num = v => Math.round(v).toLocaleString('en-US');
@@ -61,7 +62,8 @@ function modules() {
     ['fc', 'Demand and inventory forecasting', 'Style, size and color forecasts for a seasonal swim line, reorder points and PO drafts, so July sells out on purpose.', 'Markdown share, stockouts', 'Inventory Planner + agent', 'forecast'],
     ['tr', 'Traceability ledger', 'A lot code on every care label links the trunk to its bottle, flake, pellet, yarn, fabric and factory documents.', 'Claim defensibility', 'Build (Harbor data layer)', 'trace'],
   ];
-  $('#hx-mods').innerHTML = M.map(([k, t, d, kpi, v, r]) => `<article class="sys-card hx-mod"><span class="fh-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg></span><p class="sys-card-title">${t}</p><p class="sys-card-body">${d}</p><dl><div><dt>Moves</dt><dd>${kpi}</dd></div><div><dt>Stack</dt><dd>${v}</dd></div></dl><div class="sys-card-foot"><button class="sys-btn sys-btn--ghost sys-btn--sm hx-mod-go" type="button" data-goto="${r}">See it in the demo <span aria-hidden="true">→</span></button></div></article>`).join('');
+  $('#hx-mods').innerHTML = M.map(([k, t, d, kpi, v, r]) => `<article class="sys-card hx-mod"><span class="fh-ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg></span><p class="sys-card-title">${t}</p><dl><div><dt>Moves</dt><dd>${kpi}</dd></div><div><dt>Stack</dt><dd>${v}</dd></div></dl><div class="sys-card-foot"><button class="sys-btn sys-btn--ghost sys-btn--sm hx-mod-go" type="button" data-goto="${r}">Open demo <span aria-hidden="true">→</span></button></div></article>`).join('');
+  $('#mod-ev').innerHTML = `<ul class="sys-card-list">${M.map(([, t, d]) => `<li><b>${t}.</b> ${d}</li>`).join('')}</ul>`;
   $$('.hx-mod-go').forEach(b => b.addEventListener('click', () => { select(b.dataset.goto); $('#demo').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }));
 }
 
@@ -78,7 +80,7 @@ function tabs() {
     t.addEventListener('keydown', e => { const k = e.key; if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(k)) return; e.preventDefault(); const n = k === 'Home' ? 0 : k === 'End' ? T.length - 1 : (i + (k === 'ArrowDown' || k === 'ArrowRight' ? 1 : -1) + T.length) % T.length; T[n].focus(); select(T[n].dataset.r); });
   });
 }
-const head = (t, s, tag) => `<div class="hx-p-head"><div><h3>${t}</h3><p>${s}</p></div>${tag ? `<span class="hx-tag">${tag}</span>` : ''}</div>`;
+const head = (t, s, tag) => `<div class="hx-p-head"><div><h3>${t}</h3></div>${tag ? `<span class="hx-tag">${tag}</span>` : ''}</div>`;
 const range = (id, label, min, max, step, val, out) => `<div class="hx-f"><label for="${id}">${label}<output id="${id}-o">${out}</output></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
 const paint = r => r.style.setProperty('--p', `${((r.value - r.min) / (r.max - r.min)) * 100}%`);
 
@@ -253,7 +255,7 @@ function fcPanel() {
     const fmtD = d => d.toLocaleString('en-US', { month: 'short', day: 'numeric' });
     $('#fc-k').innerHTML = `<div class="hx-stat"><span>Season forecast</span><b>${num(season)} units</b><em>illustrative</em></div><div class="hx-stat"><span>Peak week</span><b>${fmtD(wk(peakW))}</b><em>${num(f[peakW])} units/wk</em></div><div class="hx-stat"><span>Weeks of cover today</span><b>${cover.toFixed(0)} wks</b><em>off-season run-rate</em></div><div class="hx-stat ${out >= 0 ? 'bad' : 'good'}"><span>Stockout risk</span><b>${out >= 0 ? `from ${fmtD(wk(out))}` : 'None'}</b><em>${out >= 0 ? `${num(lostU)} units of lost sales` : 'covered through peak'}</em></div>`;
     $('#fc-sz').innerHTML = SIZES.map((z, i) => `<div><i style="height:${sku.curve[i] * 2.4}px"></i><b>${sku.curve[i]}%</b><span>${z.s}</span></div>`).join('');
-    $('#fc-po').innerHTML = po ? `<p class="hx-sec-k">Drafted PO</p><p class="hx-po-big">${num(po[1])} units</p><p>Place by <b>${fmtD(wk(Math.max(0, po[0] - sku.lead)))}</b> (${sku.lead}-week lead time) to land <b>${fmtD(wk(po[0]))}</b>, three weeks ahead of the first projected stockout. Split by the size curve: ${SIZES.map((z, i) => `${z.s} ${num(po[1] * sku.curve[i] / 100)}`).join(' · ')}.</p><p class="sys-src">AI forecasting cuts errors 20–50% and lost sales from stockouts by up to 65% (McKinsey). Demand and inventory here are illustrative.</p>` : '<p class="hx-sec-k">Drafted PO</p><p>No PO needed: open POs cover the season with safety stock.</p>';
+    $('#fc-po').innerHTML = po ? `<p class="hx-sec-k">Drafted PO</p><p class="hx-po-big">${num(po[1])} units</p><p>Place by <b>${fmtD(wk(Math.max(0, po[0] - sku.lead)))}</b> (${sku.lead}-week lead time) to land <b>${fmtD(wk(po[0]))}</b>, three weeks ahead of the first projected stockout. Split by the size curve: ${SIZES.map((z, i) => `${z.s} ${num(po[1] * sku.curve[i] / 100)}`).join(' · ')}.</p><details class="sys-fold"><summary><b>Source</b></summary><p class="sys-src">AI forecasting cuts errors 20–50% and lost sales from stockouts by up to 65% (McKinsey). Demand and inventory here are illustrative.</p></details>` : '<p class="hx-sec-k">Drafted PO</p><p>No PO needed: open POs cover the season with safety stock.</p>';
   };
   el.querySelector('#fc-sku').addEventListener('change', e => { sku = SKUS.find(s => s.id === e.target.value); draw(); });
   el.querySelector('#fc-apply').addEventListener('change', e => { apply = e.target.checked; draw(); });
@@ -285,7 +287,7 @@ function trPanel() {
     $('#tr-out').innerHTML = `<div class="hx-tr">
       <div class="hx-tr-sum"><div class="hx-tr-art">${art(st[2], m[2] === 'BRK' ? 'navy' : 'sea', m[2] === 'BAY' ? 'palm' : 'solid')}</div><div><p class="hx-sec-k">Lot ${esc(c)}</p><p class="hx-tr-name">${esc(st[0])}</p><p class="hx-tr-b"><b>${st[1]}</b> bottles in this pair</p><p class="hx-tr-ok"><i></i>7 of 7 custody documents matched</p><dl class="hx-tr-kv"><dt>Season</dt><dd>${m[2] === 'BRK' ? 'Surf' : 'Swim'} ${yr}</dd><dt>Shell</dt><dd>Recycled polyester from post-consumer bottles</dd><dt>Bottle count</dt><dd>Computed from fabric weight and recycled content on the mill certificate</dd><dt>Label claim</dt><dd>“Made from ${st[1]} plastic bottles” ✓ supported</dd></dl></div></div>
       <ol class="hx-chain">${steps.map((s, i) => `<li><span class="hx-dot">${i + 1}</span><div><b>${s[0]}</b><span>${esc(s[1])}</span><code>${esc(s[2])}</code></div><span class="hx-doc">✓ ${s[3]}</span></li>`).join('')}</ol>
-    </div><p class="sys-src">Illustrative: lot IDs and suppliers are placeholders. In production the fields would follow recycled-content chain-of-custody certificates from each supplier, so the bottle count on the label is computed from documents rather than estimated.</p>`;
+    </div><details class="sys-fold"><summary><b>Source</b></summary><p class="sys-src">Illustrative: lot IDs and suppliers are placeholders. In production the fields would follow recycled-content chain-of-custody certificates from each supplier, so the bottle count on the label is computed from documents rather than estimated.</p></details>`;
   };
   el.querySelector('#tr-f').addEventListener('submit', e => { e.preventDefault(); run($('#tr-c').value); });
   el.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => { $('#tr-c').value = b.dataset.c; run(b.dataset.c); }));
@@ -296,8 +298,8 @@ function trPanel() {
 function kpis(ev) {
   const E = id => (ev?.items || []).find(i => i.id === id); const k1 = E('kb-fh-1'), k2 = E('kb-fh-2');
   if (!k1 || !k2) return;
-  $('#hx-kpis').innerHTML = `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Online return rate</span><span class="sys-kpi-value">${k2.baseline}% → ${k2.target}%<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><a href="${esc(k2.source_url)}" target="_blank" rel="noopener">NRF 2025</a> baseline; True Fit M&amp;Co case target</span></div>
-    <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Repeat purchase rate</span><span class="sys-kpi-value">${k1.baseline}% → ${k1.target}%<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><a href="${esc(k1.source_url)}" target="_blank" rel="noopener">Klaviyo</a> benchmark range</span></div>
+  $('#hx-kpis').innerHTML = `<div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Online return rate</span><span class="sys-kpi-value">${k2.baseline}% → ${k2.target}%<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><a href="${esc(k2.source_url)}" target="_blank" rel="noopener">NRF 2025</a>, True Fit</span></div>
+    <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Repeat purchase rate</span><span class="sys-kpi-value">${k1.baseline}% → ${k1.target}%<span class="sys-est">est.</span></span><span class="sys-kpi-sub"><a href="${esc(k1.source_url)}" target="_blank" rel="noopener">Klaviyo</a> benchmark</span></div>
     <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">EBITDA impact</span><span class="sys-kpi-value">+${RA.ebitda_impact_pct_revenue[0]}–${RA.ebitda_impact_pct_revenue[1]} pts<span class="sys-est">est.</span></span><span class="sys-kpi-sub">About ${fmtMoney(RA.ebitda_impact_usd?.[0] ?? 4e5)}–${fmtMoney(RA.ebitda_impact_usd?.[1] ?? 1.75e6)} on ${fmtMoney(RA.revenue_basis_usd[0])}–${fmtMoney(RA.revenue_basis_usd[1])} revenue</span></div>`;
 }
 
@@ -311,18 +313,20 @@ function calc() {
     ['c-inv', 'Investment', i0 / 1e3, i1 / 1e3, 25, (i0 + i1) / 2e3, v => `$${v}K`, 'Analyst assumption: $300–700K build plus first-year vendor fees'],
     ['c-ttv', 'Time to value', t0, t1, 1, Math.round((t0 + t1) / 2), v => `${v} mo`, 'Analyst assumption: 4–9 months'],
   ];
-  $('#calc').innerHTML = `<p class="hx-sec-k">Inputs<span class="sys-est">est.</span></p>` + F.map(([id, l, mn, mx, st, v, f, src]) => `<div class="hx-f"><label for="${id}">${l}<output id="${id}-o">${f(v)}</output></label><input type="range" id="${id}" min="${mn}" max="${mx}" step="${st}" value="${v}"><small>${esc(src)}</small></div>`).join('');
+  $('#calc').innerHTML = `<p class="hx-sec-k">Inputs<span class="sys-est">est.</span></p>` + F.map(([id, l, mn, mx, st, v, f, src]) => `<div class="hx-f"><label for="${id}">${l}<output id="${id}-o">${f(v)}</output></label><input type="range" id="${id}" min="${mn}" max="${mx}" step="${st}" value="${v}"></div>`).join('');
+  $('#calc-ev').innerHTML = `<ul class="sys-card-list">${F.map(([, l, , , , , , src]) => `<li><b>${l}.</b> ${esc(src)}</li>`).join('')}</ul>`;
   const run = () => {
     F.forEach(([id, , , , , , f]) => { const r = $('#' + id); paint(r); $(`#${id}-o`).textContent = f(r.value); });
     const rev = +$('#c-rev').value * 1e6, pts = +$('#c-pts').value, mx = +$('#c-mx').value, inv = +$('#c-inv').value * 1e3, ttv = +$('#c-ttv').value;
     const eb = rev * pts / 100, val = rev * mx, roi = val / inv, pay = ttv + inv / (eb / 12);
-    $('#calc-out').innerHTML = `<div class="hx-big"><span>Equity value created (multiple case)</span><b>${fmtMoney(val)}<span class="sys-est">est.</span></b><em>revenue × multiple credit</em></div>
-      <div class="hx-out-grid"><div class="hx-stat"><span>EBITDA impact</span><b>${fmtMoney(eb)}/yr</b><em>revenue × uplift</em></div><div class="hx-stat"><span>Value ÷ investment</span><b>${roi.toFixed(0)}x</b><em>multiple case</em></div><div class="hx-stat"><span>Payback</span><b>${pay.toFixed(0)} months</b><em>time to value + investment ÷ monthly EBITDA</em></div><div class="hx-stat"><span>EBITDA margin</span><b>~6% → ${(6 + pts).toFixed(1)}%</b><em>baseline midpoint of 0–12% est.</em></div></div>
+    $('#calc-out').innerHTML = `<div class="hx-big"><span>Equity value created (multiple case)</span><b>${fmtMoney(val)}<span class="sys-est">est.</span></b></div>
+      <div class="hx-out-grid"><div class="hx-stat"><span>EBITDA impact</span><b>${fmtMoney(eb)}/yr</b></div><div class="hx-stat"><span>Value ÷ investment</span><b>${roi.toFixed(0)}x</b></div><div class="hx-stat"><span>Payback</span><b>${pay.toFixed(0)} months</b></div><div class="hx-stat"><span>EBITDA margin</span><b>~6% → ${(6 + pts).toFixed(1)}%</b><em>0–12% est. midpoint</em></div></div>
       <pre class="hx-formula">value     = ${fmtMoney(rev)} × ${mx.toFixed(2)}x = ${fmtMoney(val)}
 EBITDA    = ${fmtMoney(rev)} × ${pts}% = ${fmtMoney(eb)}/yr
 payback   = ${ttv} mo + ${fmtMoney(inv)} ÷ ${fmtMoney(eb / 12)}/mo = ${pay.toFixed(1)} mo</pre>
-      <p class="sys-src"><b>Source:</b> analyst assumptions labelled est. (OS program evidence, Fair Harbor return assumptions), not a forecast or company guidance. The multiple credit is deliberately narrow: no source isolates a pure technology premium, and DTC multiples track growth and margin.</p>`;
+`;
   };
+  addSrc('<b>Calculator:</b> analyst assumptions labelled est. (OS program evidence, Fair Harbor return assumptions), not a forecast or company guidance. The multiple credit is deliberately narrow: no source isolates a pure technology premium, and DTC multiples track growth and margin.');
   $('#calc').addEventListener('input', run); run();
 }
 function levers(ev) {
@@ -334,8 +338,8 @@ function levers(ev) {
   ];
   const mid = (RA.ebitda_impact_pct_revenue[0] + RA.ebitda_impact_pct_revenue[1]) / 2;
   $('#levers').innerHTML = `<div class="hx-stackbar">${Lv.map(([n, s, c]) => `<i style="flex:${s};background:${c}" title="${n}"></i>`).join('')}</div>
-    <ul class="hx-lv">${Lv.map(([n, s, c, d]) => `<li><span class="sw" style="background:${c}"></span><div><b>${n}</b><span>${esc(d)}</span></div><em class="hx-mono">+${(mid * s).toFixed(1)} pts<span class="sys-est sys-est--illus">illustrative</span></em></li>`).join('')}</ul>
-    <p class="sys-src"><b>Source:</b> the split of the ${mid} pt midpoint is illustrative; the 2–5 pt range is an analyst assumption (OS program evidence).</p>`;
+    <ul class="hx-lv">${Lv.map(([n, s, c, d]) => `<li><span class="sw" style="background:${c}"></span><div><b>${n}</b><span>${esc(d)}</span></div><em class="hx-mono">+${(mid * s).toFixed(1)} pts<span class="sys-est sys-est--illus">illustrative</span></em></li>`).join('')}</ul>`;
+  addSrc(`<b>Margin split:</b> the split of the ${mid} pt midpoint is illustrative; the 2–5 pt range is an analyst assumption (OS program evidence).`);
 }
 function compsChart(comps) {
   let rows = (comps?.items || []).filter(i => ['LULU', 'RVLV', 'CROX', 'DLTH', 'BIRD'].includes(i.ticker) && i.ebitda_margin_latest_pct != null).map(i => [i.ticker, i.ebitda_margin_latest_pct, T.mute2]);
@@ -343,13 +347,14 @@ function compsChart(comps) {
   const mid = (RA.ebitda_impact_pct_revenue[0] + RA.ebitda_impact_pct_revenue[1]) / 2;
   rows.sort((a, b) => b[1] - a[1]); rows.push(['Fair Harbor est.', 6, T.ink], ['FH + HarborOS est.', 6 + mid, T.co]);
   const lo = -10, hi = 28, x = v => ((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * 100, z = x(0);
-  $('#comps').innerHTML = `<div class="hx-bars">${rows.map(([n, v, c]) => `<div class="hx-bar-r"><span class="n">${esc(n)}</span><span class="t"><i class="${v < lo ? 'clip' : ''}" style="left:${Math.min(z, x(v))}%;width:${Math.abs(x(v) - z)}%;background:${c}"></i><s style="left:${z}%"></s></span><span class="v hx-mono">${(+v).toFixed(1)}%</span></div>`).join('')}</div>
-    <p class="sys-src"><b>Source:</b> public comparables (SEC XBRL, latest fiscal year); Allbirds clipped at −10%. The Fair Harbor baseline is the 0–12% est. midpoint (Fair Harbor public filings); LULU 24.4% is the ceiling, not a target.</p>`;
+  $('#comps').innerHTML = `<div class="hx-bars">${rows.map(([n, v, c]) => `<div class="hx-bar-r"><span class="n">${esc(n)}</span><span class="t"><i class="${v < lo ? 'clip' : ''}" style="left:${Math.min(z, x(v))}%;width:${Math.abs(x(v) - z)}%;background:${c}"></i><s style="left:${z}%"></s></span><span class="v hx-mono">${(+v).toFixed(1)}%</span></div>`).join('')}</div>`;
+  addSrc('<b>Margin gap:</b> public comparables (SEC XBRL, latest fiscal year); Allbirds clipped at −10%. The Fair Harbor baseline is the 0–12% est. midpoint (Fair Harbor public filings); LULU 24.4% is the ceiling, not a target.');
 }
 function evidence(ev) {
   const ids = ['ve-06', 've-24', 've-25', 've-26']; const it = (ev?.items || []).filter(i => ids.includes(i.id));
   if (!it.length) { $('#evidence').innerHTML = '<p class="sys-src">The evidence file is not available.</p>'; return; }
-  $('#evidence').innerHTML = `<p class="sys-kicker">Evidence behind the ranges</p><div class="sys-grid sys-grid--4">${it.map(i => `<a class="sys-card hx-ev-c" href="${esc(i.source_url)}" target="_blank" rel="noopener"><span class="sys-card-label">Valuation evidence · ${esc(i.confidence)} confidence</span><p class="sys-card-title">${ep(i.title)}</p><p class="sys-card-body">${ep(String(i.note || i.claim).slice(0, 150))}</p><span class="sys-card-foot"><span>${ep(i.source_name)} ↗</span></span></a>`).join('')}</div><p class="sys-src"><b>Source:</b> OS program evidence (valuation evidence for DTC apparel), Oct 2026. Each card links to its publisher.</p>`;
+  $('#evidence').innerHTML = `<div class="sys-grid sys-grid--4">${it.map(i => `<a class="sys-card hx-ev-c" href="${esc(i.source_url)}" target="_blank" rel="noopener"><span class="sys-card-label">Valuation evidence · ${esc(i.confidence)} confidence</span><p class="sys-card-title">${ep(i.title)}</p><p class="sys-card-body">${ep(String(i.note || i.claim).slice(0, 150))}</p><span class="sys-card-foot"><span>${ep(i.source_name)} ↗</span></span></a>`).join('')}</div>`;
+  addSrc('<b>Evidence:</b> OS program evidence (valuation evidence for DTC apparel), Oct 2026. Each card links to its publisher.');
 }
 
 /* ── stack ──────────────────────────────────────────────────────────── */
@@ -362,7 +367,9 @@ function stack(ev) {
     { layer: 'Fit model tuning', name: 'Fair Harbor kept/returned model', mode: 'Build', what: 'Tunes the vendor fit engine on Fair Harbor\'s own kept-versus-returned orders and the liner/inseam specifics.', price: 'PRG data team; weeks, not months.', src: null },
     { layer: 'Traceability', name: 'Bottle → trunk ledger', mode: 'Build', what: 'Links care-label lot codes to supplier chain-of-custody documents.', price: 'Small build on the data layer; supplier onboarding is the work.', src: null },
   );
-  $('#hx-stack').innerHTML = `<div class="sys-table-wrap"><table class="sys-table hx-st-t"><thead><tr><th scope="col">Layer</th><th scope="col">Vendor or component</th><th scope="col">Buy or build</th><th scope="col">What it does</th><th scope="col">Pricing note</th></tr></thead><tbody>${rows.map(r => `<tr><td data-l="Layer">${esc(r.layer)}</td><td data-l="Vendor"><b>${esc(r.name)}</b>${r.note ? `<small>${esc(r.note)}</small>` : ''}</td><td data-l="Mode"><span class="hx-mode ${r.mode === 'Build' ? 'b' : ''}">${r.mode}</span></td><td data-l="What it does">${esc(r.what)}</td><td data-l="Pricing">${esc(r.price)}${r.src ? ` <a href="${esc(r.src)}" target="_blank" rel="noopener" aria-label="Source for ${esc(r.name)}">source ↗</a>` : ''}</td></tr>`).join('')}</tbody><caption>Source: OS program evidence (Fair Harbor vendor stack) and the Fair Harbor growth plan, Oct 2026. Vendor outcome claims are self-reported upper bounds.</caption></table></div>`;
+  $('#hx-stack').innerHTML = `<div class="sys-table-wrap"><table class="sys-table hx-st-t"><thead><tr><th scope="col">Layer</th><th scope="col">Vendor or component</th><th scope="col">Buy or build</th></tr></thead><tbody>${rows.map(r => `<tr><td data-l="Layer">${esc(r.layer)}</td><td data-l="Vendor"><b>${esc(r.name)}</b></td><td data-l="Mode"><span class="hx-mode ${r.mode === 'Build' ? 'b' : ''}">${r.mode}</span></td></tr>`).join('')}</tbody></table></div>`;
+  addSrc('<b>Stack:</b> OS program evidence (Fair Harbor vendor stack) and the Fair Harbor growth plan, Oct 2026. Vendor outcome claims are self-reported upper bounds.');
+  $('#hx-stack-ev').innerHTML = `<div class="sys-table-wrap"><table class="sys-table hx-st-t"><thead><tr><th scope="col">Layer</th><th scope="col">Vendor or component</th><th scope="col">Buy or build</th><th scope="col">What it does</th><th scope="col">Pricing note</th></tr></thead><tbody>${rows.map(r => `<tr><td data-l="Layer">${esc(r.layer)}</td><td data-l="Vendor"><b>${esc(r.name)}</b>${r.note ? `<small>${esc(r.note)}</small>` : ''}</td><td data-l="Mode"><span class="hx-mode ${r.mode === 'Build' ? 'b' : ''}">${r.mode}</span></td><td data-l="What it does">${esc(r.what)}</td><td data-l="Pricing">${esc(r.price)}${r.src ? ` <a href="${esc(r.src)}" target="_blank" rel="noopener" aria-label="Source for ${esc(r.name)}">source ↗</a>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
 /* ── roadmap ────────────────────────────────────────────────────────── */
@@ -395,7 +402,8 @@ function risks() {
     ['Markdown habit', '38.5% of live variants were marked down in Sept 2026; customers learn to wait.', 'SKU-level markdowns only; content-led capture instead of blanket discounts.'],
     ['Building too much software', 'Custom platforms become the next owner\'s write-off.', 'Buy the systems of record; build only the data layer, fit tuning and ledger.'],
   ];
-  $('#hx-risks').innerHTML = R.map(([t, r, m], i) => `<article class="sys-card"><span class="sys-card-label">Risk 0${i + 1}</span><p class="sys-card-title">${t}</p><p class="sys-card-body">${r}</p><div class="sys-note sys-note--good" style="margin-top:auto"><span><b>Guardrail.</b> ${m}</span></div></article>`).join('');
+  $('#hx-risks').innerHTML = R.map(([t, r, m], i) => `<article class="sys-card"><span class="sys-card-label">Risk 0${i + 1}</span><p class="sys-card-title">${t}</p><div class="sys-note sys-note--good" style="margin-top:auto"><span>${m}</span></div></article>`).join('');
+  $('#risk-ev').innerHTML = `<ul class="sys-card-list">${R.map(([t, r]) => `<li><b>${t}.</b> ${r}</li>`).join('')}</ul>`;
 }
 function exitList() {
   const X = [
@@ -404,5 +412,6 @@ function exitList() {
     ['A wholesale channel with reorder data', 'Door-level sell-through and pre-books show a scalable second channel; Chubbies\' retail and wholesale reached 52% of FY2025 sales.'],
     ['Sustainability claims that survive diligence', 'Lot-level traceability turns "made from bottles" from marketing into documentation, and protects the B Corp brand premium.'],
   ];
-  $('#exit-list').innerHTML = X.map(([t, d]) => `<li class="sys-card"><h3 class="sys-card-title">${t}</h3><p class="sys-card-body">${d}</p></li>`).join('');
+  $('#exit-list').innerHTML = X.map(([t, d]) => `<li class="sys-card"><h3 class="sys-card-title">${t}</h3></li>`).join('');
+  $('#exit-ev').innerHTML = `<ul class="sys-card-list">${X.map(([t, d]) => `<li><b>${t}.</b> ${d}</li>`).join('')}</ul>`;
 }

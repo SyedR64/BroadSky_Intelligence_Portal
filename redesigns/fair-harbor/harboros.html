@@ -20,7 +20,7 @@
   <nav class="sys-subnav" aria-label="On this page">
     <div class="sys-subnav-in">
       <a class="sys-subnav-title" href="#main"><span class="hx-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="hx-w1" d="M3 14c3-3 5.5-3 9 0s6 3 9 0" fill="none" stroke-width="2.4" stroke-linecap="round"/><path class="hx-w2" d="M3 9c3-3 5.5-3 9 0s6 3 9 0" fill="none" stroke-width="2.4" stroke-linecap="round"/></svg></span>HarborOS</a>
-      <div class="sys-subnav-links"><a href="#modules">Modules</a><a href="#demo">Demo</a><a href="#math">Value math</a><a href="#roadmap">Roadmap</a><a href="#exit">Exit</a></div>
+      <div class="sys-subnav-links"><a href="#modules">Capabilities</a><a href="#demo">Demo</a><a href="#math">Value math</a><a href="#roadmap">Roadmap</a><a href="#exit">Exit</a></div>
       <div class="sys-subnav-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="../../app.html#/techos/overview">Open in portal</a></div>
     </div>
   </nav>
@@ -28,20 +28,17 @@
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <section class="sys-hero" aria-labelledby="hx-h">
     <div class="sys-wrap">
-      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>HarborOS</b> · for Fair Harbor</p>
+      <p class="sys-eyebrow"><span class="sys-dot" aria-hidden="true"></span><b>For Fair Harbor</b></p>
       <h1 class="sys-h1" id="hx-h">Software for a brand people <span class="sys-grad-text">buy twice.</span></h1>
-      <p class="sys-lead">Fit and size, replenishment, a wholesale portal, forecasting and traceability on one data layer. Fewer returns, more second orders, smarter buys.</p>
-<p class="sys-src page-terms"><b>Terms:</b> AOV: average order value. GMV: gross merchandise value. NRF: National Retail Federation.</p>
       <div class="sys-actions">
         <a class="sys-btn sys-btn--primary sys-btn--lg" href="#demo">Try the live demo <span aria-hidden="true">→</span></a>
         <a class="sys-btn sys-btn--secondary sys-btn--lg" href="#math">See the value math</a>
       </div>
       <div class="sys-kpis" id="hx-kpis" role="list">
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Online return rate</span><span class="sys-kpi-value">19.3% → 17.4%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">NRF 2025 baseline; True Fit case study target</span></div>
-        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Repeat purchase rate</span><span class="sys-kpi-value">20% → 30%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Klaviyo benchmark range</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Online return rate</span><span class="sys-kpi-value">19.3% → 17.4%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">NRF 2025, True Fit</span></div>
+        <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">Repeat purchase rate</span><span class="sys-kpi-value">20% → 30%<span class="sys-est">est.</span></span><span class="sys-kpi-sub">Klaviyo benchmark</span></div>
         <div class="sys-kpi" role="listitem"><span class="sys-kpi-label">EBITDA impact</span><span class="sys-kpi-value">+2–5 pts<span class="sys-est">est.</span></span><span class="sys-kpi-sub">About $0.4–1.75M on $20–35M revenue</span></div>
       </div>
-      <p class="sys-src"><b>Source:</b> OS program evidence (Fair Harbor KPI benchmarks and return assumptions), NRF 2025, Klaviyo, Oct 2026. Analyst assumptions, not company guidance.</p>
     </div>
   </section>
 
@@ -50,12 +47,13 @@
     <div class="sys-wrap">
       <div class="sys-section-head">
         <p class="sys-kicker">What it is</p>
-        <h2 class="sys-h2" id="mod-h">Six modules. One customer and product graph.</h2>
-        <p class="sys-lead">Proven vendors and a thin BSP data layer, aimed at three margin leaks: returns, one-time buyers and the wrong sizes.</p>
+        <h2 class="sys-h2" id="mod-h">Six capabilities. One customer and product graph.</h2>
       </div>
       <div class="sys-grid sys-grid--3" id="hx-mods"></div>
-      <p class="sys-src"><b>Source:</b> OS program evidence (Fair Harbor vendor stack and KPI benchmarks) and the Fair Harbor growth plan, Oct 2026. Vendor outcome claims are self-reported upper bounds.</p>
-      <div class="sys-note sys-note--co hx-found"><span><b>Foundation: the Harbor data layer.</b> Shopify Plus orders and catalog, Klaviyo profiles, return reasons, wholesale sell-through and supplier certificates become one customer and product graph, owned by Fair Harbor and maintained by the PRG.</span></div>
+      <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>What each capability does</b><span>and the data layer under them</span></summary>
+        <div id="mod-ev"></div>
+        <div class="sys-note sys-note--co hx-found"><span><b>Foundation: the Harbor data layer.</b> Shopify Plus orders and catalog, Klaviyo profiles, return reasons, wholesale sell-through and supplier certificates become one customer and product graph, owned by Fair Harbor and maintained by the PRG.</span></div>
+      </details>
     </div>
   </section>
 
@@ -65,7 +63,6 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Interactive demo</p>
         <h2 class="sys-h2" id="demo-h">Click through HarborOS.</h2>
-        <p class="sys-lead">A working demo that calculates as you click. Shopper and product figures are illustrative.</p>
       </div>
       <div class="hx-app">
         <div class="hx-bar"><i></i><i></i><i></i><span class="hx-url">HarborOS · <b id="hx-route">Fit and size</b></span><span class="hx-live"><span class="sys-est sys-est--illus">illustrative</span></span></div>
@@ -89,7 +86,6 @@
           </div>
         </div>
       </div>
-      <p class="sys-src"><b>Source:</b> shopper, buyer and product figures in the demo are illustrative<span class="sys-est sys-est--illus">illustrative</span>; benchmark figures cite OS program evidence (Fair Harbor KPI benchmarks), NRF 2025 and Klaviyo, Oct 2026.</p>
     </div>
   </section>
 
@@ -99,25 +95,23 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Value math</p>
         <h2 class="sys-h2" id="math-h">What HarborOS is worth, with every input showing.</h2>
-        <p class="sys-lead">DTC apparel trades on revenue, so the case is in turns of EV/revenue. Move the sliders within the evidence ranges.</p>
       </div>
       <div class="hx-calc">
         <form class="hx-in" id="calc" aria-label="Value inputs"></form>
         <div class="hx-out" id="calc-out" data-sys-theme="dark" data-co="fh" aria-live="polite"></div>
       </div>
+      <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>Input assumptions</b><span>where each range comes from</span></summary><div id="calc-ev"></div></details>
       <div class="sys-grid sys-grid--2" style="margin-top:var(--sys-gap)">
         <article class="sys-card">
           <h3 class="sys-card-title">Where the margin comes from</h3>
-          <p class="sys-card-body">Illustrative split of the EBITDA uplift across the three levers.</p>
           <div id="levers"></div>
         </article>
         <article class="sys-card">
           <h3 class="sys-card-title">The margin gap HarborOS targets</h3>
-          <p class="sys-card-body">Latest EBITDA margin, apparel and DTC public comparables vs Fair Harbor<span class="sys-est">est.</span></p>
           <div id="comps"></div>
         </article>
       </div>
-      <div class="hx-ev" id="evidence"></div>
+      <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>Evidence behind the ranges</b><span>four valuation sources</span></summary><div class="hx-ev" id="evidence"></div></details>
     </div>
   </section>
 
@@ -127,9 +121,9 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Build vs buy</p>
         <h2 class="sys-h2" id="stack-h">Buy the systems of record. Build the layer that compounds.</h2>
-        <p class="sys-lead">Named vendors from the evidence file. Custom software is limited to the data layer, fit tuning and the traceability ledger.</p>
       </div>
       <div class="hx-stack" id="hx-stack"></div>
+      <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>Vendor detail</b><span>what each does, pricing, sources</span></summary><div class="hx-stack" id="hx-stack-ev"></div></details>
     </div>
   </section>
 
@@ -137,12 +131,10 @@
   <section class="sys-section" id="roadmap" aria-labelledby="road-h">
     <div class="sys-wrap">
       <div class="sys-section-head">
-        <p class="sys-kicker">12-month roadmap</p>
+        <p class="sys-kicker">12-month roadmap<span class="sys-est">est.</span></p>
         <h2 class="sys-h2" id="road-h">Live before the swim season, paid back by the next one.</h2>
-        <p class="sys-lead">Timed to the selling calendar: fit and flows before April, the wholesale portal before summer pre-book.<span class="sys-est">est.</span></p>
       </div>
       <div class="hx-gantt" id="gantt"></div>
-      <p class="sys-src"><b>Source:</b> OS program evidence (Fair Harbor time to value), Fair Harbor growth plan, Oct 2026. Owners are proposed.</p>
     </div>
   </section>
 
@@ -154,7 +146,7 @@
         <h2 class="sys-h2" id="risk-h">What could go wrong, and the guardrail for each.</h2>
       </div>
       <div class="sys-grid sys-grid--3" id="hx-risks"></div>
-      <p class="sys-src"><b>Source:</b> OS program evidence (Fair Harbor risks and vendor claims) and Fair Harbor public filings (court dockets), Oct 2026. Severity is an analyst call.</p>
+      <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>Evidence by risk</b><span>what each guard answers</span></summary><div id="risk-ev"></div></details>
     </div>
   </section>
 
@@ -164,12 +156,26 @@
       <div class="sys-section-head">
         <p class="sys-kicker">Why a buyer pays for this at exit</p>
         <h2 class="sys-h2" id="exit-h">A brand with data a buyer can underwrite.</h2>
-        <p class="sys-lead">Buyers pay for growth they can see repeating. HarborOS turns loyal buyers and real wholesale demand into numbers that survive diligence.</p>
       </div>
       <div>
         <ol class="hx-exit-list" id="exit-list"></ol>
-        <p class="sys-src"><b>Source:</b> Fair Harbor growth plan (exit thesis) and competitor filings (Solo Brands FY2025 10-K for Chubbies' channel mix), Oct 2026.</p>
+        <details class="sys-fold" style="margin-top:var(--sys-gap)"><summary><b>Why buyers pay</b><span>one line per proof point</span></summary><div id="exit-ev"></div></details>
       </div>
+    </div>
+  </section>
+
+  <section class="sys-section sys-section--alt" aria-label="Sources and method">
+    <div class="sys-wrap">
+      <details class="sys-fold" id="sources"><summary><b>Sources and method</b><span>terms, sources, assumptions</span></summary>
+        <p class="sys-src page-terms"><b>Terms:</b> AOV: average order value. GMV: gross merchandise value. NRF: National Retail Federation.</p>
+        <p class="sys-src"><b>Hero and demo:</b> OS program evidence (Fair Harbor KPI benchmarks and return assumptions), NRF 2025, Klaviyo, Oct 2026. Analyst assumptions, not company guidance. Shopper, buyer and product figures in the demo are illustrative<span class="sys-est sys-est--illus">illustrative</span>.</p>
+        <p class="sys-src"><b>Capabilities:</b> proven vendors and a thin BSP data layer, aimed at three margin leaks: returns, one-time buyers and the wrong sizes. OS program evidence (Fair Harbor vendor stack and KPI benchmarks) and the Fair Harbor growth plan, Oct 2026. Vendor outcome claims are self-reported upper bounds.</p>
+        <p class="sys-src"><b>Roadmap:</b> OS program evidence (Fair Harbor time to value), Fair Harbor growth plan, Oct 2026. Owners are proposed. Timed to the selling calendar: fit and flows before April, the wholesale portal before summer pre-book.</p>
+        <p class="sys-src"><b>Risks:</b> OS program evidence (Fair Harbor risks and vendor claims) and Fair Harbor public filings (court dockets), Oct 2026. Severity is an analyst call.</p>
+        <p class="sys-src"><b>Exit:</b> Fair Harbor growth plan (exit thesis) and competitor filings (Solo Brands FY2025 10-K for Chubbies' channel mix), Oct 2026.</p>
+        <p class="sys-src"><b>Value math:</b> DTC apparel trades on revenue, so the case is in turns of EV/revenue. Sliders stay within the evidence ranges.</p>
+        <div id="src-all"></div>
+      </details>
     </div>
   </section>
 
@@ -178,7 +184,6 @@
       <div class="sys-cta-in">
         <div class="sys-cta-copy">
           <h2 id="cta-h">See where HarborOS shows up for shoppers.</h2>
-          <p>The concept site runs the fit finder, bottle counter and wholesale entry on HarborOS. The plan puts it in the 36-month plan.</p>
         </div>
         <div class="sys-actions">
           <a class="sys-btn sys-btn--accent sys-btn--lg" href="index.html">Fair Harbor concept site</a>
