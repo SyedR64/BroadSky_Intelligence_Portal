@@ -459,24 +459,29 @@ async function weather(ctx) {
     root.querySelector('#wx-sowhat').innerHTML = `${AR.alerts.length} live NWS alerts touch the territory; forecast feed unavailable.`;
     return;
   }
-  const dates = okRows[0].days.map(d => d.date); const fIdx = okRows[0].days.map((d, i) => i).filter(i => !okRows[0].days[i].past);
+  /* hubs filled from the nightly snapshot can cover fewer days than live ones: key every hub's cells to one date row (null = no data that day) */
+  const ref = okRows.reduce((a, g) => g.days.length > a.days.length ? g : a, okRows[0]);
+  const dates = ref.days.map(d => d.date); const fIdx = ref.days.map((d, i) => i).filter(i => !ref.days[i].past);
+  okRows.forEach(g => { const byDate = new Map(g.cells.map(c => [c.d.date, c])); g.cells = dates.map(dt => byDate.get(dt) || null); });
+  const hasCells = g => fIdx.some(i => g.cells[i]);
+  const peakDay = g => fIdx.filter(i => g.cells[i]).reduce((b, i) => b == null || Math.max(...TRADES.map(t => g.cells[i].idx[t])) > Math.max(...TRADES.map(t => g.cells[b].idx[t])) ? i : b, null);
 
   const drawHeat = () => {
     const t = state.trade; const hue = t === 'Peak' ? PAL.red : TRADE_HEX[t];
     const val = c => t === 'Peak' ? Math.max(...TRADES.map(x => c.idx[x])) : c.idx[t];
-    const all = okRows.flatMap(g => g.cells.map(val)); const mx = Math.max(1.3, ...all);
-    root.querySelector('#wx-heat').innerHTML = `<div class="sys-table-wrap"><table class="sys-table pp-grid pp-heat"><thead><tr><th>Hub</th>${dates.map((d, i) => `<th class="sys-n${okRows[0].days[i].past ? ' past' : ''}">${esc(dlab(d))}${okRows[0].days[i].past ? '<span class="pp-obs">observed</span>' : i === 2 ? '<span class="pp-obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td>${esc(g.hub.name)} <span class="sys-muted small">${esc(hubWhere(g.hub))}</span></td>${g.days ? g.cells.map((c, i) => { const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="sys-n${c.d.past ? ' past' : ''}" data-g="${gi}" data-i="${i}" tabindex="0" style="${v > 1.0001 ? heatBg(hue, 0.08 + a * 0.92) : ''}" title="${esc(g.hub.name)} ${esc(dfull(fmt, c.d.date))}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="sys-muted" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
+    const all = okRows.flatMap(g => g.cells.filter(Boolean).map(val)); const mx = Math.max(1.3, ...all);
+    root.querySelector('#wx-heat').innerHTML = `<div class="sys-table-wrap"><table class="sys-table pp-grid pp-heat"><thead><tr><th>Hub</th>${dates.map((d, i) => `<th class="sys-n${ref.days[i].past ? ' past' : ''}">${esc(dlab(d))}${ref.days[i].past ? '<span class="pp-obs">observed</span>' : i && ref.days[i - 1].past ? '<span class="pp-obs">today</span>' : ''}</th>`).join('')}</tr></thead><tbody>${grid.map((g, gi) => `<tr><td>${esc(g.hub.name)} <span class="sys-muted small">${esc(hubWhere(g.hub))}</span></td>${g.days ? g.cells.map((c, i) => { if (!c) return '<td class="sys-n sys-muted">—</td>'; const v = val(c); const a = Math.max(0, Math.min(1, (v - 1) / (mx - 1))); return `<td class="sys-n${c.d.past ? ' past' : ''}" data-g="${gi}" data-i="${i}" tabindex="0" style="${v > 1.0001 ? heatBg(hue, 0.08 + a * 0.92) : ''}" title="${esc(g.hub.name)} ${esc(dfull(fmt, c.d.date))}: ${Math.round(v * 100)}">${Math.round(v * 100)}</td>`; }).join('') : `<td class="sys-muted" colspan="${dates.length}">forecast unavailable</td>`}</tr>`).join('')}</tbody></table></div>`;
     root.querySelector('#wx-heat-leg').innerHTML = `<div class="sys-chips pp-legend"><span class="sys-chip">100 = baseline</span><span class="sys-chip" style="${heatBg(hue, .3)}">110–120 elevated</span><span class="sys-chip" style="${heatBg(hue, 1)}">${Math.round(mx * 100)}+ peak in window</span></div><p class="sys-muted small">Combination: max driver + 0.5 × each additional independent hazard (model formula); correlated drivers of one hazard count once.</p>`;
     bindRows(root, '#wx-heat td[data-g]', td => openCell(grid[+td.dataset.g], +td.dataset.i));
   };
   ui.seg(root.querySelector('#wx-trade'), [...TRADES.map(t => ({ value: t, label: t })), { value: 'Peak', label: 'Max' }], state.trade, v => { state.trade = v; drawHeat(); });
 
-  const hubCalls = (g, i, t) => P.base[t] * (g.hub.hu / 1e4) * g.cells[i].idx[t];
+  const hubCalls = (g, i, t) => P.base[t] * (g.hub.hu / 1e4) * (g.cells[i]?.idx[t] ?? 1);   // a hub with no data that day counts at baseline
   const staffCalc = () => {
     const rows = fIdx.map(i => {
       const o = { date: dates[i] }; TRADES.forEach(t => { o[t] = sum(okRows, g => hubCalls(g, i, t)) * state.share; o['b' + t] = sum(okRows, g => P.base[t] * g.hub.hu / 1e4) * state.share; });
       o.total = sum(TRADES, t => o[t]); o.base = sum(TRADES, t => o['b' + t]); o.techs = Math.ceil(o.total / JOBS_PER_TECH); o.baseTechs = Math.ceil(o.base / JOBS_PER_TECH); o.surge = o.techs - o.baseTechs;
-      const drv = okRows.flatMap(g => TRADES.flatMap(t => g.cells[i].drv[t].map(x => ({ ...x, t, hub: g.hub.name })))).sort((a, b) => b.m - a.m)[0]; o.driver = drv ? `${drv.t}: ${drv.l} (${drv.hub})` : 'no weather driver';
+      const drv = okRows.flatMap(g => TRADES.flatMap(t => (g.cells[i]?.drv[t] || []).map(x => ({ ...x, t, hub: g.hub.name })))).sort((a, b) => b.m - a.m)[0]; o.driver = drv ? `${drv.t}: ${drv.l} (${drv.hub})` : 'no weather driver';
       return o;
     });
     return rows;
@@ -497,7 +502,7 @@ async function weather(ctx) {
   const drawAll = () => {
     drawHeat(); const rows = drawStaff();
     // KPIs + so-what
-    const peak = t => { let best = { v: 0 }; okRows.forEach(g => fIdx.forEach(i => { const v = g.cells[i].idx[t]; if (v > best.v) best = { v, hub: g.hub.name, date: dates[i], drv: g.cells[i].drv[t][0]?.l }; })); return best; };
+    const peak = t => { let best = { v: 0 }; okRows.forEach(g => fIdx.forEach(i => { if (!g.cells[i]) return; const v = g.cells[i].idx[t]; if (v > best.v) best = { v, hub: g.hub.name, date: dates[i], drv: g.cells[i].drv[t][0]?.l }; })); return best; };
     const pk = Object.fromEntries(TRADES.map(t => [t, peak(t)]));
     const pday = rows.slice().sort((a, b) => b.total - a.total)[0];
     const sev = AR.alerts.filter(a => /Extreme|Severe/.test(a.severity)).length;
@@ -515,8 +520,8 @@ async function weather(ctx) {
 
   // hub conditions table
   const hubRows = grid.map(g => {
-    if (!g.days) return { hub: g.hub.name, county: hubWhere(g.hub), hu: g.hub.hu, na: true };
-    const f = fIdx.map(i => g.days[i]); const peakI = fIdx.reduce((b, i) => Math.max(...TRADES.map(t => g.cells[i].idx[t])) > Math.max(...TRADES.map(t => g.cells[b].idx[t])) ? i : b, fIdx[0]);
+    if (!g.days || !hasCells(g)) return { hub: g.hub.name, county: hubWhere(g.hub), hu: g.hub.hu, na: true };
+    const f = fIdx.filter(i => g.cells[i]).map(i => g.cells[i].d); const peakI = peakDay(g);
     return { hub: g.hub.name, county: `${hubWhere(g.hub)}${g.hub.note ? ' · ' + g.hub.note : ''}`, hu: g.hub.hu, tmax: Math.max(...f.map(d => num(d.tmax)).filter(fin)), tmin: Math.min(...f.map(d => num(d.tmin)).filter(fin)), precip: Math.max(...f.map(d => num(d.precip)).filter(fin)), gust: Math.max(...f.map(d => num(d.gust)).filter(fin)), snow: sum(f, d => d.snow), peak: Math.round(Math.max(...TRADES.map(t => g.cells[peakI].idx[t])) * 100), _g: g };
   });
   ui.table(root.querySelector('#wx-hubs'), {
@@ -527,11 +532,11 @@ async function weather(ctx) {
       { key: 'gust', label: 'Gust', num: true, fmt: v => fin(v) ? Math.round(v) : '—' },
       { key: 'peak', label: 'Peak', num: true, fmt: v => v ? (v > 100 ? chip(String(v), v >= 120 ? PAL.red : PAL.amber) : `<b>${v}</b>`) : '—' },
     ], rows: hubRows, pageSize: 12, sortKey: 'peak', exportName: 'pp_hub_conditions', rowKey: r => r.hub,
-    onRow: r => r._g && openCell(r._g, fIdx.reduce((b, i) => Math.max(...TRADES.map(t => r._g.cells[i].idx[t])) > Math.max(...TRADES.map(t => r._g.cells[b].idx[t])) ? i : b, fIdx[0])),
+    onRow: r => r._g && openCell(r._g, peakDay(r._g)),
   });
 
   function openCell(g, i) {
-    if (!g?.days) return; const c = g.cells[i]; const d = c.d;
+    if (!g?.days || !g.cells[i]) return; const c = g.cells[i]; const d = c.d;
     const calls = Object.fromEntries(TRADES.map(t => [t, P.base[t] * g.hub.hu / 1e4 * c.idx[t]]));
     inspector.open({
       title: `${esc(g.hub.name)} · ${esc(dfull(fmt, d.date))}`, sub: `${esc(hubWhere(g.hub))} · ${d.past ? 'observed' : 'forecast'} · ${esc(live.wmo(d.code))}`, color: PP,
