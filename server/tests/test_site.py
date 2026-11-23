@@ -349,7 +349,7 @@ def test_outside_the_service_area_still_answers(env, monkeypatch):
     fs = card_of(res)
     assert res['status'] == 'found' and fs and fs['area']['status'] == 'out'
     assert 'Outside the Punctual Pros service area' in fs['area']['label']
-    assert 'Outside the Punctual Pros service area; refer to dispatch.' in res['text'] and SITE.words(res['text']) <= 40
+    assert 'Outside our service area; refer to dispatch.' in res['text'] and SITE.words(res['text']) <= 40
 
 
 def test_templates_fit_the_limits():
@@ -476,3 +476,17 @@ def test_show_view_tool(env, monkeypatch):
     text, err, cards = workspace.run_tool('show_view', {'view': 'scorecard', 'company': 'cet'}, ws, SITE.LocalSources())
     assert err and 'outside your access' in text
     assert workspace.status_text('show_view', {}) == 'Building the picture'
+
+
+# ---------------------------------------------------------------- live (opt-in), a public building only
+
+@pytest.mark.skipif(os.environ.get('SITE_LIVE_TEST') != '1', reason='network test: SITE_LIVE_TEST=1 to run (Trenton City Hall only)')
+def test_live_public_building_end_to_end(monkeypatch):
+    """Trenton City Hall, a public building outside the service area: found at the parcel, outline drawn, still answered."""
+    monkeypatch.setattr(homes, 'LIVE_ON', True)
+    SITE.reset()
+    res = SITE.brief('319 E State St, Trenton, NJ 08608 for a sink repair', PLUMBER, [])
+    fs = card_of(res)
+    assert res['status'] == 'found' and res['precision'] in ('parcel', 'typed'), res
+    assert fs['place']['basis'] == 'public' and fs['area']['status'] == 'out' and SITE.words(res['text']) <= 40
+    assert 'ZZTEST' not in json.dumps(res) and not re.search(r'\b(example|sandbox|fictional)\b', res['text'], re.I)

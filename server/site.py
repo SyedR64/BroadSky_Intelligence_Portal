@@ -581,6 +581,7 @@ def dress(card, live, house, add):
                                                   for o in live.get('outbuildings') or [] if o.get('ring_ll')]})
         if 'parcel' in blk:
             blk['parcel']['src'] = add((live.get('parcel') or {}).get('src') or 'nj_parcels', (live.get('parcel') or {}).get('as_of'))
+            blk['parcel']['as_of'] = (live.get('parcel') or {}).get('as_of')
         if storeys_public:
             sf = fact(live, 'stories')
             blk['storeys']['src'] = add(sf['src'], sf.get('as_of'))
@@ -776,7 +777,7 @@ def answer_text(live, card, area=None, record=False):
     label = live.get('label') or (card or {}).get('address') or 'That address'
     short = _short_label(live) or label
     out_area = (area or {}).get('status') == 'out'
-    tail = ['?Outside the Punctual Pros service area; refer to dispatch.'] if out_area else []
+    tail = ['Outside our service area; refer to dispatch.'] if out_area else []
     st = live.get('status')
     if record and card:
         its = _focus_items(card)
@@ -821,7 +822,7 @@ def answer_text(live, card, area=None, record=False):
         lead = 'Likely: ' if i == 0 else '?Likely: '
         parts.append(f"{lead}{W._lc(it.get('label') or '')}, {_where(it)}.")
     parts += tail
-    parts.append('Plan, 3D view and map below; dashed is likely.')
+    parts.append('Plan, 3D and map below; dashed is likely.')
     txt = fit_words(parts)
     return txt
 
