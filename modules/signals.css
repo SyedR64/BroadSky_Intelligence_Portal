@@ -10,8 +10,9 @@
 .m-signals .sg-matrix .sys-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--co);vertical-align:1px}
 .m-signals .sg-cell{min-height:26px;padding:0 10px;font-size:var(--sys-fs-xs)}
 .m-signals .sg-cell.hi{font-weight:700}
-.m-signals .sg-cell .w{font-size:8px;line-height:1}
+.m-signals .sg-cell.hi::after{content:'●';margin-left:5px;font-size:8px;line-height:1}
 .m-signals .sg-none{color:var(--sys-mute-2)}
+.m-signals .sg-none::before{content:'·'}
 .m-signals .sg-legend{margin:0;padding:var(--sys-sp-3) var(--pad,16px);border-top:1px solid var(--sys-line)}
 .m-signals .sg-legend .w{font-size:8px;vertical-align:1px}
 
@@ -65,3 +66,4 @@
 .m-signals .sg-card .sg-why{max-width:none}
 .m-signals .sg-card-read{display:block;padding:8px 10px;border-radius:var(--sys-r-sm);background:var(--sys-bg-2)}
 .m-signals .kpi .spark{position:static;margin-top:6px}
+.m-signals .sg-fed .sys-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--co);vertical-align:1px}
