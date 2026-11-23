@@ -286,7 +286,7 @@ async function overview(ctx) {
   const ons = cetFirm?.add_ons || [];
   const tl = [
     { date: 'February 2025', color: 'var(--sys-brand)', html: `<b>BSP becomes majority investor in CET</b><div class="dim small">Worcester HQ + Taunton office · founded 2008 · 400+ professionals (company site)</div>` },
-    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b>${a.status === 'reported' ? ' <span class="sys-chip">reported</span>' : ''} · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
+    ...ons.map(a => ({ date: fmt.date(a.date), color: /Horton/.test(a.name) ? PAL.cyan : PAL.purple, html: `<b>${esc(a.name)}</b> · ${esc(a.hq || '')}${a.source_url ? ` <a class="dim" href="${esc(a.source_url)}" target="_blank" rel="noopener">↗</a>` : ''}<div class="dim small">${esc(String(a.note || '').slice(0, 170))}${String(a.note || '').length > 170 ? '…' : ''}</div>` })),
     { date: 'Next', color: COLOR, html: `<b>Add-on #7</b> · hand-researched list of ${fmt.num(targets?.items?.length || 0)} targets <a href="#/ma/pipeline?platform=cet">→</a><div class="dim small">Top: ${esc((targets?.meta?.ranked_top_10 || []).slice(0, 3).map(t => t.company).join(' · ') || '—')}</div>` },
   ];
   if (!ons.length) tl.splice(1, 0, { date: 'October 7, 2025', color: PAL.purple, html: '<b>NuWave Energy Solutions</b> · Norwell, MA' }, { date: 'September 15, 2026', color: PAL.cyan, html: `<b>Horton Electrical Services</b> · ${esc(horton.town)}` });
