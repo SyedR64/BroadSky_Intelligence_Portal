@@ -66,5 +66,5 @@ export function mountChat(extraSuggestions) {
 }
 
 export function faqHTML(list = FAQ) {
-  return list.map((f, i) => `<details${i === 0 ? ' open' : ''}><summary>${f.q}</summary><div class="ans">${f.a}</div></details>`).join('');
+  return list.map((f, i) => `<details><summary>${f.q}</summary><div class="ans">${f.a}</div></details>`).join('');
 }

@@ -53,7 +53,7 @@ const JOBS = [
   ['Paid Media Strategist', 'Chicago', 'Digital & paid media'],
 ];
 const jobs = document.getElementById('jobs');
-if (jobs) jobs.innerHTML = JOBS.map(([t, c, p]) => `<a class="job" href="#contact"><b>${esc(t)}</b><span>${esc(p)}</span><span>${esc(c)} · Hybrid</span><span class="go" aria-hidden="true">→</span></a>`).join('') + '<p class="sys-src">Illustrative openings for the concept<span class="sys-est sys-est--illus">illustrative</span>; the live site would sync from the applicant-tracking system.</p>';
+if (jobs) jobs.innerHTML = JOBS.map(([t, c, p]) => `<a class="job" href="#contact"><b>${esc(t)}</b><span>${esc(p)}</span><span>${esc(c)} · Hybrid</span><span class="go" aria-hidden="true">→</span></a>`).join('') + '<p class="sys-src"><span class="sys-est sys-est--illus">illustrative</span> openings</p><details class="sys-fold"><summary><b>Source</b><span>Openings</span></summary><p class="sys-src">Illustrative openings for the concept; the live site would sync from the applicant-tracking system.</p></details>';
 
 // faq
 const fl = document.getElementById('faq-list'); if (fl) fl.innerHTML = faqHTML();

@@ -216,6 +216,7 @@ export function mountPulse(el) {
   sp.setAttribute('viewBox', `0 0 ${w} ${h}`);
   sp.innerHTML = `<defs><linearGradient id="pg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--co);stop-opacity:.5"/><stop offset="1" style="stop-color:var(--co);stop-opacity:0"/></linearGradient></defs><polygon points="0,${h} ${line} ${w},${h}" fill="url(#pg)"/><polyline points="${line}" fill="none" style="stroke:var(--co)" stroke-width="2"/><circle cx="${pts[pts.length - 1][0] - 3}" cy="${pts[pts.length - 1][1]}" r="4" style="fill:var(--sys-ink)"/>`;
   big.textContent = data[data.length - 1].v.toLocaleString('en-US');
+  if (!list) return; // the card is the number and the line; the signals themselves are in the monitor below
   let i = 0; const items = sc.signals;
   const row = x => `<li><span class="chn">${esc(x.ch)}</span><span>${esc(x.tx.length > 74 ? x.tx.slice(0, 72) + '…' : x.tx)}</span><span class="s" style="color:${sCol(x.s)}">${sgn(x.s)}</span></li>`;
   list.innerHTML = [0, 1, 2].map(k => row(items[k])).join('').replace(/<li>/g, '<li style="animation:none">');
