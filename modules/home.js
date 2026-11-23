@@ -2,6 +2,7 @@
 import { dataset, srcLabel } from './copy.js?v=20261123143257';
 import { loadScoreboard, templateExit } from './fin.js?v=20261123143257';
 import { Session } from '../assets/session.js?v=20261123143257';
+import { embedView } from './embed.js?v=20261123143257';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', hq: 'Worcester, MA', lat: 42.2626, lon: -71.8023, entry: '2025-02', footprint: 'Licensed in all 6 New England states' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', hq: 'East Hempfield, PA', lat: 40.0629, lon: -76.3700, entry: '2024-04', footprint: '248 Central PA zips + Ocean/Monmouth NJ' },
@@ -303,6 +304,12 @@ async function overview(ctx) {
   return () => { alive = false; stop(); removeEventListener('storage', onStore); delete ctx.el.dataset.home; if (undo) { try { undo(); } catch { /* gone */ } } };
 }
 
+/* The agent inside the shell: agent.html in its embedded form, following the role in view. */
+function agentView(ctx) {
+  injectCss();
+  return embedView(ctx, 'agent.html', { title: 'Agent' });
+}
+
 async function firmView(ctx) {
   const { el, ui, fmt, data, esc, inspector, app } = ctx;
   // the next action per company is the sentence the value and exit tables print (fin.js); the profile still draws if that load fails
@@ -398,6 +405,7 @@ export default {
   views: [
     { id: 'overview', name: 'Overview', icon: '◉', render: overview },
     { id: 'firm', name: 'BSP profile', icon: '◈', render: firmView },
+    { id: 'agent', name: 'Agent', icon: '◍', flush: true, render: agentView },
   ],
   tour: [
     { order: 100, hash: '#/home/overview', caption: '<b>Broad Sky OS.</b> Six companies. Every number is tied to a decision.', narration: 'This is Broad Sky OS. Six companies, and every number is tied to a decision.', duration: 7000 },
