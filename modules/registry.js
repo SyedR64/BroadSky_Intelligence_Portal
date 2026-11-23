@@ -47,7 +47,7 @@ const TAB_ORDER = { ma: ['overview', 'pipeline', 'research', 'rivals', 'whitespa
    target is a live address: one 'old': 'new' pair per line, plain single-quoted strings. */
 export const ALIASES = {
   'signals/levers': 'signals/overview?co=all',
-  'cet/territory': 'cet/overview',
+  'cet/territory': 'cet/overview?counties=1',
   'cet/targets': 'ma/pipeline?platform=cet',
   'pp/targets': 'ma/pipeline?platform=pp',
   'fl/targets': 'ma/pipeline?platform=fl',
@@ -56,7 +56,7 @@ export const ALIASES = {
   'bpi/benchmarks': 'fin/comps?sector=communications_agencies',
   'fh/benchmarks': 'fin/comps?sector=apparel_dtc',
   'ma/valuation': 'fin/comps',
-  'pe/heatmap': 'pe/landscape',
+  'pe/heatmap': 'pe/landscape?show=grid',
   'fin/deal': 'fin/portfolio',
   'fin/rivals': 'ma/rivals',
 };
