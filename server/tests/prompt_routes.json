@@ -1,5 +1,5 @@
 {
- "_note": "Where each suggested prompt on index.html, assistant.html and the portal panel goes when the research assistant is live (Chat.route): to:intent. \"open\" = no grounded intent: a prepared answer, then the research assistant. \"followups\" pins the follow-up chips written in assets/chat.js the same way. Checked by tests/e2e_browser.py; update it when a prompt or its route changes on purpose.",
+ "_note": "Where each suggested prompt on assistant.html and the portal panel goes when the research assistant is live (Chat.route): to:intent. \"open\" = no grounded intent: a prepared answer, then the research assistant. \"followups\" pins the follow-up chips written in assets/chat.js the same way. Checked by tests/e2e_browser.py; update it when a prompt or its route changes on purpose.",
  "routes": {
   "Estimate Punctual Pros revenue from public filings": "grounded:fin",
   "How do the portfolio's valuations compare with public peers?": "grounded:comps",
