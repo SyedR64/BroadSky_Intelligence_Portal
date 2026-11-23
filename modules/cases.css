@@ -226,13 +226,10 @@
 @media print{.m-cases .cs-tl-in{min-width:0}.m-cases .cs-mx-wrap{overflow:visible}}
 
 /* ── moved in from the case-studies page (it now forwards to the portal) ── */
-/* closed sections: same look as the acquisition engine's "How we estimated this" disclosure (ma.css .ma-how) */
-.m-cases .cs-drawer{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
-.m-cases .cs-drawer>summary{display:flex;flex-wrap:wrap;align-items:center;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+/* closed sections: the shared closed section in app.css; spacing only here */
+.m-cases .cs-drawer>summary{flex-wrap:wrap;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);color:var(--sys-ink-2)}
 .m-cases .cs-drawer>summary b{font-weight:600;color:var(--sys-ink)}
-.m-cases .cs-drawer>summary::-webkit-details-marker{display:none}
-.m-cases .cs-drawer>summary::before{content:"";flex:none;width:7px;height:7px;margin-right:4px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-.m-cases .cs-drawer[open]>summary::before{transform:rotate(45deg)}
+.m-cases .cs-drawer>summary::before{flex:none;margin-right:4px}
 .m-cases .cs-drawer>:not(summary){margin:0 var(--sys-sp-4) var(--sys-sp-4)}
 .m-cases .cs-method{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:var(--sys-sp-5)}
 .m-cases .cs-drawer .sys-prose{max-width:none;font-size:var(--sys-fs-sm);line-height:1.6}

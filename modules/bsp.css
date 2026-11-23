@@ -93,13 +93,10 @@
 .m-bsp .bsp-ledger .tbl td{vertical-align:top}
 
 /* ── moved in from the methodology page (it now forwards to the portal) ── */
-/* closed sections: same look as the acquisition engine's "How we estimated this" disclosure (ma.css .ma-how) */
-.m-bsp .bsp-drawer{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
-.m-bsp .bsp-drawer>summary{display:flex;flex-wrap:wrap;align-items:center;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
+/* closed sections: the shared closed section in app.css; spacing only here */
+.m-bsp .bsp-drawer>summary{flex-wrap:wrap;gap:4px var(--sys-sp-2);min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-3);color:var(--sys-ink-2)}
 .m-bsp .bsp-drawer>summary b{font-weight:600;color:var(--sys-ink)}
-.m-bsp .bsp-drawer>summary::-webkit-details-marker{display:none}
-.m-bsp .bsp-drawer>summary::before{content:"";flex:none;width:7px;height:7px;margin-right:4px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-.m-bsp .bsp-drawer[open]>summary::before{transform:rotate(45deg)}
+.m-bsp .bsp-drawer>summary::before{flex:none;margin-right:4px}
 .m-bsp .bsp-drawer>:not(summary){margin:0 var(--sys-sp-4) var(--sys-sp-4)}
 /* the twelve observations (two columns; one below 900px) */
 .m-bsp .bsp-nar{padding:0;list-style:none;counter-reset:nar;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sys-sp-3) var(--sys-sp-6)}

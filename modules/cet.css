@@ -61,9 +61,7 @@
   .m-cet .cet-stk-row{grid-template-columns:minmax(80px,auto) minmax(0,1fr) 56px}
 }
 
-/* county fit: a closed section on the Operating picture (the former Territory fit view); same disclosure bar as ma.css .ma-how */
-.m-cet .cet-fold>summary{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-3);min-height:48px;padding:var(--sys-sp-3) var(--sys-sp-4);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink)}
-.m-cet .cet-fold>summary::-webkit-details-marker{display:none}
-.m-cet .cet-fold>summary::before{content:"";flex-shrink:0;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-.m-cet .cet-fold[open]>summary::before{transform:rotate(45deg)}
+/* county fit: a closed section on the Operating picture (the former Territory fit view); the disclosure bar and chevron are the shared closed section in app.css */
+.m-cet .cet-fold>summary{flex-wrap:wrap;gap:var(--sys-sp-2) var(--sys-sp-3);min-height:48px;padding:var(--sys-sp-3) var(--sys-sp-4);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2);color:var(--sys-ink)}
+.m-cet .cet-fold>summary::before{flex-shrink:0}
 .m-cet .cet-fold-body{padding-top:var(--sys-gap)}

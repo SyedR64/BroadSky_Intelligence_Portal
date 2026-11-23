@@ -542,7 +542,7 @@ export const App = {
   /** The forwarding table for merged screens ('module/view' → 'module/view?params', modules/registry.js ALIASES).
       app.html hands it over, so this file never imports the registry (that would be an import cycle). */
   alias(table) { App.aliases = { ...(table || {}) }; },
-  register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: `${m.name} · ${v.name}`, kind: SCREEN, href: `#/${m.id}/${v.id}`, color: m.color })); },
+  register(m) { App.modules.push(m); if (Array.isArray(m.tour) && m.tour.length) Tour.register(m.tour); (m.views || []).forEach(v => searchIndex.push({ label: v.name === m.name ? m.name : `${m.name} · ${v.name}`, kind: SCREEN, href: `#/${m.id}/${v.id}`, color: m.color })); },
   /** Modules call this to make entities searchable in ⌘K: items [{label, sub, href, kind}]. A module that tags an entry
       'View' means a screen; the search box shows one word for it. */
   index(items) { for (const i of items) if (!searchIndex.some(x => x.href === i.href && x.label === i.label)) searchIndex.push(i.kind === 'View' ? { ...i, kind: SCREEN } : i); },
@@ -615,6 +615,7 @@ export const App = {
     const ord = m.tabOrder || [], pos = x => { const i = ord.indexOf(x.id); return i < 0 ? ord.length : i; };
     const shown = m.views.filter(x => x.menu !== false || x === v).sort((a, b) => pos(a) - pos(b));
     $('.view-tabs', t).innerHTML = shown.map(x => `<a class="view-tab" href="#/${esc(m.id)}/${esc(x.id)}" data-v="${x.id}"${x === v ? ' aria-current="page"' : ''}>${esc(x.name)}${x.badge ? `<span class="sys-kbd n">${esc(x.badge)}</span>` : ''}</a>`).join('');
+    $('.view-tabs', t).classList.toggle('view-tabs--one', shown.length < 2);   // one screen: the title already names it, so no tab is drawn
     $$('.view-tab', t).forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); App.go(m.id, b.dataset.v); });
     const cur = $('.view-tab[aria-current]', t), tabs = $('.view-tabs', t); if (cur && tabs.scrollWidth > tabs.clientWidth) { const a = cur.getBoundingClientRect(), b = tabs.getBoundingClientRect(); if (a.left < b.left || a.right > b.right - 24) tabs.scrollLeft += a.left - b.left - 24; }
   },

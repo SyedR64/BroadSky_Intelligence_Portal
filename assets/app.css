@@ -97,6 +97,14 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .crumb{display:flex;align-items:center;min-width:0;flex-shrink:0}
 :where(#app) .crumb a.sys-subnav-title{color:var(--sys-ink);text-decoration:none}
 .view-tabs{flex:1;min-width:0}
+.view-tabs--one{visibility:hidden}
+/* closed section (<details>): the portal's one disclosure look, a bar on surface-2 with a 7px chevron first. New markup
+   uses .sys-fold; the module names listed here are the same section built before it existed, and their CSS adds only spacing */
+:is(.sys-fold,.ma-how,.bsp-drawer,.cs-drawer,.pe-more){border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary{display:flex;align-items:center;cursor:pointer;list-style:none;font-size:var(--sys-fs-sm)}
+:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::-webkit-details-marker{display:none}
+:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
+:is(.sys-fold,.ma-how,.cet-fold,.pp-fold,.bsp-drawer,.cs-drawer,.pe-more)[open]>summary::before{transform:rotate(45deg)}
 :where(#app) a.view-tab{text-decoration:none}
 .view-tab{gap:6px}
 .view-tab .n{height:18px;padding:0 5px;font-size:10px}

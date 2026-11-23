@@ -158,11 +158,9 @@
 @media (max-width:560px){.m-ma .ma-flow{grid-template-columns:1fr}.m-ma .ma-dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* "How we estimated this": a disclosure with one row per estimate (value, method, source, confidence) */
-:is(.m-ma,.m-ma-insp) .ma-how{margin-top:var(--sys-sp-3);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
-:is(.m-ma,.m-ma-insp) .ma-how>summary{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink)}
-:is(.m-ma,.m-ma-insp) .ma-how>summary::-webkit-details-marker{display:none}
-:is(.m-ma,.m-ma-insp) .ma-how>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-:is(.m-ma,.m-ma-insp) .ma-how[open]>summary::before{transform:rotate(45deg)}
+/* closed section: the bar, chevron and box are the shared one in app.css; only spacing and weight here */
+:is(.m-ma,.m-ma-insp) .ma-how{margin-top:var(--sys-sp-3)}
+:is(.m-ma,.m-ma-insp) .ma-how>summary{gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-2) var(--sys-sp-3);font-weight:600;color:var(--sys-ink)}
 :is(.m-ma,.m-ma-insp) .ma-how-steps{margin:0;padding:0 var(--sys-sp-3);counter-reset:how}
 :is(.m-ma,.m-ma-insp) .ma-how-steps li{list-style:none;padding:var(--sys-sp-2) 0;border-top:1px solid var(--sys-line)}
 :is(.m-ma,.m-ma-insp) .ma-how-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px var(--sys-sp-2)}

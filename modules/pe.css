@@ -79,12 +79,8 @@
 .m-pe .pe-notes div{padding-left:10px;border-left:3px solid var(--cc);font-size:var(--sys-fs-xs);line-height:1.55;color:var(--sys-ink-2);overflow-wrap:anywhere}
 .m-pe .pe-notes b{color:var(--sys-ink)}
 
-/* closed section: the portal's one disclosure look, the five rules of .ma-how in ma.css (less its top margin: the column's gap places this one) */
-.m-pe .pe-more{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
-.m-pe .pe-more>summary{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-2) var(--sys-sp-3);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);font-weight:600;color:var(--sys-ink)}
-.m-pe .pe-more>summary::-webkit-details-marker{display:none}
-.m-pe .pe-more>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-.m-pe .pe-more[open]>summary::before{transform:rotate(45deg)}
+/* closed section: the portal's one disclosure look, shared in app.css; the same spacing as .ma-how (less its top margin: the column's gap places this one) */
+.m-pe .pe-more>summary{gap:var(--sys-sp-2);min-height:40px;padding:var(--sys-sp-2) var(--sys-sp-3);font-weight:600;color:var(--sys-ink)}
 /* what this one adds: summary = <b>title</b><span>one line</span>, the line under the title; the body holds the county table and its source line */
 .m-pe .pe-more>summary{flex-wrap:wrap;row-gap:2px}
 .m-pe .pe-more>summary::before{flex:none}

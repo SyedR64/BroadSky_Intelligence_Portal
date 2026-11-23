@@ -65,9 +65,7 @@
   .m-pp .sys-chip{max-width:100%;white-space:normal;padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}
 }
 
-/* market: the local competitor list sits in a closed section under the links to Rival companies and the add-on list; same disclosure bar as ma.css .ma-how */
-.m-pp .pp-fold>summary{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-3);min-height:48px;padding:var(--sys-sp-3) var(--sys-sp-4);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2);cursor:pointer;list-style:none;font-size:var(--sys-fs-sm);color:var(--sys-ink)}
-.m-pp .pp-fold>summary::-webkit-details-marker{display:none}
-.m-pp .pp-fold>summary::before{content:"";flex-shrink:0;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform var(--sys-t)}
-.m-pp .pp-fold[open]>summary::before{transform:rotate(45deg)}
+/* market: the local competitor list sits in a closed section under the links to Rival companies and the add-on list; the disclosure bar and chevron are the shared closed section in app.css */
+.m-pp .pp-fold>summary{flex-wrap:wrap;gap:var(--sys-sp-2) var(--sys-sp-3);min-height:48px;padding:var(--sys-sp-3) var(--sys-sp-4);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2);color:var(--sys-ink)}
+.m-pp .pp-fold>summary::before{flex-shrink:0}
 .m-pp .pp-fold-body{padding-top:var(--sys-gap)}
