@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   BSP Desk · unified design system (system.css)
+   Broad Sky OS · unified design system (system.css)
    One file, every page: landing, portal, gallery, concept sites, OS pages,
    playbooks, theater, print. Spec and checklist: UNIFIED.md.
 
    1 tokens · 2 dark variant · 3 company accents · 4 base · 5 frame (top bar,
-   sheet, banner, crumb) · 6 page scaffolding (hero, section, grid, card, KPI,
+   sheet, Viewing as switch, banner, crumb) · 6 page scaffolding (hero, section, grid, card, KPI,
    table, note, est., chips, buttons, CTA, footer, prose) · 7 layouts (app,
-   minimal) · 8 responsive · 9 motion · 10 print
+   minimal, embed) · 8 responsive · 9 motion · 10 print
 
    Rules: every token is prefixed --sys- (company accents are --co-*), every
    class is prefixed .sys-, element resets use :where() so page CSS always wins.
@@ -193,8 +193,40 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-sheet[hidden]{display:none}
 .sys-sheet a{display:flex;justify-content:space-between;align-items:center;gap:var(--sys-sp-4);min-height:52px;padding:0 4px;border-bottom:1px solid var(--sys-line);text-decoration:none;font:600 17px/1.2 var(--sys-font);letter-spacing:-.01em;color:var(--sys-ink)}
 .sys-sheet a[aria-current]{color:var(--sys-brand)}
-.sys-sheet a span{font:500 12px var(--sys-mono);color:var(--sys-mute);text-align:right}
 .sys-sheet .sys-btn{width:100%;margin-top:var(--sys-sp-4)}
+
+/* ── 5b2 · frame: "Viewing as" switch (frame.js bindViewAs; OS build spec 4.2) ── */
+/* Closed: a pill with the role and organisation. Open: a panel under it with the
+   five levels as chips, then the roles of the chosen level grouped by organisation.
+   At 560px and narrower the panel is a sheet under the top bar.                 */
+.sys-viewas{position:relative;min-width:0;display:flex}
+.sys-viewas-btn{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:340px;height:40px;padding:0 10px 0 14px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink);font:500 13.5px/1.15 var(--sys-font);text-align:left;cursor:pointer;transition:border-color var(--sys-t),box-shadow var(--sys-t)}
+.sys-viewas-btn:hover,.sys-viewas.is-open .sys-viewas-btn{border-color:var(--sys-ink)}
+.sys-viewas-k{flex-shrink:0;font:600 var(--sys-fs-2xs)/1 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
+.sys-viewas-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sys-ink-2)}
+.sys-viewas-v b{font-weight:600;color:var(--sys-ink)}
+.sys-viewas-chev{flex-shrink:0;width:12px;height:12px;color:var(--sys-mute);transition:transform var(--sys-t)}
+.sys-viewas.is-open .sys-viewas-chev{transform:rotate(180deg)}
+.sys-viewas-pop{position:absolute;right:0;top:calc(100% + 8px);z-index:90;width:min(400px,calc(100vw - 2 * var(--sys-gut)));max-height:calc(100dvh - var(--sys-top-h) - 24px);overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--sys-sp-4);padding:var(--sys-sp-4);background:var(--sys-surface);color:var(--sys-ink);border:1px solid var(--sys-line);border-radius:var(--sys-r);box-shadow:var(--sys-sh-3)}
+.sys-viewas-pop[hidden]{display:none}
+.sys-viewas-levels{gap:6px}
+.sys-viewas-levels .sys-chip{min-height:32px;padding:0 10px}
+.sys-viewas-levels .sys-chip .sys-num{font-size:11px}
+.sys-viewas-roles{display:flex;flex-direction:column;gap:var(--sys-sp-4);padding-top:var(--sys-sp-4);border-top:1px solid var(--sys-line)}
+.sys-viewas-group{display:flex;flex-direction:column;gap:6px}
+.sys-viewas-group:not([data-co]) .sys-dot{background:var(--sys-brand)}
+.sys-viewas-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.sys-viewas-role{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink-2);font:500 13.5px/1.2 var(--sys-font);cursor:pointer;transition:border-color var(--sys-t),color var(--sys-t),background var(--sys-t)}
+.sys-viewas-role:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
+.sys-viewas-role[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink);font-weight:600}
+@media (max-width:1180px){ .sys-viewas-btn{max-width:260px} }
+@media (max-width:960px){ .sys-viewas-k{display:none} }
+@media (max-width:560px){
+  .sys-viewas{flex:1 1 auto}
+  .sys-viewas-btn{width:100%;max-width:none;height:36px;padding:0 8px 0 12px;font-size:13px}
+  .sys-viewas-pop{position:fixed;left:0;right:0;top:var(--sys-top-h);width:auto;max-height:calc(100dvh - var(--sys-top-h));border-radius:0 0 var(--sys-r-lg) var(--sys-r-lg);border-left:0;border-right:0;padding:var(--sys-sp-4) var(--sys-gut) calc(var(--sys-sp-5) + env(safe-area-inset-bottom,0px))}
+  .sys-viewas-role{min-height:44px}
+}
 
 /* ── 5c · frame: concept tag (in the page bar, or in the crumb row on a page without one) ── */
 .sys-concept{display:inline-flex;align-items:center;gap:.5ch;flex-shrink:0;height:24px;padding:0 9px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);font:500 11.5px/1 var(--sys-mono);letter-spacing:.01em;color:var(--sys-mute);white-space:nowrap;cursor:help}
@@ -475,6 +507,14 @@ body[data-sys-layout="app"]>.sys-top{-webkit-backdrop-filter:none;backdrop-filte
 body[data-sys-layout="app"] .sys-top-in{max-width:none;padding:0 16px}
 body[data-sys-layout="app"] #app{flex:1 1 0;height:auto;min-height:0;width:100%}
 
+body[data-sys-layout="app"] .sys-viewas-pop{max-height:calc(100dvh - var(--sys-top-h) - 16px)}
+
+/* ── 7a2 · layout: embedded page (?embed=1, frame.js mountEmbed) ──────────── */
+/* The shell draws the page inside an iframe: no top bar, footer, crumb row or
+   floating Ask button; a page's own sub-nav sticks to the top edge instead.    */
+html[data-embed]{--sys-top-h:0px}
+html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed] .sys-footer,html[data-embed] .ch.ch-floating{display:none!important}
+
 /* ── 7b · layout: minimal transparent frame (theater.html) ────────────────── */
 .sys-top--minimal{position:fixed;left:0;right:0;top:0;background:transparent;border-bottom:0;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
 .sys-top--minimal .sys-top-in{max-width:none}
@@ -533,6 +573,10 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 @media (max-width:560px){
   .sys-ask .sys-kbd,.sys-top-cta{display:none}
   .sys-ask{padding:0 13px}
+  /* the brand keeps its mark only, so the "Viewing as" switch has room */
+  .sys-top-in{gap:var(--sys-sp-3)}
+  .sys-top-actions{flex:1 1 auto;min-width:0;justify-content:flex-end}
+  .sys-top:has(.sys-viewas) .sys-brand-name{display:none}
   .sys-crumb-in{height:40px}
   /* room for the 44px chat launcher under the last line of the page */
   .sys-footer{padding-bottom:calc(28px + 56px + env(safe-area-inset-bottom,0px))}
