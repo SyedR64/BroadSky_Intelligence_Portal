@@ -129,7 +129,7 @@ def page_checks(browser, site, catalog):
     dlg = page.locator('#ca-consent')
     check('Connect opens the consent dialog', poll(lambda: dlg.evaluate('d => d.open'), 3))
     first = (dlg.locator('.sys-card-label').first.text_content() or '').strip()
-    check('first dialog label is "BSP Desk sandbox"', first == 'BSP Desk sandbox', first)
+    check('first dialog label is "Broad Sky OS sandbox"', first == 'Broad Sky OS sandbox', first)
     n_inputs = dlg.locator('input, select, textarea').count()
     check('consent dialog has no input, select or textarea', n_inputs == 0, f'{n_inputs} found')
     visible_text_ok(page, catalog, 'consent dialog')
