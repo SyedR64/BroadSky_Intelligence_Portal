@@ -92,10 +92,10 @@ function wire(el) {
    value tables; it opens in the side panel. */
 const MOVES = {
   cet: r => `Integrate the ${r.addOns ?? 6} add-ons`,
-  pp: r => 'Next tuck-in on the undrawn loan',
-  fl: r => 'First add-on under BSP',
+  pp: r => 'Tuck-in on the undrawn loan',
+  fl: r => 'Close a first add-on',
   ts: r => `Refinance or sell by ${r.matLabel || 'Dec 2027'}`,
-  bpi: r => `One reporting line, ${r.addOns ?? 6} add-ons`,
+  bpi: r => 'One reporting line',
   fh: r => 'Choose sponsor or strategic sale',
 };
 /** The status chip: the exit-window flag fin.js sets, cut to its first words ("Build", "In exit window", "Refinance in 13 mo"). */
@@ -122,7 +122,7 @@ async function firmHome(ctx, role, live) {
     const rev = dollars(r.rev, 'revenue'), ev = dollars(r.ev);
     return `<tr tabindex="0" data-id="${esc(r.id)}" aria-label="${esc(r.name)}: open the details">
       <td><span class="hm-co" ${coAttr(r.id)}><span class="sys-dot" aria-hidden="true"></span><b>${esc(LONG[r.id] || r.name)}</b></span></td>
-      <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub"> · ${esc(addTxt(r.addOns, reportedOf(firm, r.id)))}</span></td>
+      <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub">${esc(addTxt(r.addOns, reportedOf(firm, r.id)))}</span></td>
       <td class="sys-n hm-cell" data-label="Revenue, est.">${rev ? esc(rev) : '—'}</td>
       <td class="sys-n hm-cell hm-ev" data-label="Entry value, est.">${ev ? esc(ev) : '—'}</td>
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>

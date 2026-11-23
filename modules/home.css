@@ -25,7 +25,7 @@
 .hm-co{display:flex;align-items:center;gap:var(--sys-sp-2);min-width:0}
 .hm-co b{font-weight:600;color:var(--sys-ink)}
 .hm-cell{font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
-.hm-sub{font-size:var(--sys-fs-xs);color:var(--sys-mute)}
+.hm-sub{font-size:var(--sys-fs-xs);color:var(--sys-mute);margin-left:var(--sys-sp-2)}
 
 /* today's items and waiting for approval */
 .hm-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
