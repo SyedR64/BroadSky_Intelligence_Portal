@@ -1,6 +1,6 @@
 /* Command Center — portfolio-wide situational awareness */
-import { dataset, srcLabel } from './copy.js?v=20261117223642';
-import { loadScoreboard, templateExit } from './fin.js?v=20261117223642';
+import { dataset, srcLabel } from './copy.js?v=20261123143257';
+import { loadScoreboard, templateExit } from './fin.js?v=20261123143257';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', hq: 'Worcester, MA', lat: 42.2626, lon: -71.8023, entry: '2025-02', footprint: 'Licensed in all 6 New England states' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', hq: 'East Hempfield, PA', lat: 40.0629, lon: -76.3700, entry: '2024-04', footprint: '248 Central PA zips + Ocean/Monmouth NJ' },

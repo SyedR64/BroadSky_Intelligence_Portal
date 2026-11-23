@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261117223642';
+import * as Copy from './copy.js?v=20261123143257';
 /* Narrated tour: play it over the live screens, start from any chapter, read the script.
    The recorded films live on the home page (index.html#briefing); this screen links there. */
 async function render(ctx) {

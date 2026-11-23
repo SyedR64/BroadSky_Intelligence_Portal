@@ -2,24 +2,24 @@
    The order of the exported array is the load, search and tour order and it never changes (home stays first: it is the
    default screen). The side menu and the tab rows are drawn from the flags set at the bottom of this file, sorted and
    filtered at draw time in assets/core.js. A screen is flagged, never taken out of its module's views. */
-import home from './home.js?v=20261117223642';
-import signals from './signals.js?v=20261117223642';
-import bsp from './bsp.js?v=20261117223642';
-import cet from './cet.js?v=20261117223642';
-import pp from './pp.js?v=20261117223642';
-import fl from './fl.js?v=20261117223642';
-import ts from './ts.js?v=20261117223642';
-import bpi from './bpi.js?v=20261117223642';
-import fh from './fh.js?v=20261117223642';
-import ma from './ma.js?v=20261117223642';
-import deal from './deal.js?v=20261117223642';
-import cases from './cases.js?v=20261117223642';
-import pe from './pe.js?v=20261117223642';
-import national from './national.js?v=20261117223642';
-import fin from './fin.js?v=20261117223642';
-import techos from './techos.js?v=20261117223642';
-import theater from './theater.js?v=20261117223642';
-import briefing from './briefing.js?v=20261117223642';
+import home from './home.js?v=20261123143257';
+import signals from './signals.js?v=20261123143257';
+import bsp from './bsp.js?v=20261123143257';
+import cet from './cet.js?v=20261123143257';
+import pp from './pp.js?v=20261123143257';
+import fl from './fl.js?v=20261123143257';
+import ts from './ts.js?v=20261123143257';
+import bpi from './bpi.js?v=20261123143257';
+import fh from './fh.js?v=20261123143257';
+import ma from './ma.js?v=20261123143257';
+import deal from './deal.js?v=20261123143257';
+import cases from './cases.js?v=20261123143257';
+import pe from './pe.js?v=20261123143257';
+import national from './national.js?v=20261123143257';
+import fin from './fin.js?v=20261123143257';
+import techos from './techos.js?v=20261123143257';
+import theater from './theater.js?v=20261123143257';
+import briefing from './briefing.js?v=20261123143257';
 /* Rail and heading names. Headings read "<module name> · <view title>" (modules/copy.js VIEW_TITLES), so a module
    name must not repeat a word of its own view titles ("PE landscape · sponsor landscape"). Ids never change. */
 const NAMES = { cases: 'Sponsor precedents', pe: 'Private equity', national: 'US expansion', fin: 'Fundamentals', briefing: 'Narrated tour' };
