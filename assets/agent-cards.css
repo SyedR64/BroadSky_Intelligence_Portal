@@ -13,31 +13,35 @@
 /* floor chips and the drawing */
 .ca-fs-floors{margin-top:var(--sys-sp-1)}
 .ca-fs-svg{border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface);padding:var(--sys-sp-1)}
-.ca-fs{display:block;width:100%;height:auto;max-height:60dvh}
+/* The plan is drawn at the card's own width in CSS pixels (agent-cards.js sketchSVG): text and markers keep these sizes. */
+.ca-fs{display:block;width:100%;height:auto}
 .ca-fs-wall{fill:var(--sys-surface-2);stroke:var(--sys-ink-2);stroke-width:2}
-.ca-fs-wall-line{fill:none}
-.ca-fs-room{fill:none;stroke:var(--sys-line-2);stroke-dasharray:6 4}
-.ca-fs-room-t{fill:var(--sys-mute);font:500 13px var(--sys-mono);paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4}
-.ca-fs-street{fill:var(--sys-mute);font:500 14px var(--sys-mono);text-anchor:middle}
+.ca-fs-room{fill:none;stroke:var(--sys-line-2);stroke-width:1;stroke-dasharray:5 4}
+.ca-fs-room-t{fill:var(--sys-mute);font:500 var(--ca-fs-t,12px) var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4;stroke-linejoin:round}
+.ca-fs-note{fill:var(--sys-ink-2);font:500 var(--ca-fs-t,12px) var(--sys-mono);text-anchor:middle}
+.ca-fs-street{fill:var(--sys-mute);font:500 var(--ca-fs-t,12px) var(--sys-mono);text-anchor:middle}
 .ca-fs-arrow{fill:none;stroke:var(--sys-mute);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.ca-fs-run{fill:none;stroke:var(--sys-ink-2);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.ca-fs-run.k-gas{stroke-width:2}
-.ca-fs-run.k-drain{stroke-width:5}
-.ca-fs-run.is-likely{stroke-dasharray:8 6}
-.ca-fs-run-t{fill:var(--sys-ink-2);font:600 12px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4}
+.ca-fs-dim path{fill:none;stroke:var(--sys-ink-2);stroke-width:1}
+.ca-fs-dim-t{fill:var(--sys-ink-2);font:600 11px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:none}
+.ca-fs-north path{fill:none;stroke:var(--sys-ink-2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ca-fs-north-t{fill:var(--sys-ink-2);font:700 11px var(--sys-mono);text-anchor:middle;dominant-baseline:central}
+.ca-fs-run{fill:none;stroke:var(--sys-ink-2);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ca-fs-run.k-gas{stroke-width:1.75}
+.ca-fs-run.k-drain{stroke-width:4}
+.ca-fs-run.is-likely{stroke-dasharray:7 5}
+.ca-fs-riser{fill:var(--sys-surface);stroke:var(--sys-ink-2);stroke-width:1.75}
+.ca-fs-run-t{fill:var(--sys-ink-2);font:600 11px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4;stroke-linejoin:round}
 .ca-fs-m.is-record circle{fill:var(--co);stroke:var(--sys-surface);stroke-width:2}
 .ca-fs-m.is-record text{fill:var(--sys-on-accent)}
 .ca-fs-m.is-likely circle{fill:var(--sys-surface);stroke:var(--sys-warn-ink);stroke-width:2}
 .ca-fs-m.is-likely text{fill:var(--sys-warn-ink)}
-.ca-fs-m text{font:700 15px var(--sys-mono);text-anchor:middle;dominant-baseline:central}
-/* Phones: the drawing scales down to about 60%, so its text is set larger to stay at 11 px or more on screen */
-@media (max-width:560px){.ca-fs-room-t,.ca-fs-run-t,.ca-fs-street,.ca-fs-m text{font-size:18px}}
-.ca-fs-m circle.ca-fs-ring{fill:none;stroke:var(--co);stroke-width:3;stroke-dasharray:none}
-.ca-fs-m circle.ca-fs-halo{fill:none;stroke:var(--co);stroke-width:3;opacity:0;stroke-dasharray:none}
+.ca-fs-m text{font:700 11px var(--sys-mono);text-anchor:middle;dominant-baseline:central}
+.ca-fs-m circle.ca-fs-ring{fill:none;stroke:var(--co);stroke-width:2.5;stroke-dasharray:none}
+.ca-fs-m circle.ca-fs-halo{fill:none;stroke:var(--co);stroke-width:2.5;opacity:0;stroke-dasharray:none}
 .ca-fs-m.is-pulse .ca-fs-ring{animation:ca-pulse 1.2s ease-out 1}
 .ca-fs-m.is-pulse .ca-fs-halo{animation:ca-halo 1.2s ease-out 1}
-@keyframes ca-pulse{0%{stroke-width:9}100%{stroke-width:3}}
-@keyframes ca-halo{0%{opacity:1;stroke-width:9}100%{opacity:0;stroke-width:3}}
+@keyframes ca-pulse{0%{stroke-width:7}100%{stroke-width:2.5}}
+@keyframes ca-halo{0%{opacity:1;stroke-width:7}100%{opacity:0;stroke-width:2.5}}
 @media (prefers-reduced-motion:reduce){.ca-fs-m.is-pulse .ca-fs-ring{animation:none}.ca-fs-m.is-pulse .ca-fs-halo{animation:none;opacity:1}}
 
 /* legend */
@@ -80,10 +84,9 @@
 @media (max-width:420px){.ca-fields{grid-template-columns:minmax(0,1fr);gap:2px}.ca-fields dd{margin-bottom:var(--sys-sp-2)}}
 @media (pointer:coarse){.ca-sketch .sys-chip[data-ca],.ca-draft .sys-btn{min-height:44px}}
 
-/* live address: the real outline behind the plan (public record, solid) with the plan rectangle over it (layout likely, dashed) */
-.ca-fs-outline{fill:var(--sys-surface-2);stroke:var(--sys-ink);stroke-width:2.5;stroke-linejoin:round}
-.ca-fs.has-outline .ca-fs-wall{fill:none;stroke:var(--sys-mute);stroke-dasharray:8 6}
-.ca-fs.has-outline .ca-fs-wall-line{stroke-dasharray:8 6}
+/* live address: the real outline is the wall (public record, solid); rooms, lines and markers over it are likely (dashed) */
+.ca-fs-floor{fill:var(--sys-surface-2);stroke:none}
+.ca-fs-outline{fill:none;stroke:var(--sys-ink);stroke-width:2.5;stroke-linejoin:round}
 .ca-fs-m.is-public circle{fill:var(--sys-ink-2);stroke:var(--sys-surface);stroke-width:2}
 .ca-fs-m.is-public text{fill:var(--sys-surface)}
 .ca-eq-m.is-public{background:var(--sys-ink-2);color:var(--sys-surface)}
