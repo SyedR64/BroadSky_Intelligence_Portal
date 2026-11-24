@@ -4,7 +4,13 @@
    assets/frame.js) and is given the role in view, so it follows the "Viewing as" switch (assets/session.js).
    The frame takes the whole content area and the page scrolls inside it: one scroll. Same origin only. */
 import { Session } from '../assets/session.js?v=20261124170325';
-const BACKEND_OFF = (() => { try { return new URLSearchParams(location.search).get('backend') === 'off'; } catch { return false; } })();
+// the shell's own backend setting from its address: 'off', 'auto' or an http(s) address (assets/backend.js reads the same parameter)
+const BACKEND = (() => {
+  try {
+    const q = String(new URLSearchParams(location.search).get('backend') || '').trim();
+    return q === 'off' || q === 'auto' || /^https?:\/\/[^\s/]+(\/[^\s]*)?$/i.test(q) ? q : '';
+  } catch { return ''; }
+})();
 
 /** Draw `src` (a path from the site root, for example 'agent.html' or 'redesigns/cet/gridos.html') into ctx.el.
     opts.title is the frame's accessible name; opts.params are extra query parameters. Returns the unmount function. */
@@ -14,8 +20,8 @@ export function embedView(ctx, src, opts = {}) {
     const u = new URL(src, new URL('../', import.meta.url));
     u.searchParams.set('embed', '1');
     u.searchParams.set('role', role.id);
-    // the shell opened with ?backend=off: the page in the frame stays off the backend too (the override is not stored)
-    if (BACKEND_OFF) u.searchParams.set('backend', 'off');
+    // the page in the frame uses the shell's backend setting, whatever it is (the embedded page does not store it: assets/backend.js)
+    if (BACKEND) u.searchParams.set('backend', BACKEND);
     for (const [k, v] of Object.entries(opts.params || {})) if (v != null && v !== '') u.searchParams.set(k, v);
     if (opts.hash) u.hash = opts.hash;
     return u.href;

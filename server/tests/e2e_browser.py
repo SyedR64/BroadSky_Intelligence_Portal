@@ -238,7 +238,8 @@ def main():
                 pg = hctx.new_page()
                 deep = []
                 pg.on('response', lambda r: deep.append(r.url) if '/health?deep=1' in r.url else None)
-                goto(pg, f'{SITE}/app.html?backend={urllib.parse.quote(backend, safe=":/")}#/home/overview')
+                # the home overview docks the agent and its Ask opens the dock, so the floating panel is checked on another screen
+                goto(pg, f'{SITE}/app.html?backend={urllib.parse.quote(backend, safe=":/")}#/home/firm')
                 pg.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
                 pg.click('.ch-floating .ch-launch')
                 pg.wait_for_selector('.ch-head .ch-state', state='attached', timeout=15000)
@@ -289,7 +290,7 @@ def main():
                 return pg
 
             collect(SITE + '/assistant.html?backend=off', 'assistant').close()
-            pr = collect(SITE + '/app.html?backend=off#/home/overview', 'portal panel', launch=True)
+            pr = collect(SITE + '/app.html?backend=off#/home/firm', 'portal panel', launch=True)
             for q in pr.evaluate("async () => (await import('/assets/chat.js')).PERSONAS.portal.suggestions"):
                 prompts.setdefault(q, set()).add('portal list')
             route_js = """async qs => { const { Chat } = await import('/assets/chat.js'); return qs.map(q => { const on = Chat.route(q, { hosted: true }), off = Chat.route(q, { hosted: false }); return [q, `${on.to}:${on.intent || '-'}`, `${off.to}:${off.intent || '-'}`, on.why]; }); }"""
@@ -436,7 +437,7 @@ def main():
                 if stub:
                     pg.add_init_script("window.BSPSite = { lookup: t => { window.__lookups = (window.__lookups || []).concat([t]); return Promise.resolve(); } };")
                 pg.add_init_script("window.__maps = []; addEventListener('bsp:map', e => window.__maps.push(JSON.parse(JSON.stringify(e.detail))));")
-                goto(pg, f'{SITE}/app.html?backend={urllib.parse.quote(MAIN, safe=":/")}' + (f'&role={role}' if role else '') + '#/home/overview')
+                goto(pg, f'{SITE}/app.html?backend={urllib.parse.quote(MAIN, safe=":/")}' + (f'&role={role}' if role else '') + '#/fin/portfolio')   # the floating panel (any role); an address it is given opens the home
                 pg.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
                 return pg, posts
             wc = lambda t: len([w for w in t.split() if w])
@@ -793,7 +794,7 @@ def main():
 
             # 10h. Phone: the docked portal panel at 390px, hold to talk with a touch, no sideways scroll, in both themes.
             for theme in ('light', 'dark'):
-                pc2, pp2 = voice_page(f'{SITE}/app.html?backend={urllib.parse.quote(MAIN, safe=":/")}#/home/overview', viewport={'width': 390, 'height': 844}, has_touch=True, is_mobile=True, color_scheme=theme)
+                pc2, pp2 = voice_page(f'{SITE}/app.html?backend={urllib.parse.quote(MAIN, safe=":/")}#/home/firm', viewport={'width': 390, 'height': 844}, has_touch=True, is_mobile=True, color_scheme=theme)
                 pp2.evaluate("t => { try { localStorage.setItem('bsp-theme', t); } catch {} document.documentElement.dataset.sysTheme = t; }", theme)
                 pp2.wait_for_selector('.ch-floating .ch-launch', timeout=30000)
                 pp2.click('.ch-floating .ch-launch')

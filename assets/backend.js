@@ -41,10 +41,12 @@ const pagePath = () => { try { return (location.pathname + location.hash).slice(
 
 function override() {
   try {
-    const q = new URLSearchParams(location.search).get('backend');
+    const sp = new URLSearchParams(location.search), q = sp.get('backend');
+    // a page embedded in the shell is handed the shell's setting for this load only: the shell alone keeps or clears it
+    const keep = sp.get('embed') !== '1';
     if (q === 'off') return 'off';
-    if (q && validEndpoint(q)) { try { localStorage.setItem(OVERRIDE_LS, trimSlash(q)); } catch { /* private mode */ } return trimSlash(q); }
-    if (q === 'auto') { try { localStorage.removeItem(OVERRIDE_LS); } catch { /* private mode */ } return null; }
+    if (q && validEndpoint(q)) { if (keep) try { localStorage.setItem(OVERRIDE_LS, trimSlash(q)); } catch { /* private mode */ } return trimSlash(q); }
+    if (q === 'auto') { if (keep) try { localStorage.removeItem(OVERRIDE_LS); } catch { /* private mode */ } return null; }
   } catch { /* no location (worker / test) */ }
   try { const v = localStorage.getItem(OVERRIDE_LS); return v && validEndpoint(v) ? trimSlash(v) : null; } catch { return null; }
 }
