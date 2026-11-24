@@ -323,12 +323,12 @@ SKETCH_GEOMETRY_JS = """async (evs) => {
       const vb = svg.viewBox.baseVal;
       const marks = [...svg.querySelectorAll('.ca-fs-m')].map(g => { const c = g.querySelector('circle:not(.ca-fs-ring):not(.ca-fs-halo)');
         return { t: g.querySelector('text').textContent, x: +c.getAttribute('cx'), y: +c.getAttribute('cy'), ring: !!g.querySelector('.ca-fs-ring') }; });
-      const reach = k => (k.ring ? 28.5 : 21);
+      const reach = k => (k.ring ? 19.25 : 15);   // focus ring r 18 + half its 2.5 stroke; marker r 14 + half its 2 stroke (CSS px since the plan is drawn at the card's width)
       for (const t of svg.querySelectorAll('.ca-fs-room-t')) { const b = t.getBBox();
         for (const k of marks) { const d = Math.hypot(Math.max(b.x - k.x, 0, k.x - (b.x + b.width)), Math.max(b.y - k.y, 0, k.y - (b.y + b.height))); if (d < reach(k)) r.labelOver.push(`${k.t} on ${t.textContent}`); } }
       for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) { const a = marks[i], b = marks[j];
         if ((a.ring || b.ring) && Math.hypot(a.x - b.x, a.y - b.y) < reach(a) + reach(b)) r.ringOver.push(`${a.t}/${b.t}`); }
-      for (const k of marks.filter(k => k.ring)) if (k.x - 28.5 < vb.x || k.x + 28.5 > vb.x + vb.width || k.y - 28.5 < vb.y || k.y + 28.5 > vb.y + vb.height) r.clipped.push(k.t);
+      for (const k of marks.filter(k => k.ring)) if (k.x - reach(k) < vb.x || k.x + reach(k) > vb.x + vb.width || k.y - reach(k) < vb.y || k.y + reach(k) > vb.y + vb.height) r.clipped.push(k.t);
       const arrow = svg.querySelector('.ca-fs-arrow'), st = svg.querySelector('.ca-fs-street');
       if (arrow && st) { const tip = +(arrow.getAttribute('d').match(/V(-?[\\d.]+)/) || [])[1];   // the shaft ends at the tip
         r.arrowGap.push(+st.getAttribute('y') - tip - parseFloat(getComputedStyle(st).fontSize) * 0.73); }   // baseline to cap top: 0.73 em
@@ -638,8 +638,8 @@ def live_card_checks(browser, site):
         r = page.evaluate("""() => { const a = document.querySelector('#ca-t article.ca-sketch'), svg = a.querySelector('.ca-fs-svg:not([hidden]) svg');
           const poly = svg.querySelector('polygon.ca-fs-outline'), d = a.querySelector('details.ca-facts');
           const P = poly ? poly.getAttribute('points').trim().split(/\\s+/).map(q => q.split(',').map(Number)) : [], rect = svg.querySelector('rect.ca-fs-wall');
-          const fit = P.length ? [(Math.max(...P.map(q => q[0])) - Math.min(...P.map(q => q[0]))) / Number(rect.getAttribute('width')), (Math.max(...P.map(q => q[1])) - Math.min(...P.map(q => q[1]))) / Number(rect.getAttribute('height'))] : [];
-          return { outline: P.length, fit, has: svg.classList.contains('has-outline'),
+          const ext = P.length ? [Math.max(...P.map(q => q[0])) - Math.min(...P.map(q => q[0])), Math.max(...P.map(q => q[1])) - Math.min(...P.map(q => q[1]))] : [];
+          return { outline: P.length, ext, rect: !!rect, has: svg.classList.contains('has-outline'),
                    place: a.querySelector('.ca-fs-place')?.textContent || '', precision: a.querySelector('.ca-fs-place')?.dataset.precision,
                    title: a.querySelector('.ca-fs-title').textContent, dated: a.querySelector('.ca-fs-outline-t')?.textContent || '',
                    key: [...a.querySelectorAll('.ca-legend [data-basis]')].map(s => s.dataset.basis + ':' + s.textContent),
@@ -648,7 +648,9 @@ def live_card_checks(browser, site):
                    map: a.querySelectorAll('.ca-map-btn').length }; }""")
         ring = len(live['building']['footprint']['ring_m']) - 1   # recorded closed; drawn open
         check(f'{label}: the real outline is drawn behind the plan', r['outline'] == ring and r['has'], f"{r['outline']} points vs {ring}")
-        check(f'{label}: the outline sits square on the plan rectangle (extents within 5%)', len(r['fit']) == 2 and all(abs(x - 1) < 0.05 for x in r['fit']), json.dumps(r['fit']))
+        f0 = live['floors'][0]
+        ratio = (r['ext'][0] / r['ext'][1]) / (f0['w'] / f0['h']) if len(r['ext']) == 2 and r['ext'][1] else 0
+        check(f'{label}: the outline is the wall, square on the plan (no bounding rectangle; proportions within 5%)', not r['rect'] and abs(ratio - 1) < 0.05, f"rect {r['rect']}, ratio {ratio:.3f}")
         check(f'{label}: place chip with the typed address and its precision, title is the typed address',
               live['address'] in r['place'] and 'Parcel match' in r['place'] and r['precision'] == 'parcel' and r['title'] == live['address'], r['place'])
         check(f'{label}: outline date shown', r['dated'].startswith('Outline from imagery dated Aug 2024'), r['dated'])
@@ -677,6 +679,135 @@ def live_card_checks(browser, site):
         check(f'{label}: no sideways scroll, nothing outside the site, no console errors', sw == w and r['wide'] <= 1 and not outside and not con.errors,
               json.dumps({'sw': sw, 'wide': r['wide'], 'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
+
+
+# ── the plan drawing rules (FLOORPLAN_SPEC R1, R2, R3, R4, R6, R7): cards built to the new card contract ───────────────────
+def _plan_card(scale=1.0, large=False):
+    """An L-shaped two-storey house (or, large=True, the same outline as a building with no rooms) in the new card contract:
+    a real outline (metres, north up, street to the south), rooms with short names, square runs with risers. `scale` grows or
+    shrinks the whole building so the glyph checks can see that text and markers keep their size."""
+    k = scale
+    ft = 0.3048
+    ring = [[0, 0], [36.3 * ft * k, 0], [36.3 * ft * k, 9.9 * ft * k], [56 * ft * k, 9.9 * ft * k], [56 * ft * k, 33 * ft * k], [0, 33 * ft * k]]
+    room = lambda lab, sh, x0, y0, x1, y1: {'x': x0 * k, 'y': y0 * k, 'w': (x1 - x0) * k, 'h': (y1 - y0) * k, 'label': lab, 'short': sh, 'kind': 'room', 'floor': 'first', 'basis': 'likely'}  # noqa: E731
+    item = lambda s, x, y: {'kind': 'fixture_shutoffs', 'label': 'Fixture shutoffs', 'short': s, 'basis': 'likely', 'focus': True, 'note': 'Under each sink', 'x': x * k, 'y': y * k}  # noqa: E731
+    pts = lambda *q: [[x * k, y * k] for x, y in q]  # noqa: E731
+    rooms = [room('Kitchen', 'Kitchen', 0, 0, 16, 13), room('Dining', 'Dining', 16, 0, 28, 13), room('Family room', 'Family', 28, 0, 56, 13),
+             room('Half bath', 'Half ba', 0, 13, 6, 23.1), room('Stairs', 'Stairs', 6, 13, 16, 23.1), room('Hall', 'Hall', 16, 13, 36.3, 23.1),
+             room('Garage', 'Garage', 36.3, 13, 56, 23.1), room('Living room', 'Living', 0, 23.1, 22, 33), room('Den', 'Den', 22, 23.1, 36.3, 33)]
+    runs = [{'kind': 'water', 'label': 'Water', 'basis': 'likely', 'points': pts((8, 1.6), (7.5, 1.6), (7.5, 12), (3, 12), (3, 21.6)), 'risers': [[7.5 * k, 12 * k, 'down']]},
+            {'kind': 'drain', 'label': 'Drain', 'basis': 'likely', 'points': pts((9.5, 1.6), (9.5, 4), (4.5, 4), (4.5, 12.6), (1.5, 12.6), (1.5, 20)), 'risers': [[4.5 * k, 12.6 * k, 'down']]}]
+    floor = {'id': 'first', 'name': 'First floor', 'w': 56 * k, 'h': 33 * k, 'rooms': rooms, 'items': [item('FX', 8, 1.6), item('FX', 3, 21.6)], 'runs': runs, 'wet_walls': []}
+    card = {'type': 'card', 'kind': 'floor_sketch', 'id': f'fs-plan-{k}-{large}', 'address': '1 Plan Test Rd', 'basis': 'likely', 'front': 'bottom', 'example': False,
+            'focus': ['fixture_shutoffs'], 'floors': [floor], 'outside': [], 'layout': {'from': 'outline', 'basis': 'likely'},
+            'place': {'lat': 40.05, 'lon': -76.3, 'precision': 'parcel', 'label': '1 Plan Test Rd'},
+            'building': {'kind': 'house', 'frame': {'origin': {'lat': 40.05, 'lon': -76.3}, 'units': 'm'}, 'footprint': {'ring_m': ring, 'basis': 'public'},
+                         'front': {'bearing_deg': 180, 'basis': 'public'}}}
+    if large:
+        card['floors'] = [{'id': 'first', 'name': 'Ground floor', 'w': 56 * k, 'h': 33 * k, 'rooms': [], 'items': [], 'runs': [], 'wet_walls': []}]
+        card['building']['kind'] = 'large'
+        card['layout'] = {'from': 'none', 'basis': 'likely', 'note': 'Interior layout is not on public record.'}
+        card['outside'] = [{'kind': 'main_water', 'label': 'Water service', 'short': 'W', 'side': 'front', 'at': 0.3, 'floor': 'first', 'basis': 'likely', 'focus': True,
+                            'note': 'Building shutoff in the mechanical room; ask the site contact'}]
+        card['focus'] = ['main_water']
+    return card
+
+
+PLAN_JS = """async (card) => {
+  const m = await import('./assets/agent-cards.js');
+  document.getElementById('ca-plan')?.remove();
+  const host = document.createElement('div'); host.id = 'ca-plan'; document.querySelector('.ca-main').prepend(host);
+  const a = m.renderCard(card, { widget: { root: host } }); host.append(a);
+  await new Promise(r => setTimeout(r, 400));
+  return true;
+}"""
+PLAN_MEASURE = """() => {
+  const a = document.querySelector('#ca-plan article.ca-sketch'), box = a.querySelector('.ca-fs-svg:not([hidden])'), svg = box.querySelector('svg.ca-fs');
+  const k = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+  const R = e => { const r = e.getBoundingClientRect(); return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom }; };
+  const fonts = [...svg.querySelectorAll('text')].map(t => parseFloat(getComputedStyle(t).fontSize) * k);
+  const marks = [...svg.querySelectorAll('g.ca-fs-m')].map(g => [...g.querySelectorAll('circle')].map(c => +c.getAttribute('r') * 2 * k));
+  const centre = [...svg.querySelectorAll('g.ca-fs-m')].map(g => { const c = g.querySelector('circle:not(.ca-fs-ring):not(.ca-fs-halo)'), r = c.getBoundingClientRect(), ring = !!g.querySelector('.ca-fs-ring');
+    return { x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2, reach: (ring ? 19.25 : 15) * k }; });
+  const names = [...svg.querySelectorAll('.ca-fs-room-t')].map(t => ({ t: t.textContent, ...R(t) }));
+  const rooms = [...svg.querySelectorAll('rect.ca-fs-room')].map(R);
+  const hit = (p, q) => p.x0 < q.x1 - 0.5 && q.x0 < p.x1 - 0.5 && p.y0 < q.y1 - 0.5 && q.y0 < p.y1 - 0.5;
+  const nameOverlaps = [], nameOnMarker = [], nameOutside = [];
+  names.forEach((n, i) => {
+    names.slice(i + 1).forEach(o => { if (hit(n, o)) nameOverlaps.push(n.t + ' / ' + o.t); });
+    centre.forEach(c => { if (Math.hypot(Math.max(n.x0 - c.x, 0, c.x - n.x1), Math.max(n.y0 - c.y, 0, c.y - n.y1)) < c.reach) nameOnMarker.push(n.t); });
+    if (!rooms.some(r => n.x0 >= r.x0 - 1 && n.x1 <= r.x1 + 1 && n.y0 >= r.y0 - 1 && n.y1 <= r.y1 + 1)) nameOutside.push(n.t);
+  });
+  const dash = e => e ? getComputedStyle(e).strokeDasharray : null;
+  const runs = [...svg.querySelectorAll('.ca-fs-run:not(.ca-fs-link)')];
+  const diag = runs.filter(p => { const q = p.getAttribute('points').trim().split(/\\s+/).map(v => v.split(',').map(Number)); return q.some((v, i) => i && Math.abs(v[0] - q[i - 1][0]) > 0.5 && Math.abs(v[1] - q[i - 1][1]) > 0.5); }).length;
+  return { k, width: svg.viewBox.baseVal.width, inner: box.clientWidth - parseFloat(getComputedStyle(box).paddingLeft) - parseFloat(getComputedStyle(box).paddingRight),
+    fonts: [Math.min(...fonts), Math.max(...fonts)], marks: [Math.min(...marks.flat()), Math.max(...marks.flat())],
+    rect: svg.querySelectorAll('rect.ca-fs-wall').length, outline: dash(svg.querySelector('polygon.ca-fs-outline')), roomDash: dash(svg.querySelector('rect.ca-fs-room')),
+    runDash: runs.map(dash), rounded: runs.every(p => /Q/.test(p.getAttribute('d'))), diag, risers: svg.querySelectorAll('.ca-fs-riser').length,
+    riserKey: !!a.querySelector('.ca-legend [data-key="riser"]'), names: names.map(n => n.t), nameOverlaps, nameOnMarker, nameOutside,
+    dims: [...svg.querySelectorAll('.ca-fs-dim-t')].map(t => t.textContent), north: svg.querySelectorAll('.ca-fs-north').length,
+    street: svg.querySelector('.ca-fs-street')?.textContent || '', note: [...svg.querySelectorAll('.ca-fs-note')].map(t => t.textContent).join(' '),
+    roomsN: svg.querySelectorAll('.ca-fs-room').length, runsN: runs.length, text: a.innerText + ' ' + svg.getAttribute('aria-label') };
+}"""
+
+
+def plan_rules_checks(browser, site):
+    """R1 text 11 to 13 px and markers 26 to 36 px on screen at every card width and building size, redrawn when the card
+    resizes; R2 the outline is the wall (solid, no bounding rectangle), likely things dashed; R3 runs square with rounded
+    corners and risers drawn; R4 names fit their rooms (full or short), never overlap each other or a marker; R6 a large
+    building has no rooms or lines, its note, and no house words; R7 overall feet on two sides, a north arrow, the street side."""
+    ctx, page, outside = _offline_ctx(browser, site, 1280, 900, False)
+    con = Console(page, site)
+    page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+    wait_ready(page)
+    labels = {r['label'] for r in _plan_card()['floors'][0]['rooms']} | {r['short'] for r in _plan_card()['floors'][0]['rooms']}
+    for w in (1280, 768, 390, 360):
+        page.set_viewport_size({'width': w, 'height': 900})
+        for scale in (0.5, 1.0, 6.0):
+            page.evaluate(PLAN_JS, _plan_card(scale))
+            r = page.evaluate(PLAN_MEASURE)
+            tag = f'plan {w} px, building x{scale}'
+            check(f'{tag}: R1 drawn at the card width, text 11-13 px, markers 26-36 px', abs(r['width'] - r['inner']) <= 1 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1
+                  and 25.9 <= r['marks'][0] and r['marks'][1] <= 36.1, json.dumps({k: r[k] for k in ('width', 'inner', 'fonts', 'marks')}))
+            if scale != 1.0:
+                continue
+            check(f'{tag}: R2 the outline is the wall (solid, no bounding rectangle), rooms and likely lines dashed',
+                  r['rect'] == 0 and r['outline'] == 'none' and r['roomDash'] not in (None, 'none') and all(d not in (None, 'none') for d in r['runDash']),
+                  json.dumps({k: r[k] for k in ('rect', 'outline', 'roomDash', 'runDash')}))
+            check(f'{tag}: R3 runs square with rounded corners, risers drawn and in the key', r['diag'] == 0 and r['rounded'] and r['risers'] == 2 and r['riserKey'],
+                  json.dumps({k: r[k] for k in ('diag', 'rounded', 'risers', 'riserKey')}))
+            check(f'{tag}: R4 names fit their rooms (full or short), never overlap each other or a marker',
+                  r['names'] and set(r['names']) <= labels and not r['nameOverlaps'] and not r['nameOnMarker'] and not r['nameOutside'],
+                  json.dumps({k: r[k] for k in ('names', 'nameOverlaps', 'nameOnMarker', 'nameOutside')}))
+            check(f'{tag}: R7 overall feet on two sides, a north arrow, the street side', sorted(r['dims']) == ['33 ft', '56 ft'] and r['north'] == 1 and r['street'] == 'Street side',
+                  json.dumps({k: r[k] for k in ('dims', 'north', 'street')}))
+        page.evaluate(PLAN_JS, _plan_card(1.0, large=True))
+        r = page.evaluate(PLAN_MEASURE)
+        tag = f'plan {w} px, large building'
+        bad = re.findall(r'\b(house|home|garage|living|bedroom|kitchen)\b', r['text'], re.I)
+        check(f'{tag}: R6 no rooms, no lines, its note, sizes and street side, no house words',
+              r['roomsN'] == 0 and r['runsN'] == 0 and r['note'] == 'Interior layout is not on public record.' and sorted(r['dims']) == ['33 ft', '56 ft']
+              and r['street'] == 'Street side' and not bad and r['rect'] == 0 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1, json.dumps({k: r[k] for k in ('roomsN', 'runsN', 'note', 'dims', 'fonts')}) + ' ' + str(bad))
+    # one card, drawn at 1280, then the window narrows: the plan is redrawn at the new width and its text keeps its size
+    page.set_viewport_size({'width': 1280, 'height': 900})
+    page.evaluate(PLAN_JS, _plan_card(1.0))
+    before = page.evaluate(PLAN_MEASURE)
+    page.set_viewport_size({'width': 390, 'height': 900})
+    page.wait_for_timeout(500)
+    after = page.evaluate(PLAN_MEASURE)
+    page.wait_for_timeout(800)
+    again = page.evaluate("() => document.querySelector('#ca-plan svg.ca-fs').viewBox.baseVal.width")
+    check('plan: R1 redrawn when the card narrows, text and markers keep their size, no redraw loop',
+          before['width'] > after['width'] and abs(after['width'] - after['inner']) <= 1 and again == after['width'] and 10.9 <= after['fonts'][0] and after['fonts'][1] <= 13.1
+          and 25.9 <= after['marks'][0], json.dumps({'before': before['width'], 'after': after['width'], 'inner': after['inner'], 'again': again, 'fonts': after['fonts']}))
+    # string output without a DOM: the module's sketchSVG takes a width and returns an SVG at that width
+    sv = page.evaluate("""async (card) => { const m = await import('./assets/agent-cards.js'); const f = card.floors[0];
+      const o = m.outlinePoints(card, f.w, f.h, 1); const s = m.sketchSVG(f, [], { width: 500, outline: o });
+      return { ok: typeof s === 'string' && s.startsWith('<svg') && /viewBox="0 0 500 /.test(s) && /data-outline/.test(s), north: o && o.north }; }""", _plan_card())
+    check('plan: sketchSVG returns the SVG string at the width asked, with the outline and its north', sv['ok'] and sv['north'] and abs(sv['north'][1] + 1) < 1e-6, json.dumps(sv))
+    check('plan: no console errors, nothing outside the site', not con.errors and not outside, json.dumps({'errors': con.errors[:2], 'outside': outside[:2]}))
+    ctx.close()
 
 
 def view_card_checks(browser, site):
@@ -859,6 +990,7 @@ def main():
             try:
                 signature_checks(browser, site, catalog)
                 live_card_checks(browser, site)
+                plan_rules_checks(browser, site)
                 view_card_checks(browser, site)
                 map_checks(browser, site)
                 if not args.only_wave3:
