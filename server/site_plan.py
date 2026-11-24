@@ -91,6 +91,8 @@ def building_kind(live, footprint_m2, facts=None):
         if not f:
             continue
         v = str(f['v']).strip()
+        if re.search(r'\bnon[\s-]?exempt\b|\bnot exempt\b', v, re.I):    # "Non-exempt" says the opposite
+            continue
         if (k == 'facility' or (k == 'tax_exempt' and v.lower() in ('yes', 'y', 'true', '1')) or NONRES_CODES.search(v)
                 or NONRES_WORDS.search(v) or OFFICE_USE.search(v)):
             return {'kind': 'large', 'from': f"{str(f.get('label') or k).lower()}: {v[:40]}"}

@@ -473,6 +473,7 @@ def test_building_kind_class_codes_and_office_words():
     assert site_plan.building_kind({'facts': [fact('land_use', 'Office')]}, m2)['kind'] == 'large'
     assert site_plan.building_kind({'facts': [fact('land_use', 'Single family w/ home office')]}, m2)['kind'] == 'house'
     assert site_plan.building_kind({'facts': [fact('property_class', '2 (residential)')]}, m2)['kind'] == 'house'
+    assert site_plan.building_kind({'facts': [fact('tax_exempt', 'Non-exempt')]}, m2)['kind'] == 'house'
 
 
 def test_large_card_drops_house_facts_and_says_the_note_once(env):
