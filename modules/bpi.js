@@ -1,10 +1,10 @@
-import * as Copy from './copy.js?v=20261124123408';
+import * as Copy from './copy.js?v=20261124170325';
 /* Bully Pulpit International — strategic communications & public affairs (BSP majority, Apr 2023).
    Views: overview · opportunities · filings (comparables live on Fundamentals › Public comparables). The DC home-sales view was dropped (Oct 2026 review: not decision-grade for a public-affairs agency).
    Helpers were originally duplicated from fh.js (no cross-module imports); this file no longer mirrors fh.js line for line. */
-import { renderFilings, opportunityCard } from '../assets/components.js?v=20261124123408';
-import { companyLinks } from './company-links.js?v=20261124123408';
-import { embedView } from './embed.js?v=20261124123408';
+import { renderFilings, opportunityCard } from '../assets/components.js?v=20261124170325';
+import { companyLinks } from './company-links.js?v=20261124170325';
+import { embedView } from './embed.js?v=20261124170325';
 
 /* ── module config (the only block that differs from fh.js) ──────────────── */
 const CFG = {
