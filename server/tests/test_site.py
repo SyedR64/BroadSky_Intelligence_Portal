@@ -494,7 +494,7 @@ def rec_facts(sqft=None, stories=None, k='floor_area_sqft'):
 
 def choose(cands, facts=(), building=None):
     area, st = SITE.record_size(list(facts))
-    return SITE.choose_building(cands, area, st, building)
+    return SITE.choose_building(cands, area, st, building, house=SITE.reads_as_house(facts))
 
 
 def test_pick_house_over_a_detached_garage_or_a_shed():
@@ -529,8 +529,43 @@ def test_pick_town_hall_numbers_from_the_fixture():
 
 def test_pick_with_no_stories_recorded_reads_one_story():
     assert SITE.record_size(rec_facts(2000)) == (2000, 1)
+    barn, house = bld(570, 1), bld(230, 2)
+    ch = choose([barn, house], rec_facts(2000))   # 2,000 sq ft on one story = 185.8 m2: the 230 m2 house fits, the barn is over 3 x
+    assert ch['pick'] is house and ch['why'] == 'record'
+    ch = choose([barn, house], rec_facts(2000, 2))   # read as two stories (92.9 m2 a story) the house is 2.5 x and still the pick
+    assert ch['pick'] is house and ch['why'] == 'record'
+
+
+def test_pick_keeps_a_house_with_its_garage_over_a_detached_shop_or_barn():
+    # a one-story ranch outline with its attached garage and porch runs 2 to 2.5 x the recorded living area: a 150 to 220 m2
+    # shop or pole barn beside it fits the record better, but the house is kept (the facts read as a house: 3 x is needed)
+    cases = ((240, 155, 1100, 1), (230, 160, 1000, 1), (200, 160, 1400, 1.5), (186, 160, 1600, 2), (250, 220, 1200, 1),
+             (250, 180, 2400, 2), (180, 151, 900, 1), (250, 151, 1100, None))
+    for house_m2, shop_m2, sqft, st in cases:
+        house, shop = bld(house_m2, 1), bld(shop_m2, 2)
+        ch = choose([shop, house], rec_facts(sqft, st, 'living_area_sqft'))
+        assert ch['pick'] is house and ch['why'] == 'largest', (house_m2, shop_m2, sqft, st)
+    # the same 2.35 x on a lot whose facts say it is not a house (a public building) is doubted at 2 x
+    house, shop = bld(240, 1), bld(155, 2)
+    ch = choose([shop, house], rec_facts(1100, 1) + [{'k': 'facility', 'v': 'ADMIN BUILDING'}])
+    assert ch['pick'] is shop and ch['why'] == 'record'
+
+
+def test_pick_does_not_switch_to_an_outline_that_fits_the_record_badly_too():
+    barns, house = [bld(900, 1), bld(600, 2), bld(450, 3)], bld(180, 4)   # the house is under 0.4 of the largest: not sizeable
+    ch = choose(barns + [house], rec_facts(2400, 2))                     # 111.5 m2 a story: the best sizeable one is 4 x over
+    assert ch['pick'] is barns[0] and ch['why'] == 'largest'
+
+
+def test_record_size_skips_an_absurd_number_and_reads_floor_area_first():
+    living_bad = [{'k': 'living_area_sqft', 'v': 50}, {'k': 'stories', 'v': 2}, {'k': 'floor_area_sqft', 'v': 2000}]
+    assert SITE.record_size(living_bad) == (2000, 2)
+    floor_bad = [{'k': 'floor_area_sqft', 'v': 9_999_999}, {'k': 'living_area_sqft', 'v': 1800}]
+    assert SITE.record_size(floor_bad) == (1800, 1)
+    both = [{'k': 'living_area_sqft', 'v': 1800}, {'k': 'floor_area_sqft', 'v': 2000}]     # the order site_plan.building_kind reads
+    assert SITE.record_size(both) == (2000, 1)
     barn, house = bld(400, 1), bld(170, 2)
-    ch = choose([barn, house], rec_facts(2000))   # 2,000 sq ft on one story = 185.8 m2: the 170 m2 house fits, the barn is over 2 x
+    ch = choose([barn, house], living_bad)
     assert ch['pick'] is house and ch['why'] == 'record'
 
 
@@ -547,6 +582,18 @@ def test_pick_equal_areas_is_deterministic():
     for order in ([a, b, c], [c, b, a], [b, a, c]):
         ch = choose(order)
         assert ch['pick'] is b and ch['sizeable'] == [b, c, a]
+    # no build_id: the rounded centre decides, whatever order the layer returns them in
+    x = {'area_m2': 200, 'build_id': None, 'centroid': [-74.2, 39.95]}
+    y = {'area_m2': 200, 'build_id': None, 'centroid': [-74.1, 39.95]}
+    assert {id(choose(o)['pick']) for o in ([x, y], [y, x])} == {id(x)}
+
+
+def test_pick_survives_a_text_area_and_an_outline_with_no_centre():
+    a, b = {'area_m2': '300', 'build_id': 1}, bld(200, 2)
+    assert choose([b, a])['pick'] is a
+    lot = ring(0, 0, 120, 80)
+    good = outline(0, 0, 15, 12, 1)
+    assert SITE._primary_building([{'ring_ll': good['ring_ll'], 'area_m2': 500}, good], lot, None)[0] is good
 
 
 def test_pick_the_persons_choice_and_an_out_of_range_one():
@@ -630,6 +677,23 @@ def test_nj_full_building_one_is_the_persons_pick(env):
     assert [o.get('kind') for o in b['footprint']['outbuildings']] == ['building', None]
     again = card_of(SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, []))   # the default is cached apart from the pick
     assert again['building']['lot']['why'] == 'record' and again['building']['footprint']['area_m2'] == pytest.approx(2092.6, abs=5)
+
+
+def test_a_building_pick_makes_no_new_public_lookup(env):
+    fx = load('nj_full')
+    rp = env(fx['calls'])
+    first = SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, [])
+    n = len(rp.seen)
+    assert n > 0
+    for k in (1, 2, 1, 5, 8):                                    # each press, and out-of-range picks, re-pick from the cached outlines
+        SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, [], building=k)
+    assert len(rp.seen) == n
+    two = card_of(SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, [], building=1))['building']
+    assert two['lot']['why'] == 'chosen' and two['footprint']['area_m2'] == pytest.approx(3447.6, abs=5)
+    five = card_of(SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, [], building=5))['building']
+    assert five['lot']['why'] == 'record'                          # out of range: the default answer
+    assert card_of(SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, []))['building']['lot']['why'] == 'record'
+    assert card_of(first)['building']['lot']['why'] == 'record'
 
 
 def test_building_reaches_the_lookup_and_bad_values_do_not(env, monkeypatch):

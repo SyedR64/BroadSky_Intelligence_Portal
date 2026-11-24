@@ -205,54 +205,75 @@ SIZEABLE_M2 = 150.0          # a building on the lot at least this big (and 0.4 
 SIZEABLE_SHARE = 0.4         # below it is a detached garage or a shed, which never competes with a house
 SIZEABLE_MAX = 6
 RECORD_SQFT = (200, 2_000_000)   # a parsed floor area outside this is ignored
-RECORD_OVER = 2.0            # the largest outline is doubted only when it is more than this times the recorded area per story
+RECORD_OVER = 2.0            # the largest outline is doubted only when it is more than this times the recorded area per story ...
+RECORD_OVER_HOUSE = 3.0      # ... or this many times when the facts read as a house (a ranch with its garage and porch runs 2.5 x)
+RECORD_FIT = 3.5             # and the outline taken instead must itself be within this factor of the recorded area per story
 
 
 def record_size(facts):
-    """(recorded floor area in sq ft, stories) from the public facts, for the building pick. The area is None when no source
-    states one or the number is absurd; stories is 1 when none is recorded."""
+    """(recorded floor area in sq ft, stories) from the public facts, for the building pick. The floor area is read in the same
+    order as site_plan.building_kind (floor_area_sqft, then living_area_sqft); a number outside RECORD_SQFT is skipped and the next
+    key is tried. The area is None when no source states a sane one; stories is 1 when none is recorded."""
     area = None
-    for k in ('living_area_sqft', 'floor_area_sqft'):
+    for k in ('floor_area_sqft', 'living_area_sqft'):
         f = next((f for f in facts or [] if isinstance(f, dict) and f.get('k') == k and f.get('v') not in (None, '')), None)
         a = site_plan._num((f or {}).get('v'))
-        if a is not None:
-            area = a if RECORD_SQFT[0] <= a <= RECORD_SQFT[1] else None
+        if a is not None and RECORD_SQFT[0] <= a <= RECORD_SQFT[1]:
+            area = a
             break
     f = next((f for f in facts or [] if isinstance(f, dict) and f.get('k') == 'stories'), None)
     n = site_plan._num((f or {}).get('v'))
     return area, (n if n and 1 <= n <= 200 else 1)
 
 
+def reads_as_house(facts):
+    """True when the facts alone (no outline) read as a house: no large floor area, no 4 stories, no non-residential fact."""
+    return site_plan.building_kind(None, 0, list(facts or []))['kind'] == 'house'
+
+
+def _area(b):
+    a = site_plan._num((b or {}).get('area_m2'))
+    return a if a is not None and a > 0 else 0.0
+
+
 def _rank_key(b):
+    """Largest first; equal areas by build_id, then by the rounded centre, so the order never depends on the layer's order."""
     bid = b.get('build_id')
-    return (-(b.get('area_m2') or 0), (0, bid, '') if isinstance(bid, (int, float)) else (1, 0, str(bid or '')))
+    c = b.get('centroid') or ()
+    try:
+        cxy = tuple(round(float(v), 7) for v in c[:2])
+    except (TypeError, ValueError):
+        cxy = ()
+    return (-_area(b), (0, bid, '') if isinstance(bid, (int, float)) and not isinstance(bid, bool) else (1, 0, str(bid or '')), cxy)
 
 
-def choose_building(cands, area_sqft=None, stories=None, building=None, nearer=None):
+def choose_building(cands, area_sqft=None, stories=None, building=None, nearer=None, house=True):
     """Which of the candidate outlines on one lot is drawn (candidates: centre inside the lot, not flagged outbuilding).
 
-    Sizeable = at least 150 m2 and 0.4 of the largest, at most 6, largest first (ties by build_id). The default is the largest.
-    It gives way only when the record states a floor area, the largest is more than 2 x the recorded area per story and another
-    sizeable outline is closer to it (in log terms): then the sizeable outline that fits best. building (1-based rank in the
-    sizeable list) is the person's own choice and wins when it is in range. nearer(b) -> metres to the street point is only for
-    the evaluation of a variant (scratch eval_rule.py); the shipped rule passes None.
+    Sizeable = at least 150 m2 and 0.4 of the largest, at most 6, largest first (ties by build_id, then centre). The default is
+    the largest. It gives way only when the record states a floor area, the largest is more than 2 x the recorded area per story
+    (3 x when the facts read as a house: house=True), and another sizeable outline is closer to it in log terms and within 3.5 x
+    of it: then the sizeable outline that fits best. building (1-based rank in the sizeable list) is the person's own choice and
+    wins when it is in range. nearer(b) -> metres to the street point is only for the evaluation of a variant (scratch
+    eval_rule.py); the shipped rule passes None.
 
     Returns {'pick', 'why': 'only' | 'largest' | 'record' | 'chosen', 'sizeable': [outlines], 'shown': rank or None}."""
     cs = sorted((b for b in cands or [] if b), key=_rank_key)
     if not cs:
         return {'pick': None, 'why': None, 'sizeable': [], 'shown': None}
     big = cs[0]
-    top = big.get('area_m2') or 0
-    size = [b for b in cs if (b.get('area_m2') or 0) >= SIZEABLE_M2 and (b.get('area_m2') or 0) >= SIZEABLE_SHARE * top][:SIZEABLE_MAX]
+    top = _area(big)
+    size = [b for b in cs if _area(b) >= SIZEABLE_M2 and _area(b) >= SIZEABLE_SHARE * top][:SIZEABLE_MAX]
     pick, why = big, ('only' if len(cs) == 1 else 'largest')
     if isinstance(building, int) and not isinstance(building, bool) and 1 <= building <= len(size):
         pick, why = size[building - 1], 'chosen'
     elif area_sqft and RECORD_SQFT[0] <= area_sqft <= RECORD_SQFT[1] and len(size) >= 2:
         per = area_sqft * site_geo.M2_PER_SQFT / (stories if stories and stories >= 1 else 1)
-        if top > RECORD_OVER * per:
-            fit = lambda b: abs(math.log(max(b.get('area_m2') or 0, 1e-6) / per))   # noqa: E731
+        if top > (RECORD_OVER_HOUSE if house else RECORD_OVER) * per:
+            fit = lambda b: abs(math.log(max(_area(b), 1e-6) / per))   # noqa: E731
             best = min(size, key=lambda b: (fit(b), size.index(b)))
-            if best is not big and fit(best) < fit(big) and (nearer is None or nearer(best) < nearer(big)):
+            if (best is not big and fit(best) < fit(big) and fit(best) <= math.log(RECORD_FIT)
+                    and (nearer is None or nearer(best) < nearer(big))):
                 pick, why = best, 'record'
     shown = next((i + 1 for i, b in enumerate(size) if b is pick), None)
     return {'pick': pick, 'why': why, 'sizeable': size, 'shown': shown}
@@ -263,14 +284,14 @@ def _primary_building(buildings, parcel_ring, point_ll, facts=None, building=Non
     and that are not flagged outbuildings; the others inside (at most 4, largest first) are outbuildings, each other sizeable
     one marked 'sizeable' (a second building, not a shed). With no parcel: the outline holding the point, else the nearest
     within 25 m. Returns (building, outbuildings, lot) where lot is {why, shown, buildings: [sizeable outlines]} or None."""
-    bs = [b for b in buildings or [] if b.get('ring_ll')]
+    bs = [b for b in buildings or [] if isinstance(b, dict) and b.get('ring_ll') and b.get('centroid')]
     if not bs:
         return None, [], None
     if parcel_ring:
         pr, origin = site_geo.ll_to_m(parcel_ring)
         inside = [b for b in bs if site_geo.point_in_ring(site_geo.point_ll_to_m(b['centroid'], origin), pr)]
         area, stories = record_size(facts)
-        ch = choose_building([b for b in inside if not b.get('outbuilding')], area, stories, building)
+        ch = choose_building([b for b in inside if not b.get('outbuilding')], area, stories, building, house=reads_as_house(facts))
         prim = ch['pick']
         if prim is None:
             return None, [], None
@@ -301,21 +322,30 @@ def lookup(parsed, area=None, pick=None, deadline_s=TOTAL_S, building=None):
     degraded: [source names], seconds}. lot is {why, shown, buildings} for the outline pick (None without a parcel). 'found' means the house is placed (parcel or typed); a town alone is 'not_found'."""
     parsed = dict(parsed or {})
     building = building if isinstance(building, int) and not isinstance(building, bool) and 1 <= building <= 8 else None
-    key = (parsed.get('key') or '', (parsed.get('zip') or (parsed.get('town') or '').upper()), parsed.get('state') or '', pick or '', live_on(),
-           building or 0)
+    # one cache entry per address: a person's building pick re-picks from the cached outlines, with no upstream call
+    key = (parsed.get('key') or '', (parsed.get('zip') or (parsed.get('town') or '').upper()), parsed.get('state') or '', pick or '', live_on())
     hit = _cache_get(key)
-    if hit is not None:
-        return hit
-    with _lock_for(key):                                        # two identical lookups make one set of upstream calls
-        hit = _cache_get(key)
-        if hit is not None:
-            return hit
-        res = _resolve(parsed, area, pick, deadline_s, building)
-        _cache_put(key, res, _ttl(res))
+    if hit is None:
+        with _lock_for(key):                                    # two identical lookups make one set of upstream calls
+            hit = _cache_get(key)
+            if hit is None:
+                hit = _resolve(parsed, area, pick, deadline_s)
+                _cache_put(key, hit, _ttl(hit[0]))
+    res, outlines = hit
+    return _repick(res, outlines, building) if building and outlines else res
+
+
+def _repick(res, outlines, building):
+    """A copy of the cached answer with the person's pick among the buildings on the lot drawn; the cached entry is unchanged.
+    An out-of-range pick gives the default answer back."""
+    prim, outs, lot = _primary_building(outlines['buildings'], outlines['ring'], outlines['point'], res.get('facts'), building)
+    if (lot or {}).get('why') != 'chosen':
         return res
+    return dict(res, building=prim, outbuildings=outs, lot=lot)
 
 
-def _resolve(parsed, area, pick, deadline_s, building=None):
+def _resolve(parsed, area, pick, deadline_s):
+    """(res, outlines): outlines holds what the building pick needs ({buildings, ring, point}) or None without an outline."""
     t0 = time.monotonic()
     until = t0 + max(0.5, float(deadline_s or TOTAL_S))
     degraded = []
@@ -328,7 +358,7 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
         res['town_place'] = sources.town_point(zip=zip_, town=town, state=state).get('place')
         res['precision'] = 'town' if res['town_place'] else None
         res['label'] = label_of(parsed, town, state, zip_)
-        return res
+        return res, None
     # 1. the local sales row: no network, about a millisecond
     rec = None
     try:
@@ -343,7 +373,7 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
         r1 = {'status': 'unavailable'}
     if r1.get('status') == 'choose' and not pick:
         res.update(status='choose', choose=list(r1.get('choose') or [])[:6], label=label_of(parsed, town, state, zip_))
-        return res
+        return res, None
     if r1.get('status') == 'found':
         rec = r1['record']
         res['record'] = rec
@@ -409,7 +439,7 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
                    choose=[{'label': lab + (f', lot {i + 1} of {len(cs)}' if dup else ''), 'key': _pick_key(p),
                             'lat': (p.get('centroid') or [None, None])[1], 'lon': (p.get('centroid') or [None, None])[0]}
                            for i, (p, lab) in enumerate(zip(cs, labs))])
-        return res
+        return res, None
     res['parcel'] = parcel
     res['label'] = label_of(parsed, town, state, zip_)
     # facts: the sales row, then the parcel's assessor row
@@ -438,8 +468,9 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
         res['precision'] = 'town' if res['town_place'] else None
         res['facts'] = F
         res['seconds'] = round(time.monotonic() - t0, 3)
-        return res
+        return res, None
     res['status'] = 'found'
+    outlines = None
     res['point'] = point
     # enrich side by side: the outline, NJ permits, ground elevation
     if live_on() and time.monotonic() < until:
@@ -455,7 +486,8 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
         if not fp or not fp.get('ok'):
             degraded.append('footprint')
         else:
-            prim, outs, lot = _primary_building(fp.get('buildings') or [], ring, point if not ring else None, F, building)
+            outlines = {'buildings': list(fp.get('buildings') or []), 'ring': ring, 'point': point if not ring else None}
+            prim, outs, lot = _primary_building(outlines['buildings'], ring, outlines['point'], F)
             res['building'], res['outbuildings'], res['lot'] = prim, outs, lot
         if 'permits' in futs:
             pm = got.get('permits')
@@ -470,7 +502,7 @@ def _resolve(parsed, area, pick, deadline_s, building=None):
             F.append(ev['fact'])
     res['facts'] = F
     res['seconds'] = round(time.monotonic() - t0, 3)
-    return res
+    return res, outlines
 
 
 # ---------------------------------------------------------------- reading the facts into the house record
