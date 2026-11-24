@@ -277,16 +277,14 @@ def test_nothing_inferred_is_public_and_nothing_is_a_record(env, name):
 
 
 def test_rooms_and_items_sit_inside_the_real_outline(env):
+    # Changed for FLOORPLAN_SPEC R6: this 48,700 sq ft footprint is 'large' now, so it gets no house rooms (houses: test_site_plan.py).
     res, _ = fx_brief(env, 'pa_lancaster_outline_only')
     fs = card_of(res)
     site_geo = SITE.site_geo
     b = fs['building']
     ring = b['footprint']['ring_m']
-    assert any(r['kind'] == 'kitchen' for f in fs['floors'] for r in f['rooms'])
-    for f in fs['floors']:
-        assert (f['w'], f['h']) == (fs['floors'][0]['w'], fs['floors'][0]['h'])
-        for it in f['items']:
-            assert 0 <= it['x'] <= f['w'] and 0 <= it['y'] <= f['h']
+    assert b['kind'] == 'large' and not any(f['rooms'] or f['items'] for f in fs['floors'])
+    assert [f['id'] for f in fs['floors']] == ['first'] and fs['floors'][0]['name'] == 'Ground floor'
     assert site_geo.ring_area_m2(ring) == pytest.approx(b['footprint']['area_m2'], rel=0.02)
 
 
@@ -294,8 +292,9 @@ def test_wire_and_wet_wall_are_drawn_as_likely(env):
     res, _ = fx_brief(env, 'pa_lancaster_outline_only')
     fs = card_of(res)
     runs = [r for f in fs['floors'] for r in f['runs']]
-    assert {'water', 'drain'} <= {r['kind'] for r in runs} and 'power' in {r['kind'] for r in runs}
-    assert any(f.get('wet_walls') for f in fs['floors'])
+    # Changed for FLOORPLAN_SPEC R6: a large building has no interior lines; the water service and sewer are outside, likely.
+    assert not runs and not any(f.get('wet_walls') for f in fs['floors'])
+    assert {(o['kind'], o['side'], o['basis']) for o in fs['outside']} == {('main_water', 'front', 'likely'), ('sewer_cleanout', 'front', 'likely')}
 
 
 # ---------------------------------------------------------------- privacy
@@ -336,8 +335,9 @@ def test_answers_are_short_and_never_call_a_real_address_example(env):
         assert not re.search(r'\b(example|sandbox|fictional|owner)\b', t, re.I), (name, t)
         assert not re.search(r'\b(example|sandbox|fictional)\b', json.dumps(res['cards']).replace('"example": false', ''), re.I), name
     res, _ = fx_brief(env, 'nj_full')
-    assert res['text'].startswith('33 Washington St, Toms River. 15,226 sq ft, two storeys (public record).')
-    assert 'Likely: fixture shutoffs, under each sink' in res['text'] and res['text'].endswith('dashed is likely.')
+    # Changed for FLOORPLAN_SPEC R6: a town hall's answer names the facility and only what holds for any building.
+    assert res['text'].startswith('33 Washington St, Toms River. Town hall, 15,226 sq ft, two storeys (public record).')
+    assert 'Likely: fixture shutoffs under each sink' in res['text'] and res['text'].endswith('map below.')
 
 
 def test_outside_the_service_area_still_answers(env, monkeypatch):
