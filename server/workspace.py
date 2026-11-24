@@ -1859,6 +1859,17 @@ def _near_job(cust_id, jobs):
     return cand[0] if cand else None
 
 
+def _company_customer(parsed, co):
+    """A technician sent to an address the company's job system knows, but not on their own job list: the customer record at that
+    exact address (WAVE3 ruling 6: the system connected and the typed address equal to the customer's). None otherwise."""
+    if not parsed or not parsed.get('key') or not parsed.get('house_no') or co != 'pp':
+        return None
+    z, town = parsed.get('zip'), (parsed.get('town') or '').lower()
+    hits = [c for c in _st().get('customers') or [] if c.get('co') == co and c.get('addr_key') == parsed['key']
+            and ((c.get('address') or {}).get('zip') == z if z else (c.get('address') or {}).get('town', '').lower() == town if town else True)]
+    return {'job': None, 'customer': hits[0], 'how': 'exact', 'company_wide': True} if len(hits) == 1 else None
+
+
 def match_job(parsed, ws, text=''):
     if text and JOBREF_RX.search(text):
         j = _job_ref(text, ws)
@@ -2547,6 +2558,8 @@ def _site_brief(ws, args, sources):
                 hit = None
             if hit and hit.get('how') != 'exact':
                 hit = None   # WAVE3 ruling 6: a company record answers only an address that equals the customer's exactly
+            if not hit and connected:
+                hit = _company_customer(parsed, R.get('company'))
     cust = hit['customer'] if hit else None
     job = hit.get('job') if hit else None
     caddr = (cust or {}).get('address') or {}
@@ -2554,7 +2567,7 @@ def _site_brief(ws, args, sources):
     town = caddr.get('town') if cust else parsed.get('town')
     state = caddr.get('state') if cust else parsed.get('state')
     area = area_of(zip_, town, state)
-    records = bool(cust) and connected and visible(cust, ws['role'], 'servicetitan', 'customers') if cust else False
+    records = bool(cust) and connected and (visible(cust, ws['role'], 'servicetitan', 'customers') or hit.get('company_wide')) if cust else False
     if cust and not records and connected:
         records = bool(job) and visible(job, ws['role'], 'servicetitan', 'jobs')
     live = None
