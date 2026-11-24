@@ -1,5 +1,5 @@
 /* Open value: a running estimate driven by the portal's sourced rates (the firm home's "Strategy and operations" tile).
-   Usage: import { Counter } from './assets/counter.js?v=20261123194657';
+   Usage: import { Counter } from './assets/counter.js?v=20261124014806';
      Counter.live(valueEl, { baseline?: 'load'|'today', minDisplay?: number })
        writes the running figure into valueEl's text and returns { annual, comps, method, destroy } (method: HTML).
      Counter.mount(el, { theme:'light'|'dark', caption?: string, compact?: boolean,
@@ -15,7 +15,7 @@
    Each lever is read at runtime; a lever whose data is missing is skipped. "How" lines quote formula inputs and
    are shown only while the formula still contains them (otherwise a generic line is shown).
    Colours come from system.css tokens, so the clock follows the page's light or dark theme. */
-import { Data, Fmt, esc } from './core.js?v=20261123194657';
+import { Data, Fmt, esc } from './core.js?v=20261124014806';
 const ROOT = new URL('../', import.meta.url).href;
 const YEAR = 365.25 * 24 * 3600;
 const AGENT_SHARE = 0.5;      // revenue-lift and new-product agents count at 50%, the same haircut as redesigns/ai-agents.js

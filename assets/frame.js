@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261123194657';
+       import { Frame } from '../../assets/frame.js?v=20261124014806';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -44,7 +44,7 @@
      humanize true|'observe'|false                 (default 'observe': one pass now, then on DOM changes)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { Session } from './session.js?v=20261123194657';
+import { Session } from './session.js?v=20261124014806';
 
 /* The site lives at broadsky-agent.vercel.app. Older addresses (GitHub Pages and the project's earlier Vercel names) forward there, keeping the page, query and portal view. */
 export const HOME = 'https://broadsky-agent.vercel.app/';
