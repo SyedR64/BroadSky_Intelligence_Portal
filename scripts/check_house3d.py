@@ -330,17 +330,19 @@ def main():
                     sw = page.evaluate('document.documentElement.scrollWidth')
                     check(f'no sideways scroll [{tag}]', sw <= vw, f'{sw}')
                     # controls
-                    page.click('[data-h3="layer"][data-layer="water"]')
-                    st2 = page.evaluate('window.h.stats()')
-                    water = [o for o in st2['items'] + st2['runs'] if o['layer'] == 'water']
-                    check(f'Water layer hides [{tag}]', water and not any(o['visible'] for o in water) and st2['layers']['water'] is False)
-                    page.click('[data-h3="layer"][data-layer="water"]')
-                    st2 = page.evaluate('window.h.stats()')
-                    check(f'Water layer shows [{tag}]', all(o['visible'] for o in st2['items'] + st2['runs'] if o['layer'] == 'water'))
-                    page.click('[data-h3="layer"][data-layer="walls"]')
-                    st2 = page.evaluate('window.h.stats()')
-                    check(f'Walls layer [{tag}]', not any(w['visible'] for w in st2['walls']))
-                    page.click('[data-h3="layer"][data-layer="walls"]')
+                    large3d = (card.get('building') or {}).get('kind') == 'large' or (card.get('layout') or {}).get('from') == 'none'
+                    if not large3d:                                     # a shell has no layer chips
+                        page.click('[data-h3="layer"][data-layer="water"]')
+                        st2 = page.evaluate('window.h.stats()')
+                        water = [o for o in st2['items'] + st2['runs'] if o['layer'] == 'water']
+                        check(f'Water layer hides [{tag}]', water and not any(o['visible'] for o in water) and st2['layers']['water'] is False)
+                        page.click('[data-h3="layer"][data-layer="water"]')
+                        st2 = page.evaluate('window.h.stats()')
+                        check(f'Water layer shows [{tag}]', all(o['visible'] for o in st2['items'] + st2['runs'] if o['layer'] == 'water'))
+                        page.click('[data-h3="layer"][data-layer="walls"]')
+                        st2 = page.evaluate('window.h.stats()')
+                        check(f'Walls layer [{tag}]', not any(w['visible'] for w in st2['walls']))
+                        page.click('[data-h3="layer"][data-layer="walls"]')
                     levels = st['levels']
                     top_i = len(levels) - 1
                     if not st['large']:
@@ -349,7 +351,7 @@ def main():
                         check(f'floor switch [{tag}]', st2['floor'] == levels[0] and not any(
                             w['visible'] for w in st2['walls'] if w['level'] != levels[0]))
                         page.click('[data-h3="floor"][data-floor="all"]')
-                    for v in ('cutaway', 'top', 'outside'):
+                    for v in (('top', 'outside') if large3d else ('cutaway', 'top', 'outside')):   # a shell offers no cutaway
                         page.click(f'[data-h3="view"][data-v="{v}"]')
                         st2 = page.evaluate('window.h.stats()')
                         ok = st2['view'] == v and page.get_attribute(f'[data-h3="view"][data-v="{v}"]', 'aria-pressed') == 'true'
