@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-23",
+ "generated": "2026-11-24",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -30,7 +30,7 @@
    "folder": "research",
    "title": "bsp_firm",
    "item_count": 6,
-   "bytes": 76132,
+   "bytes": 77978,
    "generated": "2026-09-24",
    "lists": {
     "timeline": 52,
@@ -43,7 +43,7 @@
    "folder": "research",
    "title": "How BSP buys: a reverse-engineered acquisition methodology",
    "item_count": 68,
-   "bytes": 116993,
+   "bytes": 116873,
    "generated": "2026-10-06"
   },
   {
@@ -51,7 +51,7 @@
    "folder": "research",
    "title": "BSP professional network graph (public roles only)",
    "item_count": 314,
-   "bytes": 156297,
+   "bytes": 156220,
    "generated": "2026-10-06"
   },
   {
@@ -75,7 +75,7 @@
    "folder": "research",
    "title": "Commonwealth Electrical Technologies (BSP) – filings & financial research track",
    "item_count": 25,
-   "bytes": 50725,
+   "bytes": 51897,
    "generated": "2026-09-24"
   },
   {
@@ -83,7 +83,7 @@
    "folder": "research",
    "title": "CET New England Opportunity Radar",
    "item_count": 86,
-   "bytes": 112836,
+   "bytes": 112801,
    "generated": "2026-09-24"
   },
   {
@@ -91,7 +91,7 @@
    "folder": "research",
    "title": "Commonwealth Electrical Technologies: the growth plan (from New England electrical/energy contractor to Northeast infrastructure company)",
    "item_count": 46,
-   "bytes": 63253,
+   "bytes": 63248,
    "generated": "2026-10-06"
   },
   {
@@ -101,6 +101,18 @@
    "item_count": 183,
    "bytes": 342225,
    "generated": "2026-09-24"
+  },
+  {
+   "name": "connections",
+   "folder": "research",
+   "title": "connections",
+   "item_count": 0,
+   "bytes": 34724,
+   "generated": null,
+   "lists": {
+    "sources": 46,
+    "groups": 7
+   }
   },
   {
    "name": "county_cbsa",
@@ -115,7 +127,7 @@
    "folder": "research",
    "title": "Acquisition model: default assumptions, benchmarks and presets",
    "item_count": 24,
-   "bytes": 31305,
+   "bytes": 31361,
    "generated": "2026-10-08"
   },
   {
@@ -123,7 +135,7 @@
    "folder": "research",
    "title": "Design references for the BSP landing page and the six portfolio website concepts",
    "item_count": 26,
-   "bytes": 84921,
+   "bytes": 84892,
    "generated": "2026-10-06"
   },
   {
@@ -167,6 +179,17 @@
    "generated": "2026-09-24"
   },
   {
+   "name": "globe_tours",
+   "folder": "research",
+   "title": "globe_tours",
+   "item_count": 0,
+   "bytes": 14007,
+   "generated": null,
+   "lists": {
+    "tours": 7
+   }
+  },
+  {
    "name": "ma_ppp_screen",
    "folder": "research",
    "title": "SBA loan screen",
@@ -179,7 +202,7 @@
    "folder": "research",
    "title": "CET add-on acquisition target screen (New England electrical, solar, controls, utility, generator, W/WW I&C)",
    "item_count": 48,
-   "bytes": 101672,
+   "bytes": 101612,
    "generated": "2026-09-24"
   },
   {
@@ -203,7 +226,7 @@
    "folder": "research",
    "title": "Private-equity competitive landscape for BSP (LMM business & consumer services)",
    "item_count": 35,
-   "bytes": 169152,
+   "bytes": 169151,
    "generated": "2026-09-24"
   },
   {
@@ -259,7 +282,7 @@
    "folder": "research",
    "title": "BSP public comparables: FY2023-FY2025 (latest available) SEC XBRL fundamentals for 31 listed peers across all six BSP portfolio sectors",
    "item_count": 31,
-   "bytes": 118735,
+   "bytes": 118663,
    "generated": "2026-09-24"
   },
   {
@@ -283,7 +306,7 @@
    "folder": "research",
    "title": "Tech-enablement (\"OS\") value-creation evidence file: ServiceOS (Punctual Pros), GridOS (CET), FirmOS (Frontline), LabOS (Thomas Scientific), SignalOS (BPI), HarborOS (Fair Harbor)",
    "item_count": 80,
-   "bytes": 70858,
+   "bytes": 70849,
    "generated": "2026-10-06"
   },
   {
@@ -315,7 +338,7 @@
    "folder": "research",
    "title": "Voice-AI as a growth engine: 24/7 voice-agent economics, vendors, use cases, sample calls, reference platforms, technical stack and governance for the BSP portfolio (Punctual Pros focus)",
    "item_count": 81,
-   "bytes": 78986,
+   "bytes": 78855,
    "generated": "2026-10-06"
   },
   {
@@ -410,11 +433,11 @@
   }
  ],
  "totals": {
-  "research_files": 39,
+  "research_files": 41,
   "research_items": 4863,
   "sales_files": 10,
   "sales_rows": 182351,
-  "bytes": 45194849,
+  "bytes": 45246115,
   "data_from": "2026-09-24",
   "data_to": "2026-11-23"
  }

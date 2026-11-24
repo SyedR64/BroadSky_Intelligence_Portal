@@ -6,7 +6,7 @@ ROOT=${ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
 V="$V" ROOT="$ROOT" python3 - <<'PY'
 import os, re, sys
 V = os.environ['V']; ROOT = os.environ['ROOT']
-SKIP = ('.git', 'node_modules', 'data', 'worker', '.github', 'briefing/ads', 'tools')
+SKIP = ('.git', '.claude', 'node_modules', 'data', 'worker', '.github', 'briefing/ads', 'tools')   # .claude holds other sessions' worktrees
 EXTS = ('.html', '.js', '.css')
 n_files = 0; n_stamps = 0; n_added = 0
 # 1) existing stamps → V ;  2) unstamped local .js/.css references in src/href/import → add ?v=V
@@ -15,7 +15,7 @@ re_html = re.compile(r'''((?:src|href)=["'])(?!https?:|//|data:|mailto:)([^"'?#]
 re_js = re.compile(r'''((?:from\s+|import\s*\(\s*)["'])(\.{1,2}/[^"'?#]+\.(?:js|css))(["'])''')
 for d, dirs, fs in os.walk(ROOT):
     rel = os.path.relpath(d, ROOT)
-    dirs[:] = [x for x in dirs if not any((rel + '/' + x).lstrip('./').startswith(s) for s in SKIP)]
+    dirs[:] = [x for x in dirs if not any(os.path.normpath(os.path.join(rel, x)).startswith(s) for s in SKIP)]   # normpath keeps a leading dot (.claude, .git)
     for f in fs:
         if not f.endswith(EXTS): continue
         p = os.path.join(d, f)
