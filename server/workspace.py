@@ -2414,6 +2414,80 @@ def sketch(address, house, items, runs, basis, area, issue, focus, source_line, 
             'floors': floors, 'outside': outside, 'front': 'bottom', 'source_line': source_line, 'sources': list(sources_n or [])}
 
 
+def _record_map(label, caddr):
+    """The map step for a company-record address: the town is real, the house is example data, so the globe goes to the town only."""
+    try:
+        import site_sources
+        tp = (site_sources.town_point(zip=(caddr or {}).get('zip'), town=(caddr or {}).get('town'), state=(caddr or {}).get('state')) or {}).get('place')
+    except Exception:   # noqa: BLE001
+        tp = None
+    if not tp:
+        return None
+    step = {'kind': 'site', 'lat': tp['lat'], 'lon': tp['lon'], 'label': label, 'sub': 'Company record (example data) · town only',
+            'precision': 'town', 'zoom': 12.5, 'pitch': 0, 'bearing': 0, 'hold_ms': 4000}
+    cid = 'mc-' + hashlib.sha1(f'{label}|record'.encode('utf-8')).hexdigest()[:8]
+    return {'type': 'card', 'kind': 'map_command', 'id': cid, 'example': True, 'cmd': {'title': label, 'source': 'site', 'steps': [step]}}
+
+
+def _record_dress(card, cust_id):
+    """A company-record card (example data): the flagship houses' signed rooms and wire runs (pp_houses.json) are drawn as records,
+    their risers and wet walls as likely. Every record card carries example: True (the 3D view's and the plan's explicit flag)."""
+    card['example'] = True
+    card['layout'] = {'from': 'rules', 'name': None, 'basis': 'likely'}
+    card['roof'] = {'type': None, 'basis': 'likely'}   # unknown until a visit records it
+    try:
+        hs = (load('pp_houses').get('houses') or {}).get(cust_id) if cust_id else None
+    except Exception:   # noqa: BLE001
+        hs = None
+    if not hs:
+        return card
+    spots = _rules().get('spots') or {}
+    floors = card.get('floors') or []
+    w = floors[0]['w'] if floors else 40
+    h = floors[0]['h'] if floors else 30
+    order = ['basement', 'first', 'second']
+    need = {r.get('floor') or 'first' for r in hs.get('rooms') or []} | {r.get('floor') or 'first' for r in hs.get('runs') or []}
+    have = {f['id'] for f in floors}
+    for fid in sorted(need - have, key=lambda x: order.index(x) if x in order else 9):
+        if fid in FLOOR_NAMES:
+            floors.append({'id': fid, 'name': FLOOR_NAMES[fid], 'w': w, 'h': h, 'rooms': [], 'items': [], 'runs': []})
+    floors.sort(key=lambda f: order.index(f['id']) if f['id'] in order else 9)
+    for f in floors:
+        fw, fh = f['w'], f['h']
+        rooms = [r for r in hs.get('rooms') or [] if (r.get('floor') or 'first') == f['id']]
+        if rooms:   # the visit sketch replaces the generic boxes on that level (the basement's own box stays)
+            keep = [r for r in f.get('rooms') or [] if f['id'] == 'basement' or r.get('label') == 'Garage']   # the attached garage stays
+            f['rooms'] = keep + [{'x': round(r['x'] * fw, 1), 'y': round(r['y'] * fh, 1), 'w': round(r['w'] * fw, 1), 'h': round(r['h'] * fh, 1),
+                                  'label': r.get('name') or 'Room', 'floor': f['id'], 'basis': r.get('basis') or 'record',
+                                  'src': r.get('src') or 'Prior visit sketch'} for r in rooms]
+        ww = [x for x in hs.get('wet_wall') or [] if (x.get('floor') or 'first') == f['id']]
+        if ww:
+            f['wet_walls'] = [{'floor': f['id'], 'a': [round(x['a'][0] * fw, 1), round(x['a'][1] * fh, 1)],
+                               'b': [round(x['b'][0] * fw, 1), round(x['b'][1] * fh, 1)], 'rooms': x.get('rooms') or [], 'what': x.get('what'),
+                               'basis': x.get('basis') or 'likely'} for x in ww]
+        have_lbl = {str(r.get('label') or '').lower() for r in f.get('runs') or []}
+        for r in hs.get('runs') or []:
+            if (r.get('floor') or 'first') != f['id'] or str(r.get('label') or '').lower() in have_lbl:
+                continue
+            pts = [[round((spots.get(v) or [0.5, 0.5])[0] * fw, 1), round((spots.get(v) or [0.5, 0.5])[1] * fh, 1)] for v in r.get('via') or []][:4]
+            if len(pts) < 2:
+                continue
+            run = {'kind': r.get('kind') or 'water', 'label': r.get('label') or _uc(r.get('kind') or 'line'), 'points': pts,
+                   'basis': r.get('basis') or 'likely'}
+            for k in ('material', 'note', 'rise'):
+                if r.get(k):
+                    run[k] = r[k]
+            f.setdefault('runs', []).append(run)
+    card['floors'] = floors
+    card['layout'] = {'from': 'record', 'name': 'Prior visit sketch', 'basis': 'record'}
+    if hs.get('roof'):
+        card['roof'] = hs['roof']
+    if hs.get('split_level'):
+        card['split_level'] = True
+        card['layout_note'] = 'Split-level drawn as two levels'
+    return card
+
+
 # ---------------------------------------------------------------- site_brief
 
 def _no_ids(s):
@@ -2755,6 +2829,11 @@ def _site_brief(ws, args, sources):
     key = (parsed.get('key') or site_line) + '|' + (zip_ or '')
     card = sketch(site_line, house, items, runs, {**hbasis, 'card': card_basis}, area, tri, focus, source_line, ns, key=key)
     extra_cards = []
+    if records:
+        card = _record_dress(card, (cust or {}).get('id'))
+        mc = _record_map(site_line, caddr)
+        if mc:
+            extra_cards.append(mc)
     if not records:   # (a company-record card keeps its "example data" source line; site.brief adds example: True to it)
         S = site_module()
         card = S.dress(card, live or {'label': site_line}, house, num)

@@ -510,7 +510,7 @@ def test_site_brief_address_forms(sb):
               'my 8 am', 'this job'):
         text, err, cards, _ = run('site_brief', {'address': a}, ws)
         assert not err and 'MATCHED: your 8:00 am job today, L-2187, 418 Wexcombe Ln, Lititz.' in text, (a, text[:400])
-        assert cards and cards[0]['kind'] == 'floor_sketch' and 'example' not in cards[0] and 'fictional' in cards[0]['source_line']
+        assert cards and cards[0]['kind'] == 'floor_sketch' and cards[0].get('example') is True and 'fictional' in cards[0]['source_line']
     # WAVE3 ruling 6: a near miss is not the customer's address, so no company record answers it
     for a in ('418 Wexcomb Ln, Lititz', '418 wax comb lane lititz no heat'):
         text, err, cards, _ = run('site_brief', {'address': a}, ws)
@@ -532,7 +532,14 @@ def test_site_brief_address_forms(sb):
 
 def test_site_brief_record_path(sb):
     text, err, cards, s = run('site_brief', {'address': FLAGSHIP, 'issue': 'Furnace runs a few seconds then stops'}, ws_for(TECH))
-    assert not err and len(cards) == 1
+    # the plan, then a map step to the town only: the town is real, the house is example data (WAVE3 rulings 2 and 6)
+    assert not err and [c['kind'] for c in cards] == ['floor_sketch', 'map_command']
+    st = cards[1]['cmd']['steps']
+    assert len(st) == 1 and st[0]['kind'] == 'site' and st[0]['precision'] == 'town' and st[0]['zoom'] <= 12.5 and 'example data' in st[0]['sub']
+    fs = cards[0]
+    assert fs['example'] is True and fs['layout']['from'] in ('record', 'rules')
+    if fs['layout']['from'] == 'record':   # a flagship house: its visit sketch and wire runs (server/sandbox/pp_houses.json)
+        _flagship_rooms(fs)
     assert 'BASIS: company records [1]' in text and 'PIPES:' in text
     assert text.index('WHERE THE PROBLEM IS') < text.index('OTHER EQUIPMENT') if 'OTHER EQUIPMENT' in text else True
     assert '(record)' in text and '(likely; confirm on site)' in text and '[record]' not in text and '[likely]' not in text
@@ -551,6 +558,16 @@ def test_site_brief_record_path(sb):
     assert again[0]['id'] == c['id']
     _, _, other, _ = run('site_brief', {'address': FLAGSHIP, 'issue': 'water heater leaking'}, ws_for(TECH))
     assert other[0]['id'] != c['id']
+
+
+
+def _flagship_rooms(fs):
+    assert fs['layout']['basis'] == 'record'
+    first = next(f for f in fs['floors'] if f['id'] == 'first')
+    assert {'Kitchen', 'Laundry', 'Half bath'} <= {r['label'] for r in first['rooms']} and all(r.get('basis') in (None, 'record') for r in first['rooms'])
+    assert any(r['label'] == 'Kitchen supply' and r['basis'] == 'likely' and r.get('rise') for r in first['runs']) and first.get('wet_walls')
+    base = next(f for f in fs['floors'] if f['id'] == 'basement')
+    assert any(r['kind'] == 'power' and r['label'] == 'Service line' and r['basis'] == 'record' for r in base['runs'])
 
 
 def test_site_brief_focus_first(sb):
@@ -714,11 +731,14 @@ def test_card_shapes_match_fixture(sb):
     assert set(fixture) == {'floor_sketch', 'action_draft'}
     _, _, sk, _ = run('site_brief', {'address': FLAGSHIP}, ws_for(TECH))
     _, _, dr, _ = run('draft_action', {'action': 'text_customer', 'number': 'L-2187', 'body': 'Ten minutes out.'}, ws_for(TECH))
-    same_keys(shape(sk[0]), shape(fixture['floor_sketch']))
+    if os.path.exists(os.path.join(sb, 'pp_houses.json')):   # the fixture is the flagship house: its visit sketch adds wet walls and run notes
+        same_keys(shape(sk[0]), shape(fixture['floor_sketch']))
+    else:
+        assert set(sk[0]) == set(fixture['floor_sketch'])
     same_keys(shape(dr[0]), shape(fixture['action_draft']))
     fs = fixture['floor_sketch']
     assert fs['basis'] == 'mixed' and len(fs['floors']) == 2 and fs['focus']
-    assert sorted(r['basis'] for f in fs['floors'] for r in f['runs']) == ['likely', 'record']
+    assert {r['basis'] for f in fs['floors'] for r in f['runs']} == {'likely', 'record'}
     assert [o['basis'] for o in fs['outside']] == ['likely']
 
 
