@@ -292,32 +292,342 @@ def overlaps(a, b):
     return min(a['x1'], b['x1']) - max(a['x0'], b['x0']) > 1e-6 and min(a['y1'], b['y1']) - max(a['y0'], b['y0']) > 1e-6
 
 
-def assert_layout_ok(res, ring):
-    assert res['basis'] == 'likely' and res['rooms']
-    fr = res['frame']
-    plan_ring = None
-    for r in res['rooms']:
-        assert r['basis'] == 'likely' and r['label']
-        assert min(r['w_m'], r['d_m']) >= (1.0 if r['kind'] == 'hall' else 1.4)
+#
+# The rules (floor plan spec R4 and R10), checked on the eight invented house shapes, on every
+# building outline in the four recorded public fixtures, and on 200 seeded generated rectilinear
+# outlines: rooms inside the ring, no overlap, coverage, a kitchen and a bath on the first floor,
+# bedrooms across the floors equal to `beds` (at most 5), no room under 5 ft wide except halls,
+# stairs and closets, none longer than 3.2 times its width except a hall, the garage on two outside
+# walls, `short` at most 7 characters, the same answer every time, and under 15 ms a floor.
+
+import json
+import random
+import time
+
+FIX_DIR = os.path.join(SERVER_DIR, 'tests', 'fixtures', 'site')
+NARROW_OK = {'hall', 'stairs', 'closet'}
+
+# metres, x across the front, y back from the street; INVENTED shapes (the floor plan harness's set), never real homes
+SHAPES = {
+    'ranch_rect': dict(pts=[(0, 0), (13, 0), (13, 8.5), (0, 8.5)], rot=20, st=1, sqft=1150, beds=3, garage=False, street=(6, -12)),
+    'colonial_L': dict(pts=[(0, 0), (11, 0), (11, 3), (17, 3), (17, 10), (0, 10)], rot=-35, st=2, sqft=2300, beds=4, garage=True, street=(8, -14)),
+    'cape_T': dict(pts=[(0, 0), (10, 0), (10, 7), (7, 7), (7, 11), (3, 11), (3, 7), (0, 7)], rot=75, st=1, sqft=1300, beds=2, garage=False,
+                   street=(5, -12)),
+    'narrow_row': dict(pts=[(0, 0), (5.5, 0), (5.5, 14), (0, 14)], rot=8, st=2, sqft=1500, beds=3, garage=False, street=(2.7, -8)),
+    'u_shape': dict(pts=[(0, 0), (6, 0), (6, 4), (12, 4), (12, 0), (18, 0), (18, 11), (0, 11)], rot=140, st=1, sqft=1900, beds=3, garage=True,
+                    street=(9, -13)),
+    'cottage': dict(pts=[(0, 0), (7.2, 0), (7.2, 6.4), (0, 6.4)], rot=-10, st=1, sqft=500, beds=1, garage=False, street=(3.6, -9)),
+    'angled_bay': dict(pts=[(0, 0), (12, 0), (14.5, 2.5), (14.5, 9), (0, 9)], rot=33, st=1, sqft=1350, beds=3, garage=False, street=(6, -12)),
+    'big_slab_2st': dict(pts=[(0, 0), (8, 0), (8, -2), (15, -2), (15, 0), (21, 0), (21, 11), (13, 11), (13, 13), (4, 13), (4, 11), (0, 11)],
+                         rot=-80, st=2, sqft=3900, beds=5, garage=True, street=(10, -16)),
+}
+
+
+def turn(pts, deg):
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return [[x * c - y * s, x * s + y * c] for x, y in pts]
+
+
+def is_rectilinear(ring):
+    pts = g._clean(ring)
+    n = len(pts)
+    for i in range(n):
+        a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]
+        u, v = (b[0] - a[0], b[1] - a[1]), (c[0] - b[0], c[1] - b[1])
+        cosang = abs(u[0] * v[0] + u[1] * v[1]) / (math.hypot(*u) * math.hypot(*v))
+        if cosang > 0.01:                       # neither square nor (after cleaning) straight on
+            return False
+    return True
+
+
+def side_outside(room, ring):
+    """How many of the room's four sides lie on the outline for at least half their length."""
+    c = room['ring_m']
+    cx, cy = sum(p[0] for p in c) / 4, sum(p[1] for p in c) / 4
+    n = 0
+    for k in range(4):
+        a, b = c[k], c[(k + 1) % 4]
+        mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        ox, oy = mx - cx, my - cy
+        L = math.hypot(ox, oy)
+        ox, oy = ox / L * 0.1, oy / L * 0.1
+        ts = [0.05 + 0.1 * i for i in range(10)]
+        out = sum(not g.point_in_ring([a[0] + (b[0] - a[0]) * t + ox, a[1] + (b[1] - a[1]) * t + oy], ring) for t in ts)
+        if out >= 5:
+            n += 1
+    return n
+
+
+def floor_faults(res, ring, street, floor):
+    """Every broken rule on one floor, as readable strings (empty when the floor is good)."""
+    out = []
+    rooms = res['rooms']
+    fr = g.plan_frame(g._clean(ring), street)
+    eps = g.grid_tol([g.to_plan(fr, p) for p in g._clean(ring)]) + 0.01
+    for r in rooms:
+        if not (r['short'] and len(r['short']) <= 7):
+            out.append('short %r' % r['short'])
+        if r['basis'] != 'likely' or r['floor'] != floor:
+            out.append('basis/floor %s' % r['label'])
         for p in r['ring_m']:
-            assert g.point_in_ring(p, ring, eps=0.03), (r['label'], p)
-        # the corner ring is a real rectangle of the stated size
-        assert g.ring_area_m2(r['ring_m']) == pytest.approx(r['area_m2'], abs=0.6)
-    boxes = [r['plan_m'] for r in res['rooms']]
+            if not g.point_in_ring(p, ring, eps=eps):
+                out.append('outside %s' % r['label'])
+                break
+        w, d = r['plan_m']['x1'] - r['plan_m']['x0'], r['plan_m']['y1'] - r['plan_m']['y0']
+        if r['kind'] not in NARROW_OK and min(w, d) < g.MIN_ROOM_M - 0.006:
+            out.append('narrow %s %.2f' % (r['label'], min(w, d)))
+        if r['kind'] != 'hall' and max(w, d) > g.MAX_ASPECT * min(w, d) + 0.01:
+            out.append('long %s %.2fx%.2f' % (r['label'], w, d))
+        if r['kind'] == 'garage' and side_outside(r, ring) < 2:
+            out.append('garage walls %d' % side_outside(r, ring))
+    boxes = [r['plan_m'] for r in rooms]
     for i in range(len(boxes)):
         for j in range(i + 1, len(boxes)):
-            assert not overlaps(boxes[i], boxes[j]), (res['rooms'][i]['label'], res['rooms'][j]['label'])
+            if overlaps(boxes[i], boxes[j]):
+                out.append('overlap %s %s' % (rooms[i]['label'], rooms[j]['label']))
+    labels = [r['label'] for r in rooms]
+    if len(set(labels)) != len(labels):
+        out.append('duplicate labels')
+    need = 0.85 if (is_rectilinear(ring) and len(g._clean(ring)) <= 12) else 0.70
+    if res['coverage'] < need:
+        out.append('coverage %.2f < %.2f' % (res['coverage'], need))
+    if floor == 'first':
+        kinds = {r['kind'] for r in rooms}
+        if 'kitchen' not in kinds or 'bath' not in kinds:
+            out.append('first floor without kitchen or bath')
+    return out
+
+
+def house_faults(ring, street, storeys, beds, garage, sqft=None, basement=True):
+    """Lay out every floor of one house and return (faults, slowest floor in ms, results by floor)."""
+    floors = (['basement'] if basement else []) + ['first'] + (['second'] if storeys >= 2 else [])
+    out, slow, res_by = [], 0.0, {}
+    for f in floors:
+        kw = dict(floor=f, storeys=storeys, beds=beds, sqft=sqft, garage=garage and f == 'first')
+        best = None
+        for _ in range(3):
+            t = time.perf_counter()
+            res = g.fit_layout(ring, street, **kw)
+            ms = (time.perf_counter() - t) * 1000
+            best = ms if best is None else min(best, ms)
+        slow = max(slow, best)
+        if json.dumps(res, sort_keys=True) != json.dumps(g.fit_layout(ring, street, **kw), sort_keys=True):
+            out.append('%s: not deterministic' % f)
+        out += ['%s: %s' % (f, x) for x in floor_faults(res, ring, street, f)]
+        res_by[f] = res
+    want = min(beds, g.MAX_BEDS)
+    got = sum(1 for f in ('first', 'second') if f in res_by for r in res_by[f]['rooms'] if r['kind'] == 'bedroom')
+    if got != want:
+        out.append('bedrooms %d, want %d' % (got, want))
+    if garage and not any(r['kind'] == 'garage' for r in res_by['first']['rooms']):
+        out.append('no garage')
+    return out, slow, res_by
+
+
+@pytest.mark.parametrize('name', sorted(SHAPES))
+def test_layout_rules_on_the_invented_house_shapes(name):
+    h = SHAPES[name]
+    ring = turn(h['pts'], h['rot'])
+    street = turn([h['street']], h['rot'])[0]
+    faults, slow, res = house_faults(ring, street, h['st'], h['beds'], h['garage'], h['sqft'])
+    assert not faults, faults
+    assert slow < 15.0, slow
+    first = res['first']['rooms']
+    # public rooms to the street: the living room is in front of every bedroom beside or behind it
+    lv = next(r for r in first if r['kind'] == 'living')
+    for r in first:
+        p, q = r['plan_m'], lv['plan_m']
+        if r['kind'] == 'bedroom' and min(p['x1'], q['x1']) - max(p['x0'], q['x0']) > 0.01:
+            assert q['y0'] < p['y0']
+    if h['garage']:
+        gar = next(r for r in first if r['kind'] == 'garage')
+        assert gar['short'] == 'Garage'
+
+
+def test_wings_get_rooms():
+    # an L, a T and a U: the wing is not left empty
+    for name, probe in (('cape_T', (5, 9)), ('u_shape', (3, 2)), ('u_shape', (15, 2)), ('colonial_L', (14, 7)), ('big_slab_2st', (8, 12))):
+        h = SHAPES[name]
+        ring = turn(h['pts'], h['rot'])
+        street = turn([h['street']], h['rot'])[0]
+        p = turn([probe], h['rot'])[0]
+        for f in ('first', 'second') if h['st'] >= 2 else ('first',):
+            res = g.fit_layout(ring, street, floor=f, storeys=h['st'], beds=h['beds'], garage=h['garage'] and f == 'first')
+            assert any(g.point_in_ring(p, r['ring_m']) for r in res['rooms']), (name, f, probe)
+
+
+def recorded_rings():
+    out = []
+    for name in ('nj_full', 'pa_york_full', 'pa_franklin_full', 'pa_lancaster_outline_only'):
+        fx = json.load(open(os.path.join(FIX_DIR, name + '.json')))
+        geo = (fx['adapters'].get('geocode') or {}).get('matches') or []
+        for n, b in enumerate((fx['adapters'].get('footprints') or {}).get('buildings') or []):
+            ring, origin = g.ll_to_m(b['ring_ll'])
+            street = g.point_ll_to_m([geo[0]['lon'], geo[0]['lat']], origin) if geo else None
+            out.append(('%s_%d' % (name, n), ring, street))
+    return out
+
+
+RECORDED = recorded_rings()
+
+
+@pytest.mark.parametrize('name,ring,street', RECORDED, ids=[r[0] for r in RECORDED])
+def test_layout_rules_on_the_recorded_building_outlines(name, ring, street):
+    # these are public buildings (the card calls them large and draws no rooms), but the fitting must still hold its rules
+    for storeys, garage in ((1, False), (2, True)):
+        faults, _, _ = house_faults(ring, street, storeys, 3, garage, basement=storeys == 1)
+        assert not [f for f in faults if not f.startswith('no garage')], (name, faults)
+
+
+def _cells_ring(cells):
+    """The outline of a set of unit cells, or None when it is not one simple ring (holes, pieces, corner touches)."""
+    edges = {}
+    for x, y in cells:
+        for a, b in (((x, y), (x + 1, y)), ((x + 1, y), (x + 1, y + 1)), ((x + 1, y + 1), (x, y + 1)), ((x, y + 1), (x, y))):
+            if (b, a) in edges:
+                del edges[(b, a)]
+            else:
+                edges[(a, b)] = True
+    nxt = {}
+    for a, b in edges:
+        if a in nxt:
+            return None
+        nxt[a] = b
+    start = min(nxt)
+    ring, p = [start], nxt[start]
+    while p != start:
+        ring.append(p)
+        p = nxt[p]
+    if len(ring) != len(nxt):
+        return None
+    out = []
+    n = len(ring)
+    for i in range(n):
+        a, b, c = ring[i - 1], ring[i], ring[(i + 1) % n]
+        if (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]) != 0:
+            out.append(b)
+    return out
+
+
+def generated_houses(n=200, seed=20261123):
+    """Seeded rectilinear outlines (0.5 m steps): a block with notches, slots and bumps, turned and moved."""
+    rnd = random.Random(seed)
+    out = []
+    while len(out) < n:
+        W, D = rnd.randint(14, 44), rnd.randint(12, 30)
+        cells = {(x, y) for x in range(W) for y in range(D)}
+        for _ in range(rnd.randint(0, 4)):
+            kind = rnd.choice(('notch', 'slot', 'bump', 'bump'))
+            xs = [c[0] for c in cells]
+            ys = [c[1] for c in cells]
+            x0, x1, y0, y1 = min(xs), max(xs) + 1, min(ys), max(ys) + 1
+            if kind == 'notch':
+                a, b = rnd.randint(3, max(3, (x1 - x0) // 2)), rnd.randint(3, max(3, (y1 - y0) // 2))
+                cx, cy = rnd.choice((x0, x1 - a)), rnd.choice((y0, y1 - b))
+                cells -= {(x, y) for x in range(cx, cx + a) for y in range(cy, cy + b)}
+            elif kind == 'slot':
+                if x1 - x0 < 12:
+                    continue
+                a, b = rnd.randint(3, (x1 - x0) - 8), rnd.randint(3, max(3, (y1 - y0) // 2))
+                cx = rnd.randint(x0 + 4, x1 - 4 - a)
+                cy = rnd.choice((y0, y1 - b))
+                cells -= {(x, y) for x in range(cx, cx + a) for y in range(cy, cy + b)}
+            else:
+                side = rnd.choice('lrfb')
+                if side in 'fb':
+                    L, P = rnd.randint(4, max(4, (x1 - x0) - 2)), rnd.randint(3, 12)
+                    cx = rnd.randint(x0, max(x0, x1 - L))
+                    ys_b = range(y0 - P, y0) if side == 'f' else range(y1, y1 + P)
+                    add = {(x, y) for x in range(cx, cx + L) for y in ys_b}
+                else:
+                    L, P = rnd.randint(4, max(4, (y1 - y0) - 2)), rnd.randint(3, 12)
+                    cy = rnd.randint(y0, max(y0, y1 - L))
+                    xs_b = range(x0 - P, x0) if side == 'l' else range(x1, x1 + P)
+                    add = {(x, y) for x in xs_b for y in range(cy, cy + L)}
+                # attach only where the bump meets the house along at least 2 m
+                touch = sum(1 for x, y in add for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)) if (x + dx, y + dy) in cells)
+                if touch >= 4:
+                    cells |= add
+        ring = _cells_ring(cells)
+        if ring is None or len(ring) > 20:
+            continue
+        pts = [(x * 0.5, y * 0.5) for x, y in ring]
+        # no wall shorter than 1.5 m: the generator draws houses, not sheds with fins
+        if any(math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]) < 1.5 for i in range(len(pts))):
+            continue
+        area = g.ring_area_m2(pts)
+        if not 40 <= area <= 420:
+            continue
+        rot, dx, dy = rnd.uniform(0, 360), rnd.uniform(-50, 50), rnd.uniform(-50, 50)
+        ys = [p[1] for p in pts]
+        xs = [p[0] for p in pts]
+        street = ((min(xs) + max(xs)) / 2 + rnd.uniform(-3, 3), min(ys) - rnd.uniform(6, 15))
+        ring_m = [[x + dx, y + dy] for x, y in turn(pts, rot)]
+        st_m = [v + d for v, d in zip(turn([street], rot)[0], (dx, dy))]
+        storeys = 2 if area >= 55 and rnd.random() < 0.45 else 1
+        beds = 1 if area < 60 else 2 if area < 90 else 3 if area < 140 else 4 if area < 210 else 5
+        if storeys == 2:
+            beds = min(5, beds + 1)
+        garage = area >= 110 and rnd.random() < 0.5
+        out.append((ring_m, st_m, storeys, beds, garage))
+    return out
+
+
+GENERATED = generated_houses()
+
+
+def test_layout_rules_on_200_generated_rectilinear_outlines():
+    bad, slow = [], []
+    for k, (ring, street, storeys, beds, garage) in enumerate(GENERATED):
+        faults, ms, _ = house_faults(ring, street, storeys, beds, garage)
+        if faults:
+            bad.append((k, len(g._clean(ring)), faults[:4]))
+        if ms >= 15.0:
+            slow.append((k, round(ms, 1)))
+    assert len(GENERATED) == 200
+    assert not bad, bad[:10]
+    assert not slow, slow[:10]
+
+
+def test_any_ring_returns_without_error():
+    for ring in ([[0, 0], [1, 0], [2, 0]], [[0, 0], [0.5, 0], [0.5, 0.4]], [[0, 0], [400, 0], [400, 300], [0, 300]], [[0, 0], [3, 0]],
+                 [[0, 0], [30, 1], [10, 2], [31, 20], [-5, 12]]):
+        for f in ('basement', 'first', 'second'):
+            res = g.fit_layout(ring, None, floor=f, storeys=2, beds=4, garage=True)
+            assert set(res) >= {'floor', 'rooms', 'frame', 'coverage', 'dropped', 'basis', 'front_basis'}
+    assert g.fit_layout([[0, 0], [1, 0], [2, 0]])['rooms'] == []
+    # odd inputs for the numbers
+    res = g.fit_layout(rect_ring(12, 9), (0, -20), storeys='2', beds='three', sqft='n/a')
+    assert res['rooms']
+
+
+def test_short_names():
+    assert g._short('Bedroom 1') == 'Bed 1' and g._short('Living room') == 'Living' and g._short('Kitchen') == 'Kitchen'
+    assert g._short('Half bath') == '½ Bath' and g._short('Utility') == 'Utility' and g._short('Garage') == 'Garage'
+    for label in ('Bedroom', 'Bath 2', 'Family room', 'Bonus room', 'Closet 12', 'Storage 2', 'Workshop', 'Rec room', 'Mudroom'):
+        assert 0 < len(g._short(label)) <= 7
+
+
+def test_beds_split_between_floors_agrees_and_caps_at_five():
+    assert g.beds_split(150, 4, 2) == (0, 4)
+    assert g.beds_split(60, 4, 2) == (1, 3)
+    assert g.beds_split(60, 9, 1) == (5, 0)
+    ring = rect_ring(9, 7)
+    first = g.fit_layout(ring, (0, -20), floor='first', storeys=2, beds=4)
+    second = g.fit_layout(ring, (0, -20), floor='second', storeys=2, beds=4)
+    n = sum(1 for res in (first, second) for r in res['rooms'] if r['kind'] == 'bedroom')
+    assert n == 4
+    assert any(r['kind'] == 'bedroom' for r in first['rooms'])           # one could not fit upstairs, so it is downstairs
 
 
 def test_layout_in_a_rectangle():
     ring = rect_ring(15.5, 8.8, 0)                       # about 51 ft by 29 ft
     res = g.fit_layout(ring, (0, -25), storeys=1, beds=3)
-    assert_layout_ok(res, ring)
+    assert not floor_faults(res, ring, (0, -25), 'first')
     labels = [r['label'] for r in res['rooms']]
     assert 'Living room' in labels and 'Kitchen' in labels and sum(1 for k in labels if k.startswith('Bedroom')) == 3
-    assert 'Bath' in labels
-    assert res['coverage'] > 0.7
-    # public rooms sit at the front (low y), bedrooms behind
+    assert 'Bath' in labels and 'Hall' in labels
+    assert res['coverage'] > 0.97
     ys = {r['label']: r['plan_m']['y0'] for r in res['rooms']}
     assert ys['Living room'] < ys['Bedroom 1']
 
@@ -325,25 +635,29 @@ def test_layout_in_a_rectangle():
 def test_layout_in_a_non_rectangular_ring():
     ring = [[x, y] for x, y in L_SHAPE]
     res = g.fit_layout(ring, (9, -20), storeys=1, beds=3)
-    assert_layout_ok(res, ring)
-    assert res['coverage'] > 0.5
+    assert not floor_faults(res, ring, (9, -20), 'first')
     # nothing may sit in the notch (11..18 east, 7..12 north)
     for r in res['rooms']:
         cx = sum(p[0] for p in r['ring_m']) / 4
         cy = sum(p[1] for p in r['ring_m']) / 4
         assert not (cx > 11.2 and cy > 7.2)
-    # the same L turned and with the street on another side still fits
     t = math.radians(33)
     turned = [[x * math.cos(t) - y * math.sin(t), x * math.sin(t) + y * math.cos(t)] for x, y in L_SHAPE]
     res2 = g.fit_layout(turned, (-30, 10), storeys=1, beds=2)
-    assert_layout_ok(res2, turned)
+    assert not floor_faults(res2, turned, (-30, 10), 'first')
 
 
-def test_layout_garage_stays_inside_and_clear_of_rooms():
+def test_layout_garage_sits_at_an_outside_corner():
     ring = rect_ring(17, 9.5, 10)
     res = g.fit_layout(ring, (0, -30), storeys=1, beds=3, garage=True)
-    assert_layout_ok(res, ring)
-    assert any(r['kind'] == 'garage' for r in res['rooms'])
+    assert not floor_faults(res, ring, (0, -30), 'first')
+    gar = next(r for r in res['rooms'] if r['kind'] == 'garage')
+    assert side_outside(gar, ring) >= 2
+    assert gar['plan_m']['y0'] == 0                      # at the street wall
+    # no garage on a floor that did not ask for one, and none in a house too small for one
+    assert not any(r['kind'] == 'garage' for r in g.fit_layout(ring, (0, -30), floor='second', storeys=2, beds=3, garage=False)['rooms'])
+    tiny = g.fit_layout(rect_ring(6, 5), (0, -20), storeys=1, beds=1, garage=True)
+    assert 'Garage' in tiny['dropped'] or any(r['kind'] == 'garage' for r in tiny['rooms'])
 
 
 def test_layout_two_storey_floors():
@@ -351,19 +665,22 @@ def test_layout_two_storey_floors():
     first = g.fit_layout(ring, (0, -20), floor='first', storeys=2, sqft=1840)
     second = g.fit_layout(ring, (0, -20), floor='second', storeys=2, sqft=1840)
     base = g.fit_layout(ring, (0, -20), floor='basement', storeys=2)
-    for res in (first, second, base):
-        assert_layout_ok(res, ring)
+    for res, f in ((first, 'first'), (second, 'second'), (base, 'basement')):
+        assert not floor_faults(res, ring, (0, -20), f)
     assert any(r['label'].startswith('Bedroom') for r in second['rooms'])
     assert not any(r['label'].startswith('Bedroom') for r in first['rooms'])
+    assert any(r['kind'] == 'stairs' for r in first['rooms']) and any(r['kind'] == 'stairs' for r in second['rooms'])
+    assert any(r['label'] == 'Half bath' for r in first['rooms'])
     assert second['floor'] == 'second' and all(r['floor'] == 'second' for r in second['rooms'])
+    assert {'utility', 'stairs'} <= {r['kind'] for r in base['rooms']}
 
 
-def test_layout_small_footprint_drops_rooms_instead_of_overflowing():
+def test_layout_small_footprint_stays_inside():
     ring = rect_ring(5.0, 3.5)
     res = g.fit_layout(ring, (0, -10), storeys=1, beds=3)
     for r in res['rooms']:
         for p in r['ring_m']:
-            assert g.point_in_ring(p, ring, eps=0.03)
+            assert g.point_in_ring(p, ring, eps=0.05)
     assert isinstance(res['dropped'], list)
 
 
