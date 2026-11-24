@@ -866,8 +866,8 @@ def _programme(floor, two, beds, area):
         rooms = [_room('Living room', 'living', 22.0, 'front', core=True), _room('Dining', 'dining', 12.0, 'front', drop=True),
                  _room('Kitchen', 'kitchen', 14.0, 'back', core=True)]
         rooms.append(_room('Bath', 'bath', 5.5, 'back', core=True) if n1 else _room('Half bath', 'bath', 3.6, 'back', core=True))
-        rooms.append(_room('Stairs', 'stairs', 4.5, 'back', core=True))
         rooms += [bed(n2 + i + 1, 11.5) for i in range(n1)]
+        rooms.append(_room('Stairs', 'stairs', 4.5, 'back', core=True))
         return rooms
     rooms = [_room('Living room', 'living', 22.0, 'front', core=True), _room('Kitchen', 'kitchen', 13.0, 'front', core=True),
              _room('Dining', 'dining', 10.0, 'front', drop=True)]
@@ -1048,6 +1048,12 @@ def _main_options(rooms, rect, hall_ok):
     return min(opts, key=lambda o: o[0])
 
 
+def _add_before_stairs(rooms, r):
+    """Stairs stay last in the plan order, so they land at the same end of the house on every floor."""
+    k = next((n for n, x in enumerate(rooms) if x['kind'] == 'stairs'), len(rooms))
+    rooms.insert(k, r)
+
+
 def _assign(prog, blocks, floor):
     """Share the programme between the main block and the wings: [(rect, rooms)], dropped labels."""
     used = {r['label'] for r in prog}
@@ -1059,7 +1065,7 @@ def _assign(prog, blocks, floor):
         if f['kind'] == 'closet':
             break
         used.add(f['label'])
-        prog.append(f)
+        _add_before_stairs(prog, f)
     while total / sum(r['wt'] for r in prog) < 0.8:
         d = next((r for r in prog if r['drop']), None)
         if d is None:
@@ -1103,7 +1109,7 @@ def _assign(prog, blocks, floor):
     acc = sum(r['wt'] for r in main_rooms)
     while acc < 0.6 * T:
         f = _next_filler(floor, used)
-        main_rooms.append(f)
+        _add_before_stairs(main_rooms, f)
         acc += f['wt']
     return [(main, main_rooms)] + out, dropped
 
