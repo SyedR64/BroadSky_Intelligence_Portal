@@ -59,6 +59,7 @@
 .ca-equip li{border-bottom:1px solid var(--sys-line)}
 .ca-eq{display:flex;align-items:flex-start;gap:var(--sys-sp-3);width:100%;min-height:44px;padding:var(--sys-sp-2) var(--sys-sp-1);border:0;background:none;color:var(--sys-ink);font:400 var(--sys-fs-sm)/1.45 var(--sys-font);text-align:left;cursor:pointer;border-radius:var(--sys-r-xs);transition:background var(--sys-t)}
 .ca-eq:hover{background:var(--sys-surface-2)}
+.ca-eq--off{cursor:default}.ca-eq--off:hover{background:none}
 .ca-eq-m{box-sizing:border-box;flex:none;display:grid;place-items:center;width:28px;height:28px;margin-top:1px;border-radius:var(--sys-r-pill);font:700 var(--sys-fs-xs)/1 var(--sys-mono)}
 .ca-eq-m.is-record{background:var(--co);color:var(--sys-on-accent)}
 .ca-eq-m.is-likely{background:var(--sys-surface);color:var(--sys-warn-ink);border:2px dashed var(--sys-warn-ink)}

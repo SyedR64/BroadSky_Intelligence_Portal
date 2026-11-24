@@ -161,6 +161,8 @@ function markersOf(ev) {
     let fi = ids.indexOf(String(it.floor ?? '')); if (fi < 0) fi = 0;
     if (floors.length) out.push({ ...it, key: `o${i}`, fi, outside: true });
   });
+  const n = {}; for (const m of out) n[m.kind] = (n[m.kind] || 0) + 1;
+  for (const m of out) m.dup = n[m.kind] > 1;
   return { floors, markers: out };
 }
 function isFocus(m, focus) { return m.focus === true || (focus.includes(String(m.kind)) && m.focus !== false); }
@@ -383,6 +385,7 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const P = ring ? ring.map(([x, y]) => [X(x), Y(y)]) : null;
   const rb = P ? { x0: Math.min(...P.map(p => p[0])), y0: Math.min(...P.map(p => p[1])), x1: Math.max(...P.map(p => p[0])), y1: Math.max(...P.map(p => p[1])) } : box;
   const boxes = [];   // text boxes already placed: names, labels, sizes; nothing placed later may overlap them
+  let noteGrow = 0;   // extra height when a large building's note has to sit under the drawing
   let s1 = `<svg class="ca-fs${ring ? ' has-outline' : ''}" viewBox="0 0 ${width} ${H}" data-w="${width}" style="--ca-fs-t:${fs}px" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
   const clip = ring ? `ca-fs-clip-${++CLIPS}` : '';
   if (P) s1 += `<defs><clipPath id="${clip}"><polygon points="${P.map(p => p.join(',')).join(' ')}"/></clipPath></defs>`
@@ -441,20 +444,28 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   if (note) {
     // one line, else two; the place nearest the middle where the whole line sits inside the outline and clear of markers
     const cut = note.lastIndexOf(' ', Math.ceil(note.length / 2) + 4);
-    const ways = [[note], ...(cut > 0 ? [[note.slice(0, cut), note.slice(cut + 1)]] : [])];
+    const w3 = note.split(' '), t3 = Math.ceil(w3.length / 3);   // three short lines for a narrow wing
+    const ways = [[note], ...(cut > 0 ? [[note.slice(0, cut), note.slice(cut + 1)]] : []),
+      ...(w3.length >= 5 ? [[w3.slice(0, t3).join(' '), w3.slice(t3, 2 * t3).join(' '), w3.slice(2 * t3).join(' ')]] : [])];
     const mx = (rb.x0 + rb.x1) / 2, my = (rb.y0 + rb.y1) / 2;
     let best = null;
     for (const lines of ways) {
       const tw = Math.max(...lines.map(l => l.length)) * fs * MONO + 8, th2 = lines.length * (fs + 4) + 4;
-      for (let gy = 0; gy <= 12; gy++) for (let gx = 0; gx <= 12; gx++) {
-        const cx = rb.x0 + (rb.x1 - rb.x0) * gx / 12, cy = rb.y0 + (rb.y1 - rb.y0) * gy / 12;
+      for (let gy = 0; gy <= 36; gy++) for (let gx = 0; gx <= 36; gx++) {   // fine enough to find a narrow wing
+        const cx = rb.x0 + (rb.x1 - rb.x0) * gx / 36, cy = rb.y0 + (rb.y1 - rb.y0) * gy / 36;
         const b = { x0: cx - tw / 2, y0: cy - th2 / 2, x1: cx + tw / 2, y1: cy + th2 / 2 };
         if (b.x0 < 2 || b.x1 > width - 2 || (P ? !boxInPoly(b, P) : !hits(b, box)) || !clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2))) continue;
         const d = Math.hypot(cx - mx, cy - my) + (lines.length - 1) * 30;
         if (!best || d < best.d) best = { d, lines, cx, b };
       }
     }
-    if (!best) { const lines = ways.at(-1), th2 = lines.length * (fs + 4) + 4; best = { lines, cx: mx, b: { x0: mx - 1, y0: my - th2 / 2, x1: mx + 1, y1: my + th2 / 2 } }; }
+    // a plan too flat or thin to hold it: the note goes under the drawing (the SVG grows), never across a wall
+    if (!best) {
+      const lines = (width - 8) / (fs * MONO) >= note.length ? [note] : ways[1] || [note], th2 = lines.length * (fs + 4) + 4;
+      const tw = Math.max(...lines.map(l => l.length)) * fs * MONO + 8, cx = width / 2;
+      best = { lines, cx, b: { x0: cx - tw / 2, y0: H + 2, x1: cx + tw / 2, y1: H + 2 + th2 } };
+      noteGrow = th2 + 6;
+    }
     boxes.push(best.b);
     names += best.lines.map((l, i) => `<text class="ca-fs-note" x="${r1(best.cx)}" y="${r1(best.b.y0 + 2 + (i + 1) * (fs + 4) - 4)}">${esc(l)}</text>`).join('');
   }
@@ -504,11 +515,18 @@ export function sketchSVG(floor, outside = [], opts = {}) {
     }
   }
   // runs under the markers: solid from records, dashed when likely; square, corners rounded a little; risers as small rings
+  // one name per line kind per floor (the server sends one run per branch), placed on the longest run of that kind first;
+  // a drain that shares its route with a water line is drawn a few px off it so both stay visible (still square);
+  // its riser ring stays on the true spot, so the water and drain rings at one stack draw as one
   let runs = '', runText = '';
-  for (const r of Array.isArray(f.runs) ? f.runs : []) {
-    if (!r || typeof r !== 'object' || !Array.isArray(r.points)) continue;
+  const runList = (Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points));
+  const runLen = r => r.points.filter(p => Array.isArray(p)).reduce((a, p, i, q) => i ? a + Math.abs(p[0] - q[i - 1][0]) + Math.abs(p[1] - q[i - 1][1]) : 0, 0);
+  const named = new Set(), hasWater = runList.some(r => r.kind === 'water'), off = 3;
+  const order = runList.map((r, i) => [r, i, runLen(r)]).sort((a, b) => b[2] - a[2] || a[1] - b[1]).map(e => e[0]);
+  for (const r of order) {
     const k = KINDS.has(r.kind) ? r.kind : 'water', cls = isSolid(r.basis) ? 'is-record' : 'is-likely';
-    const pts = r.points.filter(p => Array.isArray(p)).map(p => [X(p[0]), Y(p[1])]); if (pts.length < 2) continue;
+    const d = k === 'drain' && hasWater ? off : 0;
+    const pts = r.points.filter(p => Array.isArray(p)).map(p => [r1(X(p[0]) + d), r1(Y(p[1]) + d)]); if (pts.length < 2) continue;
     runs += `<path class="ca-fs-run ${cls} k-${k}" d="${roundPath(pts)}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
     const link = toMeter(pts, k, all, box, s);
     if (link) { const meter = all.find(p => p.edge && String(p.m.kind) === 'gas_meter'); runs += `<path class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}" d="${roundPath(link)}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
@@ -517,13 +535,15 @@ export function sketchSVG(floor, outside = [], opts = {}) {
       const dir = q[2] === 'up' ? 'up' : 'down';
       runs += `<circle class="ca-fs-riser k-${k}" data-dir="${dir}" cx="${X(q[0])}" cy="${Y(q[1])}" r="4.5"><title>${RUN_NAMES[k]} ${dir === 'up' ? 'goes to the floor above' : 'goes to the floor below'}</title></circle>`;
     }
-    const txt = r.label || RUN_NAMES[k], at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P);
-    if (at) { boxes.push(at.b); runText += `<text class="ca-fs-run-t" x="${at.x}" y="${at.y}">${esc(txt)}</text>`; }
+    const txt = r.label || RUN_NAMES[k]; if (named.has(k + '|' + txt)) continue;
+    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P);
+    if (at) { named.add(k + '|' + txt); boxes.push(at.b); runText += `<text class="ca-fs-run-t" x="${at.x}" y="${at.y}">${esc(txt)}</text>`; }
   }
   s1 += runs + dims + st + north + names + runText;
   // markers last, non-focus first so focus rings sit on top
   all.sort((a, b) => Number(isFocus(a.m, focus)) - Number(isFocus(b.m, focus)));
   for (const { m, x, y } of all) s1 += markerSVG(m, x, y, focus);
+  if (noteGrow) s1 = s1.replace(`viewBox="0 0 ${width} ${H}"`, `viewBox="0 0 ${width} ${H + noteGrow}"`);
   return s1 + '</svg>';
 }
 
@@ -535,7 +555,7 @@ function houseText(ev) {
   return t.split(/(?<=\.)\s+/).map((s, i) => {
     if (/\bbuilt\b/i.test(s)) return h.year_basis === 'likely' ? likely(s) : s;
     if (/\b(heat|gas|oil|propane|electric)\b/i.test(s)) return h.fuel_basis === 'likely' ? likely(s) : s;
-    if (i === 0 && ev.basis === 'likely') return likely(s);
+    if (i === 0 && ev.basis === 'likely' && !/public record/i.test(s)) return likely(s);   // a recorded fact is not made likely
     return s;
   }).join(' ');
 }
@@ -545,9 +565,21 @@ const swatch = (cls, dashed) => `<svg class="ca-sw" viewBox="0 0 22 22" width="1
 const riserSw = '<svg class="ca-sw" viewBox="0 0 22 22" width="18" height="18" aria-hidden="true" focusable="false"><circle class="ca-fs-riser" cx="11" cy="11" r="5"/></svg>';
 const lineSw = (kind, dashed) => `<svg class="ca-sw" viewBox="0 0 26 10" width="24" height="10" aria-hidden="true" focusable="false"><line class="ca-sw-line k-${esc(kind)}" x1="3" y1="5" x2="23" y2="5"${dashed ? ' stroke-dasharray="4 3"' : ''}/></svg>`;
 
+/** Things that hold for the building but have no spot on the plan (card.unplaced, large buildings): listed, not drawn. */
+function unplacedRow(m, focus) {
+  if (!m || typeof m !== 'object') return '';
+  const f = isFocus(m, focus), solid = isSolid(m.basis);
+  return `<li><div class="ca-eq ca-eq--off" data-k="${esc(String(m.kind || ''))}">`
+    + `<span class="ca-eq-m ${markClass(m.basis)}" aria-hidden="true">${esc(String(m.short || '?').slice(0, 2))}</span>`
+    + `<span class="ca-eq-t"><span class="ca-eq-h"><b>${esc(m.label || 'Item')}</b>${f ? '<span class="sys-chip sys-chip--soft">Start here</span>' : ''}${solid ? '' : '<span class="sys-chip sys-chip--warn">Likely</span>'}</span>`
+    + (m.note ? `<span class="ca-eq-n">${esc(String(m.note))}</span>` : '')
+    + `</span></div></li>`;
+}
+
 function equipRow(m, focus, floors) {
   const solid = isSolid(m.basis), f = isFocus(m, focus), fl = floors[m.fi];
-  const where = [m.note, m.outside ? (/^outside\b/i.test(String(m.note || '')) ? '' : 'Outside') : floors.length > 1 && fl?.name ? fl.name : ''].filter(Boolean).map(String);   // an outside marker is not on a floor
+  const room = !m.outside && m.dup && typeof m.room === 'string' ? m.room : '';   // several of one kind: the room tells them apart
+  const where = [m.note, room, m.outside ? (/^outside\b/i.test(String(m.note || '')) ? '' : 'Outside') : floors.length > 1 && fl?.name ? fl.name : ''].filter(Boolean).map(String);   // an outside marker is not on a floor
   return `<li><button type="button" class="ca-eq" data-ca="equip" data-k="${esc(m.key)}" data-floor="${m.fi}">`
     + `<span class="ca-eq-m ${markClass(m.basis)}" aria-hidden="true">${esc(String(m.short || '?').slice(0, 2))}</span>`
     + `<span class="ca-eq-t"><span class="ca-eq-h"><b>${esc(m.label || 'Item')}</b>${f ? '<span class="sys-chip sys-chip--soft">Start here</span>' : ''}${solid ? '' : '<span class="sys-chip sys-chip--warn">Likely</span>'}</span>`
@@ -680,6 +712,7 @@ export function renderSketch(ev, ctx = {}) {
     ...markers.filter(m => !isFocus(m, focus) && m.fi === cur),
     ...markers.filter(m => !isFocus(m, focus) && m.fi !== cur),
   ];
+  const unplaced = Array.isArray(ev.unplaced) ? ev.unplaced.filter(m => m && typeof m === 'object') : [];
   const live = !!(ev.place || ev.building) || ev.example === false;
   const example = !live && (ev.example === true || ['record', 'mixed'].includes(basisKey(ev.basis)));   // a company record card only
   const fp = ev.building?.footprint || null;
@@ -700,7 +733,7 @@ export function renderSketch(ev, ctx = {}) {
     + (floors.length ? `<div class="sys-chips ca-fs-floors" role="group" aria-label="Floor">${floors.map((f, i) => `<button type="button" class="sys-chip" data-ca="floor" data-floor="${i}" aria-pressed="${i === cur}">${esc(f.name || `Floor ${i + 1}`)}</button>`).join('')}</div>` : '')
     + floors.map((f, i) => `<div class="ca-fs-svg" data-floor="${i}"${i === cur ? '' : ' hidden'}>${svgOf(f, i, 720)}</div>`).join('')
     + legendHTML(ev, markers, floors, outlines.some(Boolean))
-    + (list.length ? `<ul class="ca-equip">${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
+    + (list.length || unplaced.length ? `<ul class="ca-equip">${unplaced.map(m => unplacedRow(m, focus)).join('')}${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
     + factsHTML(ev)
     + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
     + (ev.source_line ? `<p class="sys-src">${esc(ev.source_line)}</p>` : '');
