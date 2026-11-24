@@ -6,8 +6,8 @@
    names everywhere, and a tool connected for a company is connected for every role at that company.
    ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers.
    ?embed=1&dock=1 (the home's right column, modules/home.js): the signature question as one card, the chips as quiet rows, the
-   thread, the composer at the bottom. On the homes with the address lookup a typed site address goes to the home ('bsp:address'),
-   which answers it in its own wide column. */
+   thread, the composer at the bottom. A typed site address goes to the home ('bsp:address'), for every role, as the Ask panel
+   does it: the home answers it in its own wide column and says back where the answer is ('bsp:address-done'). */
 import { Frame } from './frame.js?v=20261124170325';
 import { Chat, PERSONAS } from './chat.js?v=20261124170325';
 import { Session, CONN_STATES } from './session.js?v=20261124170325';
@@ -115,34 +115,53 @@ function accentOf(org) {
   const co = orgOf(org).co;
   try { return getComputedStyle(document.documentElement).getPropertyValue(co ? `--co-${co}` : '--sys-brand').trim() || undefined; } catch { return undefined; }
 }
-/* The roles whose home answers a typed site address (modules/home.js hasBox): the firm levels and the Punctual Pros office and field. */
+/* The roles that had the home's address box before the dock (the firm levels, the Punctual Pros office and field): their composer
+   names the address in its placeholder. Every role's dock hands a typed address to the home (handAddress). */
 const addressRole = (r = state.role) => r.level === 'firm_leadership' || r.level === 'firm_team' || (orgOf(r.org).co === 'pp' && (r.level === 'co_office' || r.level === 'co_field'));
 /** The composer's placeholder; in the dock, an address role's names the address too ("the fund, a deal or an address"). */
 function placeholderOf(r) {
   let p = r.placeholder || 'Ask the agent';
   if (!DOCK || !addressRole(r)) return p;
-  if (/[?.]$/.test(p)) return `${p} Or an address`;
+  if (/[?.]$/.test(p)) return `${p} Or type an address.`;
   const i = p.lastIndexOf(' or ');
   if (i > -1) p = `${p.slice(0, i)}, ${p.slice(i + 4)}`;
   return `${p} or an address`;
 }
-/** Dock, address role: a site address (the test the Ask panel applies before it hands one to the home) is not sent to the agent.
- *  The thread shows it and the one-line reply; the home runs the lookup in its own column. Returns true when it was handed over. */
+/** Dock: a site address (the test the Ask panel applies before it hands one to the home) is not sent to the agent, for any role.
+ *  The thread shows it and one reply line; the home runs the lookup in its own column and posts the outcome back, which turns
+ *  the line into where the answer is, or why there is none (addressDone). Returns true when it was handed over. */
+const pendingAddr = new Map();   // hand-over id → { el, addr, entry } until the home says how the lookup ended
+let addrSeq = 0;
 function handAddress(q) {
   const w = state.inst;
-  if (!DOCK || !w || !addressRole() || window.parent === window) return false;
+  if (!DOCK || !w || window.parent === window) return false;
   const g = classify(q, { co: orgOf(state.role.org).co || null });
   // a line that is only an address ("418 Wexcombe Ln, Lititz") counts too: the home's old Address box took those
   const addr = g ? (g.kind === 'address' ? g.addr : null) : (/^\s*\d/.test(q) ? parseAddress(q) : null);
   if (!addr) return false;
   w.root?.querySelector('.ch-thread')?.classList.add('open');
-  const u = w.userTurn(q), t = w.botShell(), line = esc(addressReply(addr, true));
-  t.querySelector('.ch-answer').innerHTML = `<p>${line}</p>`;
+  const u = w.userTurn(q), t = w.botShell(), text = addressReply(addr, true), ans = t.querySelector('.ch-answer');
+  ans.innerHTML = `<p>${esc(text)}</p>`;
   w.msgs.append(u, t);
-  if (Array.isArray(w.history)) w.history.push({ role: 'user', html: esc(q), text: q }, { role: 'assistant', html: `<p>${line}</p>`, text: addressReply(addr, true) });
+  const entry = { role: 'assistant', html: `<p>${esc(text)}</p>`, text };
+  if (Array.isArray(w.history)) w.history.push({ role: 'user', html: esc(q), text: q }, entry);
   scrollTurnIntoView(u);
-  try { window.parent.postMessage({ type: 'bsp:address', text: q }, location.origin); } catch { /* no shell around */ }
+  const id = ++addrSeq;
+  pendingAddr.set(id, { el: ans, addr, entry });
+  try { window.parent.postMessage({ type: 'bsp:address', text: q, id }, location.origin); } catch { pendingAddr.delete(id); }
   return true;
+}
+/** The home's word on a handed-over address: the reply line says where the answer is, the reason there is none, or that it stopped. */
+function addressDone(d) {
+  const p = pendingAddr.get(d.id);
+  if (!p) return;
+  pendingAddr.delete(d.id);
+  const where = [p.addr.street, p.addr.town].filter(Boolean).join(', ');
+  const text = d.status === 'stopped' ? `Lookup stopped for ${where}.`
+    : d.status === 'error' ? (String(d.text || '').trim().slice(0, 160) || 'The address lookup did not answer. Try again shortly.')
+    : `The answer for ${where} is ${d.side === 'left' ? 'on the left' : 'on the home screen'}.`;
+  p.el.innerHTML = `<p>${esc(text)}</p>`;
+  p.entry.html = `<p>${esc(text)}</p>`; p.entry.text = text;
 }
 function registerPersona(role) {
   const sig = norm(sigOf(role)?.question);   // the signature question has its own chip, answered without the model
@@ -681,10 +700,17 @@ export async function boot() {
     // the "Reads …" line sits quietly under the composer
     const hint = $('.ca-hint'), compose = $('.ch-compose', state.inst.root);
     if (hint && compose) compose.appendChild(hint);
-    // the home's Clear: a fresh thread, the keyboard in the composer
+    // the home's Clear: a fresh thread, the keyboard in the composer; the home's word on a handed-over address
     window.addEventListener('message', e => {
-      if (e.origin !== location.origin || e.source !== window.parent || !e.data || e.data.type !== 'bsp:dock-clear') return;
-      state.inst.newChat({ focus: true });
+      if (e.origin !== location.origin || e.source !== window.parent || !e.data || typeof e.data !== 'object') return;
+      if (e.data.type === 'bsp:dock-clear') { pendingAddr.clear(); state.inst.newChat({ focus: true }); }
+      else if (e.data.type === 'bsp:address-done') addressDone(e.data);
+    });
+    // the shell's Ask hotkey (Command or Control J) pressed with the keyboard in here: the home opens or closes the dock
+    document.addEventListener('keydown', e => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || String(e.key).toLowerCase() !== 'j') return;
+      e.preventDefault();
+      try { window.parent.postMessage({ type: 'bsp:dock-toggle' }, location.origin); } catch { /* no shell */ }
     });
   }
 

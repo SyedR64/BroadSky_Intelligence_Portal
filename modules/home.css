@@ -85,6 +85,12 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-split.is-docked .hm-cos .sys-table :is(th,td){padding-left:10px;padding-right:10px}
   .hm-split.is-docked .hm-cos td.hm-wrap{min-width:14ch}
 }
+/* beside the docked column below 1440px "What moves it" gives way (the row's side panel holds the full next action), so the
+   status always shows with no sideways scroll */
+@media (min-width:1200px) and (max-width:1439px){
+  .hm-split.is-docked .hm-cos .hm-wrap{display:none}
+  .hm-split.is-docked .hm-cos th{white-space:normal}
+}
 @media (min-width:641px) and (max-width:1399px){
   .hm-mainc .hm-cos .hm-sub{display:block;margin:2px 0 0;white-space:normal}
   .hm-mainc .hm-cos td.sys-n{white-space:normal}

@@ -997,6 +997,9 @@ LOT_RECORD = '2 buildings on this lot. Showing the one that best fits the record
 LOT_CHOSEN = '2 buildings on this lot. Showing the one you picked.'
 HALL_NOTE = 'Outline: about 22,500 sq ft of ground. Record: 15,226 sq ft. They do not agree.'
 GARAGE_NOTE = 'Outline: about 37,100 sq ft of ground. Record: 15,226 sq ft. They do not agree.'
+TOWN_HALL = '33 Washington St, Toms River'
+THREAD_JS = """el => ({ q: [...el.querySelectorAll('.ch-turn.user')].map(t => t.textContent.trim()),
+  a: [...el.querySelectorAll('.ch-turn.bot .ch-answer')].map(t => t.textContent.trim()) })"""
 REPLAY_ANSWERS = r'''
 import datetime, json, os, sys
 root, out = sys.argv[1], sys.argv[2]
@@ -1032,30 +1035,44 @@ def site_answers(tmp):
     server/site.py in a child process (no network, no model). Keys '0', '1', '2' and 'typed'."""
     import subprocess
     out = os.path.join(tmp, 'site_answers.json')
+    if os.path.exists(out):
+        return json.load(open(out, encoding='utf-8'))
     subprocess.run([sys.executable, '-c', REPLAY_ANSWERS, ROOT, out], check=True, cwd=os.path.join(ROOT, 'server'), timeout=120)
     return json.load(open(out, encoding='utf-8'))
 
 
-def _home_ctx(browser, site, w, h, dark, answers, delay_ms=0):
-    """The home of a field role whose dock takes addresses; the backend is answered inside the context from the replayed answers
-    (POST /site-brief by its building), /health says the lookup is on, every other backend call fails, nothing else loads."""
+def _is_fake(u):
+    """A request to the fake backend: its origin exactly (a site served on a port that starts with 9 is not it)."""
+    return u == FAKE_BACKEND or u.startswith(FAKE_BACKEND + '/') or u.startswith(FAKE_BACKEND + '?')
+
+
+def _home_ctx(browser, site, w, h, dark, answers, delay_ms=0, llm=False, site_status=200, chats=None):
+    """The home of a role whose dock takes addresses; the backend is answered inside the context from the replayed answers
+    (POST /site-brief by its building, or `site_status` when that is not 200), /health says the lookup is on (and the model when
+    `llm`), POST /chat is counted into `chats` and refused, every other backend call fails, nothing else loads."""
     ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
     outside, calls = [], []
 
     def route(r):
         u = r.request.url
         cors = {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*'}
-        if u.startswith(FAKE_BACKEND):
+        if _is_fake(u):
             path = u[len(FAKE_BACKEND):].split('?')[0]
             if r.request.method == 'OPTIONS':
                 return r.fulfill(status=204, headers=cors)
             if path == '/health':
-                return r.fulfill(status=200, content_type='application/json', body='{"ok":true,"llm":false,"site":true}', headers=cors)
+                return r.fulfill(status=200, content_type='application/json', body=json.dumps({'ok': True, 'llm': llm, 'site': True}), headers=cors)
+            if path == '/chat':
+                if chats is not None:
+                    chats.append(r.request.post_data or '')
+                return r.fulfill(status=503, content_type='application/json', body='{"ok":false,"error":"test"}', headers=cors)
             if path == '/site-brief':
                 body = r.request.post_data_json or {}
                 calls.append(body)
                 if delay_ms:
                     time.sleep(delay_ms / 1000)
+                if site_status != 200:
+                    return r.fulfill(status=site_status, content_type='application/json', body='{"ok":false}', headers=cors)
                 k = body.get('building')
                 ans = answers.get(str(k if isinstance(k, int) and str(k) in answers else 0))
                 return r.fulfill(status=200, content_type='application/json', body=json.dumps({'ok': True, **ans}), headers=cors)
@@ -1084,7 +1101,7 @@ CHOOSER_MEASURE = """() => {
   return { n: bs.length, labels: bs.map(b => b.textContent), pressed: bs.map(b => b.getAttribute('aria-pressed')),
     cls: bs.map(b => b.className), bg: bs.map(b => getComputedStyle(b).backgroundColor), after, answers: out ? out.querySelectorAll('.sl-ans').length : 0,
     text: ans?.querySelector('.sl-text')?.textContent || '', house: ans?.querySelector('.ca-house')?.textContent || '', small,
-    top, bottom, vh: innerHeight, scroll: document.getElementById('content')?.scrollTop ?? scrollY,
+    top, bottom, vh: innerHeight, scroll: document.querySelector('.hm-mainc')?.scrollTop ?? scrollY,
     src: document.querySelectorAll('#drawer-hold .drawer-list[data-drawer="src"] > .drawer-item, #inspector .drawer-list[data-drawer="src"] > .drawer-item').length,
     focus: document.activeElement?.dataset?.sl === 'building' ? document.activeElement.getAttribute('aria-pressed') : null,
     sideways: document.documentElement.scrollWidth > innerWidth, wide: bs.some(b => b.getBoundingClientRect().right > innerWidth + 0.5) };
@@ -1121,10 +1138,10 @@ def chooser_checks(browser, site, tmp):
             dock.locator('#ca-chat textarea').fill(answers['typed'])
             dock.locator('#ca-chat textarea').press('Enter')
             ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out [data-sl=\"building\"]')"), 10)
-            th = dock.locator('#ca-chat').evaluate("""el => ({ q: [...el.querySelectorAll('.ch-turn.user')].map(t => t.textContent.trim()),
-              a: [...el.querySelectorAll('.ch-turn.bot .ch-answer')].map(t => t.textContent.trim()) })""")
-            check(f'{tag}: the address typed in the dock stays out of the agent: its bubble, the one-line reply, the lookup in the home',
-                  ok and th['q'] == [answers['typed']] and len(th['a']) == 1 and th['a'][0].startswith('Looking up 33 Washington St'), json.dumps(th)[:240])
+            th = poll(lambda: (lambda t: t if t['a'] and t['a'][0].startswith('The answer for') else None)(dock.locator('#ca-chat').evaluate(THREAD_JS)), 5) \
+                or dock.locator('#ca-chat').evaluate(THREAD_JS)
+            check(f'{tag}: the address typed in the dock stays out of the agent: its bubble, one reply line that says where the answer is, the lookup in the home',
+                  ok and th['q'] == [answers['typed']] and th['a'] == [f'The answer for {TOWN_HALL} is on the left.'], json.dumps(th)[:240])
         else:
             # the Ask panel's hand-over: the typed address travels in the hash and runs in the answer area at once
             page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview?address={urllib.parse.quote(answers["typed"])}')
@@ -1207,6 +1224,258 @@ def chooser_checks(browser, site, tmp):
     check('chooser: the assistant\'s card carries the notes word for word and no row of buttons',
           f'{LOT_RECORD} {HALL_NOTE}' in got['house'] and got['rows'] == 0 and not con.errors and not outside, json.dumps(got)[:300])
     ctx.close()
+
+
+# ── the home's dock ─────────────────────────────────────────────────────────────────────────────
+DOCK_STATE = """() => { const d = document.querySelector('.hm-dock'), l = document.querySelector('.ch-floating .ch-launch');
+  const ask = [...document.querySelectorAll('.hm-mainc [data-hm="ask"]')].filter(a => a.getClientRects().length);
+  return { open: !!d && !d.hidden, ls: localStorage.getItem('bsp-os-dock'), exp: document.querySelector('[data-sys-ask]')?.getAttribute('aria-expanded'),
+    launcher: !!l && getComputedStyle(l).display !== 'none' && getComputedStyle(l).visibility !== 'hidden', flag: 'homeDock' in document.documentElement.dataset,
+    askBtn: ask.map(a => a.textContent.trim()), clear: !!d && !d.querySelector('[data-hm="clear"]').hidden, hash: location.hash,
+    act: document.activeElement?.tagName + '#' + (document.activeElement?.id || ''), out: (document.getElementById('hm-out')?.textContent || '').trim().slice(0, 80),
+    outRole: document.getElementById('hm-out')?.getAttribute('role'), outLive: document.getElementById('hm-out')?.getAttribute('aria-live'),
+    say: document.getElementById('hm-say')?.textContent || '', slText: document.querySelector('#hm-out .sl-text, #hm-out .sl-fail')?.textContent || '' };
+}"""
+TABLE_JS = """() => { const w = document.querySelector('.hm-cos .sys-table-wrap'), st = [...document.querySelectorAll('.hm-cos td.hm-st')];
+  const wr = w.getBoundingClientRect();
+  return { sw: w.scrollWidth, cw: w.clientWidth, docked: document.querySelector('.hm-split').classList.contains('is-docked'),
+    status: st.length && st.every(td => { const r = td.getBoundingClientRect(); return r.width > 20 && r.right <= wr.right + 1; }) }; }"""
+
+
+def _drawn(u, site):
+    """What a page may load offline: the site itself, the fonts, and the pinned map and 3D libraries it draws with."""
+    return u.startswith(site) or 'fonts.googleapis.com' in u or 'fonts.gstatic.com' in u or bool(THREE_RX.match(u) or LEAFLET_RX.match(u))
+
+
+def _dock_open(page, site, role, w, extra=''):
+    page.goto(f'{site}/app.html?role={role}&backend={FAKE_BACKEND}{extra}#/home/overview')
+    page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+    page.wait_for_timeout(300)
+
+
+def _press(page, sel):
+    """Clicks `sel` when it shows within 3 s; False when it never does (the check that needs it then fails, the run goes on)."""
+    try:
+        page.locator(sel).first.click(timeout=3000)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _dock_type(page, text):
+    dock = page.frame_locator('.hm-dock iframe')
+    dock.locator('#ca-chat textarea').wait_for(timeout=15000)
+    page.wait_for_function("() => !!document.querySelector('.hm-dock iframe')?.contentWindow?.__agent", timeout=15000)
+    dock.locator('#ca-chat textarea').fill(text)
+    dock.locator('#ca-chat textarea').press('Enter')
+    return dock
+
+
+def dock_checks(browser, site, tmp):
+    """The agent docked on the home (modules/home.js mountDock, agent.html?embed=1&dock=1), offline: the backend is answered inside
+    the context (nj_full's town hall replayed through server/site.py; /chat counted and refused). A site address typed in the dock
+    goes to the home for every role, as in the floating Ask panel (no /chat, one /site-brief), the reply line then says where the
+    answer is or why there is none, the address goes into the hash (a reload keeps the answer), Clear empties the thread and the
+    answer. The Ask hotkey opens and closes the dock with the keyboard inside it too. Open by default at 1440 px, the choice
+    remembered; closed at 1024 and 390 px, where every home shows "Ask the agent". The six-company table keeps Status in view
+    beside the docked column. No request leaves the site."""
+    answers = site_answers(tmp)
+    typed = answers['typed']
+    done = f'The answer for {TOWN_HALL} is on the left.'
+    # every role hands a typed address to the home: a field role and a leadership role that never had the address box
+    for role in ('cet-field-electrician', 'pp-ceo'):
+        tag = f'dock 1440 px {role}'
+        chats = []
+        ctx, page, outside, calls = _home_ctx(browser, site, 1440, 900, False, answers, llm=True, chats=chats)
+        con = Console(page, site)
+        _dock_open(page, site, role, 1440)
+        st0 = page.evaluate(DOCK_STATE)
+        dock = _dock_type(page, typed)
+        ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out .sl-ans')"), 10)
+        th = poll(lambda: (lambda t: t if t['a'] and t['a'][-1] == done else None)(dock.locator('#ca-chat').evaluate(THREAD_JS)), 5) or dock.locator('#ca-chat').evaluate(THREAD_JS)
+        st = page.evaluate(DOCK_STATE)
+        check(f'{tag}: the dock is open by default, Ask says so, the floating launcher steps aside',
+              st0['open'] and st0['exp'] == 'true' and not st0['launcher'] and st0['flag'] and not st0['askBtn'], json.dumps(st0)[:300])
+        check(f'{tag}: a typed address goes to the home, not to the model: no /chat, one /site-brief, the answer in the home',
+              ok and not chats and len(calls) == 1 and calls[0].get('role') == role and st['out'].startswith(TOWN_HALL), json.dumps({'chat': len(chats), 'site': len(calls), 'out': st['out']}))
+        check(f'{tag}: the reply line says where the answer is once it is there', th['q'] == [typed] and th['a'] == [done], json.dumps(th)[:240])
+        check(f'{tag}: the answer area is a labelled region, not live; one status line reads the answer\'s first sentence',
+              st['outRole'] == 'region' and st['outLive'] is None and st['say'] and st['say'] == st['slText'] and st['act'] == 'DIV#hm-out',
+              json.dumps({k: st[k] for k in ('outRole', 'outLive', 'say', 'act')})[:300])
+        check(f'{tag}: the address is in the hash and Clear shows', st['hash'] == '#/home/overview?address=' + urllib.parse.quote(typed, safe='') and st['clear'],
+              json.dumps({k: st[k] for k in ('hash', 'clear')}))
+        if role == 'cet-field-electrician':
+            page.reload()
+            page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+            back = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out .sl-ans')"), 10)
+            check(f'{tag}: a reload keeps the answer (the hash runs it again)', back and len(calls) == 2 and not chats, json.dumps({'site': len(calls)}))
+            _press(page, '.hm-dock [data-hm="clear"]')
+            gone = poll(lambda: (lambda s: s if not s['out'] and not s['clear'] else None)(page.evaluate(DOCK_STATE)), 5) or page.evaluate(DOCK_STATE)
+            check(f'{tag}: Clear empties the answer, takes the address out of the hash and hides itself',
+                  not gone['out'] and gone['hash'] == '#/home/overview' and not gone['clear'] and not gone['say'], json.dumps(gone)[:300])
+            # the hotkey: from the page, then with the keyboard in the dock's composer, then again
+            page.locator('.hm-mainc .hm-head').click()
+            seq = []
+            for _ in range(3):
+                page.keyboard.press('Control+J')
+                page.wait_for_timeout(700)
+                seq.append(page.evaluate("""() => ({ open: !document.querySelector('.hm-dock').hidden, act: document.activeElement?.tagName,
+                  inner: document.activeElement?.tagName === 'IFRAME' ? document.activeElement.contentDocument.activeElement?.tagName : null })"""))
+            check(f'{tag}: the Ask hotkey closes the dock, opens it with the keyboard in the composer, and closes it from inside',
+                  [x['open'] for x in seq] == [False, True, False] and seq[1]['inner'] == 'TEXTAREA' and seq[2]['act'] == 'BUTTON', json.dumps(seq))
+            page.keyboard.press('Control+J')
+            page.wait_for_timeout(500)
+            _press(page, '.hm-dock [data-hm="close"]')
+            page.reload()
+            page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+            page.wait_for_timeout(500)
+            st2 = page.evaluate(DOCK_STATE)
+            check(f'{tag}: Close is remembered across a reload, and the home then shows "Ask the agent"',
+                  not st2['open'] and st2['ls'] == 'closed' and st2['exp'] == 'false' and st2['askBtn'] == ['Ask the agent'], json.dumps(st2)[:300])
+            pressed = _press(page, '.hm-mainc [data-hm="ask"]')
+            page.wait_for_timeout(500)
+            check(f'{tag}: "Ask the agent" opens the dock', pressed and page.evaluate(DOCK_STATE)['open'])
+            who = page.evaluate("() => { const b = document.querySelector('.hm-dock [data-hm=\"who\"]'); return { pop: b.getAttribute('aria-haspopup'), label: b.getAttribute('aria-label') }; }")
+            check(f'{tag}: the dock\'s role line says it opens the "Viewing as" sheet', who['pop'] == 'dialog' and who['label'].startswith('Viewing as ') and who['label'].endswith('. Change'), json.dumps(who))
+        check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
+        ctx.close()
+    # a lookup that fails: the reply line gives the reason the home gives
+    ctx, page, outside, calls = _home_ctx(browser, site, 1440, 900, False, answers, site_status=500)
+    con = Console(page, site)
+    _dock_open(page, site, 'pp-plumber', 1440)
+    dock = _dock_type(page, typed)
+    msg = 'The address lookup did not answer. Try again shortly.'
+    th = poll(lambda: (lambda t: t if t['a'] and t['a'][-1] == msg else None)(dock.locator('#ca-chat').evaluate(THREAD_JS)), 8) or dock.locator('#ca-chat').evaluate(THREAD_JS)
+    st = page.evaluate(DOCK_STATE)
+    check('dock 1440 px, lookup answers 500: the reply line and the home both give the reason, nothing says it is still looking',
+          th['a'] == [msg] and st['out'] == msg and st['say'] == msg, json.dumps({'a': th['a'], 'out': st['out'], 'say': st['say']}))
+    con.errors[:] = [e for e in con.errors if '500' not in e]   # the refused lookup itself
+    check('dock 1440 px, lookup answers 500: nothing outside the site, no other console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
+    ctx.close()
+    # narrower: the dock starts closed, every home shows "Ask the agent"; an address typed in the dock closes it and lands in the home
+    for w, h, role in ((1024, 768, 'bsp-partner'), (390, 844, 'cet-ceo'), (390, 844, 'pp-plumber')):
+        tag = f'dock {w} px {role}'
+        ctx, page, outside, calls = _home_ctx(browser, site, w, h, w < 500, answers)
+        con = Console(page, site)
+        _dock_open(page, site, role, w)
+        st0 = page.evaluate(DOCK_STATE)
+        check(f'{tag}: the dock starts closed and the home shows "Ask the agent"', not st0['open'] and st0['askBtn'] == ['Ask the agent'] and not st0['launcher'], json.dumps(st0)[:300])
+        if not _press(page, '.hm-mainc [data-hm="ask"]'):
+            _press(page, '[data-sys-ask]')   # the top bar's Ask opens it too
+        page.wait_for_timeout(500)
+        ph = page.frame_locator('.hm-dock iframe').locator('#ca-chat textarea').get_attribute('placeholder', timeout=15000) or ''
+        named = role != 'cet-ceo'   # the roles that had the home's address box name the address in the placeholder
+        check(f'{tag}: the composer\'s placeholder reads as one thought' + (' and names the address' if named else ''),
+              ph and not re.search(r'[?.] Or an address$', ph) and (('address' in ph) == named) and (not ph.endswith('address') or ph.endswith(' or an address')), ph)
+        dock = _dock_type(page, typed)
+        ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out .sl-ans')"), 10)
+        page.wait_for_timeout(400)
+        st = page.evaluate(DOCK_STATE)
+        check(f'{tag}: an address typed in the dock closes it, the answer lands in the home and takes the focus',
+              ok and not st['open'] and len(calls) == 1 and st['act'] == 'DIV#hm-out' and st['out'].startswith(TOWN_HALL), json.dumps({k: st[k] for k in ('open', 'act', 'out')}) + f' calls={len(calls)}')
+        page.locator('[data-sys-ask]').click()
+        page.wait_for_timeout(500)
+        th = dock.locator('#ca-chat').evaluate(THREAD_JS)
+        st = page.evaluate(DOCK_STATE)
+        check(f'{tag}: reopened, the thread says the answer is on the home screen and Clear shows',
+              th['a'] == [f'The answer for {TOWN_HALL} is on the home screen.'] and st['open'] and st['clear'], json.dumps(th)[:200])
+        if role == 'bsp-partner':
+            page.keyboard.press('Escape')
+            page.evaluate("location.hash = '#/fin/portfolio'")
+            page.wait_for_timeout(1200)
+            away = page.evaluate(DOCK_STATE)
+            check(f'{tag}: off the home the floating launcher is back', away['launcher'] and not away['flag'], json.dumps({k: away[k] for k in ('launcher', 'flag')}))
+        check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
+        ctx.close()
+    # the six-company table beside the docked column: Status in view, no sideways scroll
+    for w in (1200, 1280, 1366, 1440):
+        ctx, page = new_page(browser, w, 900, reduced=True)
+        ctx.route('**/*', lambda r: r.continue_() if _drawn(r.request.url, site) else r.abort())
+        page.goto(f'{site}/app.html?backend=off#/home/overview')
+        page.wait_for_selector('.hm-cos tbody tr', timeout=15000)
+        page.wait_for_timeout(300)
+        t = page.evaluate(TABLE_JS)
+        check(f'dock {w} px firm home: beside the docked column the company table fits and every Status shows', t['docked'] and t['sw'] <= t['cw'] + 1 and t['status'], json.dumps(t))
+        ctx.close()
+
+
+# ── the "Viewing as" sheet ──────────────────────────────────────────────────────────────────────
+SHEET_JS = """() => { const p = document.getElementById('sys-viewas-pop'), rs = [...p.querySelectorAll('.sys-viewas-role')];
+  const small = [];
+  for (const e of p.querySelectorAll('*')) { if (!e.getClientRects().length || e.closest('.sys-vh') || ![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+    const fs = parseFloat(getComputedStyle(e).fontSize); if (fs < 11) small.push(e.className + ' ' + fs); }
+  const st = p.querySelector('[role="status"]');
+  return { open: !p.hidden, n: rs.length, uniq: new Set(rs.map(r => r.dataset.role)).size, first: rs[0]?.dataset.role, last: rs.at(-1)?.dataset.role,
+    lit: rs.filter(r => !r.classList.contains('is-dim')).map(r => r.dataset.role), cur: rs.filter(r => r.hasAttribute('aria-current')).map(r => r.dataset.role),
+    status: st ? st.textContent : null, statusShown: !!st && !st.classList.contains('sys-vh') && st.getClientRects().length > 0,
+    inPop: p.contains(document.activeElement), act: document.activeElement?.dataset?.role || document.activeElement?.className || '',
+    small, sideways: document.documentElement.scrollWidth > innerWidth, role: p.getAttribute('role'), modal: p.getAttribute('aria-modal') }; }"""
+
+
+def sheet_checks(browser, site):
+    """The "Viewing as" sheet (assets/frame.js bindViewAs) at 1440 and 390 px, offline: all 44 roles once each, the role in view
+    marked; search narrows (with a count for a screen reader, and "No role matches." on screen when none does); Home and End;
+    Tab stays inside; Escape closes and returns focus; a pick changes the role and shows "Back to Managing partner"; no text under
+    11 px, no sideways scroll, no console errors, nothing outside the site."""
+    for w, h, dark in ((1440, 900, False), (390, 844, True)):
+        tag = f"sheet {w} px {'dark' if dark else 'light'}"
+        ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
+        outside = []
+        ctx.route('**/*', lambda r: r.continue_() if _drawn(r.request.url, site) else (outside.append(r.request.url), r.abort())[1])
+        con = Console(page, site)
+        page.goto(f'{site}/app.html?backend=off#/home/overview')
+        page.wait_for_selector('.sys-viewas-btn', timeout=15000)
+        page.wait_for_timeout(400)
+        btn = page.locator('.sys-viewas-btn')
+        check(f'{tag}: the path is one button that opens a dialog', btn.get_attribute('aria-haspopup') == 'dialog' and (btn.get_attribute('aria-label') or '').endswith('. Change'), btn.get_attribute('aria-label') or '')
+        btn.click()
+        page.wait_for_selector('#sys-viewas-pop', state='visible')
+        s = page.evaluate(SHEET_JS)
+        check(f'{tag}: 44 roles once each, the role in view marked and focused, a modal dialog',
+              s['n'] == 44 and s['uniq'] == 44 and s['cur'] == ['bsp-managing-partner'] and s['act'] == 'bsp-managing-partner' and s['role'] == 'dialog' and s['modal'] == 'true',
+              json.dumps({k: s[k] for k in ('n', 'uniq', 'cur', 'act', 'role', 'modal')}))
+        check(f'{tag}: no text under 11 px, no sideways scroll', not s['small'] and not s['sideways'], json.dumps({'small': s['small'][:3], 'sideways': s['sideways']}))
+        find = page.locator('#sys-viewas-pop input')
+        find.fill('plumb')
+        page.wait_for_timeout(150)
+        s = page.evaluate(SHEET_JS)
+        check(f'{tag}: "plumb" leaves the Plumber lit, and the count goes to a screen reader', s['lit'] == ['pp-plumber'] and s['status'] == '1 role matches' and not s['statusShown'], json.dumps({k: s[k] for k in ('lit', 'status', 'statusShown')}))
+        find.fill('zzzqq')
+        page.wait_for_timeout(150)
+        find.press('ArrowDown')
+        s = page.evaluate(SHEET_JS)
+        check(f'{tag}: a search with no match says "No role matches." on screen and ArrowDown stays in the field',
+              not s['lit'] and s['status'] == 'No role matches.' and s['statusShown'] and 'sys-input' in s['act'], json.dumps({k: s[k] for k in ('lit', 'status', 'statusShown', 'act')}))
+        find.fill('')
+        page.wait_for_timeout(150)
+        s = page.evaluate(SHEET_JS)
+        check(f'{tag}: an empty search lights every role and says nothing', len(s['lit']) == 44 and s['status'] == '', json.dumps({'lit': len(s['lit']), 'status': s['status']}))
+        find.press('ArrowDown')
+        page.keyboard.press('End')
+        end = page.evaluate(SHEET_JS)['act']
+        page.keyboard.press('Home')
+        home = page.evaluate(SHEET_JS)['act']
+        check(f'{tag}: End and Home go to the last and the first role', end == s['last'] and home == s['first'] == 'bsp-managing-partner', json.dumps({'end': end, 'home': home, 'last': s['last']}))
+        for _ in range(12):
+            page.keyboard.press('Tab')
+        check(f'{tag}: Tab stays inside the sheet', page.evaluate(SHEET_JS)['inPop'])
+        page.keyboard.press('Escape')
+        page.wait_for_timeout(200)
+        s = page.evaluate(SHEET_JS)
+        check(f'{tag}: Escape closes it and returns focus to the button', not s['open'] and page.evaluate("() => document.activeElement?.classList.contains('sys-viewas-btn')"), json.dumps({'open': s['open'], 'act': s['act']}))
+        btn.click()
+        page.wait_for_selector('#sys-viewas-pop', state='visible')
+        page.locator('#sys-viewas-pop .sys-viewas-role[data-role="pp-plumber"]').click()
+        page.wait_for_timeout(500)
+        back = page.evaluate("() => [...document.querySelectorAll('.sys-viewas-back')].filter(e => e.getClientRects().length).map(e => e.textContent.trim())")
+        if w < 700 and not back:   # on a phone Back sits in the sheet's header
+            btn.click()
+            page.wait_for_selector('#sys-viewas-pop', state='visible')
+            back = page.evaluate("() => [...document.querySelectorAll('.sys-viewas-back')].filter(e => e.getClientRects().length).map(e => e.textContent.trim())")
+        check(f'{tag}: a pick changes the role and "Back to Managing partner" shows', page.evaluate("() => document.querySelector('.sys-viewas-btn').getAttribute('aria-label')").startswith('Viewing as Plumber')
+              and back == ['Back to Managing partner'], json.dumps(back))
+        check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
+        ctx.close()
 
 
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
@@ -1295,6 +1564,8 @@ def main():
                 view_card_checks(browser, site)
                 map_checks(browser, site)
                 chooser_checks(browser, site, tmp)
+                dock_checks(browser, site, tmp)
+                sheet_checks(browser, site)
                 if not args.only_wave3:
                     page_checks(browser, site, catalog)
                     replay_checks(browser, site)

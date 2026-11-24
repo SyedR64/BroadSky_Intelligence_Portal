@@ -215,10 +215,11 @@ function bindViewAs(top) {
         <button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" data-sys-viewas-close aria-label="Close">${CLOSE_ICON}</button>
       </div>
     </div>
+    <p class="sys-viewas-none sys-muted sys-vh" role="status"></p>
     <div class="sys-viewas-scroll"></div>`;
   top.after(scrim, pop);
   const find = pop.querySelector('input'), closeBtn = pop.querySelector('[data-sys-viewas-close]'), sheetBack = pop.querySelector('[data-sys-viewas-back]');
-  const body = pop.querySelector('.sys-viewas-scroll');
+  const body = pop.querySelector('.sys-viewas-scroll'), said = pop.querySelector('.sys-viewas-none');
   const listMode = matchMedia('(max-width: 720px)'), reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
   /* the model: organisations in order (the firm, then the companies), each with one band of roles per level */
@@ -276,6 +277,10 @@ function bindViewAs(top) {
     const words = find.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
     const hits = words.length ? order.filter(r => { const h = hay(r); return words.every(w => h.includes(w)); }) : null, set = hits && new Set(hits.map(r => r.id));
     for (const b of btns()) b.classList.toggle('is-dim', !!set && !set.has(b.dataset.role));
+    // one status line: the count for a screen reader while roles match, "No role matches." on screen when none does
+    const n = hits ? hits.length : -1, say = n < 0 ? '' : n === 0 ? 'No role matches.' : `${n} role${n === 1 ? ' matches' : 's match'}`;
+    if (said.textContent !== say) said.textContent = say;
+    said.classList.toggle('sys-vh', n !== 0);
     return hits || [];
   };
   const render = () => {
@@ -378,7 +383,7 @@ function bindViewAs(top) {
     }
     if (e.target === find) {
       if (e.key === 'Enter') { e.preventDefault(); const m = applySearch(); if (m.length) choose(m[0].id); }
-      if (e.key === 'ArrowDown') { e.preventDefault(); const m = applySearch(); focusRole(btnFor(m[0] && m[0].id) || btnFor(Session.role().id) || btns()[0]); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); const m = applySearch(); if (!m.length && find.value.trim()) return; focusRole(btnFor(m[0] && m[0].id) || btnFor(Session.role().id) || btns()[0]); }
       return;
     }
     const b = e.target.closest && e.target.closest('.sys-viewas-role');

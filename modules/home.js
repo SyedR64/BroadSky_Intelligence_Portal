@@ -97,16 +97,41 @@ function wire(el, role) {
 /* ── The answer area (direction C): no first row any more. The signature question and the chips live in the agent docked at the
    right (agent.html?embed=1&dock=1); an address lookup (assets/site-lookup.js: buildings, sources, 3D, globe) needs the width,
    so it lands here, under the head, and takes no space until used. Two ways in: #/home/overview?address=<text> (the Ask panel
-   hands a typed address over this way) and an address typed in the dock on a home that had the address box (hasBox: the firm
-   levels, the Punctual Pros office and field), which the dock posts as 'bsp:address'. ── */
+   hands a typed address over this way) and an address typed in the dock, for every role, which the dock posts as 'bsp:address'
+   (the home then writes it into the address too, so a reload or Back keeps the answer). The region is not live: one short
+   status line (#hm-say) reads out the answer's first sentence or the reason there is none. ── */
 let firstAddr = '';      // an address waiting for the answer area (the hash, or the dock before the home has drawn), run once
-const outHTML = () => '<div class="hm-out" id="hm-out" tabindex="-1" aria-live="polite"></div>';
-/** Runs the address lookup into the answer area of the home on screen, or keeps it until the home has drawn. */
+const outHTML = () => '<div class="hm-out" id="hm-out" tabindex="-1" role="region" aria-label="Address answer"></div><p class="sys-sr" id="hm-say" role="status"></p>';
+/** Runs the address lookup into the answer area of the home on screen, or keeps it until the home has drawn. Resolves the
+ *  lookup's { status, text } (null when it waits for the home). */
 function runAddress(el, role, text) {
   const out = el.querySelector('#hm-out');
   if (!out) { firstAddr = text; return null; }
   firstAddr = '';
-  return BSPSite.lookup(text, { host: out, role: role.id });
+  dockCtl?.setAnswer(true);
+  return BSPSite.lookup(text, { host: out, role: role.id }).then(res => {
+    const say = el.querySelector('#hm-say');
+    if (say && out.isConnected && res && res.status !== 'stopped') say.textContent = out.querySelector('.sl-text, .sl-fail')?.textContent || res.text || '';
+    return res;
+  });
+}
+/** Empties the answer area: the lookup stops, its lines leave the Sources drawer, and the address leaves the hash. */
+function clearAddress(el, app) {
+  const out = el.querySelector('#hm-out');
+  if (!out) return;
+  out._slCtrl?.abort();
+  for (const s of out._slSrc || []) (s.closest('.drawer-item') || s).remove();
+  const fresh = document.createElement('div');
+  fresh.className = 'hm-out'; fresh.id = 'hm-out'; fresh.tabIndex = -1; fresh.setAttribute('role', 'region'); fresh.setAttribute('aria-label', 'Address answer');
+  out.replaceWith(fresh);   // a lookup still on its way draws into the old, detached element
+  const say = el.querySelector('#hm-say'); if (say) say.textContent = '';
+  setAddressHash('', app);
+}
+/** #/home/overview?address=<text>, or the bare home, written in place (no new history entry, no redraw). */
+function setAddressHash(text, app) {
+  const want = text ? `#/home/overview?address=${encodeURIComponent(text)}` : '#/home/overview';
+  if (!/^#\/home\/overview(\?|$)/.test(location.hash) || location.hash === want) return;
+  try { history.replaceState(history.state, '', want); if (app) { app._at = location.hash; app.params = text ? { address: text } : {}; } } catch { /* the hash stays as it was */ }
 }
 
 /* What moves each company's value, in ten words or fewer. The full sentence is the next action fin.js prints for both
@@ -149,9 +174,9 @@ async function firmHome(ctx, role, live) {
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
       <td class="hm-st">${stChip(status(r), r.flag.st)}</td></tr>`;
   };
-  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${outHTML()}
+  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${askHTML()}${outHTML()}
     <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h">${rows.length ? `<div class="sys-table-wrap"><table class="sys-table">
-      <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n hm-ev">Entry value <span class="sys-est">est.</span></th><th scope="col">What moves it</th><th scope="col">Status</th></tr></thead>
+      <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n hm-ev">Entry value <span class="sys-est">est.</span></th><th scope="col" class="hm-wrap">What moves it</th><th scope="col">Status</th></tr></thead>
       <tbody>${rows.map(coRow).join('')}</tbody></table></div>` : ui.note('The company table did not load.', 'warn')}
       ${firm?.meta?.generated ? `<span data-asof>${esc(fmt.date(firm.meta.generated))}</span>` : ''}
       <p class="sys-src hm-src" data-src>Company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures) and the BSP firm profile, as of ${esc(firm?.meta?.generated || 'Sept 2026')}. <a href="#/fin/portfolio">Value and exit table</a></p>
@@ -198,7 +223,7 @@ async function companyHome(ctx, role, live) {
   const row = sb?.rows?.find(r => r.id === co);
   const tiles = (role.home?.kpis || []).slice(0, 3).map(t => kpi(esc, t));
   if (row) { const rep = reportedOf(firm, co); tiles.push({ label: 'Held by BSP', value: row.held != null ? `${row.held.toFixed(1)} yrs` : '—', sub: esc(rep ? addTxt(row.addOns, rep) : `${addTxt(row.addOns, 0)} · ${status(row)}`) }); }
-  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${outHTML()}
+  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${askHTML()}${outHTML()}
     ${tiles.length ? ui.kpis(tiles) : ''}
     <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
     <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
@@ -231,19 +256,22 @@ async function roleHome(ctx, role) {
 const DOCK_KEY = 'bsp-os-dock';
 const X_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg>';
 const dockHTML = () => `<aside class="hm-dock" id="hm-dock" aria-labelledby="hm-dock-h" hidden>
-  <div class="hm-dock-head"><div class="hm-dock-title"><h2 class="sys-card-title" id="hm-dock-h">Agent</h2><button type="button" class="hm-dock-who" data-hm="who" aria-haspopup="true"></button></div>
+  <div class="hm-dock-head"><div class="hm-dock-title"><h2 class="sys-card-title" id="hm-dock-h">Agent</h2><button type="button" class="hm-dock-who" data-hm="who" aria-haspopup="dialog"></button></div>
     <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-hm="clear" hidden>Clear</button>
     <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" data-hm="close" aria-label="Close">${X_ICON}</button></div>
   <div class="hm-dock-body"></div></aside>`;
 let dockCtl = null;      // the dock of the home on screen (the role home's "Ask the agent" opens it)
 
-function mountDock(ctx, split, onAddress) {
+/** onAddress(text) runs a typed address in the home and resolves the lookup's { status }; onClear() empties the answer area. */
+function mountDock(ctx, split, onAddress, onClear) {
   const wide = matchMedia('(min-width:1200px)');
   const dock = split.querySelector('.hm-dock'), body = dock.querySelector('.hm-dock-body');
   const who = dock.querySelector('[data-hm="who"]'), clear = dock.querySelector('[data-hm="clear"]');
   const frame = ctx.app?.frame, askBtn = () => document.querySelector('[data-sys-ask]');
   const saved = () => { try { return localStorage.getItem(DOCK_KEY); } catch { return null; } };
-  let open = false, unembed = null, iframe = null;
+  let open = false, unembed = null, iframe = null, thread = false, answer = false;
+  // Clear shows while the thread has a message or the home shows an address answer, and empties both
+  const syncClear = () => { clear.hidden = !(thread || answer); };
   // the agent page loads the first time the dock opens, then follows the role in view (modules/embed.js)
   const ensure = () => {
     if (unembed) return;
@@ -276,7 +304,13 @@ function mountDock(ctx, split, onAddress) {
   const toggle = () => set(!open, { focus: true, keep: true });
   frame?.setAsk?.(toggle);
   who.onclick = () => document.querySelector('[data-sys-viewas] .sys-viewas-btn')?.click();
-  clear.onclick = () => { try { iframe?.contentWindow?.postMessage({ type: 'bsp:dock-clear' }, location.origin); } catch { /* gone */ } };
+  clear.onclick = () => {
+    try { iframe?.contentWindow?.postMessage({ type: 'bsp:dock-clear' }, location.origin); } catch { /* gone */ }
+    if (answer) { answer = false; onClear(); }
+    syncClear();
+    if (!clear.hidden) return;
+    if (iframe) focusIn(); else dock.querySelector('[data-hm="close"]').focus();   // Clear has gone: the keyboard stays in the dock
+  };
   dock.querySelector('[data-hm="close"]').onclick = () => set(false, { focus: true, keep: true });
   dock.addEventListener('keydown', e => { if (e.key === 'Escape' && open && !wide.matches) { e.preventDefault(); set(false, { focus: true }); } });
   // the overlay closes on a press anywhere else on the page (not on Ask, which toggles it, nor on the "Viewing as" switch)
@@ -284,21 +318,28 @@ function mountDock(ctx, split, onAddress) {
   document.addEventListener('pointerdown', onDown, true);
   const onWide = () => set(wide.matches && saved() !== 'closed');
   wide.addEventListener('change', onWide);
-  // the agent page in the frame: whether its thread has a message (Clear), and a site address typed into it
+  // the agent page in the frame: whether its thread has a message (Clear), the Ask hotkey pressed inside it, and a site address
+  // typed into it, whose outcome goes back to the frame so its reply line says where the answer is (or why there is none)
   const onMsg = e => {
     if (e.origin !== location.origin || !iframe || e.source !== iframe.contentWindow || !e.data || typeof e.data !== 'object') return;
-    if (e.data.type === 'bsp:dock') clear.hidden = !e.data.thread;
+    if (e.data.type === 'bsp:dock') { thread = !!e.data.thread; syncClear(); }
+    else if (e.data.type === 'bsp:dock-toggle') toggle();
     else if (e.data.type === 'bsp:address' && typeof e.data.text === 'string' && e.data.text.trim()) {
+      const win = iframe.contentWindow, id = e.data.id;
       if (!wide.matches) set(false, { quiet: true });
-      onAddress(e.data.text.trim().slice(0, 300));
+      Promise.resolve(onAddress(e.data.text.trim().slice(0, 300))).catch(() => ({ status: 'error', text: '' })).then(res => {
+        const side = open && wide.matches ? 'left' : 'home';
+        try { win.postMessage({ type: 'bsp:address-done', id, status: res?.status || 'waiting', text: String(res?.text || ''), side }, location.origin); } catch { /* the frame has gone */ }
+      });
     }
   };
   addEventListener('message', onMsg);
   // the firm reads "Broad Sky", as in the top bar's path; a company reads its catalogue name
-  const update = role => { const org = role.org === 'bsp' || !role.org ? { name: 'Broad Sky' } : (Session.orgs() || []).find(o => o.id === role.org); const t = `${role.title}${org ? ` · ${org.name}` : ''}`; who.textContent = t; who.setAttribute('aria-label', `Viewing as ${t}`); };
+  const update = role => { const org = role.org === 'bsp' || !role.org ? { name: 'Broad Sky' } : (Session.orgs() || []).find(o => o.id === role.org); const t = `${role.title}${org ? ` · ${org.name}` : ''}`; who.textContent = t; who.setAttribute('aria-label', `Viewing as ${t}. Change`); };
   onWide();
   return {
     update, open: () => set(true, { focus: true, keep: true }),
+    setAnswer(on) { answer = !!on; syncClear(); },
     destroy() { removeEventListener('message', onMsg); document.removeEventListener('pointerdown', onDown, true); wide.removeEventListener('change', onWide); frame?.setAskState?.(false); frame?.setAsk?.(null); unembed?.(); },
   };
 }
@@ -316,10 +357,12 @@ async function overview(ctx) {
   document.documentElement.dataset.homeDock = '';
   const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
   const dock = dockCtl = mountDock(ctx, split, text => {
-    runAddress(main, Session.role(), text);
+    setAddressHash(text, ctx.app);
+    const run = runAddress(main, Session.role(), text);
     const out = main.querySelector('#hm-out');
     if (out) { out.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); out.focus({ preventScroll: true }); }
-  });
+    return run;
+  }, () => clearAddress(main, ctx.app));
   const draw = async () => {
     const my = ++gen, live = () => alive && my === gen && main.isConnected;
     if (undo) { try { undo(); } catch { /* already gone */ } undo = null; }
@@ -327,6 +370,8 @@ async function overview(ctx) {
     const role = Session.role(), kind = homeKind(role);
     host.dataset.home = kind;
     dock.update(role);
+    dock.setAnswer(!!firstAddr);
+    if (!firstAddr) setAddressHash('', ctx.app);   // a new role's home opens without the last role's answer
     main.scrollTop = 0;
     const un = await (kind === 'firm' ? firmHome : kind === 'company' ? companyHome : roleHome)(mctx, role, live);
     if (live()) undo = typeof un === 'function' ? un : null; else if (typeof un === 'function') un();

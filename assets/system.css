@@ -243,6 +243,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 
 /* the map: Firm | Portfolio companies on one grid (frame.js writes its columns); the side padding lives in the map,
    so the label spines can stick to the very edge */
+.sys-viewas-none{margin:0;padding:0 var(--sys-sp-5) var(--sys-sp-3);font-size:var(--sys-fs-sm)}
 .sys-viewas-scroll{overflow:auto;min-height:0;padding:var(--sys-sp-3) 0 var(--sys-sp-5);overscroll-behavior:contain;scroll-padding-inline:var(--sys-sp-7) var(--sys-sp-5)}
 .sys-viewas-map{display:grid;align-items:stretch;padding-right:var(--sys-sp-5)}
 .sys-viewas-col{display:contents}
