@@ -604,6 +604,7 @@ def test_any_ring_returns_without_error():
 def test_short_names():
     assert g._short('Bedroom 1') == 'Bed 1' and g._short('Living room') == 'Living' and g._short('Kitchen') == 'Kitchen'
     assert g._short('Half bath') == '½ Bath' and g._short('Utility') == 'Utility' and g._short('Garage') == 'Garage'
+    assert g._short('Rec room') == 'Rec' and g._short('Storage 3') == 'Storage' and g._short('Closet 2') == 'Closet' and g._short('Hall 4') == 'Hall'
     for label in ('Bedroom', 'Bath 2', 'Family room', 'Bonus room', 'Closet 12', 'Storage 2', 'Workshop', 'Rec room', 'Mudroom'):
         assert 0 < len(g._short(label)) <= 7
 

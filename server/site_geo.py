@@ -822,7 +822,7 @@ _EXTRAS = {
     'basement': [('Workshop', 'Shop', 'room', 14.0, 'back'), ('Storage 2', 'Stor 2', 'storage', 10.0, 'back'),
                  ('Laundry', 'Laundry', 'laundry', 6.0, 'back')],
 }
-_SHORT = {'Living room': 'Living', 'Half bath': '½ Bath', 'Rec room': 'Rec rm', 'Family room': 'Family',
+_SHORT = {'Living room': 'Living', 'Half bath': '½ Bath', 'Rec room': 'Rec', 'Family room': 'Family',
           'Bonus room': 'Bonus', 'Workshop': 'Shop'}
 
 
@@ -831,11 +831,13 @@ def _short(label):
         return _SHORT[label]
     if label.startswith('Bedroom'):
         return ('Bed' + label[7:])[:7]
+    if label.rpartition(' ')[2].isdigit() and label.rpartition(' ')[0] in ('Storage', 'Closet', 'Hall'):
+        return label.rpartition(' ')[0]
     if len(label) <= 7:
         return label
     head, _, num = label.rpartition(' ')
-    if num.isdigit() and head in ('Storage', 'Closet'):
-        return ('Stor ' if head == 'Storage' else 'Clos ') + num[:2]
+    if num.isdigit() and head in ('Storage', 'Closet', 'Hall'):        # never 'Stor 2': a storage room or hall is not numbered
+        return head
     if num.isdigit():
         return (head[:6 - len(num)] + ' ' + num)[:7]
     return label[:7]

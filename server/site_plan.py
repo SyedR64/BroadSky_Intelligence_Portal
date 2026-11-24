@@ -53,6 +53,12 @@ STACK_OFF = 5.0        # feet between a fixture marker and the riser beside it, 
 TURN_FT = 6.0          # a turn costs this many feet of run, so lines stay simple
 STACK_REACH = 12.0     # feet (along the run) a fixture may sit from its stack before it gets its own drop
 SHARE_COST = 0.8       # extra cost per foot for a drain on the water line's own route: it takes a parallel one when it can
+KIND_NEAR = 2.5        # feet: a drain this close beside a water line (or on it) pays SHARE_COST a foot, so the two never read as one
+WALL_NEAR = 2.5        # feet: a run this close to the outline pays WALL_COST a foot, so it never reads as part of the wall
+WALL_COST = 1.0
+ITEM_CLEAR = 2.5       # feet a run keeps from a marker it does not start or end at (a line under a marker reads as joined to it)
+BLOCK_COST = 60.0      # feet: what passing under a marker costs a run
+STACK_CLEAR = 6.0      # feet a stack keeps from every marker where its rooms allow (its ring never hides under a marker)
 FIX_NOTE = {'kitchen': 'Under the sink', 'bath': 'Under the sink and behind the toilet', 'laundry': 'At the washer hookup'}
 METER = {'kind': 'electric_meter', 'label': 'Electric meter', 'short': 'EM', 'basis': 'likely',
          'note': 'Outside, where the service line comes in'}
@@ -375,6 +381,21 @@ def seg_clear(a, b, ring, m):
     return True
 
 
+def _beside(p, q, segs):
+    """Feet of the axis-aligned stretch p-q that runs beside (parallel, within KIND_NEAR) any of `segs`."""
+    level = abs(p[1] - q[1]) < 1e-9
+    lo, hi = (min(p[0], q[0]), max(p[0], q[0])) if level else (min(p[1], q[1]), max(p[1], q[1]))
+    best = 0.0
+    for a, b in segs:
+        if level != (abs(a[1] - b[1]) < 1e-9) or (a[0] == b[0] and a[1] == b[1]):
+            continue
+        if abs((a[1] - p[1]) if level else (a[0] - p[0])) >= KIND_NEAR:
+            continue
+        s0, s1 = (min(a[0], b[0]), max(a[0], b[0])) if level else (min(a[1], b[1]), max(a[1], b[1]))
+        best = max(best, min(hi, s1) - max(lo, s0))
+    return best
+
+
 class Router:
     """Square runs on a grid of lines through every endpoint, every outline corner (offset by the margin) and an even spacing.
     A* over (node, heading) with a cost per turn, so the straight L wins whenever it stays inside, and otherwise the run goes
@@ -387,7 +408,7 @@ class Router:
 
         def lines(lo, hi, vals, fixed):
             raw = [lo + margin + step * k for k in range(int((hi - lo - 2 * margin) / step) + 1)]
-            raw += [v + s * margin for v in vals for s in (-1, 1)]
+            raw += [v + s * d for v in vals for s in (-1, 1) for d in (margin,)]
             keep = sorted({round(v, 3) for v in fixed})
             for v in sorted(raw):
                 if lo + margin - 1e-6 <= v <= hi - margin + 1e-6 and all(abs(v - k) > 0.2 for k in keep):
@@ -398,7 +419,7 @@ class Router:
         self.ys = lines(y0, y1, [p[1] for p in ring], [p[1] for p in points])
         self.xi = {v: i for i, v in enumerate(self.xs)}
         self.yi = {v: i for i, v in enumerate(self.ys)}
-        self._node, self._edge = {}, {}
+        self._node, self._edge, self._wall = {}, {}, {}
 
     def node(self, i, j):
         k = (i, j)
@@ -412,9 +433,17 @@ class Router:
             self._edge[k] = self.node(i, j) and self.node(i2, j2) and seg_clear((self.xs[i], self.ys[j]), (self.xs[i2], self.ys[j2]), self.ring, self.m)
         return self._edge[k]
 
-    def route(self, a, b, avoid=None):
-        """Axis-aligned points from a to b (both must be grid points), or None. `avoid`: grid edges that cost SHARE_COST a
-        foot more (another line's route). The grid edges of the route found are left in self.last."""
+    def walled(self, i, j, i2, j2):
+        """True when the grid edge runs within WALL_NEAR of the outline (it would read as part of the wall)."""
+        k = (min(i, i2), min(j, j2), max(i, i2), max(j, j2))
+        if k not in self._wall:
+            self._wall[k] = not seg_clear((self.xs[i], self.ys[j]), (self.xs[i2], self.ys[j2]), self.ring, WALL_NEAR)
+        return self._wall[k]
+
+    def route(self, a, b, avoid=None, block=None):
+        """Axis-aligned points from a to b (both must be grid points), or None. `avoid`: segments of another kind's lines; a
+        stretch running beside one within KIND_NEAR costs SHARE_COST a foot more. `block`: points (markers); a stretch passing
+        within ITEM_CLEAR of one costs BLOCK_COST (taken only when no other way exists). A stretch along the wall costs WALL_COST a foot more. The grid edges found are left in self.last."""
         self.last = set()
         ka, kb = (self.xi.get(round(a[0], 3)), self.yi.get(round(a[1], 3))), (self.xi.get(round(b[0], 3)), self.yi.get(round(b[1], 3)))
         if None in ka or None in kb or not self.node(*ka) or not self.node(*kb):
@@ -425,6 +454,7 @@ class Router:
         tx, ty = xs[kb[0]], ys[kb[1]]
         h = lambda i, j: abs(xs[i] - tx) + abs(ys[j] - ty)
         dirs = ((1, 0), (-1, 0), (0, 1), (0, -1))
+        extras = {}
         start = (ka[0], ka[1], -1)
         best = {start: 0.0}
         prev = {}
@@ -450,8 +480,21 @@ class Router:
                     continue
                 L = abs(xs[i2] - xs[i]) + abs(ys[j2] - ys[j])
                 g2 = g + L + (TURN_FT if d not in (-1, nd) else 0.0)
-                if avoid and (min(i, i2), min(j, j2), max(i, i2), max(j, j2)) in avoid:
-                    g2 += SHARE_COST * L
+                ek = (min(i, i2), min(j, j2), max(i, i2), max(j, j2))
+                extra = extras.get(ek)
+                if extra is None:
+                    extra = WALL_COST * L if self.walled(i, j, i2, j2) else 0.0
+                    if block or avoid:
+                        lo_x, hi_x, lo_y, hi_y = xs[ek[0]], xs[ek[2]], ys[ek[1]], ys[ek[3]]
+                        for cx, cy in block or ():
+                            dx, dy = max(lo_x - cx, 0.0, cx - hi_x), max(lo_y - cy, 0.0, cy - hi_y)
+                            if dx * dx + dy * dy < ITEM_CLEAR * ITEM_CLEAR:
+                                extra += BLOCK_COST
+                                break
+                        if avoid:
+                            extra += SHARE_COST * _beside((lo_x, lo_y), (hi_x, hi_y), avoid)
+                    extras[ek] = extra
+                g2 += extra
                 s2 = (i2, j2, nd)
                 if g2 < best.get(s2, math.inf) - 1e-9:
                     best[s2] = g2
@@ -473,8 +516,8 @@ class Router:
         return out
 
 
-SHORT = {'living room': 'Living', 'family room': 'Family', 'dining room': 'Dining', 'half bath': 'H.bath', 'utility': 'Utility',
-         'laundry': 'Laundry', 'laundry and utility': 'Laundry', 'main bedroom': 'Main bd', 'pantry or half bath': 'Pantry',
+SHORT = {'living room': 'Living', 'family room': 'Family', 'dining room': 'Dining', 'half bath': '½ Bath', 'utility': 'Utility',
+         'laundry': 'Laundry', 'laundry and utility': 'Laundry', 'main bedroom': 'Bedroom', 'pantry or half bath': 'Pantry',
          'partial basement': 'Bsmt', 'unfinished basement': 'Bsmt', 'basement': 'Bsmt', 'storage': 'Storage', 'mudroom': 'Mudroom'}
 
 
@@ -577,6 +620,8 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
     def wet_here(i, c):
         return any(_in_room(r, c, -0.3) and r.get('kind') in WET + ('utility',) for r in F[i].rooms)
 
+    all_marks = [[it['x'], it['y']] for f in floors for it in f['items']]
+
     def drop_spot(rooms_pts, floors_served, near_pts, aim):
         """The best riser point: in a wet room on each floor it serves, clear of the fixture markers, near `aim`."""
         best = None
@@ -589,9 +634,10 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
                     if not ok(c, ring, ROUTE_IN):
                         continue
                     dry = sum(1 for i in floors_served if not wet_here(i, c))
-                    near = min([math.hypot(c[0] - q[0], c[1] - q[1]) for q in near_pts] + [99.0])
+                    near = min([math.hypot(c[0] - q[0], c[1] - q[1]) for q in near_pts + all_marks] + [99.0])
                     cost = sum(math.hypot(c[0] - q[0], c[1] - q[1]) for q in aim)
-                    key = (dry, near < 3.0, round(cost, 3), round(c[0], 3), round(c[1], 3))
+                    walled = min(c[0] - r['x'], r['x'] + r['w'] - c[0], c[1] - r['y'], r['y'] + r['h'] - c[1]) <= 1.6   # stacks run in a wall
+                    key = (dry, near < 3.0, near < STACK_CLEAR, not walled, round(cost, 3), round(c[0], 3), round(c[1], 3))
                     if best is None or key < best[0]:
                         best = (key, c)
         return _rp(best[1]) if best else None
@@ -745,22 +791,25 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
     ends = [p for i in ids for _, a, b, _ in plans[i] for p in (a, b)]
     routers = [Router(ring, ROUTE_IN, ends)]
     failed = []
+    near = lambda p, q: abs(p[0] - q[0]) < 0.3 and abs(p[1] - q[1]) < 0.3
     for i in ids:
         runs = []
-        wet_edges = set()
+        water_segs = []
+        marks = [[it['x'], it['y']] for it in F[i].fl['items']]
         order = sorted(range(len(plans[i])), key=lambda k: (plans[i][k][0].get('kind') == 'drain', k))
         for b, a, z, ris in (plans[i][k] for k in order):
-            avoid = wet_edges if b.get('kind') == 'drain' else None
+            avoid = water_segs if b.get('kind') == 'drain' else None
+            block = [m for m in marks if not near(m, a) and not near(m, z)]     # never under a marker it does not serve
             if a == z:
                 pts = [list(a), list(z)]
             else:
-                pts = routers[0].route(a, z, avoid)
-                if pts is not None and b.get('kind') == 'water':
-                    wet_edges |= routers[0].last
+                pts = routers[0].route(a, z, avoid, block)
                 if pts is None:
                     if len(routers) == 1:
                         routers.append(Router(ring, ROUTE_IN / 2, ends))
                     pts = routers[1].route(a, z, None)
+                if pts is not None and b.get('kind') == 'water':
+                    water_segs += [(p, q) for p, q in zip(pts, pts[1:])]
             if pts is None:
                 failed.append(f"{i} {b.get('kind')} {a}->{z}")
                 continue
@@ -769,6 +818,32 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
                 run['risers'] = [[_r(x), _r(y), d] for x, y, d in ris]
             runs.append(run)
         F[i].fl['runs'] = runs
+
+    # 3b. a marker a line passes under but does not serve moves aside in its room (a line under a marker reads as joined to it)
+    for f in floors:
+        lines = [(r['points'], r['points'][0], r['points'][-1]) for r in f.get('runs') or [] if len(r.get('points') or []) >= 2]
+        ends_here = [p for _, a, z in lines for p in (a, z)]
+        for it in f['items']:
+            p = [it['x'], it['y']]
+            if any(near(p, e) for e in ends_here):
+                continue
+            under = lambda c: any(_seg_dist(c, u, v) < ITEM_CLEAR for pts, _, _ in lines for u, v in zip(pts, pts[1:]))
+            if not under(p):
+                continue
+            r = room_of(F[f['id']].rooms, p)
+            others = [[o['x'], o['y']] for o in f['items'] if o is not it]
+            best = None
+            if r:
+                for gx in range(int(r['w']) + 1):
+                    for gy in range(int(r['h']) + 1):
+                        c = [r['x'] + min(gx + 0.5, r['w'] - 0.5), r['y'] + min(gy + 0.5, r['h'] - 0.5)]
+                        if not ok(c, ring, ITEM_IN) or under(c) or any(math.hypot(c[0] - o[0], c[1] - o[1]) < 3.0 for o in others):
+                            continue
+                        d = math.hypot(c[0] - p[0], c[1] - p[1])
+                        if best is None or d < best[0] - 1e-9:
+                            best = (d, c)
+            if best:
+                it['x'], it['y'] = _rp(best[1])
 
     # 4. wet walls and the room each item is in
     for f in floors:
@@ -781,6 +856,35 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
             else:
                 it.pop('room', None)
     return {'failed': failed}
+
+
+# ---------------------------------------------------------------- a generic question that names the trade
+
+GENERIC_ISSUE = 'Not sure (generic checks)'
+ELECTRIC_WORDS = re.compile(r'\b(electric|electrical|electrician|wires?|wiring|outlets?|switch(es)?|breakers?|circuits?|lights?|lighting)\b', re.I)
+WALL_WORDS = re.compile(r'\b(drywall|sheetrock|plaster|walls?)\b', re.I)
+
+
+def trade_view(card, text):
+    """A question the rules answer with generic checks but that names electrical or wall work (an electrician asking where the
+    wires are): the panel and its service line lead (R5: never branch wiring) and no plumbing is drawn. Wall work keeps the
+    lines (they are what is behind a wall) and leads with the panel and the main water shutoff. Other cards are returned unchanged."""
+    if not isinstance(card, dict) or card.get('issue') != GENERIC_ISSUE or (card.get('building') or {}).get('kind') != 'house':
+        return card
+    t = str(text or '')
+    elec, wall = bool(ELECTRIC_WORDS.search(t)), bool(WALL_WORDS.search(t))
+    if not (elec or wall):
+        return card
+    focus = ['panel'] if elec else ['panel', 'main_water']
+    card['focus'] = focus
+    card['issue'] = 'Electrical work' if elec else 'Wall work'
+    for f in card.get('floors') or []:
+        for it in f.get('items') or []:
+            if 'focus' in it:
+                it['focus'] = it.get('kind') in focus
+        if elec:
+            f['runs'] = [r for r in f.get('runs') or [] if r.get('kind') not in ('water', 'drain')]
+    return card
 
 
 # ---------------------------------------------------------------- the large building (R6)

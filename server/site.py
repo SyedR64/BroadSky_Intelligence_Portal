@@ -968,6 +968,7 @@ def brief(text, role_id, connected=None, deadline_s=TOTAL_S, pick=None):
             cards_out = [mc] if mc else []
         elif live.get('status') == 'found' and fs:
             status = 'found'
+            site_plan.trade_view(fs, t)                          # "an electrical job, where are the wires": the panel leads
             text_out = answer_text(live, fs, area)
             cards_out = [fs] + ([mc] if mc else [])
         else:

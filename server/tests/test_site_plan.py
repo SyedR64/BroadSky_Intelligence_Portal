@@ -295,7 +295,19 @@ def test_invented_houses_are_houses_with_square_runs(env, name, tag):
     assert res['status'] == 'found' and card['building']['kind'] == 'house' and card['layout']['from'] == 'outline'
     assert not house_problems(card), house_problems(card)[:6]
     runs = [r for f in card['floors'] for r in f['runs']]
-    assert {'water', 'drain', 'power'} <= {r['kind'] for r in runs}                     # every kind the question brings is kept
+    if tag == 'wires':                                                                  # electrical work: the service line, no plumbing
+        assert {r['kind'] for r in runs} == {'power'} and card['focus'] == ['panel'] and res['text'].count('electrical panel') == 1
+    else:
+        assert {'water', 'drain', 'power'} <= {r['kind'] for r in runs}                 # every kind the question brings is kept
+    for f in card['floors']:                                                            # no line passes under a marker it does not serve
+        lines = [r['points'] for r in f['runs'] if len(r['points']) >= 2 and r['points'][0] != r['points'][-1]]
+        for it in f['items']:
+            p = [it['x'], it['y']]
+            for pts in lines:
+                if any(math.hypot(p[0] - e[0], p[1] - e[1]) < 0.3 for e in (pts[0], pts[-1])):
+                    continue
+                d = min(site_plan._seg_dist(p, a, b) for a, b in zip(pts, pts[1:]))
+                assert d >= site_plan.ITEM_CLEAR - 0.05, (f['id'], it['kind'], round(d, 2))
     assert all(r['basis'] == 'likely' for r in runs)
     items = [i for f in card['floors'] for i in f['items']]
     for it in items:                                                                    # the rules' wording stays
@@ -516,3 +528,19 @@ def test_fixture_notes_fit_the_room_and_risers_sit_in_wet_rooms(env):
         for x, y, _ in r.get('risers') or []:
             room = site_plan.room_of(first['rooms'], (x, y))
             assert room and room['kind'] in ('kitchen', 'bath', 'laundry'), (r['kind'], room and room['label'])
+
+
+def test_trade_view_reads_the_trade_of_a_generic_question():
+    """A question the rules answer with generic checks but that names electrical or wall work leads with the panel; electrical work
+    draws no plumbing, wall work keeps it; any other card is left as it is."""
+    def card(issue='Not sure (generic checks)'):
+        return {'issue': issue, 'focus': ['main_water', 'panel'], 'building': {'kind': 'house'},
+                'floors': [{'id': 'basement', 'items': [{'kind': 'main_water', 'focus': True}, {'kind': 'panel', 'focus': True}],
+                            'runs': [{'kind': 'water'}, {'kind': 'drain'}, {'kind': 'power'}]}]}
+    c = site_plan.trade_view(card(), 'going to 1 Main St for an electrical job, where are the wires')
+    assert c['focus'] == ['panel'] and [r['kind'] for r in c['floors'][0]['runs']] == ['power']
+    assert [i['focus'] for i in c['floors'][0]['items']] == [False, True]
+    c = site_plan.trade_view(card(), 'a drywall job, what is behind the wall')
+    assert c['focus'] == ['panel', 'main_water'] and len(c['floors'][0]['runs']) == 3
+    assert site_plan.trade_view(card('Sink leaking'), 'wires')['focus'] == ['main_water', 'panel']
+    assert site_plan.trade_view(card(), 'a visit')['focus'] == ['main_water', 'panel']
