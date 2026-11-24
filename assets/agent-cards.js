@@ -198,8 +198,8 @@ const r1 = v => Math.round(v * 10) / 10;
 const hits = (a, b, pad = 0) => a.x0 < b.x1 + pad && b.x0 < a.x1 + pad && a.y0 < b.y1 + pad && b.y0 < a.y1 + pad;
 /** Distance from a point to a box {x0, y0, x1, y1} (0 inside it). */
 const boxDist = (x, y, b) => Math.hypot(Math.max(b.x0 - x, 0, x - b.x1), Math.max(b.y0 - y, 0, y - b.y1));
-/** How far a marker's drawing reaches from its centre: a focus ring or the plain circle, with its stroke. */
-const reach = p => (p.ring ? RING + 2 : MR + 2);
+/** How far a marker's drawing reaches from its centre: a focus ring or the plain circle, with its stroke (a little over). */
+const reach = p => (p.rr ?? (p.ring ? RING + 2 : MR + 2));
 function inPoly(x, y, P) {
   let inside = false;
   for (let i = 0, j = P.length - 1; i < P.length; j = i++) {
@@ -227,11 +227,18 @@ const edgeOf = (m, front) => {
   const map = front === 'top' ? { front: 'top', rear: 'bottom', left: 'left', right: 'right' } : { front: 'bottom', rear: 'top', left: 'left', right: 'right' };
   return map[String(m.side)] || 'right';
 };
-function markerSVG(m, x, y, focus) {
+function markerSVG(m, x, y, focus, mr = MR, rg = RING) {
   const solid = isSolid(m.basis), f = isFocus(m, focus);
   return `<g class="ca-fs-m ${markClass(m.basis)}${f ? ' is-focus' : ''}" data-k="${esc(m.key)}">`
-    + (f ? `<circle class="ca-fs-ring" cx="${x}" cy="${y}" r="${RING}"/>` : `<circle class="ca-fs-halo" cx="${x}" cy="${y}" r="${RING}"/>`)
-    + `<circle cx="${x}" cy="${y}" r="${MR}"${solid ? '' : ' stroke-dasharray="4 3"'}/><text x="${x}" y="${y}">${esc(String(m.short || '?').slice(0, 2))}</text></g>`;
+    + (f ? `<circle class="ca-fs-ring" cx="${x}" cy="${y}" r="${rg}"/>` : `<circle class="ca-fs-halo" cx="${x}" cy="${y}" r="${rg}"/>`)
+    + `<circle cx="${x}" cy="${y}" r="${mr}"${solid ? '' : ' stroke-dasharray="4 3"'}/><text x="${x}" y="${y}">${esc(String(m.short || '?').slice(0, 2))}</text></g>`;
+}
+/** The nearest point to (x, y) on segment a-b, and the distance to it. */
+function nearOnSeg(x, y, [ax, ay], [bx, by]) {
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy;
+  const t = L2 ? Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L2)) : 0;
+  const cx = ax + t * dx, cy = ay + t * dy;
+  return { cx, cy, d: Math.hypot(x - cx, y - cy) };
 }
 
 /** The real building outline (building.footprint.ring_m, metres east and north) in plan units, centred on the plan rectangle
@@ -273,26 +280,65 @@ export function outlinePoints(ev, W, H, scale = 8) {
   return out;
 }
 
-/** Eases apart markers whose drawings would overlap (focus rings count). Inside markers stay inside the plan box; outside
- *  markers slide only along their own wall. */
-function spread(pts, box) {
-  for (let pass = 0; pass < 40; pass++) {
+/** Eases apart markers whose drawings would overlap (focus rings count): every pair ends at least the sum of their reaches plus
+ *  one px apart. Inside markers stay in their room (while that can hold them) and inside the outline, the ring crossing the wall
+ *  by under 2 px; outside markers slide only along their own wall, within its length while that can hold them. A public or
+ *  company-record marker moves last (it gives way a little only when nothing else can). Deterministic.
+ *  P: the outline in px (or the wall rectangle); edge markers carry lo/hi, the wall's ends along it. */
+function spread(pts, P) {
+  const edges = P.map((a, i) => {
+    const b = P[(i + 1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+    let n = [-(b[1] - a[1]) / L, (b[0] - a[0]) / L];
+    if (!inPoly((a[0] + b[0]) / 2 + n[0] * 0.5, (a[1] + b[1]) / 2 + n[1] * 0.5, P)) n = [-n[0], -n[1]];
+    return { a, b, n };
+  });
+  const keepIn = (p, useRoom) => {
+    if (useRoom && p.room) { p.x = Math.min(p.room.x1 - 1, Math.max(p.room.x0 + 1, p.x)); p.y = Math.min(p.room.y1 - 1, Math.max(p.room.y0 + 1, p.y)); }
+    const need = reach(p) - 2;   // the ring may cross the wall by under 2 px
+    for (let k = 0; k < 6; k++) {
+      let best = null;
+      for (const e of edges) { const q = nearOnSeg(p.x, p.y, e.a, e.b); if (!best || q.d < best.q.d) best = { q, e }; }
+      if (!best) return;
+      if (!inPoly(p.x, p.y, P)) { p.x = best.q.cx + best.e.n[0] * need; p.y = best.q.cy + best.e.n[1] * need; continue; }
+      let moved = false;
+      for (const e of edges) {
+        const q = nearOnSeg(p.x, p.y, e.a, e.b); if (q.d >= need - 0.01) continue;
+        const ux = q.d > 0.01 ? (p.x - q.cx) / q.d : e.n[0], uy = q.d > 0.01 ? (p.y - q.cy) / q.d : e.n[1];
+        p.x += ux * (need - q.d); p.y += uy * (need - q.d); moved = true;
+      }
+      if (!moved) return;
+    }
+  };
+  const along = p => (p.edge === 'top' || p.edge === 'bottom' ? 'x' : 'y');
+  const fit = (p, useRoom, slack) => {
+    if (p.edge) { const k = along(p); p[k] = Math.min(p.hi + slack, Math.max(p.lo - slack, p[k])); }
+    else keepIn(p, useRoom);
+  };
+  const weight = p => (isSolid(p.m.basis) ? 0.12 : 1);
+  for (let pass = 0; pass < 160; pass++) {
+    const useRoom = pass < 60, slack = pass < 60 ? 0 : pass < 110 ? 12 : 40;
     let moved = false;
     for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
       const a = pts[i], b = pts[j];
-      const g = reach(a) + reach(b);
+      const g = reach(a) + reach(b) + 1.2;
       let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
       if (d >= g) continue;
       if (d < 0.01) { dx = 1; dy = 0.3; d = Math.hypot(dx, dy); }
-      const push = (g - d) / 2 + 0.1, ux = dx / d, uy = dy / d;
-      for (const [p, sgn] of [[a, -1], [b, 1]]) {
-        if (p.edge === 'top' || p.edge === 'bottom') p.x += sgn * (Math.abs(ux) > 0.2 ? Math.sign(ux) : 1) * push;
-        else if (p.edge) p.y += sgn * (Math.abs(uy) > 0.2 ? Math.sign(uy) : 1) * push;
-        else { p.x += sgn * ux * push; p.y += sgn * uy * push; }
+      const o = g - d + 0.2, ux = dx / d, uy = dy / d;
+      // how much each can move along the push: an outside marker only along its wall
+      const mob = (p) => weight(p) * (p.edge ? Math.max(Math.abs(along(p) === 'x' ? ux : uy), 0.25) : 1);
+      const ma = mob(a), mb = mob(b), tot = ma + mb;
+      for (const [p, sgn, share] of [[a, -1, ma / tot], [b, 1, mb / tot]]) {
+        const push = o * share;
+        if (p.edge) {
+          const k = along(p), c = k === 'x' ? ux : uy;
+          const dir = Math.abs(c) > 0.2 ? Math.sign(c) : 1;
+          p[k] += sgn * dir * push / Math.max(Math.abs(c), 0.25);
+        } else { p.x += sgn * ux * push; p.y += sgn * uy * push; }
       }
       moved = true;
     }
-    for (const p of pts) if (!p.edge) { p.x = Math.min(box.x1, Math.max(box.x0, p.x)); p.y = Math.min(box.y1, Math.max(box.y0, p.y)); }
+    for (const p of pts) { const x = p.x, y = p.y; fit(p, useRoom, slack); if (Math.abs(p.x - x) + Math.abs(p.y - y) > 0.01) moved = true; }
     if (!moved) break;
   }
   for (const p of pts) { p.x = r1(p.x); p.y = r1(p.y); }
@@ -313,7 +359,7 @@ function roundPath(pts, rad = 6) {
 }
 /** Where a run's label reads: beside a segment (above or below a level one, left or right of an upright one), clear of every
  *  marker, every name and label already placed, and inside the building. Null when no such place exists (the key names the line). */
-function runLabelAt(pts, all, text, boxes, fs, area, P, lines = []) {
+function runLabelAt(pts, all, text, boxes, fs, area, P, lines = [], avoid = () => false) {
   const tw = String(text).length * fs * MONO, th = fs + 2;
   const segs = [];
   for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; segs.push({ x0, y0, x1, y1, len: Math.hypot(x1 - x0, y1 - y0) }); }
@@ -324,7 +370,7 @@ function runLabelAt(pts, all, text, boxes, fs, area, P, lines = []) {
     for (const [bx, by] of spots) {
       const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
       if (b.x0 < area.x0 + 2 || b.y0 < area.y0 + 2 || b.x1 > area.x1 - 2 || b.y1 > area.y1 - 2 || (P && !boxInPoly(b, P))) continue;
-      if (!clearOfMarks(b, all, 3) || boxes.some(o => hits(b, o, 3)) || lines.some(o => hits(b, o, 0))) continue;   // never across a line
+      if (!clearOfMarks(b, all, 3) || boxes.some(o => hits(b, o, 3)) || lines.some(o => hits(b, o, 0)) || avoid(b)) continue;   // never across a line
       return { b, x: r1(bx + tw / 2), y: r1(by + th - 3) };
     }
   }
@@ -372,16 +418,32 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   // the plan box in feet: the plan rectangle and the outline together
   const rx = ring ? ring.map(p => p[0]) : [], ry = ring ? ring.map(p => p[1]) : [];
   const fx0 = Math.min(0, ...rx), fy0 = Math.min(0, ...ry), fx1 = Math.max(Wf, ...rx), fy1 = Math.max(Hf, ...ry);
-  // margins: outside markers, the overall sizes (rear and left), the north arrow (right) and the street side
+  // a narrow drawing (a phone) keeps its gutters slim: smaller markers under 420 px, outside markers close to the wall, less
+  // padding, and the depth figure on a side with no outside marker (or folded into the width figure) so the plan fills the frame
+  const narrow = width < 480, mr = width < 420 ? 12 : MR, rg = width < 420 ? 16 : RING;
+  const pad = narrow ? 4 : PAD, dimOff = narrow ? rg + 5 : DIM_OFF, dimBand = narrow ? dimOff + 9 : DIM_BAND;
+  const rrOf = m => (isFocus(m, focus) ? rg + 2 : mr + 2);
+  const outD = m => (narrow ? rrOf(m) + 3 : OUT_D);   // the ring about 4 px off the wall on a phone
+  // margins: outside markers, the overall sizes (rear and a side), the north arrow (right) and the street side
   const sides = new Set(outs.map(m => edgeOf(m, front)));
-  const band = e => (sides.has(e) ? OUT_BAND : 0);
-  const dimSide = e => ring && (e === rear || e === 'left');
-  const mL = PAD + band('left') + (dimSide('left') ? DIM_BAND : 0);
-  const mR = PAD + Math.max(band('right'), 0);
-  const mT = PAD + band('top') + (dimSide('top') ? DIM_BAND : 0) + (front === 'top' ? STREET_BAND : 0);
-  const mB = PAD + band('bottom') + (dimSide('bottom') ? DIM_BAND : 0) + (front === 'bottom' ? STREET_BAND : 0);
-  const sW = (width - mL - mR) / (fx1 - fx0), sH = (MAX_H - mT - mB) / (fy1 - fy0);
-  const s = Math.max(0.2, Math.min(sW, sH, 40));
+  const band = e => (!sides.has(e) ? 0 : narrow ? Math.max(...outs.filter(m => edgeOf(m, front) === e).map(m => outD(m) + rrOf(m))) + 2 : OUT_BAND);
+  const layout = depthAt => {
+    const dimSide = e => ring && (e === rear || e === depthAt);
+    const mL = pad + band('left') + (dimSide('left') ? dimBand : 0);
+    const mR = pad + band('right') + (dimSide('right') ? dimBand : 0);
+    const mT = pad + band('top') + (dimSide('top') ? dimBand : 0) + (front === 'top' ? STREET_BAND : 0);
+    const mB = pad + band('bottom') + (dimSide('bottom') ? dimBand : 0) + (front === 'bottom' ? STREET_BAND : 0);
+    const sW = (width - mL - mR) / (fx1 - fx0), sH = (MAX_H - mT - mB) / (fy1 - fy0);
+    return { depthAt, mL, mR, mT, mB, s: Math.max(0.2, Math.min(sW, sH, 40)) };
+  };
+  let lay = layout('left');
+  if (narrow && ring) {
+    // the first that keeps the plan at least 72% of the drawing's width, or as large as the height allows
+    const fold = layout('fold'), share = L => (fx1 - fx0) * L.s / width;
+    lay = [...(sides.has('left') ? [] : [layout('left')]), ...(sides.has('right') ? [] : [layout('right')])]
+      .find(L => share(L) >= 0.72 || L.s >= fold.s - 1e-6) || fold;
+  }
+  const { mL, mR, mT, mB, s, depthAt } = lay;
   const pw = (fx1 - fx0) * s, ph = (fy1 - fy0) * s, H = Math.round(mT + ph + mB);
   const ox = mL + Math.max(0, (width - mL - mR - pw) / 2), oy = mT;
   const X = x => r1(ox + (num(x) - fx0) * s), Y = y => r1(oy + (num(y) - fy0) * s);
@@ -395,19 +457,34 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   if (P) s1 += `<defs><clipPath id="${clip}"><polygon points="${P.map(p => p.join(',')).join(' ')}"/></clipPath></defs>`
     + `<polygon class="ca-fs-floor" points="${P.map(p => p.join(',')).join(' ')}"/>`;   // the floor; the wall (the outline itself) is drawn over the rooms
   else if (!note) s1 += `<rect class="ca-fs-wall" x="${X(0)}" y="${Y(0)}" width="${r1(Wf * s)}" height="${r1(Hf * s)}" rx="3"/>`;   // a large building with no outline: no wall is drawn
-  // markers: inside ones at their place, outside ones OUT_D past the wall at `at` along their side; then eased apart
+  // markers: inside ones at their place (in their room), outside ones past the wall at `at` along their side; then eased apart.
+  // One moved more than 8 px from its true spot gets a thin leader line back to it.
+  const roomList = (Array.isArray(f.rooms) ? f.rooms : []).filter(r => r && typeof r === 'object');
+  const inRoom = (m, r) => num(m.x) >= num(r.x) && num(m.x) <= num(r.x) + num(r.w) && num(m.y) >= num(r.y) && num(m.y) <= num(r.y) + num(r.h);
+  const whole = r => num(r.x) <= 0 && num(r.y) <= 0 && num(r.w) >= Wf && num(r.h) >= Hf;
+  const roomOf = m => (typeof m.room === 'string' && roomList.find(r => r.label === m.room && inRoom(m, r)))
+    || roomList.filter(r => inRoom(m, r)).sort((a, b) => num(a.w) * num(a.h) - num(b.w) * num(b.h))[0] || null;
   const all = [
-    ...inside.map(m => ({ m, x: X(m.x), y: Y(m.y), edge: '', ring: isFocus(m, focus) })),
+    ...inside.map(m => {
+      const r = roomOf(m), x = X(m.x), y = Y(m.y);
+      return { m, x, y, tx: x, ty: y, edge: '', ring: isFocus(m, focus), rr: rrOf(m), r,
+        room: r && !whole(r) ? { x0: X(r.x), y0: Y(r.y), x1: X(num(r.x) + num(r.w)), y1: Y(num(r.y) + num(r.h)) } : null };
+    }),
     ...outs.map(m => {
-      const e = edgeOf(m, front), at = Math.min(1, Math.max(0, num(m.at) || 0.5));
-      const x = e === 'left' ? rb.x0 - OUT_D : e === 'right' ? rb.x1 + OUT_D : rb.x0 + at * (rb.x1 - rb.x0);
-      const y = e === 'top' ? rb.y0 - OUT_D : e === 'bottom' ? rb.y1 + OUT_D : rb.y0 + at * (rb.y1 - rb.y0);
-      return { m, x, y, edge: e, ring: isFocus(m, focus) };
+      const e = edgeOf(m, front), at = Math.min(1, Math.max(0, num(m.at) || 0.5)), d = outD(m);
+      const x = e === 'left' ? rb.x0 - d : e === 'right' ? rb.x1 + d : rb.x0 + at * (rb.x1 - rb.x0);
+      const y = e === 'top' ? rb.y0 - d : e === 'bottom' ? rb.y1 + d : rb.y0 + at * (rb.y1 - rb.y0);
+      const lev = e === 'top' || e === 'bottom';
+      return { m, x, y, tx: x, ty: y, edge: e, ring: isFocus(m, focus), rr: rrOf(m), lo: lev ? rb.x0 : rb.y0, hi: lev ? rb.x1 : rb.y1 };
     })];
-  spread(all, box);
+  spread(all, P || [[box.x0, box.y0], [box.x1, box.y0], [box.x1, box.y1], [box.x0, box.y1]]);
+  const leaders = all.filter(p => Math.hypot(p.x - p.tx, p.y - p.ty) > 8).map(p => {
+    const d = Math.hypot(p.tx - p.x, p.ty - p.y);
+    return [[r1(p.tx), r1(p.ty)], [r1(p.x + (p.tx - p.x) / d * (mr + 1)), r1(p.y + (p.ty - p.y) / d * (mr + 1))]];
+  });
+  const onLeader = (b, pad = 1) => leaders.some(([p, q]) => segHitsBox(p, q, { x0: b.x0 - pad, y0: b.y0 - pad, x1: b.x1 + pad, y1: b.y1 + pad }));
   // rooms: dashed (likely), inside the outline
   let rooms = '', names = '';
-  const roomList = (Array.isArray(f.rooms) ? f.rooms : []).filter(r => r && typeof r === 'object');
   for (const r of roomList) {
     const x = X(r.x), y = Y(r.y), w = r1(num(r.w) * s), h = r1(num(r.h) * s);
     if (!(num(r.x) <= 0 && num(r.y) <= 0 && num(r.w) >= Wf && num(r.h) >= Hf)) rooms += `<rect class="ca-fs-room" x="${x}" y="${y}" width="${w}" height="${h}"/>`;   // a room that is the whole floor is only named
@@ -417,14 +494,16 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   // the runs as drawn (a drain beside a water line sits RUN_OFF px off it): names and run labels keep off them
   const runList = (Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points));
   const hasWater = runList.some(r => r.kind === 'water');
-  const drawn = new Map(runList.map(r => {
+  // a run whose points are all one spot (a line passing straight through to another floor) draws no line, only its riser ring
+  const still = r => { const q = r.points.filter(p => Array.isArray(p)); return q.every(p => Math.abs(num(p[0]) - num(q[0][0])) < 0.05 && Math.abs(num(p[1]) - num(q[0][1])) < 0.05); };
+  const drawn = new Map(runList.filter(r => !still(r)).map(r => {
     const d = r.kind === 'drain' && hasWater ? RUN_OFF : 0;
     return [r, r.points.filter(p => Array.isArray(p)).map(p => [r1(X(p[0]) + d), r1(Y(p[1]) + d)])];
   }));
   const segBoxes = pad => [...drawn.values()].flatMap(q => q.slice(1).map((p, i) => ({ x0: Math.min(q[i][0], p[0]) - pad, y0: Math.min(q[i][1], p[1]) - pad, x1: Math.max(q[i][0], p[0]) + pad, y1: Math.max(q[i][1], p[1]) + pad })));
   const segs = segBoxes(3), segsTight = segBoxes(1.5);
   // room names: the full name, else the short one, else none; centred when clear, else a corner; never on a marker or another name
-  const th = fs + 2;
+  const th = fs + 2, namedRooms = new Set();
   // rooms that hold a marker, and wet rooms, are named first: the job is there
   const holds = r => inside.some(m => num(m.x) >= num(r.x) && num(m.x) <= num(r.x) + num(r.w) && num(m.y) >= num(r.y) && num(m.y) <= num(r.y) + num(r.h));
   const rank = r => (holds(r) || WET_NAME[r.kind] ? 0 : 1);
@@ -444,12 +523,12 @@ export function sketchSVG(floor, outside = [], opts = {}) {
       for (const [bx, by] of spots) {
         const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
         // never across a line: the strict pass keeps a little air, the second only stays off the stroke
-        if (!clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || (strict ? segs.some(o => hits(b, o, 1)) : segsTight.some(o => hits(b, o, 0)))) continue;
+        if (!clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || (strict ? segs.some(o => hits(b, o, 1)) : segsTight.some(o => hits(b, o, 0))) || onLeader(b)) continue;
         placed = { text, b }; break;
       }
     }
     if (!placed) continue;
-    boxes.push(placed.b);
+    boxes.push(placed.b); namedRooms.add(r);
     names += `<text class="ca-fs-room-t" x="${r1((placed.b.x0 + placed.b.x1) / 2)}" y="${r1(placed.b.y1 - 3)}">${esc(placed.text)}</text>`;
   }
   // the note a large building carries, inside the outline when it fits
@@ -481,33 +560,39 @@ export function sketchSVG(floor, outside = [], opts = {}) {
     boxes.push(best.b);
     names += best.lines.map((l, i) => `<text class="ca-fs-note" x="${r1(best.cx)}" y="${r1(best.b.y0 + 2 + (i + 1) * (fs + 4) - 4)}">${esc(l)}</text>`).join('');
   }
-  // overall sizes from the outline (public record, solid): width along the rear, depth along the left
+  // overall sizes from the outline (public record, solid): width along the rear, depth along a side (the left, or on a phone
+  // the side with no outside marker); when both sides hold outside markers on a phone, one figure along the rear: "56 ft × 33 ft"
   let dims = '';
   if (P) {
     const wFt = Math.round((Math.max(...rx) - Math.min(...rx))), dFt = Math.round((Math.max(...ry) - Math.min(...ry)));
-    const yW = rear === 'top' ? rb.y0 - band('top') - DIM_OFF : rb.y1 + band('bottom') + DIM_OFF, xD = rb.x0 - band('left') - DIM_OFF;
-    const tW = `${wFt} ft`, tD = `${dFt} ft`, twW = tW.length * fsSmall * MONO, twD = tD.length * fsSmall * MONO;
+    const yW = rear === 'top' ? rb.y0 - band('top') - dimOff : rb.y1 + band('bottom') + dimOff;
+    const xD = depthAt === 'right' ? rb.x1 + band('right') + dimOff : rb.x0 - band('left') - dimOff;
+    const tW = depthAt === 'fold' ? `${wFt} ft \u00d7 ${dFt} ft` : `${wFt} ft`, tD = `${dFt} ft`, twW = tW.length * fsSmall * MONO, twD = tD.length * fsSmall * MONO;
     const mx = (rb.x0 + rb.x1) / 2, my = (rb.y0 + rb.y1) / 2, gw = twW / 2 + 5, gd = twD / 2 + 5;
-    dims += `<g class="ca-fs-dim" data-dim="width"><path d="M${rb.x0} ${yW}H${r1(Math.max(rb.x0, mx - gw))}M${r1(Math.min(rb.x1, mx + gw))} ${yW}H${rb.x1}M${rb.x0} ${yW - 5}V${yW + 5}M${rb.x1} ${yW - 5}V${yW + 5}"/>`
+    dims += `<g class="ca-fs-dim" data-dim="${depthAt === 'fold' ? 'both' : 'width'}"><path d="M${rb.x0} ${yW}H${r1(Math.max(rb.x0, mx - gw))}M${r1(Math.min(rb.x1, mx + gw))} ${yW}H${rb.x1}M${rb.x0} ${yW - 5}V${yW + 5}M${rb.x1} ${yW - 5}V${yW + 5}"/>`
       + `<text class="ca-fs-dim-t" x="${r1((rb.x0 + rb.x1) / 2)}" y="${r1(yW + 4)}">${tW}</text></g>`;
-    dims += `<g class="ca-fs-dim" data-dim="depth"><path d="M${xD} ${rb.y0}V${r1(Math.max(rb.y0, my - gd))}M${xD} ${r1(Math.min(rb.y1, my + gd))}V${rb.y1}M${xD - 5} ${rb.y0}H${xD + 5}M${xD - 5} ${rb.y1}H${xD + 5}"/>`
-      + `<text class="ca-fs-dim-t" x="${r1(xD)}" y="${r1((rb.y0 + rb.y1) / 2 + 4)}" transform="rotate(-90 ${r1(xD)} ${r1((rb.y0 + rb.y1) / 2)})">${tD}</text></g>`;
     boxes.push({ x0: (rb.x0 + rb.x1 - twW) / 2 - 3, y0: yW - fsSmall / 2 - 2, x1: (rb.x0 + rb.x1 + twW) / 2 + 3, y1: yW + fsSmall / 2 + 2 });
-    boxes.push({ x0: xD - fsSmall / 2 - 2, y0: (rb.y0 + rb.y1 - twD) / 2 - 3, x1: xD + fsSmall / 2 + 2, y1: (rb.y0 + rb.y1 + twD) / 2 + 3 });
+    if (depthAt !== 'fold') {
+      dims += `<g class="ca-fs-dim" data-dim="depth"><path d="M${xD} ${rb.y0}V${r1(Math.max(rb.y0, my - gd))}M${xD} ${r1(Math.min(rb.y1, my + gd))}V${rb.y1}M${xD - 5} ${rb.y0}H${xD + 5}M${xD - 5} ${rb.y1}H${xD + 5}"/>`
+        + `<text class="ca-fs-dim-t" x="${r1(xD)}" y="${r1((rb.y0 + rb.y1) / 2 + 4)}" transform="rotate(${depthAt === 'right' ? 90 : -90} ${r1(xD)} ${r1((rb.y0 + rb.y1) / 2)})">${tD}</text></g>`;
+      boxes.push({ x0: xD - fsSmall / 2 - 2, y0: (rb.y0 + rb.y1 - twD) / 2 - 3, x1: xD + fsSmall / 2 + 2, y1: (rb.y0 + rb.y1 + twD) / 2 + 3 });
+    }
   }
   // street side: a small arrow from the wall (below any outside markers there) and the label
   const street = opts.frontBasis === 'assumed' ? 'Street side, assumed' : 'Street side';
-  const busy = sides.has(front), cxS = r1((rb.x0 + rb.x1) / 2), stw = street.length * fs * MONO;
-  let st;
+  const cxS = r1((rb.x0 + rb.x1) / 2), stw = street.length * fs * MONO;
+  let st, arrowBox = null;
   if (front === 'bottom') {
-    const base = rb.y1 + (busy ? OUT_BAND : 0) + 4, ly = r1(base + STREET_BAND - 14), tip = r1(ly - fs * 0.73 - 5);
+    const base = rb.y1 + band('bottom') + 4, ly = r1(base + STREET_BAND - 14), tip = r1(ly - fs * 0.73 - 5);
     // the arrow starts below any marker it would cross
     const a0 = Math.min(tip - 8, all.filter(p => Math.abs(p.x - cxS) < reach(p) + 3).reduce((y, p) => Math.max(y, p.y + reach(p) + 3), base));
+    arrowBox = { x0: cxS - 5, y0: a0, x1: cxS + 5, y1: tip };
     st = `<path class="ca-fs-arrow" d="M${cxS} ${r1(a0)}V${tip}M${cxS - 4} ${tip - 5}L${cxS} ${tip}L${cxS + 4} ${tip - 5}"/><text class="ca-fs-street" x="${cxS}" y="${ly}">${street}</text>`;
     boxes.push({ x0: cxS - stw / 2, y0: ly - fs, x1: cxS + stw / 2, y1: ly + 3 });
   } else {
-    const ly = r1(rb.y0 - (busy ? OUT_BAND : 0) - 24);
-    st = `<path class="ca-fs-arrow" d="M${cxS} ${r1(ly + 6)}V${r1(rb.y0 - (busy ? OUT_BAND : 0) - 4)}"/><text class="ca-fs-street" x="${cxS}" y="${ly}">${street}</text>`;
+    const ly = r1(rb.y0 - band('top') - 24);
+    arrowBox = { x0: cxS - 5, y0: ly + 6, x1: cxS + 5, y1: rb.y0 - band('top') - 4 };
+    st = `<path class="ca-fs-arrow" d="M${cxS} ${r1(ly + 6)}V${r1(rb.y0 - band('top') - 4)}"/><text class="ca-fs-street" x="${cxS}" y="${ly}">${street}</text>`;
     boxes.push({ x0: cxS - stw / 2, y0: ly - fs, x1: cxS + stw / 2, y1: ly + 3 });
   }
   // north arrow (the outline's own bearing): in the street band, beside the label, clear of it and of the markers
@@ -526,34 +611,59 @@ export function sketchSVG(floor, outside = [], opts = {}) {
       boxes.push(at);
     }
   }
+  // a fixture marker whose room got no name: the room's short name beside the marker, outside its ring, off every line, marker
+  // and name (it may cross a dashed room line, never the wall); one caption per room
+  let caps = '';
+  const capped = new Set(), wallHit = b => P && P.some((p, i) => segHitsBox(p, P[(i + 1) % P.length], b));
+  for (const p of all) {
+    if (p.edge || !p.r || !p.r.label || namedRooms.has(p.r) || capped.has(p.r)) continue;
+    const text = shortName(p.r), tw = text.length * fsSmall * MONO, ch = fsSmall + 2, g = reach(p) + 2;
+    const spots = [[p.x + g, p.y - ch / 2], [p.x - g - tw, p.y - ch / 2], [p.x - tw / 2, p.y - g - ch], [p.x - tw / 2, p.y + g],
+      [p.x + g * 0.7, p.y - g * 0.7 - ch], [p.x - g * 0.7 - tw, p.y - g * 0.7 - ch], [p.x + g * 0.7, p.y + g * 0.7], [p.x - g * 0.7 - tw, p.y + g * 0.7]];
+    let placed = null;
+    for (const [inner, strict] of [[true, true], [true, false], [false, true], [false, false]]) {   // inside the outline first
+      for (const [bx, by] of spots) {
+        const b = { x0: bx, y0: by, x1: bx + tw, y1: by + ch };
+        if (b.x0 < 2 || b.y0 < 2 || b.x1 > width - 2 || b.y1 > H - 2 || wallHit(b) || (inner && P && !boxInPoly(b, P)) || (arrowBox && hits(b, arrowBox, 2)) || !clearOfMarks(b, all, 1) || boxes.some(o => hits(b, o, 2))
+          || (strict ? segs.some(o => hits(b, o, 0)) : segsTight.some(o => hits(b, o, 0))) || onLeader(b)) continue;
+        placed = b; break;
+      }
+      if (placed) break;
+    }
+    if (!placed) continue;
+    capped.add(p.r); boxes.push(placed);
+    caps += `<text class="ca-fs-cap" x="${r1((placed.x0 + placed.x1) / 2)}" y="${r1(placed.y1 - 3)}">${esc(text)}</text>`;
+  }
   // runs under the markers: solid from records, dashed when likely; square, corners rounded a little; risers as small rings
   // one name per line kind per floor (the server sends one run per branch), placed on the longest run of that kind first;
   // a drain that shares its route with a water line is drawn a few px off it so both stay visible (still square);
   // its riser ring stays on the true spot, so the water and drain rings at one stack draw as one
-  let runs = '', runText = '';
+  let runs = '', runText = '', risers = '';
   const runLen = r => r.points.filter(p => Array.isArray(p)).reduce((a, p, i, q) => i ? a + Math.abs(p[0] - q[i - 1][0]) + Math.abs(p[1] - q[i - 1][1]) : 0, 0);
   const named = new Set(), hotPower = focus.includes('panel');
   const order = runList.map((r, i) => [r, i, runLen(r)]).sort((a, b) => b[2] - a[2] || a[1] - b[1]).map(e => e[0]);
   for (const r of order) {
     const k = KINDS.has(r.kind) ? r.kind : 'water', cls = isSolid(r.basis) ? 'is-record' : 'is-likely';
+    for (const q of Array.isArray(r.risers) ? r.risers : []) {
+      if (!Array.isArray(q)) continue;
+      const dir = q[2] === 'up' ? 'up' : 'down';
+      risers += `<circle class="ca-fs-riser k-${k}" data-dir="${dir}" cx="${X(q[0])}" cy="${Y(q[1])}" r="4.5"><title>${RUN_NAMES[k]} ${dir === 'up' ? 'goes to the floor above' : 'goes to the floor below'}</title></circle>`;
+    }
     const pts = drawn.get(r); if (!pts || pts.length < 2) continue;
     const hot = k === 'power' && hotPower ? ' is-hot' : '';   // an electrical question: the service line is the line to see
     runs += `<path class="ca-fs-run ${cls} k-${k}${hot}" d="${roundPath(pts)}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
     const link = toMeter(pts, k, all, box, s);
     if (link) { const meter = all.find(p => p.edge && String(p.m.kind) === METER_OF[k]); runs += `<path class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}${hot}" d="${roundPath(link)}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
-    for (const q of Array.isArray(r.risers) ? r.risers : []) {
-      if (!Array.isArray(q)) continue;
-      const dir = q[2] === 'up' ? 'up' : 'down';
-      runs += `<circle class="ca-fs-riser k-${k}" data-dir="${dir}" cx="${X(q[0])}" cy="${Y(q[1])}" r="4.5"><title>${RUN_NAMES[k]} ${dir === 'up' ? 'goes to the floor above' : 'goes to the floor below'}</title></circle>`;
-    }
     const txt = r.label || RUN_NAMES[k]; if (named.has(k + '|' + txt)) continue;
-    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P, segs);
+    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P, segs, onLeader);
     if (at) { named.add(k + '|' + txt); boxes.push(at.b); runText += `<text class="ca-fs-run-t" x="${at.x}" y="${at.y}">${esc(txt)}</text>`; }
   }
-  s1 += runs + dims + st + north + names + runText;
+  // leaders: a thin line from a marker eased off its spot back to the spot, with a small dot there
+  const lead = leaders.map(([p, q]) => `<path class="ca-fs-lead" d="M${p[0]} ${p[1]}L${q[0]} ${q[1]}"/><circle class="ca-fs-lead-dot" cx="${p[0]}" cy="${p[1]}" r="2"/>`).join('');
+  s1 += runs + risers + lead + dims + st + north + names + caps + runText;
   // markers last, non-focus first so focus rings sit on top
   all.sort((a, b) => Number(isFocus(a.m, focus)) - Number(isFocus(b.m, focus)));
-  for (const { m, x, y } of all) s1 += markerSVG(m, x, y, focus);
+  for (const { m, x, y } of all) s1 += markerSVG(m, x, y, focus, mr, rg);
   if (noteGrow) s1 = s1.replace(`viewBox="0 0 ${width} ${H}"`, `viewBox="0 0 ${width} ${H + noteGrow}"`);
   return s1 + '</svg>';
 }

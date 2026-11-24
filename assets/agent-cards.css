@@ -30,6 +30,11 @@
 .ca-fs-run.k-drain{stroke-width:4}
 .ca-fs-run.is-likely{stroke-dasharray:7 5}
 .ca-fs-riser{fill:var(--sys-surface);stroke:var(--sys-ink-2);stroke-width:1.75}
+.ca-fs-cap{fill:var(--sys-mute);font:500 11px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4;stroke-linejoin:round}
+.ca-fs-lead{fill:none;stroke:var(--sys-warn-ink);stroke-width:1;opacity:.8}
+.ca-fs-lead-dot{fill:var(--sys-warn-ink);stroke:none}
+/* a phone: the drawing takes the frame's padding back so the plan fills it */
+@media (max-width:520px){.ca-fs-svg{padding:2px;margin-inline:-6px}}
 .ca-fs-run-t{fill:var(--sys-ink-2);font:600 11px var(--sys-mono);text-anchor:middle;paint-order:stroke;stroke:var(--sys-surface-2);stroke-width:4;stroke-linejoin:round}
 .ca-fs-m.is-record circle{fill:var(--co);stroke:var(--sys-surface);stroke-width:2}
 .ca-fs-m.is-record text{fill:var(--sys-on-accent)}

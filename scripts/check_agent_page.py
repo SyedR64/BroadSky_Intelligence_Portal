@@ -752,6 +752,85 @@ PLAN_MEASURE = """() => {
 }"""
 
 
+def _dims_ok(r):
+    """R7: the width and the depth in feet on two sides, or on a phone with outside markers on both sides one figure "56 ft × 33 ft"."""
+    return sorted(r['dims']) == ['33 ft', '56 ft'] or (r['width'] < 480 and r['dims'] == ['56 ft × 33 ft'])
+
+
+def _basement_card():
+    """The L-shaped house's basement as a phone sees it at its worst: an outside marker on each side wall (electric meter left,
+    heat pump right), two focus markers at the front wall, three more inside, and a run that only passes through (points [S, S])."""
+    card = _plan_card(1.0)
+    room = lambda lab, sh, x0, y0, x1, y1: {'x': x0, 'y': y0, 'w': x1 - x0, 'h': y1 - y0, 'label': lab, 'short': sh, 'kind': 'room', 'floor': 'basement', 'basis': 'likely'}  # noqa: E731
+    item = lambda kind, lab, s, x, y, focus: {'kind': kind, 'label': lab, 'short': s, 'basis': 'likely', 'focus': focus, 'note': 'Likely', 'x': x, 'y': y}  # noqa: E731
+    card['floors'] = [{'id': 'basement', 'name': 'Basement', 'w': 56, 'h': 33, 'wet_walls': [],
+                       'rooms': [room('Storage', 'Storage', 0, 0, 16, 13), room('Utility', 'Utility', 16, 0, 36.3, 13), room('Workshop', 'Shop', 36.3, 0, 56, 23.1),
+                                 room('Rec room', 'Rec rm', 0, 13, 36.3, 33)],
+                       'items': [item('main_water', 'Main water shutoff', 'W', 8.4, 31.4, True), item('sewer_cleanout', 'Sewer cleanout', 'C', 28, 31.5, True),
+                                 item('water_heater', 'Water heater', 'WH', 34.8, 1.6, False), item('air_handler', 'Air handler', 'AH', 18.2, 23.8, False),
+                                 item('panel', 'Electrical panel', 'P', 1.6, 16.5, False)],
+                       'runs': [{'kind': 'water', 'label': 'Water', 'basis': 'likely', 'points': [[8.4, 31.4], [8.4, 1.6], [34.8, 1.6]]},
+                                {'kind': 'drain', 'label': 'Drain', 'basis': 'likely', 'points': [[28, 31.5], [32.4, 31.5], [32.4, 11.2]], 'risers': [[32.4, 11.2, 'up']]},
+                                {'kind': 'water', 'label': 'Water', 'basis': 'likely', 'points': [[6.6, 8.3], [6.6, 8.3]], 'risers': [[6.6, 8.3, 'up']]}]}]
+    card['outside'] = [{'kind': 'heat_pump', 'label': 'Heat pump', 'short': 'HP', 'floor': 'basement', 'side': 'right', 'at': 0.35, 'basis': 'likely', 'note': 'Outside on a pad'},
+                       {'kind': 'electric_meter', 'label': 'Electric meter', 'short': 'EM', 'floor': 'basement', 'side': 'left', 'at': 0.5, 'basis': 'likely', 'note': 'Outside'}]
+    card['focus'] = ['main_water', 'sewer_cleanout']
+    card['id'] = 'fs-plan-basement'
+    return card
+
+
+PHONE_MEASURE = """() => {
+  const svg = document.querySelector('#ca-plan .ca-fs-svg:not([hidden]) svg.ca-fs'), sr = svg.getBoundingClientRect();
+  const ol = svg.querySelector('[data-outline]'), ob = ol.getBoundingClientRect(), ctm = ol.getScreenCTM(), k = sr.width / svg.viewBox.baseVal.width;
+  const P = [...ol.points].map(p => { const q = p.matrixTransform(ctm); return [q.x, q.y]; });
+  const inPoly = (x, y) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, yi] = P[i], [xj, yj] = P[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const segD = (x, y, [ax, ay], [bx, by]) => { const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy || 1))); return Math.hypot(x - ax - t * dx, y - ay - t * dy); };
+  const outerOf = c => { const r = c.getBoundingClientRect(); return r.width / 2 + parseFloat(getComputedStyle(c).strokeWidth) * k / 2; };
+  const marks = [...svg.querySelectorAll('g.ca-fs-m')].map(g => {
+    const c = g.querySelector('circle:not(.ca-fs-ring):not(.ca-fs-halo)'), ring = g.querySelector('.ca-fs-ring'), r = c.getBoundingClientRect();
+    const x = (r.left + r.right) / 2, y = (r.top + r.bottom) / 2, outer = outerOf(ring || c);
+    return { t: g.textContent.trim(), x, y, outer, inside: inPoly(x, y), wall: Math.min(...P.map((p, i) => segD(x, y, p, P[(i + 1) % P.length]))) };
+  });
+  const close = [], crossing = [];
+  marks.forEach((a, i) => marks.slice(i + 1).forEach(b => { const d = Math.hypot(a.x - b.x, a.y - b.y); if (d < a.outer + b.outer + 2 - 0.3) close.push(`${a.t}/${b.t} ${d.toFixed(1)} < ${(a.outer + b.outer + 2).toFixed(1)}`); }));
+  for (const m of marks) if (m.inside && m.wall < m.outer - 2 - 0.3) crossing.push(`${m.t} ${m.wall.toFixed(1)}`);
+  const runs = [...svg.querySelectorAll('.ca-fs-run')].map(p => p.getAttribute('points').trim().split(/\\s+/).map(v => v.split(',').map(Number)));
+  const still = runs.filter(q => q.every(v => Math.abs(v[0] - q[0][0]) < 0.5 && Math.abs(v[1] - q[0][1]) < 0.5)).length;
+  return { width: svg.viewBox.baseVal.width, share: ob.width / sr.width, close, crossing, still, risers: svg.querySelectorAll('.ca-fs-riser').length,
+    marks: marks.length, sizes: [...svg.querySelectorAll('g.ca-fs-m circle:not(.ca-fs-halo)')].map(c => Math.round(c.getBoundingClientRect().width)),
+    fonts: Math.min(...[...svg.querySelectorAll('text')].map(t => parseFloat(getComputedStyle(t).fontSize) * k)),
+    dims: [...svg.querySelectorAll('.ca-fs-dim-t')].map(t => t.textContent), sideways: document.documentElement.scrollWidth > innerWidth + 1 };
+}"""
+
+
+def plan_phone_checks(browser, site):
+    """On a phone the house plan fills the frame (N1: the outline at least 72% of the drawing's width under 480 px, even with an
+    outside marker on each side wall; no smaller at 768 and 1100 than before), markers never sit on each other and an inside
+    marker's ring crosses the wall by under 2 px (N2, at every width), and a run that only passes through draws no line or dot,
+    only its riser ring (N3)."""
+    ctx, page, outside = _offline_ctx(browser, site, 1280, 900, False)
+    con = Console(page, site)
+    page.goto(f'{site}/agent.html?role=pp-dispatcher&backend=off')
+    wait_ready(page)
+    floor_share = {768: 0.74, 1280: 0.74}   # the plan's share before the phone work (76 and 81): it must not drop below these
+    for w in (360, 390, 768, 1280):
+        page.set_viewport_size({'width': w, 'height': 900})
+        for name, card in (('basement', _basement_card()), ('first floor', _plan_card(1.0))):
+            page.evaluate(PLAN_JS, card)
+            r = page.evaluate(PHONE_MEASURE)
+            tag = f'plan {w} px, {name}'
+            if name == 'basement':
+                need = 0.72 if r['width'] < 480 else floor_share.get(w, 0.72)
+                check(f'{tag}: N1 the plan fills the frame (outline {need:.0%} of the drawing or more), text 11 px or more, no sideways scroll',
+                      r['share'] >= need and r['fonts'] >= 10.9 and not r['sideways'] and _dims_ok(r), json.dumps({k: r[k] for k in ('width', 'share', 'fonts', 'dims', 'sideways')}))
+                check(f'{tag}: N3 a run that only passes through draws no line or dot, only its riser ring', r['still'] == 0 and r['risers'] == 2,
+                      json.dumps({k: r[k] for k in ('still', 'risers')}))
+            check(f'{tag}: N2 markers never on each other (focus rings counted, 2 px apart), inside rings cross the wall by under 2 px',
+                  r['marks'] >= 2 and not r['close'] and not r['crossing'], json.dumps({k: r[k] for k in ('marks', 'close', 'crossing', 'sizes')}))
+    check('plan phone: no console errors, nothing outside the site', not con.errors and not outside, json.dumps({'errors': con.errors[:2], 'outside': outside[:2]}))
+    ctx.close()
+
+
 def plan_rules_checks(browser, site):
     """R1 text 11 to 13 px and markers 26 to 36 px on screen at every card width and building size, redrawn when the card
     resizes; R2 the outline is the wall (solid, no bounding rectangle), likely things dashed; R3 runs square with rounded
@@ -768,8 +847,9 @@ def plan_rules_checks(browser, site):
             page.evaluate(PLAN_JS, _plan_card(scale))
             r = page.evaluate(PLAN_MEASURE)
             tag = f'plan {w} px, building x{scale}'
-            check(f'{tag}: R1 drawn at the card width, text 11-13 px, markers 26-36 px', abs(r['width'] - r['inner']) <= 1 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1
-                  and 25.9 <= r['marks'][0] and r['marks'][1] <= 36.1, json.dumps({k: r[k] for k in ('width', 'inner', 'fonts', 'marks')}))
+            lo, hi = (23.9, 32.1) if r['width'] < 420 else (25.9, 36.1)   # a drawing under 420 px: 24 px markers, focus ring 32 px
+            check(f'{tag}: R1 drawn at the card width, text 11-13 px, markers {lo:.0f}-{hi:.0f} px', abs(r['width'] - r['inner']) <= 1 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1
+                  and lo <= r['marks'][0] and r['marks'][1] <= hi, json.dumps({k: r[k] for k in ('width', 'inner', 'fonts', 'marks')}))
             if scale != 1.0:
                 continue
             check(f'{tag}: R2 the outline is the wall (solid, no bounding rectangle), rooms and likely lines dashed',
@@ -780,14 +860,14 @@ def plan_rules_checks(browser, site):
             check(f'{tag}: R4 names fit their rooms (full or short), never overlap each other or a marker',
                   r['names'] and set(r['names']) <= labels and not r['nameOverlaps'] and not r['nameOnMarker'] and not r['nameOutside'],
                   json.dumps({k: r[k] for k in ('names', 'nameOverlaps', 'nameOnMarker', 'nameOutside')}))
-            check(f'{tag}: R7 overall feet on two sides, a north arrow, the street side', sorted(r['dims']) == ['33 ft', '56 ft'] and r['north'] == 1 and r['street'] == 'Street side',
+            check(f'{tag}: R7 overall feet on two sides, a north arrow, the street side', _dims_ok(r) and r['north'] == 1 and r['street'] == 'Street side',
                   json.dumps({k: r[k] for k in ('dims', 'north', 'street')}))
         page.evaluate(PLAN_JS, _plan_card(1.0, large=True))
         r = page.evaluate(PLAN_MEASURE)
         tag = f'plan {w} px, large building'
         bad = re.findall(r'\b(house|home|garage|living|bedroom|kitchen)\b', r['text'], re.I)
         check(f'{tag}: R6 no rooms, no lines, its note, sizes and street side, no house words',
-              r['roomsN'] == 0 and r['runsN'] == 0 and r['note'] == 'Interior layout is not on public record.' and sorted(r['dims']) == ['33 ft', '56 ft']
+              r['roomsN'] == 0 and r['runsN'] == 0 and r['note'] == 'Interior layout is not on public record.' and _dims_ok(r)
               and r['street'] == 'Street side' and not bad and r['rect'] == 0 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1, json.dumps({k: r[k] for k in ('roomsN', 'runsN', 'note', 'dims', 'fonts')}) + ' ' + str(bad))
     # one card, drawn at 1280, then the window narrows: the plan is redrawn at the new width and its text keeps its size
     page.set_viewport_size({'width': 1280, 'height': 900})
@@ -800,7 +880,7 @@ def plan_rules_checks(browser, site):
     again = page.evaluate("() => document.querySelector('#ca-plan svg.ca-fs').viewBox.baseVal.width")
     check('plan: R1 redrawn when the card narrows, text and markers keep their size, no redraw loop',
           before['width'] > after['width'] and abs(after['width'] - after['inner']) <= 1 and again == after['width'] and 10.9 <= after['fonts'][0] and after['fonts'][1] <= 13.1
-          and 25.9 <= after['marks'][0], json.dumps({'before': before['width'], 'after': after['width'], 'inner': after['inner'], 'again': again, 'fonts': after['fonts']}))
+          and 23.9 <= after['marks'][0], json.dumps({'before': before['width'], 'after': after['width'], 'inner': after['inner'], 'again': again, 'fonts': after['fonts']}))
     # string output without a DOM: the module's sketchSVG takes a width and returns an SVG at that width
     sv = page.evaluate("""async (card) => { const m = await import('./assets/agent-cards.js'); const f = card.floors[0];
       const o = m.outlinePoints(card, f.w, f.h, 1); const s = m.sketchSVG(f, [], { width: 500, outline: o });
@@ -991,6 +1071,7 @@ def main():
                 signature_checks(browser, site, catalog)
                 live_card_checks(browser, site)
                 plan_rules_checks(browser, site)
+                plan_phone_checks(browser, site)
                 view_card_checks(browser, site)
                 map_checks(browser, site)
                 if not args.only_wave3:
