@@ -1416,6 +1416,364 @@ def b_growth_opportunities(ctx):
                  'body': f"Top public opportunity: {_clip(cards[0]['title'], 80)}.", 'channel_rx': 'sales|business|leadership|growth'})
 
 
+# ---------------------------------------------------------------- builders: the catalogue's signature questions (wave 3 integration)
+
+def _tour(tid):
+    try:
+        return next((t for t in _research('globe_tours').get('tours') or [] if t.get('id') == tid), None)
+    except Exception:   # noqa: BLE001
+        return None
+
+
+def _fig(step, name):
+    return next((f[1] for f in step.get('figures') or [] if isinstance(f, list) and len(f) >= 2 and f[0] == name), None)
+
+
+def _step(lat, lon, label, sub='', zoom=12.5, figures=None, hold_ms=5000):
+    s = {'lat': round(float(lat), 5), 'lon': round(float(lon), 5), 'label': _clip(label, 58), 'sub': _clip(sub, 78), 'zoom': zoom, 'pitch': 50,
+         'hold_ms': hold_ms}
+    if figures:
+        s['figures'] = figures[:4]
+    return s
+
+
+def _firm_name(s):
+    """'Lancaster Plumbing, Heating, Cooling & Electrical' -> 'Lancaster Plumbing'; 'Midland Scientific, Inc.' -> 'Midland Scientific'."""
+    return re.split(r',', re.sub(r',?\s+(Inc|LLC|Corp|Corporation|Co|Ltd)\.?$', '', str(s or '').strip()))[0].strip()
+
+
+def b_best3(ctx):
+    """The managing partner's question: the "Best 3 add-on targets" globe tour, as a ranked list of the tour's own three stops."""
+    co = ctx['args'].get('company')
+    tid = f'best3-{co}' if co in ('pp', 'cet', 'fl', 'ts') else 'best3'
+    t = _tour(tid)
+    if not t or not t.get('steps'):
+        return None
+    bars = []
+    for s in t['steps'][:3]:
+        fit = _fig(s, 'Fit')
+        try:
+            fit = int(str(fit))
+        except (TypeError, ValueError):
+            continue
+        rev, staff = _fig(s, 'Revenue'), _fig(s, 'Staff')
+        sub = ' · '.join(x for x in (s.get('sub') or '', f'est. revenue {rev}' if rev else '', f'{staff} staff' if staff else '') if x)
+        bars.append({'ref': _ref(tid, s.get('label')), 'label': _clip(s.get('label'), 48), 'value': fit, 'sub': sub, 'basis': EST,
+                     'lat': s.get('lat'), 'lon': s.get('lon')})
+    if len(bars) < 3:
+        return None
+    names = [_firm_name(b['label']) for b in bars]
+    lead = (f"The three best add-on targets: {names[0]} (fit {bars[0]['value']}), {names[1]} ({bars[1]['value']}) and {names[2]} "
+            f"({bars[2]['value']}). The globe flies to each.")
+    data = _bars('pts', 'fit score', bars, max_=100)
+    data['globe'] = tid
+    res = _res(t.get('title') or 'Best 3 add-on targets', lead, data, EST,
+               'Add-on target screens: company search estimates checked against each firm\'s own site and public sources. Fit score out of 100.',
+               str(_research('globe_tours').get('generated') or '')[:10] or max(_gen(f) for f in ('ma_targets_pp', 'ma_targets_cet', 'ma_targets_fl_ts')),
+               {'action': 'chat_post', 'label': 'Post the three targets to the partners channel', 'channel_rx': 'partner|deal|firm',
+                'body': 'Best three add-on targets: ' + '; '.join(f"{_firm_name(b['label'])} (fit {b['value']})" for b in bars) + '.'})
+    res['map'] = {'tour': tid}
+    return res
+
+
+def b_addon_by_company(ctx):
+    """The associate's question: the best add-on target for each company with a screen, then the runners-up."""
+    toured = {_firm_name(st.get('label')).lower(): n for co in ('pp', 'cet', 'fl', 'ts') for n, st in enumerate((_tour(f'best3-{co}') or {}).get('steps') or [])}
+    # ties go in the order the company's globe tour shows them, so the associate and the managing partner see the same firm first
+    items = sorted(_all_targets(), key=lambda i: (-i['fit_score'], toured.get(_firm_name(i.get('company')).lower(), 9), i.get('company') or ''))
+    best, rest = {}, []
+    for i in items:
+        if i['_co'] in best:
+            rest.append(i)
+        else:
+            best[i['_co']] = i
+    top = sorted(best.values(), key=lambda i: -i['fit_score'])
+    pick = top + [i for i in rest if i not in top][:max(0, 8 - len(top))]
+    if not pick:
+        return None
+    bars = []
+    for i in pick:
+        place = ', '.join(x for x in (i.get('hq_city'), i.get('state') or i.get('hq_state')) if x)
+        sub = ' · '.join(x for x in (CO_SHORT[i['_co']] + ' add-on', place,
+                                     f"est. revenue {_m(i['revenue_est_usd'])}" if isinstance(i.get('revenue_est_usd'), (int, float)) else '') if x)
+        bars.append({'ref': _ref(i.get('id')), 'label': _clip(i.get('company'), 48), 'value': i['fit_score'], 'sub': sub, 'basis': EST, 'co': i['_co']})
+    lead = 'Best fit per company. ' + ' '.join(f"{CO_SHORT[i['_co']]}: {_firm_name(i.get('company'))}, {i['fit_score']}." for i in top)
+    if words(lead) > LEAD_WORDS or any(words(s) > SENTENCE_WORDS for s in sentences(lead)):
+        lead = f"{_short_name(top[0].get('company'))} leads at {top[0]['fit_score']} of 100. Each company's best fit is shown first."
+    data = _bars('pts', 'fit score', bars, max_=100)
+    data['globe'] = 'best3'
+    gen = max(_gen(f) for f in ('ma_targets_pp', 'ma_targets_cet', 'ma_targets_fl_ts'))
+    return _res('Best add-on target for each company', lead, data, EST,
+                'Add-on target screens: company search estimates checked against each firm\'s own site and public sources. Fit score out of 100.',
+                gen, {'action': 'chat_post', 'label': 'Post the top target for each company to the deal team', 'channel_rx': 'deal|firm',
+                      'body': 'Top target per company: ' + '; '.join(f"{CO_SHORT[i['_co']]}: {_firm_name(i.get('company'))} ({i['fit_score']})" for i in top) + '.'})
+
+
+def b_hub_cold(ctx):
+    """Punctual Pros: overnight lows at the ten weather hubs for the next seven days (Open-Meteo, a live public feed)."""
+    try:
+        d = _json(os.path.join(ROOT, 'data', 'live', 'forecast_hubs.json'))
+    except Exception:   # noqa: BLE001
+        return None
+    day0 = str(d.get('fetched_at') or '')[:10]
+    hubs = [h for h in d.get('items') or [] if h.get('hub') and h.get('days')]
+    if not hubs or not day0:
+        return None
+    dates = [x['date'] for x in hubs[0]['days'] if x.get('date') and x['date'] >= day0][:7]
+    if not dates:
+        return None
+
+    def low(h, dt):
+        v = next((x.get('tmin') for x in h['days'] if x.get('date') == dt), None)
+        return round(v) if isinstance(v, (int, float)) else None
+    hubs.sort(key=lambda h: min((low(h, dt) for dt in dates if low(h, dt) is not None), default=99))
+    st = lambda h: 'NJ' if isinstance(h.get('lon'), (int, float)) and h['lon'] > -75.2 else 'PA'
+    rows = [{'id': _ref('hub', h['hub']), 'label': f"{h['hub']}, {st(h)}", 'basis': PUBLIC} for h in hubs]
+    cols = [{'id': dt, 'label': datetime.date.fromisoformat(dt).strftime('%a %-d')} for dt in dates]
+    cells = [[low(h, dt) for dt in dates] for h in hubs]
+    cold = hubs[0]
+    cmin = min(v for v in cells[0] if v is not None)
+    cday = datetime.date.fromisoformat(dates[cells[0].index(cmin)]).strftime('%A')
+    frz = sum(1 for line in cells if any(v is not None and v < 32 for v in line))
+    lead = f"{cold['hub']} faces the coldest night, {cmin}°F on {cday}. {frz} of {len(hubs)} hubs drop below freezing this week."
+    return _res('Overnight lows by hub, next seven days', lead, _heatmap('°F', 'high', rows, cols, cells), PUBLIC,
+                'Open-Meteo seven-day forecast for the ten Punctual Pros weather hubs.', day0,
+                {'action': 'chat_post', 'label': 'Post the cold-night staffing plan to the hub managers', 'channel_rx': 'hub|ops|operations|leadership',
+                 'body': f"Coldest night this week: {cold['hub']}, {cmin}°F on {cday}. Put an extra no-heat technician on call at the coldest hubs."})
+
+
+def b_research_sites(ctx):
+    """Thomas Scientific: the research institutions with the most NIH awards this year (NIH RePORTER, a live public feed)."""
+    try:
+        d = _json(os.path.join(ROOT, 'data', 'live', 'nih_awards.json'))
+    except Exception:   # noqa: BLE001
+        return None
+    orgs = [o for o in d.get('top_orgs') or [] if isinstance(o.get('current'), (int, float)) and o.get('org')]
+    if not orgs:
+        return None
+    orgs.sort(key=lambda o: -o['current'])
+    top = orgs[:8]
+    where = {}
+    try:
+        ts = _json(os.path.join(ROOT, 'data', 'ts_sites.json'))
+        cols, enums = ts.get('cols') or [], ts.get('enums') or {}
+        ci, si, la, lo = cols.index('city'), cols.index('state'), cols.index('lat'), cols.index('lon')
+        for r in ts.get('rows') or []:
+            st = r[si]
+            st = enums['state'][st] if isinstance(st, int) and 'state' in enums and 0 <= st < len(enums['state']) else st
+            c = r[ci]
+            c = enums['city'][c] if isinstance(c, int) and 'city' in enums and 0 <= c < len(enums['city']) else c
+            if isinstance(r[la], (int, float)) and isinstance(r[lo], (int, float)):
+                where.setdefault((str(c).upper(), st), []).append((r[la], r[lo]))
+    except Exception:   # noqa: BLE001
+        where = {}
+    bars = []
+    for o in top:
+        g = (o['current'] / o['prior'] - 1) * 100 if isinstance(o.get('prior'), (int, float)) and o['prior'] else None
+        name = _title_case(o['org']).replace(' At ', ' at ').replace(' Of ', ' of ')
+        sub = ' · '.join(x for x in (f"{_title_case(o.get('city') or '')}, {o.get('state')}", f"{'up' if g >= 0 else 'down'} {abs(g):.0f}% on last year" if g is not None else '') if x)
+        pts = where.get((str(o.get('city') or '').upper(), o.get('state'))) or []
+        bars.append({'ref': _ref('nih', o['org']), 'label': _clip(name, 48), 'value': round(o['current'] / 1e6), 'sub': sub, 'basis': PUBLIC,
+                     'growth': g, 'lat': sum(p[0] for p in pts) / len(pts) if pts else None, 'lon': sum(p[1] for p in pts) / len(pts) if pts else None})
+    fast = max((b for b in bars[:5] if b['growth'] is not None), key=lambda b: b['growth'], default=None)
+    lead = f"{_short_name(bars[0]['label'])} leads NIH awards this year at ${bars[0]['value']:,}M."
+    if fast:
+        lead += f" Of the top five, {_short_name(fast['label'])} grew fastest, up {fast['growth']:.0f}%."
+    steps = [_step(b['lat'], b['lon'], b['label'], b['sub'], 11.5, [['NIH awards', f"${b['value']:,}M"]]) for b in bars[:3] if b['lat'] is not None]
+    for b in bars:
+        b.pop('growth', None)
+        b.pop('lat', None)
+        b.pop('lon', None)
+    res = _res('Research sites by NIH awards this year', lead, _bars('$M', 'NIH awards, year to date', bars), PUBLIC,
+               'NIH RePORTER: research awards issued this year to date, by institution, in eight research states.', str(d.get('fetched_at') or '')[:10],
+               {'action': 'chat_post', 'label': 'Post the top three sites to the sales team', 'channel_rx': 'sales|leadership',
+                'body': 'Research sites to win next: ' + '; '.join(f"{b['label']} (${b['value']:,}M NIH this year)" for b in bars[:3]) + '.'})
+    if steps:
+        res['map'] = {'title': 'Research sites to win next', 'source': 'NIH RePORTER', 'steps': steps}
+    return res
+
+
+def b_contract_values(ctx):
+    """BPI: its public contract opportunities ranked by named value (federal award records)."""
+    opps = _research('bsp_firm').get('bpi_opportunities') or []
+    bars = []
+    for o in opps:
+        v = _first_money(o.get('value_or_scale'))
+        if not v:
+            continue
+        first = re.split(r'[;(]', o.get('value_or_scale') or '')[0].strip()
+        bars.append({'ref': _ref(o.get('id') or o.get('title')), 'label': _clip(re.split(r'\s+[-(]', o.get('title') or '')[0], 48), 'value': round(v, 1),
+                     'sub': _clip(first, 60), 'basis': PUBLIC, 'recompete': 'recompete' in str(o.get('type') or '')})
+    bars.sort(key=lambda b: -b['value'])
+    if not bars:
+        return None
+    rec = next((b for b in bars if b['recompete']), bars[0])
+    n_re = sum(1 for b in bars if b['recompete'])
+    for b in bars:
+        b.pop('recompete', None)
+    lead = f"{n_re} federal recompetes are named. The largest is {rec['label']}, ${rec['value']:,.1f}M obligated."
+    if words(lead) > LEAD_WORDS or any(words(s) > SENTENCE_WORDS for s in sentences(lead)):
+        lead = f"{n_re} federal recompetes are named. The largest is ${rec['value']:,.1f}M obligated."
+    f = _research('bsp_firm')
+    return _res('BPI public contracts by value', lead, _bars('$M', 'named value', bars), PUBLIC,
+                'Federal award records and public filings for contracts BPI holds or could bid.',
+                str((f.get('meta') or {}).get('generated') or (f.get('firm') or {}).get('retrieved') or '')[:10],
+                {'action': 'calendar_hold', 'label': 'Hold an hour to plan the largest recompete', 'when': 'This week',
+                 'body': f"Plan the {rec['label']} recompete: incumbent position, timing and team."})
+
+
+def b_fund_question(ctx):
+    """Investor relations: the open investor question and the Fund I figures that answer it (Form D commitments are public)."""
+    fund = next(iter(_recs(ctx['role_id'], 'financials', 'fund')), None)
+    if not fund:
+        return None
+    th = next((t for t in _recs(ctx['role_id'], 'email', 'threads') if t.get('kind') == 'investor question'), None)
+    pub = 'public' if 'public' in str(fund.get('commitments_basis') or '').lower() else REC
+    cols = [{'id': 'committed', 'label': 'Committed', 'unit': '$M'}, {'id': 'called', 'label': 'Called', 'unit': '$M'},
+            {'id': 'called_pct', 'label': 'Called', 'unit': '%'}, {'id': 'investors', 'label': 'Investors', 'unit': ''}]
+    nop = {'target': None, 'status': None}   # fund figures have no plan to be on or off
+    cells = [[{'value': fund.get('commitments_m'), 'basis': PUBLIC if pub == 'public' else REC, **nop},
+              {'value': fund.get('called_m'), 'basis': REC, 'est': True, **nop},
+              {'value': fund.get('called_pct'), 'basis': REC, 'est': True, **nop},
+              {'value': fund.get('investors'), 'basis': PUBLIC if pub == 'public' else REC, **nop}]]
+    rows = [{'id': _ref(fund.get('id')), 'label': fund.get('fund') or 'Fund I', 'basis': REC}]
+    nxt = fund.get('next_report_d')
+    lead = (f"{fund.get('fund') or 'Fund I'} has called {fund.get('called_pct')}% of commitments, ${fund.get('called_m'):,.1f}M of "
+            f"${fund.get('commitments_m'):,.1f}M." + (f" The next quarterly report is due in {nxt} days." if isinstance(nxt, int) and nxt > 0 else ''))
+    body = (f"Thank you for the question. {fund.get('fund') or 'Fund I'} has called {fund.get('called_pct')}% of commitments to date. "
+            'Your capital account statement in the next quarterly report shows your own figure.')
+    return _res(f"{fund.get('fund') or 'Fund I'}: the figures for the investor's question", lead, _scorecard(rows, cols, cells, target_label=''), REC,
+                f'{REC_LINE}: fund record; commitments and investor count from the SEC Form D filing. Called share is modeled.', _as_of_rec(),
+                {'action': 'reply_email', 'label': 'Reply to the investor with the Fund I figures', 'body': body,
+                 'thread_rx': re.escape(_ws().tok((th or {}).get('subject') or '')[:24]) if th else 'investor|capital|fund'})
+
+
+def b_wwtp_map(ctx):
+    res = b_wwtp(ctx)
+    if not res:
+        return None
+    d = _research('cet_wwtp_targets')
+    byid = {i.get('id'): i for i in d.get('items') or []}
+    steps = []
+    for t in ((d.get('meta') or {}).get('priority_top_15') or [])[:3]:
+        i = byid.get(t.get('id')) or {}
+        if isinstance(i.get('lat'), (int, float)) and isinstance(i.get('lon'), (int, float)):
+            steps.append(_step(i['lat'], i['lon'], t.get('facility_name') or 'Plant', ', '.join(x for x in (_title_case(i.get('town')), t.get('state')) if x),
+                               14.5, [['Fit', str(t.get('horton_fit'))]]))
+    if steps:
+        res['map'] = {'title': 'Wastewater plants to call first', 'source': 'State permit and Clean Water Fund lists', 'steps': steps}
+    res['draft'] = {'action': 'calendar_hold', 'label': 'Hold an hour to call the first plant', 'when': 'This week',
+                    'body': f"Call {res['data']['bars'][0]['label']} about its funded upgrade project."}
+    return res
+
+
+def b_new_homeowners_map(ctx):
+    res = b_new_homeowners(ctx)
+    if not res:
+        return None
+    pts = {}
+    try:
+        z = _json(os.path.join(ROOT, 'data', 'pp_zips.json'))
+        rows = z.get('rows') if isinstance(z, dict) and isinstance(z.get('rows'), list) else (z if isinstance(z, list) else [])
+        cols = z.get('cols') if isinstance(z, dict) else None
+        enums = (z.get('enums') or {}) if isinstance(z, dict) else {}
+        for r in rows:
+            if cols and isinstance(r, list):
+                r = {c: (enums[c][v] if c in enums and isinstance(v, int) and 0 <= v < len(enums[c]) else v) for c, v in zip(cols, r)}
+            if not isinstance(r, dict):
+                continue
+            c = re.sub(r'\s+County$', '', str(r.get('county') or ''))
+            if isinstance(r.get('lat'), (int, float)) and isinstance(r.get('lon'), (int, float)):
+                pts.setdefault((c, r.get('state')), []).append((r['lat'], r['lon']))
+    except Exception:   # noqa: BLE001
+        pts = {}
+    steps = []
+    for b in res['data']['bars'][:3]:
+        m = re.match(r'(.+) County, (\w\w)$', b['label'])
+        p = pts.get((m.group(1), m.group(2))) if m else None
+        if p:
+            steps.append(_step(sum(x[0] for x in p) / len(p), sum(x[1] for x in p) / len(p), b['label'], f"{b['value']:,} new owners · {b['sub']}", 9.5,
+                               [['New owners', f"{b['value']:,}"]]))
+    if steps:
+        res['map'] = {'title': 'New homeowners by county', 'source': 'County deed records', 'steps': steps}
+    return res
+
+
+def b_bids_30(ctx):
+    """CET estimator: open public bids due in the next 30 days, best fit first (the radar's due dates)."""
+    res = b_public_bids(ctx)
+    if not res:
+        return None
+    d = _research('cet_opportunities')
+    today = base_date()
+    soon = [i for i in d.get('items') or [] if i.get('stage') == 'open' and i.get('due_date')
+            and 0 <= (datetime.date.fromisoformat(str(i['due_date'])[:10]) - today).days <= 30]
+    soon.sort(key=lambda i: (str(i['due_date'])[:10], -(i.get('fit_score') or 0)))
+    if soon:
+        f = soon[0]
+        who = _clip(re.split(r'[(,]', f.get('owner_or_agency') or '')[0].strip(), 40)
+        lead = (f"{len(soon)} public bid{'s are' if len(soon) != 1 else ' is'} due in the next 30 days. The first"
+                + (f", for {who}," if who else '') + f" is due {_iso_short(f['due_date'])}, fit {f.get('fit_score')} of 100.")
+        if words(lead) > LEAD_WORDS or any(words(s) > SENTENCE_WORDS for s in sentences(lead)):
+            lead = f"{len(soon)} public bids are due in the next 30 days. The first is due {_iso_short(f['due_date'])}, fit {f.get('fit_score')} of 100."
+        res['lead'] = lead
+        res['draft'] = {'action': 'calendar_hold', 'label': 'Hold two hours to price the first bid due', 'when': f"Before {_iso_short(f['due_date'])}",
+                        'body': f"Price the {who + ' ' if who else ''}bid due {_iso_short(f['due_date'])}: scope, crew and materials."}
+    else:
+        res['lead'] = 'No public bid is due in the next 30 days. Planned and recurring items are shown, best fit first.'
+    return res
+
+
+RUNBOOK_WORDS = (('password', r'password|mfa|sign.?in|locked|log.?in'), ('new hire', r'new hire|onboard|laptop|set ?up'),
+                 ('vpn', r'vpn|remote|connect|reach|offline|network'), ('document', r'document|drive|file|share|docket|folder'),
+                 ('phishing', r'phish|suspicious|link|spoof'))
+
+
+def _runbook_for(ticket):
+    """The runbook for a ticket: the client's own runbook for that kind of call, else the general one; None when no kind matches."""
+    subj = (ticket or {}).get('subject') or ''
+    kind = next((k for k, rx in RUNBOOK_WORDS if re.search(rx, subj, re.I)), None)
+    if not kind:
+        return None
+    rbs = [r for r in _recs_any('fl', 'servicedesk', 'runbooks') if kind in (r.get('title') or '').lower()]
+    own = next((r for r in rbs if (r.get('client') and r.get('client') == ticket.get('client'))), None)
+    return own or next((r for r in rbs if not r.get('client')), rbs[0] if rbs else None)
+
+
+def _recs_any(co, app, set_):
+    try:
+        data = _ws().load(co)
+        apps = data.get('apps') if 'apps' in data else data
+        return list(((apps or {}).get(app) or {}).get(set_) or [])
+    except Exception:   # noqa: BLE001
+        return []
+
+
+def b_next_ticket(ctx):
+    """Frontline help desk: the next ticket and the runbook steps for it, over the board of the engineer's own tickets."""
+    res = b_my_tickets(ctx)
+    if not res or not res['data']['cards']:
+        return res
+    w = _ws()
+    t = [x for x in _recs(ctx['role_id'], 'servicedesk', 'tickets') if x.get('status') in TICKET_STAGES]
+    pr = {'P1': 0, 'P2': 1, 'P3': 2, 'P4': 3}
+    t.sort(key=lambda x: (x.get('status') != 'Past due', pr.get(x.get('priority'), 9), x.get('opened_d') or 0))
+    top = next((x for x in t if _runbook_for(x)), t[0])   # the first ticket in order that has a runbook to walk through
+    rb = _runbook_for(top)
+    steps = [s.rstrip('.') for s in (rb or {}).get('steps') or []]
+    subj = _clip(w.tok(top.get('subject') or ''), 40)
+    if steps:
+        lead = f"Next: {top.get('number')}, {subj[:1].lower() + subj[1:]}. " + ' '.join(f"{i}. {s}." for i, s in enumerate(steps[:4], 1))
+    else:
+        lead = f"Next: {top.get('number')}, {subj[:1].lower() + subj[1:]}. {res['lead']}"
+    res['lead'] = lead
+    if res.get('draft'):
+        res['draft'] = dict(res['draft'], label='Update the ticket with the step finished',
+                            body=f"Step done: {steps[0][:1].lower() + steps[0][1:]}. Next I will {steps[1][:1].lower() + steps[1][1:]}." if len(steps) >= 2
+                            else res['draft']['body'])
+    return res
+
+
 # ---------------------------------------------------------------- topics, access, signatures
 
 # kind, builder, sandbox sets read (app, set) or None for public data, company rule, who may read public data
@@ -1452,6 +1810,17 @@ TOPICS = {
     'retainer_hours': ('ranked_bars', b_retainer_hours, (('salesforce', 'accounts'),), 'bpi', None),
     'returns': ('ranked_bars', b_returns, (('shopify', 'returns'),), 'fh', None),
     'weeks_cover': ('ranked_bars', b_weeks_cover, (('shopify', 'products'),), 'fh', None),
+    # the catalogue's signature questions (data/agent/catalog.json roles[].signature) that the topics above do not answer as asked
+    'best3': ('ranked_bars', b_best3, None, 'any', 'firm'),
+    'addon_by_company': ('ranked_bars', b_addon_by_company, None, 'bsp', 'firm'),
+    'hub_cold': ('heatmap', b_hub_cold, None, 'pp', ('pp-location-gm', 'pp-dispatcher')),
+    'research_sites': ('ranked_bars', b_research_sites, None, 'ts', ('ts-sales', 'ts-inside-sales')),
+    'contract_values': ('ranked_bars', b_contract_values, None, ('bpi',), ('bpi-sales', 'bpi-account-director')),
+    'fund_question': ('scorecard', b_fund_question, (('financials', 'fund'), ('email', 'threads')), 'bsp', None),
+    'wwtp_map': ('ranked_bars', b_wwtp_map, None, 'cet', ('cet-sales', 'cet-estimator')),
+    'new_homeowners_map': ('ranked_bars', b_new_homeowners_map, None, 'pp', ('pp-sales', 'pp-location-gm', 'pp-dispatcher')),
+    'bids_30': ('pipeline_board', b_bids_30, None, 'cet', ('cet-sales', 'cet-estimator', 'cet-project-manager')),
+    'next_ticket': ('pipeline_board', b_next_ticket, (('servicedesk', 'tickets'), ('servicedesk', 'runbooks')), 'fl', None),
 }
 
 
@@ -1515,19 +1884,57 @@ SIGNATURES = {
 }
 
 
+# The catalogue (data/agent/catalog.json roles[].signature, written by scripts/build_agent_sandbox.py) is the source of every
+# signature question and draft. Where the catalogue's question needs a picture other than the role's entry above, this names it:
+# role -> (general picture, topic, company). A globe_tour signature is answered with a ranked list plus a map command card.
+CAT_TOPIC = {
+    'bsp-managing-partner': ('ranked_bars', 'best3', None),
+    'bsp-partner': ('pipeline_board', 'deal_stages', None),
+    'bsp-operating-partner': ('scorecard', 'portfolio_scorecard', None),
+    'bsp-associate': ('ranked_bars', 'addon_by_company', None),
+    'bsp-investor-relations': ('scorecard', 'fund_question', None),
+    'pp-vp-operations': ('heatmap', 'hub_cold', None),
+    'pp-sales': ('ranked_bars', 'new_homeowners_map', None),
+    'cet-sales': ('ranked_bars', 'wwtp_map', None),
+    'cet-estimator': ('pipeline_board', 'bids_30', None),
+    'fl-help-desk-engineer': ('pipeline_board', 'next_ticket', None),
+    'ts-sales': ('ranked_bars', 'research_sites', None),
+    'bpi-sales': ('ranked_bars', 'contract_values', None),
+}
+CAT_SITE_VIEW = {'floor_plan': 'plan', 'house_model': 'model'}
+
+
 def signature(role_id):
-    """The role's signature: the catalogue's `signature` field when present, else the table above (same shape)."""
+    """The role's signature: the catalogue's `signature` field (question, picture, draft action and title, address) when present,
+    else the table above. Shape: {q, tool, args, view, draft: {action, title?}, picture?, tour?}."""
     base = SIGNATURES.get(role_id)
     cat = (_catalog_roles().get(role_id) or {}).get('signature')
-    if isinstance(cat, dict) and cat.get('q') and cat.get('view'):
-        out = dict(base or {}, **{k: v for k, v in cat.items() if v not in (None, '')})
-        args = dict((base or {}).get('args') or {})
-        args.update(cat.get('args') or {})
-        if base and out['view'] == base['view'] and 'topic' not in (cat.get('args') or {}):
-            args['topic'] = base['args'].get('topic')
-        out['args'] = args
-        return out
-    return dict(base) if base else None
+    if not isinstance(cat, dict) or not (cat.get('question') or cat.get('q')):
+        return dict(base) if base else None
+    q = cat.get('question') or cat.get('q')
+    cview = cat.get('view')
+    dr = cat.get('draft') if isinstance(cat.get('draft'), dict) else {}
+    draft = {'action': dr.get('action') or ((base or {}).get('draft') or {}).get('action')}
+    if dr.get('title'):
+        draft['title'] = dr['title']
+    if cview in CAT_SITE_VIEW or (base or {}).get('tool') == 'site_brief':
+        addr = cat.get('address') or ((base or {}).get('args') or {}).get('address')
+        v = CAT_SITE_VIEW.get(cview) or ((base or {}).get('args') or {}).get('view') or 'plan'
+        return {'q': q, 'tool': 'site_brief', 'args': {'address': addr, 'view': v}, 'view': v, 'draft': draft, 'picture': cview}
+    if role_id in CAT_TOPIC:
+        kind, topic, co = CAT_TOPIC[role_id]
+    elif base and base.get('tool') == 'show_view':
+        kind, topic, co = base['view'], base['args'].get('topic'), base['args'].get('company')
+    else:
+        return dict(base) if base else None
+    args = {'view': kind, 'topic': topic}
+    if co or ((base or {}).get('args') or {}).get('company'):
+        args['company'] = co or base['args']['company']
+    out = {'q': q, 'tool': 'show_view', 'args': args, 'view': kind, 'draft': draft, 'picture': cview or kind}
+    tour = next((str(x).split('#', 1)[1] for x in cat.get('data') or [] if 'globe_tours.json#' in str(x)), None)
+    if cview == 'globe_tour' and tour:
+        out['tour'] = tour
+    return out
 
 
 def _public_ok(role_id, R, who, co):
@@ -1704,7 +2111,7 @@ def _pick_topic(role_id, view, args):
     t = args.get('topic')
     if t:
         return t
-    sig = SIGNATURES.get(role_id) or {}
+    sig = signature(role_id) or {}
     if sig.get('view') == view and (sig.get('args') or {}).get('topic'):
         return sig['args']['topic']
     for t in topics_for(view):
@@ -1753,9 +2160,17 @@ def build_view(role_id, view, args=None):
                 'as_of': base_date().isoformat(), 'draft': None, 'error': 'empty'}
     res['lead'] = _fit_lead(res['lead'])
     res['data']['topic'] = topic
-    res['draft'] = _draft(role_id, R, res.get('draft'))
-    return {'kind': view, 'title': res['title'], 'lead': res['lead'], 'data': res['data'], 'basis': res['basis'], 'source': res['source'],
-            'as_of': res['as_of'] or base_date().isoformat(), 'draft': res['draft']}
+    spec = res.get('draft')
+    want = args.get('draft') if isinstance(args.get('draft'), dict) else None   # the catalogue's draft: its action and title win
+    d = None
+    if want and want.get('action'):
+        d = _draft(role_id, R, dict(spec or {}, action=want['action'], **({'label': want['title']} if want.get('title') else {})))
+    res['draft'] = d or _draft(role_id, R, spec)
+    out = {'kind': view, 'title': res['title'], 'lead': res['lead'], 'data': res['data'], 'basis': res['basis'], 'source': res['source'],
+           'as_of': res['as_of'] or base_date().isoformat(), 'draft': res['draft']}
+    if res.get('map'):
+        out['map'] = res['map']
+    return out
 
 
 def _fit_lead(s):
@@ -1780,6 +2195,22 @@ def card(view):
     return {'type': 'card', 'kind': view['kind'], 'id': cid, 'title': view['title'], 'lead': view['lead'], 'basis': view['basis'],
             'est': view['basis'] == EST or any(isinstance(x, dict) and x.get('est') for x in _items(view)), 'as_of': view['as_of'],
             'source_line': view['source'], 'data': view['data']}
+
+
+def map_card(view, tour=None):
+    """The 'map_command' card for a picture that has places (a globe-tour signature): a prepared tour by id, or the picture's own
+    stops. The shell's map bus (assets/mapcmd.js) flies the globe to them."""
+    m = (view or {}).get('map') or ({'tour': tour} if tour else None)
+    if tour and not (m or {}).get('tour') and not (m or {}).get('steps'):
+        m = {'tour': tour}
+    if not m:
+        return None
+    cmd = {'tour': m['tour']} if m.get('tour') else {'title': m.get('title') or view.get('title') or 'Places', 'source': m.get('source') or '',
+                                                       'steps': list(m.get('steps') or [])[:12]}
+    if not cmd.get('tour') and not cmd['steps']:
+        return None
+    cid = 'mc-' + hashlib.sha1(json.dumps(cmd, sort_keys=True).encode('utf-8')).hexdigest()[:8]
+    return {'type': 'card', 'kind': 'map_command', 'id': cid, 'title': view.get('title') or cmd.get('title') or 'Globe', 'cmd': cmd}
 
 
 def _items(view):
@@ -1815,6 +2246,11 @@ class _Sources:
 FLOOR_WORDS = {'basement': 'basement', 'first': 'first floor', 'second': 'second floor'}
 
 
+def _and_words(xs):
+    xs = [x for x in xs if x]
+    return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' and ' + xs[-1] if xs else ''
+
+
 def _site_lead(sig, cards_):
     c = next((x for x in cards_ if x.get('kind') in SITE_KINDS), None)
     addr = sig['args']['address'].rsplit(',', 1)[0]
@@ -1831,8 +2267,20 @@ def _site_lead(sig, cards_):
         note = re.split(r'[,;]', it.get('note') or '')[0].strip().rstrip('.')
         where = FLOOR_WORDS.get(fl, fl or '')
         parts.append(f"{it.get('label')}: {where}" + (f", {note[:1].lower() + note[1:]}" if note else '') + '.')
+    wall = re.search(r'behind the (\w+) wall', sig.get('q') or '', re.I)
+    if wall:   # "Behind this wall": the runs that touch that room's wall, with their certainty, and nothing more (WAVE3 ruling 9)
+        room = wall.group(1).lower()
+        runs = [(r, f.get('id')) for f in c.get('floors') or [] for r in f.get('runs') or [] if room in str(r.get('label') or '').lower()]
+        if runs:
+            certain = {('likely' if r.get('basis') in ('likely', None) else 'on record') for r, _ in runs}
+            names = _and_words([str(r.get('label')).lower() for r, _ in runs])
+            rise = next((r.get('rise') for r, _ in runs if r.get('rise')), None)
+            lead = (f"{addr}, from our records. Behind the {room} wall: {names}, {' and '.join(sorted(certain))}"
+                    + (f", rising from the {rise.get('from')}." if rise else '.') + ' Floor plans below; dashed means likely.')
+            return _fit_lead(lead)
     has3d = any(x.get('kind') == 'house_model' for x in cards_)
     tail = ('3D model below; dashed means likely.' if has3d and sig['args'].get('view') == 'model'
+            else 'Floor plans and 3D view below; dashed means likely.' if sig['args'].get('view') == 'model'
             else 'Floor plans below; dashed means likely.')
     lead = f'{addr}, from our records. ' + ' '.join(parts) + ' ' + tail
     return _fit_lead(lead)
@@ -1867,6 +2315,8 @@ def _site_draft(role_id, R, sig):
                 'body': 'Plumber to open the kitchen wall behind the sink; plan attached.', 'when': 'Not set'}
     else:
         return None
+    if (sig.get('draft') or {}).get('title'):
+        spec['label'] = sig['draft']['title']   # the catalogue's draft title
     return _draft(role_id, R, spec)
 
 
@@ -1918,9 +2368,12 @@ def prepared(role_id, connected=None):
         view_kind = next((c.get('kind') for c in cards_ if c.get('kind') in SITE_KINDS), sig['view'])
         return {'role': role_id, 'q': sig['q'], 'view': view_kind, 'text': lead, 'basis': REC, 'cards': cards_,
                 'draft': {k: v for k, v in d.items() if k != 'card'} if d else None, 'as_of': base_date().isoformat()}
-    v = build_view(role_id, sig['view'], sig.get('args') or {})
+    v = build_view(role_id, sig['view'], dict(sig.get('args') or {}, draft=sig.get('draft')))
     c = card(v)
     cards_ = [c] if c else []
+    mc = map_card(v, sig.get('tour'))
+    if mc:
+        cards_.append(mc)
     if v.get('draft'):
         cards_.append(v['draft']['card'])
     return {'role': role_id, 'q': sig['q'], 'view': v['kind'], 'text': v['lead'], 'basis': v.get('basis'), 'cards': cards_,

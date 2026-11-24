@@ -29,6 +29,7 @@ SANDBOX = os.path.join(SERVER_DIR, 'sandbox')
 pytestmark = pytest.mark.skipif(not os.path.exists(os.path.join(SANDBOX, 'roles.json')), reason='sandbox not generated')
 
 ROLE_IDS = [r['id'] for r in json.load(open(CATALOG, encoding='utf-8'))['roles']]
+CATALOG_SIG = {r['id']: r['signature'] for r in json.load(open(CATALOG, encoding='utf-8'))['roles'] if isinstance(r.get('signature'), dict)}
 FIELD = [r['id'] for r in json.load(open(CATALOG, encoding='utf-8'))['roles'] if r.get('level') == 'co_field']
 TEXT_KEYS = ('title', 'lead', 'label', 'sub', 'owner', 'tag', 'next_step', 'due', 'source', 'body', 'text', 'value', 'q')
 
@@ -87,18 +88,32 @@ def test_every_role_has_a_signature():
 def test_signature_shape_matches_catalogue_field():
     for rid in ROLE_IDS:
         s = views.signature(rid)
-        assert set(s) == {'q', 'tool', 'args', 'view', 'draft'}, rid
+        assert {'q', 'tool', 'args', 'view', 'draft'} <= set(s) <= {'q', 'tool', 'args', 'view', 'draft', 'picture', 'tour'}, rid
+        cat = CATALOG_SIG.get(rid)
+        if cat:   # the catalogue is the source of the question and the draft
+            assert s['q'] == cat['question'] and s['draft']['action'] == cat['draft']['action'], rid
         assert s['tool'] in ('show_view', 'site_brief')
 
 
 def test_live_first_roles_use_public_data():
-    """Ruling 7: where the repository holds real data for the role's question, the signature uses it."""
-    live = {'bsp-partner': 'rival_loans', 'bsp-senior-associate': 'deal_bridge', 'bsp-associate': 'addon_targets',
-            'bsp-investor-relations': 'fund_raised', 'pp-sales': 'new_homeowners', 'cet-sales': 'wwtp', 'cet-estimator': 'public_bids',
-            'fl-sales': 'law_firms', 'ts-sales': 'lab_sites', 'bpi-sales': 'growth_opportunities', 'fh-sales': 'growth_opportunities'}
-    for rid, topic in live.items():
-        assert views.signature(rid)['args']['topic'] == topic
-        assert views.TOPICS[topic][2] is None   # reads no company records
+    """Ruling 7: where the repository holds real data for the role's question, the signature uses it. The catalogue marks those
+    signatures source 'live'; each reads no company records."""
+    live = [rid for rid, c in CATALOG_SIG.items() if c.get('source') == 'live']
+    assert len(live) >= 11
+    for rid in live:
+        s = views.signature(rid)
+        assert s['tool'] == 'show_view', rid
+        assert views.TOPICS[s['args']['topic']][2] is None, rid   # reads no company records
+
+
+def test_best3_is_the_managing_partners_answer():
+    s = views.signature('bsp-managing-partner')
+    assert s['q'] == 'Point out the best 3 acquisition targets.' and s['tour'] == 'best3'
+    p = views.prepared('bsp-managing-partner')
+    kinds = [c['kind'] for c in p['cards']]
+    assert kinds == ['ranked_bars', 'map_command', 'action_draft']
+    assert p['cards'][1]['cmd'] == {'tour': 'best3'}
+    assert len(p['cards'][0]['data']['bars']) == 3 and 'Midland' in p['text']
 
 
 # ---------------------------------------------------------------- prepared answers
@@ -155,7 +170,7 @@ def _check_shape(kind, d):
         for line in d['cells']:
             assert len(line) == len(d['cols'])
             for c in line:
-                assert c is None or ({'value', 'target', 'status'} <= set(c) and c['status'] in ('good', 'warn', 'bad'))
+                assert c is None or ({'value', 'target', 'status'} <= set(c) and (c['status'] in ('good', 'warn', 'bad') or c['target'] is None))
     elif kind == 'bridge':
         assert {'unit', 'start', 'steps', 'end'} <= set(d)
         total = d['start']['value'] + sum(s['delta'] for s in d['steps'])
@@ -307,7 +322,7 @@ def test_company_roles_see_their_own_company_only():
 def test_firm_levels():
     assert views.build_view('bsp-managing-partner', 'scorecard', {})['data']['rows'][0]['label'] == 'Punctual Pros'
     ok = [t for t, s in views.TOPICS.items() if views.access('bsp-investor-relations', s[0], t)[0]]
-    assert ok == ['fund_raised']   # investor relations: the fund only
+    assert ok == ['fund_raised', 'fund_question']   # investor relations: the fund only (its filings, and the fund record for the open question)
     assert views.access('bsp-associate', 'ranked_bars', 'addon_targets', 'cet')[0]
     assert not views.access('bsp-operating-partner', 'ranked_bars', 'due_dates')[0]   # no debt in its apps
 
