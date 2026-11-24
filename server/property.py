@@ -1375,3 +1375,101 @@ def tool_definitions():
             },
         },
     ]
+
+
+# ---------------------------------------------------------------- structured record (live address lookup)
+
+def _record_key(r):
+    import hashlib
+    return 'rec-' + hashlib.sha1(f"{r['addr_key']}|{r['muni_id']}|{addr_split(r['addr'])[1]}|{_parcel_of(r)}".encode('utf-8')).hexdigest()[:10]
+
+
+def lookup_record(args):
+    """The matched sales row for one address as structured fields, with the parcel centroid. No model, no network.
+
+    args: {address, municipality | area | town, county, state, zip, pick}. pick is a key from an earlier "choose" answer.
+    Returns {'status': 'found' | 'choose' | 'not_found' | 'unavailable' | 'bad_address', 'record': dict | None,
+             'choose': [{'label', 'key'}], 'match': 'exact' | 'prefix' | ''}.
+    record: {key, addr, addr_key, unit, muni, county, state, zip, lat, lon, year_built, sqft, beds, use_type, use_code, home,
+             new_construction, parcel: {muni_code, block, lot, qual} | {county_pin}, last_sale_date, sales_held, source}.
+    The sale price is left out (a job does not need it), and the table holds no buyer or seller names. Labels in "choose"
+    are street addresses with the municipality, never a block and lot or a name."""
+    if not ready():
+        return {'status': 'unavailable', 'record': None, 'choose': [], 'match': ''}
+    a = _flat(args)
+    raw = re.sub(r'\s+', ' ', str(a.get('address') or '')).strip()[:120]
+    parts = [p.strip() for p in raw.split(',') if p.strip()]
+    if len(parts) > 1:
+        tail = ', '.join(parts[1:])
+        z = re.search(r'\b(\d{5})\b', tail)
+        if z and not a.get('zip'):
+            a['zip'] = z.group(1)
+        tail = re.sub(r'\b\d{5}(?:-\d{4})?\b', '', tail).strip(' ,')
+        if tail and not a.get('area') and not a.get('municipality'):
+            a['area'] = tail
+    key, unit = addr_split(parts[0] if parts else raw)
+    if not key or not re.match(r'^\d', key) or not re.search(r'[A-Z]', key):
+        return {'status': 'bad_address', 'record': None, 'choose': [], 'match': ''}
+    scope, err = _scope(a)
+    if err:                                                     # often a postal town: search on state, county and ZIP only
+        b = {k: v for k, v in a.items() if k in ('state', 'county', 'zip') and v}
+        if not b.get('state') and isinstance(a.get('area'), str):
+            st = re.search(r'\b(NJ|PA)\b', a['area'].upper())
+            b['state'] = st.group(1) if st else None
+        scope, err = _scope(b)
+        if err:
+            return {'status': 'not_found', 'record': None, 'choose': [], 'match': ''}
+    rows, how = _find_address(key, unit, scope)
+    if not rows and scope['zip']:                               # ZIPs in the data are derived and sometimes missing
+        s2 = dict(scope)
+        i = s2['where'].index('s.zip=?')
+        s2['where'] = [w for w in s2['where'] if w != 's.zip=?']
+        s2['params'] = [p for j, p in enumerate(scope['params']) if j != i]
+        rows, how = _find_address(key, unit, s2)
+    if not rows or how == 'near':
+        return {'status': 'not_found', 'record': None, 'choose': [], 'match': ''}
+    lots = {}
+    for r in rows:                                              # newest sale first
+        lots.setdefault(_record_key(r), []).append(r)
+    if unit and len(lots) > 1:
+        hit = {k: v for k, v in lots.items() if _unit_matches(unit, _split_block_lot(v[0]['block_lot'])[2])}
+        lots = hit if len(hit) == 1 else lots
+    pick = str(a.get('pick') or '')
+    if pick:
+        if pick not in lots:
+            return {'status': 'not_found', 'record': None, 'choose': [], 'match': ''}
+        lots = {pick: lots[pick]}
+    if len(lots) > 1:
+        choose = []
+        for k, v in list(lots.items())[:6]:
+            r = v[0]
+            u = addr_split(r['addr'])[1]
+            label = ', '.join(x for x in ((r['addr'] or '').title() + (f' unit {u}' if u and u.upper() not in (r['addr'] or '').upper() else ''),
+                                          r['muni'], r['state']) if x)
+            choose.append({'label': label, 'key': k})
+        return {'status': 'choose', 'record': None, 'choose': choose, 'match': how}
+    k, v = next(iter(lots.items()))
+    r = v[0]
+
+    def first(col):
+        for x in v:
+            if x[col] not in (None, '', 0):
+                return x[col]
+        return None
+    b, l, qual = _split_block_lot(r['block_lot'])
+    if r['state'] == 'NJ' and b and l:
+        parcel = {'muni_code': _safe(r['code'], 4), 'block': b, 'lot': l, 'qual': qual}
+    elif r['parcel_id']:
+        parcel = {'county_pin': str(r['parcel_id'])[:40]}
+    else:
+        parcel = None
+    lat, lon = first('lat'), first('lon')
+    ok_ll = isinstance(lat, (int, float)) and isinstance(lon, (int, float)) and math.isfinite(lat) and math.isfinite(lon) and abs(lat) <= 85
+    src = _sale_source(r['state'], r['county'], r['source_id'])['src']
+    rec = {'key': k, 'addr': r['addr'], 'addr_key': r['addr_key'], 'unit': addr_split(r['addr'])[1] or None, 'muni': r['muni'],
+           'county': r['county'], 'state': r['state'], 'zip': r['zip'] or None,
+           'lat': round(lat, 7) if ok_ll else None, 'lon': round(lon, 7) if ok_ll else None,
+           'year_built': first('year_built'), 'sqft': first('sqft'), 'beds': first('beds'), 'use_type': r['use_type'], 'use_code': r['use_code'],
+           'home': bool(r['home']), 'new_construction': bool(r['new_construction']) if r['new_construction'] is not None else None,
+           'parcel': parcel, 'last_sale_date': r['sale_date'], 'sales_held': len(v), 'source': src}
+    return {'status': 'found', 'record': rec, 'choose': [], 'match': how}

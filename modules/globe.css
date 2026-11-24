@@ -37,4 +37,13 @@
   .gx-screen .gx-card{bottom:84px}
   .gx-screen .gx-fallback{padding-left:16px;padding-top:170px}
 }
+/* the CesiumJS renderer (a key in assets/runtime.json): its look chips and place card sit clear of the panel */
+.gx-screen[data-renderer=cesium] .gx-ui{padding-left:332px}
+.gx-screen[data-renderer=cesium] .gx-globe--flat .gx-ui{padding-left:332px}
+.gx-screen[data-renderer=cesium] .gx-fallback{padding:16px 18px}
+@media (max-width:760px){
+  .gx-screen[data-renderer=cesium] .gx-ui,.gx-screen[data-renderer=cesium] .gx-globe--flat .gx-ui{padding-left:8px;padding-top:calc(var(--gx-panel-h,120px) + 6px)}
+  .gx-screen[data-renderer=cesium] .gx-card{bottom:auto}
+  .gx-screen[data-renderer=cesium] .gx-fallback{padding:12px 14px}
+}
 @media (max-height:620px){.gx-screen{min-height:0}}

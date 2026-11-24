@@ -159,17 +159,31 @@ These are the same endpoints as the Worker. CORS only allows the origins in `ALL
 
 | Method and path | Returns |
 |---|---|
-| `GET /health` (also `/`) | `{ok, model, version, db, llm, llm_state, model_state, kv, log, kb, homes, directory, workspace}`. `llm` is false when no Claude key is set or the provider last rejected the key or the account (see [Model state and the key check](#model-state-and-the-key-check)); `?deep=1` runs the key check; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open); `homes` gives the home-sales row counts, build time and data-through dates per state (false if the file is missing). |
+| `GET /health` (also `/`) | `{ok, model, version, db, llm, llm_state, model_state, kv, log, kb, homes, directory, workspace, site}`. `site` is true when the live address lookup is installed. `llm` is false when no Claude key is set or the provider last rejected the key or the account (see [Model state and the key check](#model-state-and-the-key-check)); `?deep=1` runs the key check; `kv` is always true because rate limits are kept in memory; `log` says whether the chat log is on; `kb` gives the knowledge base's document and passage counts and build time (false if it could not open); `homes` gives the home-sales row counts, build time and data-through dates per state (false if the file is missing). |
 | `POST /chat` | `text/event-stream` of `data: {"type": "meta" \| "status" \| "thinking" \| "sources" \| "text" \| "card" \| "done" \| "error", ...}`, or a JSON error. Body: `{persona, question, messages, context, retrieve, page, mode, workspace}` (`card` and `workspace`: see [Company agent](#company-agent)); `context` items become the first numbered sources, `retrieve: false` skips the knowledge-base search (used by "Expand with Claude"), and `mode: "voice"` asks for a short spoken answer (see [Voice mode](#voice-mode)). `done` carries `mode`, `steps` and `usage: {input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens}`. |
 | `POST /feedback` | `201 {ok, id}` (the rating also goes to the chat log) |
 | `POST /log` | `202 {ok, saved}`. An answer the browser built itself (portfolio data, a prepared deep dive, a fallback) for the chat log: `{persona, question, answer, kind, intent, engine, sources, seconds, page}`. Shares the save rate limit with `/feedback` and `/thread`. |
 | `POST /thread` | `{ok, thread_id, updated_at}` (insert, or update if the thread exists) |
 | `GET /thread/:id` | `{ok, thread_id, persona, title, messages, created_at, updated_at}` |
 | `GET /stats` | `{threads, messages, feedback, feedback_up, feedback_down, today:{requests, tokens_in, tokens_out}, daily_cap, model, llm, llm_state, model_state, knowledge, homes}` |
+| `POST /site-brief` | `200 {ok, status, text, cards, choices, sources, degraded}`. Body: `{text, role, connected?}`. See [Live address and prepared answers](#live-address-and-prepared-answers). |
+| `GET /prepared?role=<id>` | `200 {ok, role, question, view, text, cards, draft, as_of}`: the role's signature answer. Optional `&connected=a,b` names the connected apps. |
 
 Error codes match the Worker: `no_model_key`, `rate_limited`, `daily_cap`, `upstream_busy`, `backend_auth`, `backend_billing`, `bad_mode`, `upstream_unavailable`, `upstream_timeout`, `refusal`, and the rest. A 400 from Claude that names an optional feature (web search, the server-side fallback beta, effort) is retried once without it.
 
 **Timeouts:** connecting to Claude times out after 6 s, and the wait for Claude's first reply after 45 s. A whole answer, tool calls included, is capped at 150 s (`UPSTREAM_TOTAL_TIMEOUT`); if it runs longer, the stream ends with an `upstream_timeout` error event. When a visitor presses Stop or closes the page, the server cancels the Claude stream at once and logs `visitor disconnected ... cancelled the upstream Claude stream`.
+
+## Live address and prepared answers
+
+Two routes answer without any model call. Neither uses the daily model budget, the chat log or the database.
+
+- **`POST /site-brief`** runs `site.brief(text, role, connected, deadline_s)` from `site.py`, loaded by its file path. A bare `import site` would return Python's own startup module of that name. The text is the visitor's sentence, word for word, at most 240 characters. `status` is `found`, `choose`, `not_found`, `outside` or `error`. `cards` holds the floor plan card, then a `map_command` card. `choices` is filled for `choose`. `degraded` names the sources that did not answer.
+- **Who may ask.** Roles with the site brief tool may ask, and so may every firm role. Any other role gets `403 role_not_allowed`. An unknown role, or text that is missing, empty or too long, gets `400`.
+- **Limits.** Each visitor gets 20 lookups per 10 minutes. At most 6 lookups run at once; a request waits up to 2 s for a free slot, then gets `429 busy`. The whole site gets 2,000 lookups a UTC day (`429 daily_cap`). Every 429 carries `retryAfter` and a plain message. The lookup runs in its own thread pool, so it never holds a thread `/chat` needs.
+- **Ceiling.** The lookup gets an 8 s deadline. The request answers within 9 s whatever happens. A lookup that has not returned by then gets `status: "error"` with `degraded: ["site"]`, and its slot is freed only when its thread ends.
+- **Privacy.** The typed text is never logged or stored. The log line carries the status, the precision, the time taken and the names of the sources that did not answer. On a failure it logs the error type only, never the message.
+- **`GET /prepared?role=<id>`** returns `views.prepared(role)`, the role's signature answer built from data. It has the same origin rule, its own 20-per-10-minutes count per visitor, at most 6 at once and a 9 s ceiling (`504 timeout`). When the backend is off, the site reads the static copy in `data/agent/prepared.json`.
+- **`/health`** adds `site: true` when `site.py` is installed.
 
 ## Configuration (environment variables)
 
@@ -232,6 +246,7 @@ The token is on the store's **.env.local** tab in the dashboard. `chat-logs/` is
 ```bash
 cd server
 python3 -m pytest -q tests          # starts its own mock and servers on free ports; covers the tool loop, sources and limits, and the home-records tools (test_property.py)
+                                    # test_site_endpoint.py and test_prepared_endpoint.py run the app in-process with a stub lookup and count model calls on the mock
 python3 tests/e2e_browser.py        # browser checks with the real site in headless Chromium (needs Playwright)
 python3 tests/measure_tokens.py --voice   # estimates what three typical questions send, part by part, in chat and voice mode
 ```

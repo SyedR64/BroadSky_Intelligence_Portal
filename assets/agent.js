@@ -5,9 +5,9 @@
    The role and the connections live in the Broad Sky OS session (assets/session.js): the role is the one "Viewing as"
    names everywhere, and a tool connected for a company is connected for every role at that company.
    ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers. */
-import { Frame } from './frame.js?v=20261123172325';
-import { Chat, PERSONAS } from './chat.js?v=20261123172325';
-import { Session, CONN_STATES } from './session.js?v=20261123172325';
+import { Frame } from './frame.js?v=20261123194657';
+import { Chat, PERSONAS } from './chat.js?v=20261123194657';
+import { Session, CONN_STATES } from './session.js?v=20261123194657';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
@@ -110,9 +110,10 @@ function accentOf(org) {
   try { return getComputedStyle(document.documentElement).getPropertyValue(co ? `--co-${co}` : '--sys-brand').trim() || undefined; } catch { return undefined; }
 }
 function registerPersona(role) {
+  const sig = norm(sigOf(role)?.question);   // the signature question has its own chip, answered without the model
   PERSONAS['ag-' + role.id] = {
     name: 'Company agent', short: 'the agent', initials: 'AG', color: accentOf(role.org),
-    greeting: '', placeholder: role.placeholder || 'Ask the agent', suggestions: [...(role.chips || [])], intents: [], faq: [],
+    greeting: '', placeholder: role.placeholder || 'Ask the agent', suggestions: (role.chips || []).filter(c => norm(c) !== sig), intents: [], faq: [],
   };
 }
 function applyRoleAccent() {
@@ -389,6 +390,109 @@ function renderAccess(filter = state.filter) {
     <p class="ca-try"><button type="button" class="sys-chip" data-ca="try">Ask a technician for EBITDA</button></p>`;
 }
 
+/* ── the role's signature question: the first chip, answered from the prepared answer with no model call ── */
+const norm = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const sigOf = (r = state.role) => (r?.signature && typeof r.signature === 'object' && r.signature.question ? r.signature : null);
+const backendOff = () => { try { return new URLSearchParams(location.search).get('backend') === 'off'; } catch { return false; } };
+function dataURL(path) { const u = new URL(`../${path}`, import.meta.url); u.search = new URL(import.meta.url).search; return u; }
+async function loadJSON(path) { const r = await fetch(dataURL(path)); if (!r.ok) throw new Error(`${path} ${r.status}`); return r.json(); }
+/** { question, text, cards } from GET /prepared on the backend when it answers, else the static copy (data/agent/prepared.json). */
+async function loadPrepared(roleId) {
+  const shape = j => (j && typeof j === 'object' && (j.text || Array.isArray(j.cards)) ? { question: String(j.question || j.q || ''), text: String(j.text || ''), cards: Array.isArray(j.cards) ? j.cards : [] } : null);
+  if (!backendOff()) {
+    try {
+      const m = await import('./backend.js?v=20261123194657');
+      const B = m.Backend || m.default, base = B && await B.discover();
+      if (base) {
+        const r = await fetch(`${base}/prepared?role=${encodeURIComponent(roleId)}`, { cache: 'no-store' });
+        const j = r.ok ? shape(await r.json()) : null;
+        if (j) return j;
+      }
+    } catch (e) { console.debug('prepared answer: backend not used', e?.message || e); }
+  }
+  state.preparedAll ||= loadJSON('data/agent/prepared.json').catch(e => { state.preparedAll = null; throw e; });
+  return shape((await state.preparedAll)?.roles?.[roleId]);
+}
+/** The answer to show: the prepared text and cards, with the role's globe tour first when its signature is one. A firm-wide
+ *  best-three question whose prepared answer was built for another question gets the tour's own line and the draft retitled. */
+async function signatureAnswer(role, sig, prep) {
+  let text = prep?.text || '', cards = (prep?.cards || []).filter(c => c && typeof c === 'object');
+  const tourId = (Array.isArray(sig.data) ? sig.data : []).map(d => String(d).split('#')[1]).find(Boolean);
+  if (sig.view === 'globe_tour' && tourId) {
+    state.tours ||= loadJSON('data/research/globe_tours.json').then(d => (Array.isArray(d?.tours) ? d.tours : [])).catch(() => []);
+    const tours = await state.tours, tour = tours.find(t => t.id === tourId);
+    if (tour && !cards.some(c => c.kind === 'map_command')) {   // the prepared answer carries its own map command once rebuilt
+      if (/^best3/.test(tourId) && norm(prep?.question) !== norm(sig.question)) {
+        try {
+          const GI = await import('./globe-intents.js?v=20261123194657');
+          text = GI.bestReply({ tour: tourId, co: tourId.split('-')[1] || null }, tours);
+          cards = cards.filter(c => c.kind === 'action_draft').map(d => ({ ...d, id: `${d.id || 'ad'}-sig`, title: sig.draft?.title || d.title,
+            fields: (Array.isArray(d.fields) ? d.fields : []).map(f => (f?.label === 'Message' ? { ...f, value: text } : f)) }));
+        } catch (e) { console.warn('signature: the tour line did not load', e); }
+      }
+      cards = [{ type: 'card', kind: 'map_command', id: `mc-sig-${role.id}`, title: tour.title || 'On the globe', cmd: { tour: tourId } }, ...cards];
+    }
+  }
+  // a picture whose lead repeats the answer line drops it: no sentence twice on one screen
+  cards = cards.map(c => (c.lead && norm(c.lead) === norm(text) ? { ...c, lead: '' } : c));
+  return { text, cards: cards.map((c, i) => (c.id ? c : { ...c, id: `sig-${role.id}-${i}` })) };
+}
+/** A question turn and an answer turn in the agent's thread (the chat widget's own markup), or a box of this page's own. */
+function openTurn(q) {
+  const w = state.inst;
+  if (w && w.msgs && typeof w.userTurn === 'function' && typeof w.botShell === 'function') {
+    w.root?.querySelector('.ch-thread')?.classList.add('open');
+    w.msgs.querySelector('.ch-empty')?.remove();
+    const u = w.userTurn(q), t = w.botShell();
+    t.dataset.prepared = '1';
+    w.msgs.append(u, t);
+    scrollTurnIntoView(u);
+    return t;
+  }
+  const t = document.createElement('div'); t.className = 'ca-sig-turn';
+  t.innerHTML = `<p class="sys-card-label">${esc(q)}</p><div class="ch-answer"></div><div class="ch-blocks"></div>`;
+  $('#ca-chat')?.before(t);
+  return t;
+}
+function paintInTurn(turn, card) {
+  const w = state.inst;
+  if (w && typeof w.paintCard === 'function' && turn.querySelector('.ch-blocks') && turn.classList.contains('ch-turn')) { w.paintCard(turn, card); return; }
+  const el = renderCard(card, { turn });
+  if (el) { el.dataset.cardId = card.id; turn.querySelector('.ch-blocks')?.appendChild(el); }
+}
+async function askSignature() {
+  const role = state.role, sig = sigOf(role); if (!sig || state.sigBusy) return;
+  state.sigBusy = true;
+  const turn = openTurn(sig.question), body = turn.querySelector('.ch-answer');
+  try {
+    let prep = null;
+    try { prep = await loadPrepared(role.id); } catch (e) { console.warn('prepared answer did not load', e); }
+    const ans = prep ? await signatureAnswer(role, sig, prep) : { text: 'The prepared answer did not load. Ask the agent instead.', cards: [] };
+    if (state.role !== role) return;   // the role changed while it loaded: the new role's thread starts empty
+    body.innerHTML = `<p>${esc(ans.text)}</p>`;
+    // a globe-tour signature flies the globe at once; any other answer keeps its plan on screen and offers "Show on map"
+    state.liveTurn = sig.view === 'globe_tour' ? turn : null;
+    try { for (const c of ans.cards) paintInTurn(turn, c); } finally { state.liveTurn = null; }
+    const w = state.inst;
+    if (w && Array.isArray(w.history) && turn.classList.contains('ch-turn')) w.history.push({ role: 'user', html: esc(sig.question), text: sig.question }, { role: 'assistant', html: body.innerHTML, text: ans.text });
+    announce('Answer ready.');
+  } finally { state.sigBusy = false; }
+}
+
+/** A picture's draft button ('bsp:draft' from assets/agent-views.js): the same draft card and approval list as any draft. */
+function hashOf(s) { let h = 5381; for (const c of String(s)) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(16); }
+function onViewDraft(e) {
+  const d = e.detail; if (!d || typeof d !== 'object' || !state.role) return;
+  const card = d.card && typeof d.card === 'object' && d.card.kind === 'action_draft' ? { ...d.card }
+    : { type: 'card', kind: 'action_draft', id: `vd-${hashOf(JSON.stringify(d))}`, title: String(d.label || 'Draft'), app: d.app || '', app_name: d.app_name || '', status: 'draft',
+      fields: Array.isArray(d.fields) && d.fields.length ? d.fields : d.body ? [{ label: 'Message', value: String(d.body) }] : [] };
+  if (!card.id) card.id = `vd-${hashOf(JSON.stringify(d))}`;
+  const turn = e.target?.closest?.('.ch-turn, .ca-sig-turn');
+  if (turn) { paintInTurn(turn, card); return; }
+  const el = renderCard(card, {}); const v = e.target?.closest?.('.ca-view');
+  if (el && v) { el.dataset.cardId = card.id; v.after(el); }
+}
+
 /* ── chat ── */
 function mountActions() {
   const root = state.inst?.root; if (!root) return;
@@ -401,6 +505,16 @@ function mountActions() {
   const list = isField() ? (state.role.action_chips || []) : [];
   box.innerHTML = list.map((a, i) => `<button type="button" class="sys-chip" data-ca="action" data-i="${i}">${esc(a.label)}</button>`).join('');
   box.hidden = !list.length;
+  // The signature question: the first chip, ahead of the suggestions, under the question box
+  let sb = $('.ca-sigbox', root);
+  if (!sb) {
+    sb = document.createElement('div'); sb.className = 'ca-sigbox sys-chips';
+    sb.setAttribute('role', 'group'); sb.setAttribute('aria-label', 'Prepared answer');
+    const at = $('.ch-chips', root) || box; at.before(sb);
+  }
+  const sig = sigOf();
+  sb.innerHTML = sig ? `<button type="button" class="sys-chip ca-sig" data-ca="sig">${esc(sig.question)}</button>` : '';
+  sb.hidden = !sig;
 }
 function scrollTurnIntoView(turnEl) {
   if (!turnEl?.getBoundingClientRect) return;
@@ -417,9 +531,11 @@ function onSketch(ev) {
   announce(`Floor sketch ready: ${items.length} items, ${likely} likely.`);
 }
 function onDecision(ev, status) { trackDraft(ev, status); announce(status === 'approved' ? 'Draft approved. Nothing was sent.' : 'Draft discarded.'); }
-function renderCard(ev, ctx) {
+function renderCard(ev, ctx = {}) {
   const f = state.cards?.renderCard;
-  const out = typeof f === 'function' ? f(ev, { ...ctx, onDecision, onSketch }) : null;
+  // live: painted for an answer being given now (a streamed answer, or a prepared answer just tapped); a restored thread is not
+  const live = !!ctx.turn && (ctx.turn === state.liveTurn || !!ctx.widget?.busy);
+  const out = typeof f === 'function' ? f(ev, { ...ctx, live, onDecision, onSketch }) : null;
   if (out && ev?.kind === 'action_draft') trackDraft(ev, ev.status === 'approved' || ev.status === 'discarded' ? ev.status : 'draft');
   return out;
 }
@@ -447,6 +563,7 @@ function onClick(e) {
     ask(fillTokens(row.prompt));
   } else if (a === 'show-all') { t.closest('.ca-list')?.classList.add('is-all'); t.hidden = true; $('.ca-row-more .ca-row')?.focus(); }
   else if (a === 'action') { const c = state.role.action_chips?.[Number(t.dataset.i)]; if (c) ask(c.prompt); }
+  else if (a === 'sig') askSignature();
   else if (a === 'filter') { renderAccess(t.dataset.org); $(`.ca-filter [data-org="${CSS.escape(t.dataset.org)}"]`)?.focus(); }
   else if (a === 'try') {
     setRole('pp-hvac-technician');
@@ -469,7 +586,7 @@ function showCurrentRole() {
 /** Say up front when the agent is offline (no backend, or one without the company agent), not only after a question. */
 async function checkBackend() {
   try {
-    const m = await import('./backend.js?v=20261123172325');
+    const m = await import('./backend.js?v=20261123194657');
     const B = m.Backend || m.default;
     const ok = B && await B.discover() && B.health?.workspace;
     if (ok) return;
@@ -500,7 +617,7 @@ export async function boot() {
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
   applyRoleAccent();
   registerPersona(state.role);
-  state.cards = await import('./agent-cards.js?v=20261123172325').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
+  state.cards = await import('./agent-cards.js?v=20261123194657').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
 
   state.inst = Chat.mount(document.getElementById('ca-chat'), {
     persona: 'ag-' + state.role.id, mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false,
@@ -529,6 +646,7 @@ export async function boot() {
   });
 
   document.addEventListener('click', onClick);
+  document.addEventListener('bsp:draft', onViewDraft);
   $('#ca-consent')?.addEventListener('close', onConsentClose);
   $('#ca-role-sheet')?.addEventListener('close', () => { const b = $('.ca-change'); if (b && !$('#ca-role-sheet').contains(document.activeElement)) b.focus(); });
   const thread = state.inst.root?.querySelector('.ch-thread');
@@ -539,5 +657,5 @@ export async function boot() {
     setURL(p => p.delete('q'));
     setTimeout(() => ask(q), 400);
   }
-  window.__agent = { state, setRole, catalog: state.catalog, workspace: workspacePayload };
+  window.__agent = { state, setRole, catalog: state.catalog, workspace: workspacePayload, askSignature };
 }

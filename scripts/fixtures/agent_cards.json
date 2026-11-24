@@ -150,6 +150,23 @@
        ]
       ],
       "basis": "likely"
+     },
+     {
+      "kind": "power",
+      "label": "Service line",
+      "points": [
+       [
+        2.2,
+        7.5
+       ],
+       [
+        2.2,
+        12.5
+       ]
+      ],
+      "basis": "record",
+      "material": "copper cable",
+      "note": "Service enters the left side wall to the panel"
      }
     ]
    },
@@ -165,6 +182,66 @@
       "w": 10,
       "h": 12,
       "label": "Garage"
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 17.8,
+      "h": 10.5,
+      "label": "Kitchen",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
+     },
+     {
+      "x": 22.9,
+      "y": 0,
+      "w": 14.1,
+      "h": 4.5,
+      "label": "Laundry",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
+     },
+     {
+      "x": 22.9,
+      "y": 4.5,
+      "w": 5.9,
+      "h": 5.0,
+      "label": "Half bath",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
+     },
+     {
+      "x": 28.9,
+      "y": 4.5,
+      "w": 8.1,
+      "h": 9.0,
+      "label": "Mudroom",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
+     },
+     {
+      "x": 0,
+      "y": 10.5,
+      "w": 17.8,
+      "h": 5.0,
+      "label": "Dining room",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
+     },
+     {
+      "x": 0,
+      "y": 15.5,
+      "w": 27.4,
+      "h": 9.5,
+      "label": "Living room",
+      "floor": "first",
+      "basis": "record",
+      "src": "Prior visit sketch"
      }
     ],
     "items": [
@@ -180,7 +257,87 @@
       "y": 6.2
      }
     ],
-    "runs": []
+    "runs": [
+     {
+      "kind": "water",
+      "label": "Kitchen supply",
+      "points": [
+       [
+        20.4,
+        7.5
+       ],
+       [
+        9.2,
+        1.5
+       ]
+      ],
+      "basis": "likely",
+      "material": "copper",
+      "note": "Rises from the basement and runs to the sink on the kitchen rear wall",
+      "rise": {
+       "at": "riser",
+       "from": "basement",
+       "to": "first"
+      }
+     },
+     {
+      "kind": "drain",
+      "label": "Kitchen drain",
+      "points": [
+       [
+        9.2,
+        1.5
+       ],
+       [
+        20.4,
+        7.5
+       ]
+      ],
+      "basis": "likely",
+      "material": "cast iron",
+      "note": "From the sink down to the basement drain",
+      "rise": {
+       "at": "riser",
+       "from": "basement",
+       "to": "first"
+      }
+     }
+    ],
+    "wet_walls": [
+     {
+      "floor": "first",
+      "a": [
+       1.9,
+       0
+      ],
+      "b": [
+       16.7,
+       0
+      ],
+      "rooms": [
+       "Kitchen"
+      ],
+      "what": "Kitchen sink on the rear wall",
+      "basis": "likely"
+     },
+     {
+      "floor": "first",
+      "a": [
+       22.9,
+       4.5
+      ],
+      "b": [
+       28.9,
+       4.5
+      ],
+      "rooms": [
+       "Half bath",
+       "Laundry"
+      ],
+      "what": "Half bath backs onto the laundry",
+      "basis": "likely"
+     }
+    ]
    }
   ],
   "outside": [
@@ -201,7 +358,17 @@
   "sources": [
    1,
    2
-  ]
+  ],
+  "example": true,
+  "layout": {
+   "from": "record",
+   "name": "Prior visit sketch",
+   "basis": "record"
+  },
+  "roof": {
+   "basis": "record",
+   "type": "gable"
+  }
  },
  {
   "type": "card",

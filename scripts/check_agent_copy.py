@@ -287,6 +287,21 @@ def check_catalog():
             fail(where, f'home lead over 20 words ({words(s)})', s)
     if prg_full > 1:
         fail(CATALOG, f'Portfolio Resource Group spelled out {prg_full} times', '')
+    # the signature question is the first chip on the agent (WAVE3 ruling 8): one per role, 12 words at most, no identifiers;
+    # its draft title is an action line (verb first, 15 words at most)
+    for r in cat.get('roles', []):
+        sig = r.get('signature')
+        where = f"{CATALOG} roles.{r.get('id')}.signature"
+        if not isinstance(sig, dict) or not str(sig.get('question') or '').strip():
+            fail(where, 'role has no signature question', '')
+            continue
+        q = str(sig['question'])
+        if words(q) > 12:
+            fail(where, f'signature question over 12 words ({words(q)})', q)
+        snake(where, q)
+        t = str((sig.get('draft') or {}).get('title') or '')
+        if t and words(t) > 15:
+            fail(where, f'draft title over 15 words ({words(t)})', t)
     return cat
 
 

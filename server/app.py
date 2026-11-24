@@ -23,20 +23,26 @@ Routes (JSON unless noted; CORS limited to ALLOWED_ORIGINS):
   POST /thread          {thread_id, persona, title, messages_json}  (upsert)
   GET  /thread/:id
   GET  /stats           {threads, messages, feedback, ...}
+  POST /site-brief      {text, role, connected?} -> {ok, status, text, cards, choices, sources, degraded}  (no model call)
+  GET  /prepared?role=  {ok, role, question, view, text, cards, draft, as_of}  a role's signature answer (no model call)
 
 Run: uvicorn app:app --host 0.0.0.0 --port $PORT   (see README.md)
 Author: Syed Rahman.
 """
 
 import asyncio
+import concurrent.futures
 import contextlib
+import functools
 import hashlib
+import importlib.util
 import json
 import logging
 import math
 import os
 import re
 import sqlite3
+import sys
 import threading
 import time
 from datetime import datetime, timedelta, timezone
@@ -1880,6 +1886,235 @@ def handle_stats_sync():
     }
 
 
+# ── Live address and prepared answers (POST /site-brief, GET /prepared) ──────
+# Neither route touches the model, the daily model budget, the chat log or SQLite. A typed address lives only in the request:
+# it is never logged (the log line carries the status, the precision and the timing) and never stored.
+SITE = {
+    'window_ms': 10 * 60 * 1000,
+    'per_visitor': 20,     # lookups per visitor per 10 minutes (and, separately, prepared answers)
+    'in_flight': 6,        # site lookups running at once, across all visitors (keeps the /chat threads free)
+    'prepared_in_flight': 6,
+    'daily': 2000,         # site lookups per UTC day
+    'ceiling': 9.0,        # seconds: the whole request, measured on the server
+    'slot_wait': 2.0,      # seconds a request waits for a free lookup slot before "busy"
+    'lookup_deadline': 8.0,   # the deadline handed to site.brief
+    'text': 240,           # characters of typed text
+}
+SITE_STATUSES = ('found', 'choose', 'not_found', 'outside', 'error')
+SITE_PATH = os.path.join(HERE, 'site.py')
+_site = {'mod': None}
+_site_buckets = {}
+_prepared_buckets = {}
+_site_day = {'day': None, 'n': 0}
+_slots = {'site': 0, 'prepared': 0}
+_slots_lock = threading.Lock()
+_site_pool = concurrent.futures.ThreadPoolExecutor(max_workers=16, thread_name_prefix='bsp-site')   # never the default pool /chat uses
+
+
+def site_module():
+    """server/site.py, loaded by its path: a bare `import site` returns Python's own startup module of that name."""
+    if _site['mod'] is None:
+        m = sys.modules.get('site')
+        b = sys.modules.get('bsp_site')   # workspace.site_module() may have loaded it first: one module, one cache
+        if m is not None and callable(getattr(m, 'brief', None)):
+            _site['mod'] = m
+        elif b is not None and callable(getattr(b, 'brief', None)):
+            _site['mod'] = b
+        elif os.path.isfile(SITE_PATH):
+            spec = importlib.util.spec_from_file_location('bsp_site', SITE_PATH)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules['bsp_site'] = mod
+            try:
+                spec.loader.exec_module(mod)
+            except Exception:
+                sys.modules.pop('bsp_site', None)
+                raise
+            _site['mod'] = mod
+    return _site['mod']
+
+
+def site_available():
+    """For /health: true when the live address lookup can run. Never imports anything (health answers in milliseconds)."""
+    return _site['mod'] is not None or os.path.isfile(SITE_PATH)
+
+
+def limit_visitor(buckets, key, limit, what):
+    now = time.time() * 1000
+    win = SITE['window_ms']
+    with _buckets_lock:
+        stamps = [t for t in buckets.get(key, []) if t > now - win]
+        if len(stamps) >= limit:
+            buckets[key] = stamps
+            retry_after = max(1, math.ceil((min(stamps) + win - now) / 1000))
+            raise HttpError(429, 'rate_limited', f'Too many {what} in a short time. Try again in a few minutes.', {'retryAfter': retry_after, 'scope': 'visitor'})
+        stamps.append(now)
+        buckets[key] = stamps
+        _prune(buckets, win, now)
+
+
+def count_site_day():
+    with _buckets_lock:
+        day = today()
+        if _site_day['day'] != day:
+            _site_day['day'], _site_day['n'] = day, 0
+        if _site_day['n'] >= SITE['daily']:
+            raise HttpError(429, 'daily_cap', 'Today\'s address lookups are used up. They reset at midnight UTC.', {'retryAfter': seconds_to_utc_midnight(), 'scope': 'global'})
+        _site_day['n'] += 1
+
+
+def _try_slot(kind, cap):
+    with _slots_lock:
+        if _slots[kind] >= cap:
+            return False
+        _slots[kind] += 1
+        return True
+
+
+def _free_slot(kind):
+    with _slots_lock:
+        _slots[kind] = max(0, _slots[kind] - 1)
+
+
+async def take_slot(kind, cap, wait):
+    end = time.monotonic() + wait
+    while not _try_slot(kind, cap):
+        if time.monotonic() >= end:
+            raise HttpError(429, 'busy', 'Many address lookups are running right now. Try again in a few seconds.', {'retryAfter': 5, 'scope': 'global'})
+        await asyncio.sleep(0.05)
+
+
+def _in_slot(kind, fn):
+    try:
+        return fn()
+    finally:
+        _free_slot(kind)   # freed when the work really ends, even after the request gave up waiting for it
+
+
+async def run_in_slot(kind, fn, timeout):
+    """Runs fn in the lookup pool and waits at most `timeout` seconds. The slot (taken by the caller) is held until fn returns."""
+    loop = asyncio.get_running_loop()
+    try:
+        fut = loop.run_in_executor(_site_pool, _in_slot, kind, fn)
+    except Exception:
+        _free_slot(kind)
+        raise
+    return await asyncio.wait_for(fut, max(0.05, timeout))
+
+
+def site_allowed(role_id):
+    """The address lookup is for roles that have the site brief, and for the firm levels as a demonstration."""
+    R = workspace.role(role_id)
+    return 'site_brief' in (R.get('tools') or ()) or str(R.get('level') or '').startswith('firm_')
+
+
+def site_workspace(raw_role, raw_connected, has_connected):
+    if has_connected and raw_connected is not None and not isinstance(raw_connected, list):
+        raise HttpError(400, 'bad_connected', 'connected must be a list of app names.')
+    try:
+        ws = workspace.clean({'role': raw_role, 'connected': raw_connected if isinstance(raw_connected, list) else []})
+    except workspace.WorkspaceError as e:
+        raise HttpError(e.status, e.code, str(e))
+    return ws, (ws['connected'] if has_connected and isinstance(raw_connected, list) else None)
+
+
+def validate_site(body):
+    text = body.get('text')
+    if not is_str(text):
+        raise HttpError(400, 'bad_text', 'Type an address.')
+    text = re.sub(r'\s+', ' ', text).strip()
+    if not text:
+        raise HttpError(400, 'bad_text', 'Type an address.')
+    if len(text) > SITE['text']:
+        raise HttpError(400, 'text_too_long', f'Keep the address under {SITE["text"]} characters.')
+    if not is_str(body.get('role')):
+        raise HttpError(400, 'bad_workspace', 'Pick a role first.')
+    ws, connected = site_workspace(body.get('role'), body.get('connected'), 'connected' in body)
+    if not site_allowed(ws['role']):
+        raise HttpError(403, 'role_not_allowed', 'Address lookups are not part of this role.')
+    pick = body.get('pick')
+    pick = str(pick)[:80] if isinstance(pick, (str, int)) and str(pick).strip() else None   # a lot key from an earlier 'choose' answer
+    return text, ws['role'], connected, pick
+
+
+def site_failed(why):
+    return {'status': 'error', 'text': 'The address lookup took too long. Try again in a moment.' if why == 'timeout' else
+            'The address lookup failed. Try again in a moment.', 'cards': [], 'choices': [], 'sources': [], 'degraded': ['site']}
+
+
+def site_shape(out):
+    """The answer as the contract states it, whatever the module returned."""
+    if not isinstance(out, dict):
+        return site_failed('error')
+    status = out.get('status') if out.get('status') in SITE_STATUSES else 'error'
+    lst = lambda k: [x for x in out.get(k) if x is not None] if isinstance(out.get(k), list) else []
+    res = {k: v for k, v in out.items() if k not in ('ok', 'status', 'text', 'cards', 'choices', 'sources', 'degraded')}
+    res.update({'status': status, 'text': out['text'] if is_str(out.get('text')) else '', 'cards': lst('cards'), 'choices': lst('choices'),
+                'sources': lst('sources'), 'degraded': [str(x)[:40] for x in lst('degraded')]})
+    return res
+
+
+def site_precision(out):
+    for c in out.get('cards') or ():
+        if isinstance(c, dict):
+            p = (c.get('place') or {}).get('precision') if isinstance(c.get('place'), dict) else None
+            if p:
+                return str(p)[:12]
+            for st in ((c.get('cmd') or {}).get('steps') or ()) if isinstance(c.get('cmd'), dict) else ():
+                if isinstance(st, dict) and st.get('precision'):
+                    return str(st['precision'])[:12]
+    return '-'
+
+
+async def handle_site_brief(request, cors):
+    t0 = time.monotonic()
+    text, role_id, connected, pick = validate_site(await read_json(request))
+    limit_visitor(_site_buckets, ip_key(client_ip(request)), SITE['per_visitor'], 'address lookups')
+    try:
+        mod = site_module()
+    except Exception as e:
+        log.error('site lookup could not load: %s', type(e).__name__)
+        mod = None
+    if mod is None:
+        raise HttpError(503, 'site_unavailable', 'The live address lookup is not available on this backend.')
+    count_site_day()
+    await take_slot('site', SITE['in_flight'], min(SITE['slot_wait'], SITE['ceiling'] / 4))
+    left = SITE['ceiling'] - (time.monotonic() - t0) - 0.25
+    deadline = max(0.5, min(SITE['lookup_deadline'], left - 0.75))
+    why = None
+    try:
+        kw = {'connected': connected, 'deadline_s': deadline, **({'pick': pick} if pick else {})}
+        out = await run_in_slot('site', functools.partial(mod.brief, text, role_id, **kw), left)
+    except asyncio.TimeoutError:
+        out, why = site_failed('timeout'), 'timeout'
+    except Exception as e:   # the message may quote the typed text: only its type is logged
+        out, why = site_failed('error'), type(e).__name__
+    out = site_shape(out)
+    log.info('site brief: %s, precision %s, %d ms, degraded %s%s', out['status'], site_precision(out), round((time.monotonic() - t0) * 1000),
+             ','.join(out['degraded']) or 'none', f', failed: {why}' if why else '')
+    return json_response({'ok': True, **out}, 200, cors)
+
+
+async def handle_prepared(request, cors):
+    q = request.query_params
+    rid = q.get('role')
+    if not rid:
+        raise HttpError(400, 'bad_workspace', 'Pick a role first.')
+    has_conn = 'connected' in q
+    raw_conn = [c for c in (q.get('connected') or '').split(',') if c.strip()] if has_conn else None
+    ws, connected = site_workspace(rid, raw_conn, has_conn)
+    limit_visitor(_prepared_buckets, ip_key(client_ip(request)), SITE['per_visitor'], 'requests')
+    import views   # lazy: it reads the sandbox and research files on first use
+    await take_slot('prepared', SITE['prepared_in_flight'], min(SITE['slot_wait'], SITE['ceiling'] / 4))
+    try:
+        out = await run_in_slot('prepared', functools.partial(views.prepared, ws['role'], connected), SITE['ceiling'] - 0.25)
+    except asyncio.TimeoutError:
+        raise HttpError(504, 'timeout', 'The prepared answer took too long. Try again in a moment.')
+    if not out:
+        raise HttpError(404, 'no_signature', 'This role has no prepared answer.')
+    return json_response({'ok': True, 'role': out.get('role') or ws['role'], 'question': out.get('q') or '', 'view': out.get('view'),
+                          'text': out.get('text') or '', 'cards': out.get('cards') or [], 'draft': out.get('draft'), 'as_of': out.get('as_of')}, 200, cors)
+
+
 # ── App and router ──────────────────────────────────────────────────────────
 @contextlib.asynccontextmanager
 async def lifespan(_app):
@@ -1938,7 +2173,11 @@ async def router(request: Request, rest: str = ''):
                                       'llm': llm_live(ms['state']), 'llm_state': ms['state'], 'model_state': ms, 'kv': True, 'log': chatlog.enabled(),
                                       'kb': {'docs': len(kb.docs), 'chunks': int(len(kb.chunk_ids)), 'built_at': kb.info.get('built_at')} if kb is not None else False,
                                       'homes': await run_in_threadpool(homes_summary), 'directory': bizdir.status(),
-                                      'workspace': await run_in_threadpool(workspace.status)}, 200, cors)   # WORKSPACE HOOK: the agent page treats a backend without this key as offline
+                                      'workspace': await run_in_threadpool(workspace.status), 'site': site_available()}, 200, cors)   # WORKSPACE HOOK: the agent page treats a backend without this key as offline
+            if path == '/prepared':
+                if not origin_ok:
+                    raise HttpError(403, 'origin_not_allowed', 'This origin is not allowed to use the assistant backend.')
+                return await handle_prepared(request, cors)
             if path == '/stats':
                 stats = await run_in_threadpool(handle_stats_sync)
                 return json_response(stats, 200, cors, {'Cache-Control': 'public, max-age=60'} if stats.get('db') else None)
@@ -1956,6 +2195,8 @@ async def router(request: Request, rest: str = ''):
                 raise HttpError(403, 'origin_not_allowed', 'This origin is not allowed to use the assistant backend.')
             if path == '/chat':
                 return await handle_chat(request, cors)
+            if path == '/site-brief':
+                return await handle_site_brief(request, cors)
             if path == '/log':
                 key = ip_key(client_ip(request))
                 limit_writes(key)

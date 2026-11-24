@@ -46,6 +46,16 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-figs .sys-kpis{margin-top:0;align-self:flex-start;grid-template-columns:minmax(220px,300px)}
 .hm-figs .sys-kpi-value{font-size:var(--sys-fs-xl)}
 
+/* first on every home: the signature question (one button) and, where the role has it, the address box, in one row;
+   the answer opens in place under them */
+.hm-first{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--sys-sp-3) var(--sys-sp-4);min-width:0}
+.hm-sig{flex:0 1 auto;max-width:100%;height:auto;min-height:44px;padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2);white-space:normal;text-align:left;line-height:var(--sys-lh-snug)}
+.hm-sig[aria-expanded="true"]{box-shadow:var(--sys-ring)}
+.hm-site{flex:1 1 320px;min-width:0;max-width:560px}
+.hm-out{min-width:0}
+.hm-out:empty{display:none}
+.hm-out .sl-cards{max-width:960px}
+
 /* the button into the agent screen */
 .hm-ask{align-self:flex-start}
 
@@ -68,6 +78,9 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-item .hm-main{grid-area:main}
   .hm-item>.sys-chip{grid-area:chip}
   .hm-ask{align-self:stretch}
+  .hm-first{flex-direction:column;align-items:stretch;gap:var(--sys-sp-3)}
+  .hm-sig{width:100%;border-radius:var(--sys-r-sm)}
+  .hm-site{flex:0 0 auto;max-width:none}
   .hm-figs .sys-kpis{align-self:stretch;grid-template-columns:minmax(0,1fr)}
   /* the company table becomes one block per company: name and status, then the three figures, then what moves it */
   .hm-cos .sys-table-wrap{overflow:visible}
@@ -85,4 +98,4 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-cos td.hm-ev{display:none}
   .hm-cos .hm-cell{font-size:var(--sys-fs-xs)}
 }
-@media (pointer:coarse){.hm-item,.hm-ask{min-height:48px}}
+@media (pointer:coarse){.hm-item,.hm-ask,.hm-sig{min-height:48px}}

@@ -1209,7 +1209,9 @@ def test_workspace_site_brief_card(env):
     assert status == 200 and events[-1]['type'] == 'done'
     types = [e['type'] for e in events]
     cards = [e for e in events if e['type'] == 'card']
-    assert len(cards) == 1 and cards[0]['kind'] == 'floor_sketch' and types.index('card') < types.index('done')
+    # the plan, then the map step to the town (a company-record address: the house is example data)
+    assert [c['kind'] for c in cards] == ['floor_sketch', 'map_command'] and types.index('card') < types.index('done')
+    assert cards[1]['cmd']['steps'][0]['precision'] == 'town' and cards[0]['example'] is True
     card = cards[0]
     assert re.fullmatch(r'fs-[0-9a-f]{8}', card['id']) and card['floors'] and card['focus'] and card['area']['status'] in ('in', 'adjacent')
     assert {'type': 'status', 'text': 'Checking the service area and records for 418 Wexcombe Ln'} in events

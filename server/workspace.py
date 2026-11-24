@@ -26,7 +26,7 @@ import threading
 HERE = os.path.dirname(os.path.abspath(__file__))
 log = logging.getLogger('workspace')
 
-TOOL_NAMES = ('site_brief', 'workspace_search', 'open_record', 'company_numbers', 'draft_action')
+TOOL_NAMES = ('site_brief', 'workspace_search', 'open_record', 'company_numbers', 'draft_action', 'show_view')
 PUBLIC_ORDER = ('search', 'read', 'deal', 'homes', 'directory', 'web')
 ORGS = ('bsp', 'pp', 'cet', 'fl', 'ts', 'bpi', 'fh')
 COMPANIES = ('pp', 'cet', 'fl', 'ts', 'bpi', 'fh')
@@ -639,6 +639,16 @@ def tool_defs(ws):
                                     'estimates): P&L with plan, KPIs, headcount, payroll, debt' + (', and the fund' if 'fund' in views else '') +
                                     '. Money in thousands of dollars.'),
                     'input_schema': {'type': 'object', 'additionalProperties': False, 'required': ['view'], 'properties': props}})
+    if 'show_view' in tools:
+        import views   # lazy: views imports workspace lazily too
+        out.append({'name': 'show_view',
+                    'description': ('Draw one picture for the question from the role\'s records and public research: scorecard (figures '
+                                    'against plan), bridge (plan to actual, or where a deal\'s gain comes from), heatmap, pipeline_board or '
+                                    'ranked_bars. Returns a short answer and the card; mention the card in one line.'),
+                    'input_schema': {'type': 'object', 'additionalProperties': False, 'required': ['view'], 'properties': {
+                        'view': {'type': 'string', 'enum': list(views.KINDS)},
+                        'topic': {'type': 'string', 'enum': sorted(views.TOPICS)},
+                        'company': {'type': 'string', 'enum': list(COMPANIES)}}}})
     acts = sorted(R.get('actions') or ())
     if 'draft_action' in tools and acts:
         labels = ', '.join(_action_meta(a, co)['label'] for a in acts)
@@ -863,6 +873,8 @@ def status_text(name, args):
         if c in ORGS:
             return f'Reading {_co_name(c)} results'
         return 'Reading results'
+    if name == 'show_view':
+        return 'Building the picture'
     if name == 'draft_action':
         a = args.get('action') if isinstance(args.get('action'), str) else ''
         try:
@@ -1701,6 +1713,14 @@ def _strip_state_name(text, state):
     return text
 
 
+# The town ends where the request starts: "Lititz for a sink repair, give me the floor plans" -> "Lititz".
+TOWN_CUT_RX = re.compile(r"(?i)(?:^|\s+)(?:for|to fix|to repair|to look at|with|give|show|please|and|can you|i need)\b.*$")
+
+
+def _cut_town(s):
+    return TOWN_CUT_RX.sub('', s or '').strip(' ,')
+
+
 def parse_address(text):
     import property as homes
     t = re.sub(r'\s+', ' ', text if isinstance(text, str) else '').strip()
@@ -1738,12 +1758,15 @@ def parse_address(text):
                 pw = pw[:f_]   # "Lancaster PA 17601 customer says no heat" -> "Lancaster"
             w = [x for x in pw if not re.fullmatch(r'\d{5}(-\d{4})?', x) and x.upper() not in ('PA', 'NJ', 'PENNSYLVANIA')
                  and not (len(x) == 2 and x.isupper() and x in US_STATES)]
-            w = ' '.join(w)
+            raw_w = ' '.join(w)
+            w = _cut_town(raw_w)
             w = re.sub(r'(?i)\bnew jersey\b', '', w).strip()
             w = _strip_state_name(w, st)
             if w:
                 town = w
                 break
+            if raw_w and not _cut_town(raw_w):
+                break   # the request started before any town ("12 Elm St, for a sink repair, view"): no town
     else:
         words = t.split()
         cut = None
@@ -1767,7 +1790,7 @@ def parse_address(text):
                 town = kt
                 break
         if town is None and first:
-            town = ' '.join(rest_words[:first]).strip(' ,') or None
+            town = _cut_town(' '.join(rest_words[:first])) or None
     key = homes.addr_split(street)[0]
     hn = re.match(r'^(\d+)', key)
     house_no = hn.group(1) if hn else ''
@@ -1834,6 +1857,17 @@ def _near_job(cust_id, jobs):
     cand = [j for j in jobs if j.get('customer') == cust_id and isinstance(j.get('day'), int) and -1 <= j['day'] <= 7]
     cand.sort(key=lambda j: (abs(j['day']) if j['day'] >= 0 else 10 + abs(j['day']), j.get('start') or ''))
     return cand[0] if cand else None
+
+
+def _company_customer(parsed, co):
+    """A technician sent to an address the company's job system knows, but not on their own job list: the customer record at that
+    exact address (WAVE3 ruling 6: the system connected and the typed address equal to the customer's). None otherwise."""
+    if not parsed or not parsed.get('key') or not parsed.get('house_no') or co != 'pp':
+        return None
+    z, town = parsed.get('zip'), (parsed.get('town') or '').lower()
+    hits = [c for c in _st().get('customers') or [] if c.get('co') == co and c.get('addr_key') == parsed['key']
+            and ((c.get('address') or {}).get('zip') == z if z else (c.get('address') or {}).get('town', '').lower() == town if town else True)]
+    return {'job': None, 'customer': hits[0], 'how': 'exact', 'company_wide': True} if len(hits) == 1 else None
 
 
 def match_job(parsed, ws, text=''):
@@ -2278,7 +2312,7 @@ def _house_text(h, basis):
     yb = basis.get('year')
     s2 = (f"Built {h['year']}." + ('' if yb in ('record', 'public') else lk)) if h.get('year') else ''
     fuel = {'gas': 'Gas heat', 'oil': 'Oil heat', 'propane': 'Propane heat', 'electric': 'Electric heat'}.get(h.get('fuel'), '')
-    s3 = (fuel + '.' + ('' if basis.get('fuel') == 'record' else lk)) if fuel else ''
+    s3 = (fuel + '.' + ('' if basis.get('fuel') in ('record', 'public') else lk)) if fuel else ''
     return ' '.join(x for x in (s1, s2, s3) if x)
 
 
@@ -2391,47 +2425,105 @@ def sketch(address, house, items, runs, basis, area, issue, focus, source_line, 
             'floors': floors, 'outside': outside, 'front': 'bottom', 'source_line': source_line, 'sources': list(sources_n or [])}
 
 
+def _record_map(label, caddr):
+    """The map step for a company-record address: the town is real, the house is example data, so the globe goes to the town only."""
+    try:
+        import site_sources
+        tp = (site_sources.town_point(zip=(caddr or {}).get('zip'), town=(caddr or {}).get('town'), state=(caddr or {}).get('state')) or {}).get('place')
+    except Exception:   # noqa: BLE001
+        tp = None
+    if not tp:
+        return None
+    step = {'kind': 'site', 'lat': tp['lat'], 'lon': tp['lon'], 'label': label, 'sub': 'Company record (example data) · town only',
+            'precision': 'town', 'zoom': 12.5, 'pitch': 0, 'bearing': 0, 'hold_ms': 4000}
+    cid = 'mc-' + hashlib.sha1(f'{label}|record'.encode('utf-8')).hexdigest()[:8]
+    return {'type': 'card', 'kind': 'map_command', 'id': cid, 'example': True, 'cmd': {'title': label, 'source': 'site', 'steps': [step]}}
+
+
+def _record_dress(card, cust_id):
+    """A company-record card (example data): the flagship houses' signed rooms and wire runs (pp_houses.json) are drawn as records,
+    their risers and wet walls as likely. Every record card carries example: True (the 3D view's and the plan's explicit flag)."""
+    card['example'] = True
+    card['layout'] = {'from': 'rules', 'name': None, 'basis': 'likely'}
+    card['roof'] = {'type': None, 'basis': 'likely'}   # unknown until a visit records it
+    try:
+        hs = (load('pp_houses').get('houses') or {}).get(cust_id) if cust_id else None
+    except Exception:   # noqa: BLE001
+        hs = None
+    if not hs:
+        return card
+    spots = _rules().get('spots') or {}
+    floors = card.get('floors') or []
+    w = floors[0]['w'] if floors else 40
+    h = floors[0]['h'] if floors else 30
+    order = ['basement', 'first', 'second']
+    need = {r.get('floor') or 'first' for r in hs.get('rooms') or []} | {r.get('floor') or 'first' for r in hs.get('runs') or []}
+    have = {f['id'] for f in floors}
+    for fid in sorted(need - have, key=lambda x: order.index(x) if x in order else 9):
+        if fid in FLOOR_NAMES:
+            floors.append({'id': fid, 'name': FLOOR_NAMES[fid], 'w': w, 'h': h, 'rooms': [], 'items': [], 'runs': []})
+    floors.sort(key=lambda f: order.index(f['id']) if f['id'] in order else 9)
+    for f in floors:
+        fw, fh = f['w'], f['h']
+        rooms = [r for r in hs.get('rooms') or [] if (r.get('floor') or 'first') == f['id']]
+        if rooms:   # the visit sketch replaces the generic boxes on that level (the basement's own box stays)
+            keep = [r for r in f.get('rooms') or [] if f['id'] == 'basement' or r.get('label') == 'Garage']   # the attached garage stays
+            f['rooms'] = keep + [{'x': round(r['x'] * fw, 1), 'y': round(r['y'] * fh, 1), 'w': round(r['w'] * fw, 1), 'h': round(r['h'] * fh, 1),
+                                  'label': r.get('name') or 'Room', 'floor': f['id'], 'basis': r.get('basis') or 'record',
+                                  'src': r.get('src') or 'Prior visit sketch'} for r in rooms]
+        ww = [x for x in hs.get('wet_wall') or [] if (x.get('floor') or 'first') == f['id']]
+        if ww:
+            f['wet_walls'] = [{'floor': f['id'], 'a': [round(x['a'][0] * fw, 1), round(x['a'][1] * fh, 1)],
+                               'b': [round(x['b'][0] * fw, 1), round(x['b'][1] * fh, 1)], 'rooms': x.get('rooms') or [], 'what': x.get('what'),
+                               'basis': x.get('basis') or 'likely'} for x in ww]
+        have_lbl = {str(r.get('label') or '').lower() for r in f.get('runs') or []}
+        for r in hs.get('runs') or []:
+            if (r.get('floor') or 'first') != f['id'] or str(r.get('label') or '').lower() in have_lbl:
+                continue
+            pts = [[round((spots.get(v) or [0.5, 0.5])[0] * fw, 1), round((spots.get(v) or [0.5, 0.5])[1] * fh, 1)] for v in r.get('via') or []][:4]
+            if len(pts) < 2:
+                continue
+            run = {'kind': r.get('kind') or 'water', 'label': r.get('label') or _uc(r.get('kind') or 'line'), 'points': pts,
+                   'basis': r.get('basis') or 'likely'}
+            for k in ('material', 'note', 'rise'):
+                if r.get(k):
+                    run[k] = r[k]
+            f.setdefault('runs', []).append(run)
+    card['floors'] = floors
+    card['layout'] = {'from': 'record', 'name': 'Prior visit sketch', 'basis': 'record'}
+    if hs.get('roof'):
+        card['roof'] = hs['roof']
+    if hs.get('split_level'):
+        card['split_level'] = True
+        card['layout_note'] = 'Split-level drawn as two levels'
+    return card
+
+
 # ---------------------------------------------------------------- site_brief
 
 def _no_ids(s):
     return _scrub(s)
 
 
-def _public_facts(line, town, state, zip_, sources):
-    """Year, size and a few facts from the public property brief, with its sources. Never its text."""
-    facts, ns = {}, []
-    try:
-        import property as homes
-        if not homes.ready():
-            return facts, ns
-        text, srcs = homes.run_property_brief({'address': line, 'municipality': town or '', 'state': state or '', 'zip': zip_ or ''})
-    except Exception as e:   # noqa: BLE001
-        log.warning('workspace: property brief failed: %s', e)
-        return facts, ns
-    m = re.search(r'- Year built: (\d{4})', text or '')
-    if m:
-        facts['year'] = int(m.group(1))
-    m = re.search(r'- Living area: ([\d,]+) sq ft', text or '')
-    if m:
-        facts['sqft'] = int(m.group(1).replace(',', ''))
-    m = re.search(r'- Bedrooms: (\d+)', text or '')
-    if m:
-        facts['beds'] = int(m.group(1))
-    m = re.search(r'Building description \(assessor shorthand\): "([^"]{1,40})"', text or '')
-    if m:
-        facts['bldg_desc'] = m.group(1).strip()
-    m = re.search(r'Likely reading: ([^\[]+)', text or '')
-    if m:
-        facts['reading'] = m.group(1).strip().rstrip('.')   # the property brief tags this [inferred]: it stays "likely" here too
-    if facts:
-        for s in srcs or []:
-            ns.append(sources.add(f"homes:{s.get('title')}|{s.get('url')}", s.get('title'), s.get('url'), s.get('publisher'), s.get('date'),
-                                  s.get('kind') or 'data'))
-    return facts, ns
+def site_module():
+    """server/site.py, the live site brief. Loaded by path as `bsp_site`: a bare `import site` returns Python's own site module."""
+    import sys
+    m = sys.modules.get('bsp_site')
+    if m is None:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('bsp_site', os.path.join(HERE, 'site.py'))
+        m = importlib.util.module_from_spec(spec)
+        sys.modules['bsp_site'] = m
+        try:
+            spec.loader.exec_module(m)
+        except Exception:
+            sys.modules.pop('bsp_site', None)
+            raise
+    return m
 
 
 def _rules_source(sources):
-    return sources.add('ws:rules', 'Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024', '', 'Broad Sky OS sandbox',
+    return sources.add('ws:rules', 'Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024', '', 'Broad Sky OS',
                        _iso(), 'rules')
 
 
@@ -2464,6 +2556,10 @@ def _site_brief(ws, args, sources):
             except Exception as e:   # noqa: BLE001
                 log.warning('workspace: match failed: %s', e)
                 hit = None
+            if hit and hit.get('how') != 'exact':
+                hit = None   # WAVE3 ruling 6: a company record answers only an address that equals the customer's exactly
+            if not hit and connected:
+                hit = _company_customer(parsed, R.get('company'))
     cust = hit['customer'] if hit else None
     job = hit.get('job') if hit else None
     caddr = (cust or {}).get('address') or {}
@@ -2471,17 +2567,39 @@ def _site_brief(ws, args, sources):
     town = caddr.get('town') if cust else parsed.get('town')
     state = caddr.get('state') if cust else parsed.get('state')
     area = area_of(zip_, town, state)
-    if area['status'] == 'out':
+    records = bool(cust) and connected and (visible(cust, ws['role'], 'servicetitan', 'customers') or hit.get('company_wide')) if cust else False
+    if cust and not records and connected:
+        records = bool(job) and visible(job, ws['role'], 'servicetitan', 'jobs')
+    live = None
+    if not records:
+        # A real address: the public-record ladder (server/site.py), never an example record.
+        S = site_module()
+        try:
+            live = S.lookup(parsed, area, pick=args.get('pick') if isinstance(args.get('pick'), str) else None,
+                            deadline_s=ws.get('_deadline') or S.TOTAL_S)
+        except Exception as e:   # noqa: BLE001
+            log.warning('workspace: site lookup failed: %s', type(e).__name__)
+            live = None
+        ws['_site'] = live
+        if live and live.get('status') == 'found':
+            zip_ = zip_ or live.get('zip')
+            state = state or live.get('state')
+            if area['status'] == 'unknown':
+                area = area_of(zip_, town or live.get('town'), state)
+    ws['_site_out'] = {'record': bool(records), 'area': area}
+    placed = bool(live) and live.get('status') == 'found'
+    if area['status'] == 'out' and not placed:
         where = f"{area['county']} County, {area['state']}" if area.get('county') else (
             f'ZIP {zip_}' if zip_ else (', '.join(x for x in (town, area.get('state')) if x) or 'another state'))
         return (f'SERVICE AREA: outside ({where}). This address is outside the Punctual Pros service area; say so plainly, no ZIP is '
                 'needed. Refer to dispatch.'), False, []
-    if area['status'] == 'unknown':
+    if area['status'] == 'unknown' and not placed:
         return 'SERVICE AREA: unknown. Ask for the ZIP or the town.', False, []
+    if live and live.get('status') == 'choose':
+        labels = '; '.join(plain(c.get('label'), 80) for c in live.get('choose') or [])
+        return (f"SEVERAL LOTS: more than one lot matches {plain(parsed.get('line') or text, 60)}. Ask which one: {labels}. "
+                'No owner names are shown.'), False, []
     state = state or area.get('state')
-    records = bool(cust) and connected and visible(cust, ws['role'], 'servicetitan', 'customers') if cust else False
-    if cust and not records and connected:
-        records = bool(job) and visible(job, ws['role'], 'servicetitan', 'jobs')
     notes_extra = []
     cust_hidden = False
     if cust and not connected:
@@ -2522,7 +2640,10 @@ def _site_brief(ws, args, sources):
             if other:
                 cust_hidden = True
                 notes_extra.append('This customer is not on your jobs, so their records are not shown.')
-        facts, hn = ({}, []) if (cust or cust_hidden) else _public_facts(line, town, state, zip_, sources)
+        num = site_module().Numbering(live, sources)
+        facts = site_module().house_facts(live) if live else {}
+        hn = sorted({num(f['src'], f.get('as_of')) for f in (live or {}).get('facts') or []
+                     if f.get('k') in ('year_built', 'living_area_sqft', 'floor_area_sqft', 'beds', 'stories', 'building_desc', 'heat_source')})
         n_rules = _rules_source(sources)
         ns = hn + [n_rules]
         cr = _county_rule(area.get('county'), state)
@@ -2532,6 +2653,8 @@ def _site_brief(ws, args, sources):
             year = cr.get('median_year') or 1975
         fm = cr.get('fuel') or {'gas': 1.0}
         fuel = top_fuel = max(sorted(fm), key=lambda k: fm[k])
+        if facts.get('fuel'):
+            fuel = top_fuel = facts['fuel']   # the county publishes the heat source
         heat_types = _rules().get('heat_types') or {}
         said_heat = _heat_word(issue_text)                      # "radiators are cold" -> boiler, "heat pump" -> heat pump
         heat = said_heat or (_rules().get('heat_of_fuel') or {}).get(fuel)
@@ -2545,12 +2668,13 @@ def _site_brief(ws, args, sources):
                 fuel = 'electric'
         era = _era(year)
         fnd = _foundation(state, year)
-        house = {'year': year, 'sqft': facts.get('sqft'), 'stories': era.get('stories') or 2, 'style': era.get('style'), 'foundation': fnd,
-                 'basement': 'full' if fnd == 'basement' else 'none', 'fuel': fuel, 'garage': None, '_share': fm.get(top_fuel), '_era': era,
-                 '_top_fuel': top_fuel, '_said_heat': said_heat if heat and said_heat == heat else None}
+        house = {'year': year, 'sqft': facts.get('sqft'), 'stories': facts.get('stories') or era.get('stories') or 2, 'style': era.get('style'),
+                 'foundation': fnd, 'basement': 'full' if fnd == 'basement' else 'none', 'fuel': fuel, 'garage': None,
+                 '_share': None if facts.get('fuel') else fm.get(top_fuel), '_era': era, '_top_fuel': top_fuel,
+                 '_said_heat': said_heat if heat and said_heat == heat else None}
         if heat:
             house['heat'] = heat
-        hbasis = {'year': ybasis, 'fuel': 'likely', 'layout': 'likely'}
+        hbasis = {'year': ybasis, 'fuel': 'public' if facts.get('fuel') else 'likely', 'layout': 'likely'}
         eq, recs, rec_runs, member = [], [], [], None
         site_line = ', '.join(x for x in (line, town, ' '.join(y for y in (state, zip_) if y)) if x)
     pre = _issue_for(issue_text, (job or {}).get('issue') if records else None, house.get('heat'))
@@ -2563,6 +2687,10 @@ def _site_brief(ws, args, sources):
     _meter_from_runs(items, rec_runs)
     tri = triage(issue_text, house, items, recs, (job or {}).get('issue') if records else None, hub=hub, member=member)
     runs = rec_runs + _likely_runs(house, items, rec_runs)
+    if not records:   # the service line to the panel, likely (likely_rules power_runs); no branch wiring is ever drawn
+        pr = (_rules().get('power_runs') or {}).get(house.get('foundation') or 'basement')
+        if isinstance(pr, dict) and all(n in {i.get('kind') for i in items} for n in pr.get('needs') or []):
+            runs.append({**pr, 'basis': 'likely'})
     focus = tri['focus']
     by_kind = {}
     for e in items:
@@ -2581,6 +2709,11 @@ def _site_brief(ws, args, sources):
     hub_txt = f"; {_team_name(area['hub'])}" if area.get('hub') and _team_name(area['hub']) else ''
     if area['status'] == 'adjacent':
         L.append(f"SERVICE AREA: next to our area ({area['county']} County). Check with dispatch before going.")
+    elif area['status'] == 'out':
+        where = f"{area['county']} County, {area['state']}" if area.get('county') else (f'ZIP {zip_}' if zip_ else (state or 'another state'))
+        L.append(f'SERVICE AREA: outside ({where}). Answered from public records anyway; say it is outside the area. Refer to dispatch.')
+    elif area['status'] == 'unknown':
+        L.append('SERVICE AREA: not confirmed. Check the ZIP with dispatch before going.')
     else:
         L.append(f"SERVICE AREA: inside ({area['county']} County{hub_txt})")
     if records:
@@ -2609,7 +2742,8 @@ def _site_brief(ws, args, sources):
     L.append('WHERE THE PROBLEM IS (start here):')
     L += focus_lines or ['- No equipment for this issue on record; start with the main water shutoff and the panel.']
     yr = house.get('year')
-    pipes = '; '.join(_run_text(r) for r in runs)
+    pipes = '; '.join(_run_text(r) for r in runs if r.get('kind') != 'power')
+    wires = '; '.join(_run_text(r) for r in runs if r.get('kind') == 'power')
     era_bits = []
     if isinstance(yr, int):
         if yr < 1970:
@@ -2618,6 +2752,8 @@ def _site_brief(ws, args, sources):
             if f.get('from', 0) <= yr <= f.get('to', 0):
                 era_bits.append(f.get('text'))
     L.append('PIPES: ' + (pipes + '.' if pipes else 'no runs on record.') + (' ' + ' '.join(era_bits) if era_bits else ''))
+    if wires:
+        L.append(f'WIRES: {wires}. Where the circuits run is not on any record.')
     other = [e for k, e in by_kind.items() if k not in focus]
     other_lines = [_item_line(e) for e in other]
     house_bits = []
@@ -2634,7 +2770,8 @@ def _site_brief(ws, args, sources):
         sq = f"; {house['sqft']:,} sq ft (public record)" if house.get('sqft') else ''
         share = house.get('_share')
         top = house.get('_top_fuel') or house['fuel']
-        fuel_txt = (f"{top} heat is most common here ({round(share * 100)}% of homes) (likely)") if isinstance(share, (int, float)) else ''
+        fuel_txt = (f"{top} heat is most common here ({round(share * 100)}% of homes) (likely)") if isinstance(share, (int, float)) else (
+            f"{house['fuel']} heat source (public record)" if hbasis.get('fuel') == 'public' else '')
         ht = _heat_type(house)
         if ht and ht.get('label'):
             why = "the customer's words point to" if house.get('_said_heat') else 'the heat is likely'
@@ -2704,11 +2841,26 @@ def _site_brief(ws, args, sources):
         source_line = 'Source: sandbox ServiceTitan record, fictional customer.'
     key = (parsed.get('key') or site_line) + '|' + (zip_ or '')
     card = sketch(site_line, house, items, runs, {**hbasis, 'card': card_basis}, area, tri, focus, source_line, ns, key=key)
+    extra_cards = []
+    if records:
+        card = _record_dress(card, (cust or {}).get('id'))
+        mc = _record_map(site_line, caddr)
+        if mc:
+            extra_cards.append(mc)
+    if not records:   # (a company-record card keeps its "example data" source line; site.brief adds example: True to it)
+        S = site_module()
+        card = S.dress(card, live or {'label': site_line}, house, num)
+        card['sources'] = list(num.items) + [{'n': n_rules, 'title': 'Where equipment usually is: trade rules of thumb and Census housing data, '
+                                                                      '2020–2024', 'publisher': 'Broad Sky OS', 'url': '', 'date': _iso()}]
+        mc = S.map_command(live or {}, card)
+        if mc:
+            extra_cards.append(mc)
     first_floor = card['floors'][0]['name'].lower() if card['floors'] else 'first floor'
     if card['focus']:
         ff = next((f['name'].lower() for f in card['floors'] if any(i['kind'] == card['focus'][0] for i in f['items'])), first_floor)
         first_floor = ff
-    tail.append(f"SKETCH: on screen ({first_floor} first; {n_rec} recorded, {n_lik} likely; {len(runs)} pipe run{'s' if len(runs) != 1 else ''}).")
+    n_pipes = sum(1 for r in runs if r.get('kind') != 'power')
+    tail.append(f"SKETCH: on screen ({first_floor} first; {n_rec} recorded, {n_lik} likely; {n_pipes} pipe run{'s' if n_pipes != 1 else ''}).")
     cap = FIELD_CAP if field else TEXT_CAP
     body_head = '\n'.join(L)
 
@@ -2725,7 +2877,7 @@ def _site_brief(ws, args, sources):
         srcd = _with_sources(sources, ns, build(other_lines))
     if len(srcd) > cap:
         srcd = srcd[:cap - 1].rsplit('\n', 1)[0]
-    return _no_ids(srcd), False, [card]
+    return _no_ids(srcd), False, [card] + extra_cards
 
 
 # ---------------------------------------------------------------- draft_action
@@ -2903,6 +3055,31 @@ def _draft(ws, args, sources):
             'line; do not repeat the draft in the answer.'), False, [card]
 
 
+def _show_view(ws, args, sources):
+    """One picture (server/views.py build_view) for the model path. The role's own access rules apply; nothing is drawn that the
+    role may not see, and a needed app that is not connected gets the usual not-connected line."""
+    import views   # lazy: views imports workspace lazily too
+    R = _rl(ws)
+    view = args.get('view') if isinstance(args.get('view'), str) else ''
+    company = args.get('company') if isinstance(args.get('company'), str) and args.get('company') in COMPANIES else None
+    a = {k: v for k, v in args.items() if k in ('topic', 'company') and isinstance(v, str)}
+    try:
+        topic = views._pick_topic(ws['role'], view, a) if view in views.KINDS else None
+    except Exception:   # noqa: BLE001
+        topic = None
+    if not topic or topic not in views.TOPICS or not views.access(ws['role'], view, topic, company)[0]:
+        return outside(ws), True, []
+    miss = sorted({app for app, _ in (views.TOPICS[topic][2] or ()) if not _connected(ws, app)})
+    if miss:
+        return not_connected(miss[0], R.get('company')), False, []
+    v = views.build_view(ws['role'], view, dict(a, topic=topic))
+    if v.get('error'):
+        return (outside(ws), True, []) if v['error'] == 'outside' else ('No records to draw.', False, [])
+    n = sources.add(f"view:{topic}:{company or ''}", v['title'], '', v['source'], v['as_of'], 'sandbox' if v['basis'] == views.REC else 'research')
+    cards = [views.card(v)] + ([v['draft']['card']] if v.get('draft') and v['draft'].get('card') else [])
+    return _with_sources(sources, [n], f"{v['title']} [{n}]\n{v['lead']}"), False, cards
+
+
 def action_card(role_id, action, app, app_display, label, fields, rec_id, body):
     """The action_draft card event (section 4.6). The record id is hashed, never sent."""
     cid = 'ad-' + hashlib.sha1(f'{role_id}{action}{rec_id}{body}'.encode('utf-8')).hexdigest()[:8]
@@ -2919,7 +3096,7 @@ def run_tool(name, args, ws, sources):
         return outside(ws, name), True, []
     ws = dict(ws, _sources=sources)
     fn = {'site_brief': _site_brief, 'workspace_search': _search, 'open_record': _open, 'company_numbers': _numbers,
-          'draft_action': _draft}.get(name)
+          'draft_action': _draft, 'show_view': _show_view}.get(name)
     if not fn:
         return outside(ws, name), True, []
     token = _READER.set(ws.get('role'))   # "You" on a record is only the reader's own persona

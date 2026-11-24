@@ -1,0 +1,58 @@
+name: Live site smoke
+
+# Every night, and on demand, checks that the free public services behind the live address feature still answer for six
+# public landmark addresses (town halls and county courthouses across New Jersey and the wired Pennsylvania counties):
+# a location, a building outline, ground elevation and the public facts each county publishes, with no owner field anywhere
+# in the output. It also checks that none of the example customers' invented street names exists on the real road map.
+#
+# No secret is used or printed: every service is free and keyless, and nothing here calls a paid model or the hosted backend.
+# The job fails only when two or more sources fail, or when an owner-like key shows up in an output (a privacy failure).
+# One source down is a warning in the run log, not a failure: public services have bad nights. GitHub emails the repository
+# owner when a scheduled run fails, and that email is the alert.
+
+on:
+  schedule:
+    - cron: '41 5 * * *'   # daily 05:41 UTC, off the hour and clear of the other jobs
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-site-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'   # the backend runs on 3.12 (Vercel and Railway); its pins need 3.11 or newer
+          cache: pip
+          cache-dependency-path: server/requirements.txt
+
+      - name: Install the backend's requirements
+        run: pip install --quiet -r server/requirements.txt httpx==0.28.1
+
+      # Exit 1 when two or more sources fail or an owner-like key appears. One source down exits 0 with a warning.
+      # The step summary on the run page carries the table of checks and timings.
+      - name: Six public landmarks against the live services
+        run: python3 scripts/live_site_smoke.py
+
+      # Exit 1 when an example street exists on the real road map. Exit 2 means the geocoder did not answer: a warning only.
+      - name: Example streets against the real road map
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          python3 scripts/check_sandbox_streets.py
+          rc=$?
+          if [ "$rc" = "2" ]; then
+            echo "::warning title=Street check inconclusive::The Census geocoder did not answer for every address. Run this workflow again."
+            exit 0
+          fi
+          exit "$rc"

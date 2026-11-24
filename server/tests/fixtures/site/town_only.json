@@ -1,0 +1,116 @@
+{
+ "name": "town_only",
+ "typed": "1 Zzyzx Test Ln, Lititz, PA 17543",
+ "issue": "sink repair",
+ "what": "a street that does not exist, in Lititz",
+ "status": "town_only",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "1 Zzyzx Test Ln, Lititz, PA 17543",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "1 Zzyzx Test Ln, Lititz, PA 17543"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": []
+    }
+   }
+  },
+  {
+   "url": "https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Parcels_HUBnew/FeatureServer/0/query",
+   "params": {
+    "where": "ADDRESS LIKE '1 ZZYZX%'",
+    "outFields": "PIN,DISTRICT,LANDUSECD,DEED_ACRES,ADDRESS,BLDGASSESS,TAX_EXEMPT",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriFeet"
+    },
+    "features": []
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "not_found",
+   "matches": []
+  },
+  "parcels": {
+   "ok": true,
+   "src": "pa_lancaster",
+   "parcels": []
+  },
+  "town": {
+   "ok": true,
+   "src": "zip_centroids",
+   "status": "found",
+   "place": {
+    "label": "Lititz, PA 17543",
+    "lat": 40.181,
+    "lon": -76.2954,
+    "precision": "town",
+    "geocoder": "zip centroid",
+    "basis": "public",
+    "src": "zip_centroids",
+    "as_of": null,
+    "date_kind": "retrieved",
+    "zip": "17543",
+    "county": "Lancaster",
+    "state": "PA"
+   }
+  }
+ },
+ "card": null,
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-town_only",
+  "cmd": {
+   "title": "1 Zzyzx Test Ln, Lititz, PA 17543",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 40.181,
+     "lon": -76.2954,
+     "label": "Lititz, PA",
+     "sub": "Town only · the house was not found",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    }
+   ]
+  }
+ }
+}

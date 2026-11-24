@@ -5,7 +5,12 @@ it with Playwright (headless Chromium, SwiftShader WebGL). The test page imports
 
 Run:
   uv run --no-project --python 3.12 --with playwright==1.60.0 python scripts/check_globe_cesium.py \
-      [--port 8983] [--scratch DIR] [--quick]
+      [--port 8983] [--scratch DIR] [--quick] [--screen http://127.0.0.1:<port> [--screen-only]]
+
+--screen also drives the Globe screen of a served copy of the site (python3 OS/serve.py <copy> <port>): the map
+command's 'site' kind and its precision ceilings, MapCmd.site(card), both renderers behind the same command (the
+keyed path with runtime.json answered by the test and Google's root request blocked and asserted), a command posted
+from a frame, reduced motion, the field level and teardown, at 1440x900 and 390x844.
 
 Needs the network for the CesiumJS CDN and the key-free imagery (NASA GIBS, USGS The National Map). Every request to
 Google or Cesium ion is intercepted: nothing metered is ever called, and no key is ever real.
@@ -69,6 +74,315 @@ ADDRESS = {
 # A minimal, empty 3D Tiles tileset used to answer the intercepted root request (not Google content).
 EMPTY_TILESET = {"asset": {"version": "1.0", "copyright": "Check fixture"}, "geometricError": 1000,
                  "root": {"boundingVolume": {"sphere": [0, 0, 0, 1]}, "geometricError": 0, "refine": "REPLACE"}}
+
+
+MV = "?v=20261123172325"
+
+# A public building (the county courthouse block in Lancaster, PA); the rings are a check fixture, not looked up.
+CARD = {
+    "kind": "floor_sketch", "address": "50 N Duke St, Lancaster, PA 17602",
+    "house": {"year": 1854, "year_basis": "public", "stories": 3},
+    "place": {"label": "50 N Duke St, Lancaster, PA 17602", "lat": 40.0396, "lon": -76.3047, "precision": "parcel", "basis": "public"},
+    "building": {"frame": {"origin": {"lon": -76.3047, "lat": 40.0396}, "units": "m"},
+                 "footprint": {"ring_m": [[-20, -15], [20, -15], [20, 15], [-20, 15]], "as_of": "2010-08-17", "basis": "public"},
+                 "height": {"eave_m": 14, "ridge_m": 18, "basis": "likely"},
+                 "parcel": {"ring_m": [[-30, -25], [30, -25], [30, 25], [-30, 25]]},
+                 "front": {"bearing_deg": 270}},
+}
+
+
+CARD_LOG = """window.CARDS = []; window.CARDT = []; new MutationObserver(() => { const c = document.querySelector('.gx-card');
+  if (!c || c.hidden || c.classList.contains('out')) return; const t = c.innerText; if (!t) return;
+  if (window.CARDS[window.CARDS.length - 1] !== t) { window.CARDS.push(t); window.CARDT.push(performance.now()); } })
+  .observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'class'] });"""
+
+
+def run_screen(browser, base, ck, shots):
+    def new_page(w, h, role="bsp-managing-partner", reduced=None, keyed=False, dsf=1):
+        ctx = browser.new_context(viewport={"width": w, "height": h}, device_scale_factor=dsf, reduced_motion=reduced or "no-preference",
+                                  is_mobile=w < 768, has_touch=w < 768)
+        ctx.add_init_script(CARD_LOG)
+        page = ctx.new_page()
+        log = {"errors": [], "metered": [], "cdn": [], "runtime": 0}
+        page.on("console", lambda m: log["errors"].append(m.text) if m.type == "error" else None)
+        page.on("pageerror", lambda e: log["errors"].append("pageerror: " + str(e)))
+
+        def handle(route):
+            url = route.request.url
+            if any(c in url for c in CDN):
+                log["cdn"].append(url)
+            if "/assets/runtime.json" in url:
+                log["runtime"] += 1
+                if keyed:
+                    return route.fulfill(status=200, content_type="application/json",
+                                         body=json.dumps({"chatEndpoint": "", "maps": {"google3dTilesKey": FAKE_KEY}}))
+            if any(m in url for m in METERED) and not url.endswith("/google-credit.png"):
+                log["metered"].append(url)
+                return route.abort()
+            return route.continue_()
+        page.route("**/*", handle)
+        page.goto(f"{base}/app.html?role={role}#/home/overview")
+        page.wait_for_function("!!window.MapCmd", timeout=30000)
+        return ctx, page, log
+
+    def open_globe(page, timeout=90000):
+        page.evaluate("location.hash = '#/globe/view'")
+        page.wait_for_function("window.BSPGlobe && window.BSPGlobe.mode && window.BSPGlobe.mode !== 'none'", timeout=timeout)
+        return page.evaluate("({ renderer: window.BSPGlobe.renderer, mode: window.BSPGlobe.mode })")
+
+    def wait_card(page, text, timeout=90, after=0):
+        """The first place card (from the n-th one logged on) whose text holds `text`, and the globe's state then."""
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            cards = page.evaluate("window.CARDS")
+            hit = next((c for c in cards[after:] if text in c), None)
+            if hit:
+                return page.evaluate("window.BSPGlobe && window.BSPGlobe.state()"), hit
+            time.sleep(0.25)
+        return page.evaluate("window.BSPGlobe && window.BSPGlobe.state()"), None
+
+    def ncards(page):
+        return page.evaluate("window.CARDS.length")
+
+    # ── 1. contract: ceilings, outline rules, MapCmd.site ──
+    ctx, page, log = new_page(1440, 900)
+    r = page.evaluate(f"""async () => {{ const M = window.MapCmd; const v = s => M.validate({{ steps: [s] }});
+      const at = {{ lat: 40.0396, lon: -76.3047 }};
+      const ring = [[-76.3049, 40.0395], [-76.3045, 40.0395], [-76.3045, 40.0397], [-76.3049, 40.0397]];
+      const far = [[-76.4, 40.0395], [-76.3045, 40.0395], [-76.3045, 40.0397]];
+      const z = (p, zoom) => v({{ kind: 'site', ...at, label: '50 N Duke St, Lancaster', precision: p, zoom }}).cmd.steps[0];
+      const big = Array.from({{ length: 49 }}, (_, k) => [-76.3047 + 0.0002 * Math.cos(k / 49 * 6.28), 40.0396 + 0.0002 * Math.sin(k / 49 * 6.28)]);
+      return {{
+        parcel: z('parcel', 25).zoom, typed: z('typed', 25).zoom, town: z('town', 25).zoom, unknown: z(undefined, 25).zoom, junk: z('rooftop', 25).zoom,
+        ceil: [z('parcel').ceiling, z('typed').ceiling, z('town').ceiling],
+        defaults: [z('parcel').zoom, z('typed').zoom, z('town').zoom],
+        address: v({{ kind: 'address', ...at, label: '50 N Duke St', zoom: 25 }}).cmd.steps[0],
+        siteLabel: z('parcel').label,
+        outlineParcel: v({{ kind: 'site', ...at, precision: 'parcel', outline: ring, height_m: 18, parcel: ring }}).cmd.steps[0],
+        outlineTyped: v({{ kind: 'site', ...at, precision: 'typed', outline: ring, height_m: 18 }}).cmd.steps[0],
+        outlineFar: v({{ kind: 'site', ...at, precision: 'parcel', outline: far }}).cmd.steps[0],
+        outlineBig: v({{ kind: 'site', ...at, precision: 'parcel', outline: big }}).cmd.steps[0],
+        badHeight: v({{ kind: 'site', ...at, precision: 'parcel', outline: ring, height_m: 9999, height_basis: 'public' }}).cmd.steps[0],
+        nanOutline: v({{ kind: 'site', ...at, precision: 'parcel', outline: [[NaN, 1], [2, 3], [4, 5]] }}).cmd.steps[0],
+        front: v({{ kind: 'site', ...at, precision: 'parcel', front_deg: 270 }}).cmd.steps[0].bearing,
+        site: M.site({json.dumps(CARD)}),
+        siteResp: M.site({{ status: 'found', place: {json.dumps(CARD['place'])}, cards: [{json.dumps(CARD)}] }}),
+        siteTown: M.site({{ place: {{ label: 'Lititz, PA', lat: 40.157, lon: -76.307, precision: 'town' }} }}),
+        siteNone: M.site({{ place: {{}} }}),
+      }}; }}""")
+    ck.ok("contract: zoom ceilings by precision (parcel 19, typed 16.5, town 12.5; unknown counts as town)",
+          [r["parcel"], r["typed"], r["town"], r["unknown"], r["junk"]] == [19, 16.5, 12.5, 12.5, 12.5] and r["ceil"] == [19, 16.5, 12.5],
+          json.dumps([r["parcel"], r["typed"], r["town"], r["unknown"], r["junk"], r["ceil"]]))
+    ck.ok("contract: default landing zooms 18.5 / 16.5 / 12", r["defaults"] == [18.5, 16.5, 12], json.dumps(r["defaults"]))
+    ck.ok("contract: 'address' stays the example kind (label Example address, zoom 17)",
+          r["address"]["label"] == "Example address" and r["address"]["zoom"] == 17 and r["address"]["ceiling"] == 17)
+    ck.ok("contract: a site step keeps the typed address as its label", r["siteLabel"] == "50 N Duke St, Lancaster")
+    op = r["outlineParcel"]
+    ck.ok("contract: parcel precision keeps outline, parcel edge and height", len(op.get("outline", [])) == 4 and len(op.get("parcel", [])) == 4 and op.get("height_m") == 18 and op.get("height_basis") == "likely", json.dumps(op)[:200])
+    ck.ok("contract: typed precision drops the outline", "outline" not in r["outlineTyped"] and "height_m" not in r["outlineTyped"])
+    ck.ok("contract: an outline far from its point, over 48 points, or with a bad number is dropped",
+          "outline" not in r["outlineFar"] and "outline" not in r["outlineBig"] and "outline" not in r["nanOutline"])
+    ck.ok("contract: height clamped to 120 m and an out-of-range height is not 'public'", r["badHeight"]["height_m"] == 120 and r["badHeight"]["height_basis"] == "likely")
+    ck.ok("contract: front_deg 270 (front faces west) turns the camera to bearing 90 (looking east at it)", r["front"] == 90, str(r["front"]))
+    s = r["site"]
+    ok_site = s and len(s["steps"]) == 2 and s["steps"][0]["precision"] == "town" and s["steps"][0]["label"] == "Lancaster, PA" \
+        and s["steps"][0]["zoom"] <= 12.5 and s["steps"][1]["precision"] == "parcel" and s["steps"][1]["label"] == "50 N Duke St, Lancaster, PA 17602" \
+        and len(s["steps"][1]["outline"]) == 4 and len(s["steps"][1]["parcel"]) == 4 and s["steps"][1]["height_m"] == 18 and s["steps"][1]["bearing"] == 90
+    ck.ok("MapCmd.site(card): town step, then the building (typed label, outline, parcel, height, street-facing bearing)", ok_site, json.dumps(s)[:400])
+    ck.ok("MapCmd.site(card): outline date and facts on the card",
+          s["steps"][1]["sub"] == "Parcel match · outline from imagery dated Aug 2010"
+          and s["steps"][1]["figures"] == [["Built", "1854", None], ["Storeys", "3", "est"], ["Height", "18 m", "est"]], json.dumps([s["steps"][1]["sub"], s["steps"][1]["figures"]]))
+    ox, oy = s["steps"][1]["outline"][1]
+    ck.ok("MapCmd.site(card): local metres become lon/lat (20 m east, 15 m south)", abs((ox + 76.3047) * 111320 * 0.7657 - 20) < 0.2 and abs((oy - 40.0396) * 110574 + 15) < 0.2, f"{ox},{oy}")
+    ck.ok("MapCmd.site(response): the endpoint's whole response works the same", r["siteResp"] == s)
+    ck.ok("MapCmd.site: town only is one step at 12.5 at most, no outline; no place gives null",
+          r["siteTown"] and len(r["siteTown"]["steps"]) == 1 and r["siteTown"]["steps"][0]["zoom"] <= 12.5 and "outline" not in r["siteTown"]["steps"][0] and r["siteNone"] is None)
+    words = json.dumps(s).lower()
+    ck.ok("MapCmd.site: no 'example', 'sandbox' or 'fictional' anywhere in a live address command", not any(w in words for w in ("example", "sandbox", "fictional")))
+    ck.ok("nothing metered or CesiumJS before the globe opens (home screen)", not log["metered"] and not log["cdn"], json.dumps(log["metered"][:2] + log["cdn"][:2]))
+    ck.ok("runtime.json not read before the globe opens", log["runtime"] == 0, str(log["runtime"]))
+    ctx.close()
+
+    # ── 2. MapLibre renderer (no key): the two-step site command at both viewports ──
+    for (w, h, dsf) in [(1440, 900, 1), (390, 844, 3)]:
+        name = f"{w}x{h}"
+        ctx, page, log = new_page(w, h, dsf=dsf)
+        o = open_globe(page)
+        ck.ok(f"open {name}: no key -> MapLibre renderer", o["renderer"] == "open" and o["mode"] == "open", json.dumps(o))
+        n0 = ncards(page)
+        page.evaluate(f"window.MapCmd.run(window.MapCmd.site({json.dumps(CARD)}))")
+        st0, card0 = wait_card(page, "Lancaster, PA", 60, n0)
+        st, card = wait_card(page, "50 N Duke St", 90, n0)
+        page.wait_for_timeout(2500)
+        st = page.evaluate("window.BSPGlobe.state()")
+        page.screenshot(path=str(shots / f"site_open_{name}.png"))
+        cam = st.get("camera") or {}
+        ck.ok(f"open {name}: flies to town level first (card 'Lancaster, PA', zoom <= 12.5)", card0 and "1 / 2" in card0 and st0["camera"]["zoom"] <= 12.51, json.dumps([card0, st0.get("camera")]))
+        ck.ok(f"open {name}: then down to the building, card labelled with the typed address, no 'Example'",
+              card and "50 N Duke St, Lancaster, PA 17602" in card and "Example" not in card and "Parcel match" in card, (card or "").replace("\n", " | ")[:160])
+        ck.ok(f"open {name}: camera down at the building (zoom 18 to 19), facing the street side", 18 <= cam.get("zoom", 99) <= 19.0 and abs(((cam.get("bearing", 0) - 90 + 540) % 360) - 180) < 40, json.dumps(cam))
+        pins = page.evaluate("[...document.querySelectorAll('.gx-pin.stop .gx-lbl')].map(e => e.textContent)")
+        ck.ok(f"open {name}: one pin, the typed address (the town step that stages it has none)", pins == ["50 N Duke St, Lancaster, PA 17602"], json.dumps(pins))
+        ck.ok(f"open {name}: outline extruded, edge and parcel drawn; map buildings dimmed", st.get("siteFeatures") == 3 and st.get("dimmed") is True, json.dumps({k: st.get(k) for k in ("siteFeatures", "dimmed")}))
+        ck.ok(f"open {name}: map zoom limited to 19 while the site shows", st.get("maxZoom") == 19, str(st.get("maxZoom")))
+        page.mouse.move(w / 2, h / 2)
+        for _ in range(20):
+            page.mouse.wheel(0, -900)
+            page.wait_for_timeout(40)
+        page.wait_for_timeout(1200)
+        z = page.evaluate("window.BSPGlobe.state().camera.zoom")
+        ck.ok(f"open {name}: manual zoom cannot pass 19", z <= 19.0, str(z))
+        # typed precision: no outline, ceiling 16.5
+        n0 = ncards(page)
+        page.evaluate("""window.MapCmd.run({ title: 'T', steps: [{ kind: 'site', lat: 40.0396, lon: -76.3047, label: 'Typed 50 N Duke St', precision: 'typed', zoom: 19, hold_ms: 1500, outline: [[-76.3049,40.0395],[-76.3045,40.0395],[-76.3045,40.0397]] }] })""")
+        st, card = wait_card(page, "Typed 50 N Duke St", 60, n0)
+        page.wait_for_timeout(800)
+        st = page.evaluate("window.BSPGlobe.state()")
+        ck.ok(f"open {name}: typed precision stops at 16.5 and draws no outline; buildings not dimmed",
+              st["camera"]["zoom"] <= 16.51 and st.get("maxZoom") == 16.5 and st.get("siteFeatures") == 0 and st.get("dimmed") is False, json.dumps({k: st.get(k) for k in ("camera", "maxZoom", "siteFeatures", "dimmed")}))
+        ck.ok(f"open {name}: no console error, nothing metered", not log["errors"] and not log["metered"] and not log["cdn"], "; ".join(log["errors"][:3]))
+        # teardown
+        res = page.evaluate("""async () => { location.hash = '#/home/overview'; await new Promise(r => setTimeout(r, 1500));
+          return { open: !!window.__bspGlobeOpen, g: !!window.BSPGlobe, stage: document.querySelectorAll('.gx-stage, .gx-globe, .maplibregl-map').length, markers: document.querySelectorAll('.gx-pin').length }; }""")
+        ck.ok(f"teardown {name}: leaving the screen removes the map and stops listening", res == {"open": False, "g": False, "stage": 0, "markers": 0}, json.dumps(res))
+        ctx.close()
+
+    # ── 3. a command posted from an embedded page (same origin only); MapCmd.run inside a frame forwards ──
+    ctx, page, log = new_page(1440, 900)
+    open_globe(page)
+    page.evaluate("""() => { const f = document.createElement('iframe'); f.id = 'fr'; f.src = '/assets/runtime.json'; f.style.cssText = 'position:fixed;width:10px;height:10px;bottom:0;right:0;opacity:0';
+      document.body.appendChild(f); const x = document.createElement('iframe'); x.id = 'xo'; x.src = location.href.replace('127.0.0.1', 'localhost').replace(/app\\.html.*/, 'assets/runtime.json'); x.style.cssText = f.style.cssText; document.body.appendChild(x); }""")
+    page.wait_for_timeout(1500)
+    fr = next(f for f in page.frames if f.url.startswith("http://127.0.0.1") and f.url.endswith("/assets/runtime.json"))
+    xo = next(f for f in page.frames if f.url.startswith("http://localhost"))
+    cmd_x = {"title": "X", "steps": [{"kind": "place", "lat": 10, "lon": 10, "label": "Other origin", "hold_ms": 1500}]}
+    xo.evaluate(f"parent.postMessage({{ type: 'bsp:map', cmd: {json.dumps(cmd_x)} }}, '*')")
+    page.wait_for_timeout(1200)
+    t = page.evaluate("document.querySelector('.gx-title')?.textContent || ''")
+    ck.ok("message: a command from another origin is ignored", "Other origin" not in t and t != "X", t)
+    site_cmd = page.evaluate(f"window.MapCmd.site({json.dumps(CARD)})")
+    n0 = ncards(page)
+    fr.evaluate(f"parent.postMessage({{ type: 'bsp:map', cmd: {json.dumps(site_cmd)} }}, location.origin)")
+    st, card = wait_card(page, "Lancaster, PA", 60, n0)
+    t = page.evaluate("document.querySelector('.gx-title')?.textContent || ''")
+    ck.ok("message: { type: 'bsp:map', cmd } from a same-origin frame runs on the globe", t == "50 N Duke St, Lancaster, PA 17602" and card and "Lancaster, PA" in card, json.dumps([t, card]))
+    fr.evaluate(f"""async () => {{ const M = (await import(location.origin + '/assets/mapcmd.js{MV}')).MapCmd;
+        M.run({{ title: 'From frame', steps: [{{ kind: 'site', lat: 40.0396, lon: -76.3047, label: '50 N Duke St, Lancaster, PA', precision: 'typed', hold_ms: 1500 }}] }}); }}""")
+    page.wait_for_timeout(1500)
+    t = page.evaluate("document.querySelector('.gx-title')?.textContent || ''")
+    fh = fr.evaluate("location.href")
+    ck.ok("message: MapCmd.run inside an embedded page hands the command to the shell (the frame does not navigate)",
+          t == "From frame" and fh.endswith("/assets/runtime.json"), json.dumps([t, fh]))
+    ck.ok("message: no console error", not log["errors"], "; ".join(log["errors"][:3]))
+    # globe closed: a posted command opens the globe and runs there
+    page.evaluate("location.hash = '#/home/overview'")
+    page.wait_for_timeout(1200)
+    page.evaluate("document.getElementById('fr') || null")
+    fr2 = [f for f in page.frames if f.url.startswith("http://127.0.0.1") and f.url.endswith("/assets/runtime.json")]
+    if fr2:
+        fr2[0].evaluate(f"parent.postMessage({{ type: 'bsp:map', cmd: {json.dumps(site_cmd)} }}, location.origin)")
+        page.wait_for_function("location.hash.startsWith('#/globe/view') && window.BSPGlobe", timeout=30000)
+        page.wait_for_timeout(1500)
+        t = page.evaluate("document.querySelector('.gx-title')?.textContent || ''")
+        ck.ok("message: with the globe closed, a posted command opens it and runs", t == "50 N Duke St, Lancaster, PA 17602", t)
+    else:
+        ck.ok("message: with the globe closed, a posted command opens it and runs", False, "frame gone with the screen")
+    ctx.close()
+
+    # ── 4. reduced motion: cut straight to the building ──
+    ctx, page, log = new_page(1440, 900, reduced="reduce")
+    open_globe(page)
+    page.evaluate(f"window.__T0 = performance.now(); window.MapCmd.run(window.MapCmd.site({json.dumps(CARD)}))")
+    st, card = wait_card(page, "50 N Duke St", 30)
+    dt = page.evaluate("(window.CARDT[window.CARDS.findIndex(c => c.includes('50 N Duke St'))] - window.__T0) / 1000")
+    town = page.evaluate("window.CARDS.some(c => c.includes('1 / 2'))")
+    st = page.evaluate("window.BSPGlobe.state()")
+    ck.ok("reduced motion: the town step is skipped and the camera cuts to the building", card and not town and dt < 3 and 18 <= st["camera"]["zoom"] <= 19 and not st["orbiting"],
+          json.dumps({"card_after_s": round(dt, 2), "town_card": town, "camera": st["camera"], "orbiting": st["orbiting"]}))
+    ctx.close()
+
+    # ── 5. field role: a site command is shown (no tours) ──
+    ctx, page, log = new_page(390, 844, role="pp-plumber", dsf=2)
+    page.evaluate(f"window.MapCmd.run(window.MapCmd.site({json.dumps(CARD)}))")
+    page.wait_for_function("window.BSPGlobe && window.BSPGlobe.mode !== 'none'", timeout=60000)
+    st, card = wait_card(page, "Lancaster, PA", 60)
+    n = page.evaluate("document.querySelectorAll('.gx-stops li').length")
+    tours = page.evaluate("document.querySelectorAll('.gx-tours [data-tour]').length")
+    ck.ok("field level: the typed-address command runs (2 stops, no tours)", n == 2 and tours == 0 and card, json.dumps([n, tours, card]))
+    ctx.close()
+
+    # ── 6. keyed: the CesiumJS renderer behind the same command, Google's root request blocked and asserted ──
+    for (w, h, dsf) in [(1440, 900, 1), (390, 844, 3)]:
+        name = f"{w}x{h}"
+        ctx, page, log = new_page(w, h, keyed=True, dsf=dsf)
+        seen = []
+
+        def google(route):
+            rq = route.request
+            seen.append({"url": rq.url, "method": rq.method})
+            route.abort()
+        page.route("**://tile.googleapis.com/**", google)
+        page.wait_for_timeout(800)
+        ck.ok(f"keyed {name}: nothing sent to Google or the CesiumJS CDN before the globe opens", not seen and not log["cdn"], json.dumps(seen[:1]))
+        o = open_globe(page)
+        page.wait_for_function("window.BSPGlobe.api && window.BSPGlobe.api.tiles", timeout=60000)
+        tiles = page.evaluate("window.BSPGlobe.api.tiles")
+        page.wait_for_timeout(500)
+        ck.ok(f"keyed {name}: key in runtime.json -> CesiumJS renderer", o["renderer"] == "cesium" and o["mode"] == "cesium" and log["cdn"], json.dumps(o))
+        u = seen[0]["url"] if seen else ""
+        ck.ok(f"keyed {name}: one blocked GET to tile.googleapis.com/v1/3dtiles/root.json with the configured key, then the key-free globe",
+              len(seen) == 1 and seen[0]["method"] == "GET" and u.split("?")[0] == "https://tile.googleapis.com/v1/3dtiles/root.json" and f"key={FAKE_KEY}" in u and tiles.get("route") == "none",
+              json.dumps({"n": len(seen), "url": u.replace(FAKE_KEY, "<key>"), "tiles": tiles}))
+        n0 = ncards(page)
+        page.evaluate(f"window.MapCmd.run(window.MapCmd.site({json.dumps(CARD)}))")
+        st0, card0 = wait_card(page, "1 OF 2", 90, n0)
+        st, card = wait_card(page, "2 OF 2", 120, n0)
+        drawn = False
+        for _ in range(60):   # the outline's geometry is built off the main thread; SwiftShader is slow
+            drawn = page.evaluate("window.BSPGlobe.state().sitesDrawn")
+            if drawn:
+                break
+            page.wait_for_timeout(500)
+        page.wait_for_timeout(3000)   # a few frames for the built geometry to reach the screen before the picture
+        st = page.evaluate("window.BSPGlobe.state()")
+        page.screenshot(path=str(shots / f"site_cesium_{name}.png"))
+        ck.ok(f"keyed {name}: the outline geometry is built and shown", drawn)
+        ex = page.evaluate("document.querySelector('.gx-example')?.textContent || null")
+        ck.ok(f"keyed {name}: same command: town first, then the building with its typed label (no 'Example address' chip)",
+              card0 and "Lancaster, PA" in card0 and card and "50 N Duke St, Lancaster, PA 17602" in card and ex is None, json.dumps([card0, card, ex])[:300])
+        ck.ok(f"keyed {name}: parcel floor 150 m held on every frame; outline, roof edge and parcel edge drawn",
+              st["precision"] == "parcel" and st["floor"] == 150 and (st["minHeightAboveDuringFloor"] or 0) >= 149 and st["siteEntities"] == 4,
+              json.dumps({k: st.get(k) for k in ("precision", "floor", "minHeightAboveDuringFloor", "siteEntities")}))
+        rects = page.evaluate("""() => { const r = s => { const e = document.querySelector(s); if (!e || e.hidden) return null; const b = e.getBoundingClientRect(); return {x:b.x,y:b.y,w:b.width,h:b.height}; };
+          return { panel: r('.gx-panel'), card: r('.gx-globe .gx-card'), bar: r('.gx-bar .gx-modes') }; }""")
+        ov = lambda a, b: a and b and not (a["x"] + a["w"] <= b["x"] or b["x"] + b["w"] <= a["x"] or a["y"] + a["h"] <= b["y"] or b["y"] + b["h"] <= a["y"])
+        ck.ok(f"keyed {name}: the place card and look chips do not sit under the panel", not ov(rects["panel"], rects["card"]) and not ov(rects["panel"], rects["bar"]), json.dumps(rects))
+        if w == 1440:
+            # typed precision: 900 m floor, no outline
+            n0 = ncards(page)
+            page.evaluate("""window.MapCmd.run({ title: 'T', steps: [{ kind: 'site', lat: 40.0396, lon: -76.3047, label: 'Typed 50 N Duke St', precision: 'typed', zoom: 19, hold_ms: 1500 }] })""")
+            st, card = wait_card(page, "Typed 50 N Duke St", 60, n0)
+            st = page.evaluate("window.BSPGlobe.state()")
+            ck.ok("keyed: typed precision floor 900 m, nothing drawn for the building",
+                  st["precision"] == "typed" and st["floor"] == 900 and st["heightAboveGround"] >= 899 and st["siteEntities"] == 0,
+                  json.dumps({k: st.get(k) for k in ("precision", "floor", "heightAboveGround", "siteEntities")}))
+            # the panel's controls steer the CesiumJS renderer
+            n0 = ncards(page)
+            page.evaluate(f"(() => {{ const c = window.MapCmd.site({json.dumps(CARD)}); c.steps.forEach(s => s.hold_ms = 20000); window.MapCmd.run(c); }})()")
+            wait_card(page, "1 OF 2", 60, n0)
+            page.click(".gx-ctl [data-act=pause]")
+            page.wait_for_timeout(300)
+            p1 = page.evaluate("window.BSPGlobe.state().userPaused")
+            page.click(".gx-ctl [data-act=next]")
+            st, card = wait_card(page, "2 OF 2", 60, n0)
+            ck.ok("keyed: the panel's Pause and Next steer the CesiumJS renderer", p1 is True and card and "50 N Duke St" in card, json.dumps([p1, card])[:200])
+        errs = [e for e in log["errors"] if "net::ERR_FAILED" not in e]   # the blocked root request logs one
+        ck.ok(f"keyed {name}: no console error, no other metered request", not errs and all("tile.googleapis.com/v1/3dtiles/root.json" in m for m in log["metered"]), "; ".join(errs[:3] + log["metered"][:2]))
+        res = page.evaluate("""async () => { const c = document.querySelector('.gx-globe canvas'); const gl = c && (c.getContext('webgl2') || c.getContext('webgl'));
+          location.hash = '#/home/overview'; await new Promise(r => setTimeout(r, 1500));
+          return { open: !!window.__bspGlobeOpen, g: !!window.BSPGlobe, left: document.querySelectorAll('.gx-globe, .cesium-widget').length, lost: gl ? gl.isContextLost() : null }; }""")
+        ck.ok(f"keyed teardown {name}: leaving the screen destroys the viewer and frees its WebGL context", res == {"open": False, "g": False, "left": 0, "lost": True}, json.dumps(res))
+        ctx.close()
 
 
 def make_server(port: int, scratch: Path):
@@ -148,6 +462,8 @@ def main():
     ap.add_argument("--scratch", default=os.environ.get("GX_SCRATCH") or tempfile.mkdtemp(prefix="gx_cesium_"))
     ap.add_argument("--quick", action="store_true", help="one viewport and theme for the render pass")
     ap.add_argument("--headed", action="store_true")
+    ap.add_argument("--screen", default="", help="base URL of a served copy of the site: also check the Globe screen")
+    ap.add_argument("--screen-only", action="store_true", help="with --screen: skip the renderer checks")
     args = ap.parse_args()
 
     scratch = Path(args.scratch)
@@ -217,11 +533,31 @@ def main():
                 time.sleep(0.5)
             return False
 
+        if args.screen:
+            run_screen(browser, args.screen.rstrip("/"), ck, shots)
+        if args.screen_only:
+            browser.close()
+            srv.shutdown()
+            fails = [r for r in ck.results if not r[1]]
+            print(f"\n{len(ck.results) - len(fails)} passed, {len(fails)} failed. Screenshots: {shots}")
+            sys.exit(1 if fails else 0)
+
         # ── 1. import alone loads nothing heavy ──
         ctx, page, log = new_page(1440, 900)
         time.sleep(1.0)
         ck.ok("import: no CesiumJS or tile request before the globe is opened",
               not log["cdn"] and not log["metered"] and not any("gibs" in u or "nationalmap" in u for u in log["requests"]))
+        fl = page.evaluate("""() => { const f = s => window.GX.cleanStep(s); const at = { lat: 40.0396, lon: -76.3047 };
+            const ring = [[-76.3049, 40.0395], [-76.3045, 40.0395], [-76.3045, 40.0397], [-76.3049, 40.0397]];
+            return { parcel: f({ ...at, kind: 'site', precision: 'parcel', zoom: 25 }), typed: f({ ...at, kind: 'site', precision: 'typed', zoom: 25, outline: ring }),
+              town: f({ ...at, kind: 'site', zoom: 25 }), address: f({ ...at, kind: 'address', zoom: 25 }),
+              areaTyped: f({ ...at, kind: 'area', precision: 'typed' }), outlined: f({ ...at, kind: 'site', precision: 'parcel', outline: ring, parcel: ring, height_m: 18 }) }; }""")
+        ck.ok("site: floors follow precision (parcel 150 m, typed 900 m, town 12,000 m); 3,000 m stays for 'address'",
+              [fl["parcel"]["floor"], fl["typed"]["floor"], fl["town"]["floor"], fl["address"]["floor"], fl["areaTyped"]["floor"]] == [150, 900, 12000, 3000, 900],
+              json.dumps([fl[k]["floor"] for k in ("parcel", "typed", "town", "address", "areaTyped")]))
+        ck.ok("site: zoom ceilings 19 / 16.5 / 12.5 in the renderer too", [fl["parcel"]["zoom"], fl["typed"]["zoom"], fl["town"]["zoom"]] == [19, 16.5, 12.5])
+        ck.ok("site: outline, parcel edge and height kept only at parcel precision",
+              len(fl["outlined"].get("outline", [])) == 4 and len(fl["outlined"].get("parcel", [])) == 4 and fl["outlined"]["height_m"] == 18 and "outline" not in fl["typed"])
         ctx.close()
 
         # ── 2. key-free globe renders: viewports x themes ──

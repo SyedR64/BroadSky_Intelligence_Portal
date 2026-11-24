@@ -1,0 +1,2429 @@
+{
+ "name": "pa_franklin_full",
+ "typed": "157 Lincoln Way E, Chambersburg, PA 17201",
+ "issue": "sink repair",
+ "what": "Franklin County Courthouse (public building)",
+ "status": "found",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "157 Lincoln Way E, Chambersburg, PA 17201",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "157 Lincoln Way E, Chambersburg, PA 17201"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": [
+      {
+       "tigerLine": {
+        "side": "R",
+        "tigerLineId": "60095128"
+       },
+       "coordinates": {
+        "x": -77.659634419248,
+        "y": 39.937339309803
+       },
+       "addressComponents": {
+        "zip": "17201",
+        "streetName": "LINCOLN",
+        "preType": "",
+        "city": "CHAMBERSBURG",
+        "preDirection": "",
+        "suffixDirection": "E",
+        "fromAddress": "199",
+        "state": "PA",
+        "suffixType": "WAY",
+        "toAddress": "101",
+        "suffixQualifier": "",
+        "preQualifier": ""
+       },
+       "matchedAddress": "157 LINCOLN WAY E, CHAMBERSBURG, PA, 17201"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://fcgis.franklincountypa.gov/fcgishosting/rest/services/TaxRecords/FC_TaxRecords/MapServer/0/query",
+   "params": {
+    "where": "FULL_SITUS_ADDR LIKE '157 LINCOLN%'",
+    "outFields": "CONTROL_NUMBER,FULL_SITUS_ADDR,REM_PRCL_LOCN_CITY,REM_PRCL_LOCN_ZIP,LAND_USE_CODE,LAND_USE_DESC,YEAR_BUILT,CNS_AREA_LIVING,CNS_STORIES,CNS_STYLE_DESC,CNS_BASEMENT,HEAT_SOURCE,HEAT_DISTRIBUTION,ATTACHED_GARAGE,ATTACHED_GARAGE_AREA_SQFT,TOTAL_NUMBER_OF_BEDROOMS,PRC_TTL_ASSESS_BLDG,TOTAL_DEEDED_ACRES,COMM_OUTBLDG_1_USE,COMM_OUTBLDG_1_SQ_FT,COMM_OUTBLDG_1_STORIES",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "displayFieldName": "Name",
+    "fieldAliases": {
+     "CONTROL_NUMBER": "CONTROL NUMBER",
+     "FULL_SITUS_ADDR": "FULL_SITUS_ADDR",
+     "REM_PRCL_LOCN_CITY": "SITUS POSTAL CITY",
+     "REM_PRCL_LOCN_ZIP": "SITUS ZIP",
+     "LAND_USE_CODE": "LAND USE CODE",
+     "LAND_USE_DESC": "LAND USE DESCRIPTION",
+     "YEAR_BUILT": "DWELLING BUILT",
+     "CNS_AREA_LIVING": "DWELLING AREA",
+     "CNS_STORIES": "DWELLING STORIES",
+     "CNS_STYLE_DESC": "DWELLING STYLE",
+     "CNS_BASEMENT": "BASEMENT PRCT",
+     "HEAT_SOURCE": "HEAT SOURCE",
+     "HEAT_DISTRIBUTION": "HEATING DISTRIBUTION",
+     "ATTACHED_GARAGE": "ATTACHED GARAGE",
+     "ATTACHED_GARAGE_AREA_SQFT": "ATTACHED GARAGE SQ FT",
+     "TOTAL_NUMBER_OF_BEDROOMS": "TOTAL BEDS",
+     "PRC_TTL_ASSESS_BLDG": "BLDG ASSESSMENT",
+     "TOTAL_DEEDED_ACRES": "DEEDED ACRES",
+     "COMM_OUTBLDG_1_USE": "COMMERCIAL OUTBUILDING 1 USE",
+     "COMM_OUTBLDG_1_SQ_FT": "COMMERCIAL OUTBUILDING 1 SQ FT",
+     "COMM_OUTBLDG_1_STORIES": "COMMERCIAL OUTBUILDING 1 STORIES"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "CONTROL_NUMBER": "00006546",
+       "FULL_SITUS_ADDR": "157 LINCOLN WAY EAST  CHAMBERSBURG PA 17201",
+       "REM_PRCL_LOCN_CITY": "CHAMBERSBURG",
+       "REM_PRCL_LOCN_ZIP": "17201",
+       "LAND_USE_CODE": 604,
+       "LAND_USE_DESC": "OTHER MISCELLANEOUS, EXEMPT",
+       "YEAR_BUILT": null,
+       "CNS_AREA_LIVING": null,
+       "CNS_STORIES": null,
+       "CNS_STYLE_DESC": null,
+       "CNS_BASEMENT": null,
+       "HEAT_SOURCE": null,
+       "HEAT_DISTRIBUTION": null,
+       "ATTACHED_GARAGE": "YES",
+       "ATTACHED_GARAGE_AREA_SQFT": null,
+       "TOTAL_NUMBER_OF_BEDROOMS": null,
+       "PRC_TTL_ASSESS_BLDG": 0,
+       "TOTAL_DEEDED_ACRES": 0,
+       "COMM_OUTBLDG_1_USE": "Other",
+       "COMM_OUTBLDG_1_SQ_FT": 46528,
+       "COMM_OUTBLDG_1_STORIES": "4"
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.66101,
+          39.9382871
+         ],
+         [
+          -77.6610059,
+          39.9383028
+         ],
+         [
+          -77.6609987,
+          39.9383359
+         ],
+         [
+          -77.6609846,
+          39.9384009
+         ],
+         [
+          -77.660974,
+          39.9384496
+         ],
+         [
+          -77.6609682,
+          39.9384761
+         ],
+         [
+          -77.6609493,
+          39.9385627
+         ],
+         [
+          -77.6600467,
+          39.9384437
+         ],
+         [
+          -77.6600186,
+          39.93844
+         ],
+         [
+          -77.6600375,
+          39.9383527
+         ],
+         [
+          -77.6600277,
+          39.9383512
+         ],
+         [
+          -77.6600625,
+          39.9381691
+         ],
+         [
+          -77.6593707,
+          39.9380774
+         ],
+         [
+          -77.6593776,
+          39.9380477
+         ],
+         [
+          -77.6594105,
+          39.9379017
+         ],
+         [
+          -77.659396,
+          39.9379018
+         ],
+         [
+          -77.6593635,
+          39.9380458
+         ],
+         [
+          -77.6591526,
+          39.9380181
+         ],
+         [
+          -77.6591839,
+          39.9378736
+         ],
+         [
+          -77.659207,
+          39.9377668
+         ],
+         [
+          -77.6592643,
+          39.9375024
+         ],
+         [
+          -77.6593832,
+          39.9375183
+         ],
+         [
+          -77.6593265,
+          39.9377825
+         ],
+         [
+          -77.6594202,
+          39.9377948
+         ],
+         [
+          -77.6594342,
+          39.9377967
+         ],
+         [
+          -77.659488,
+          39.9375582
+         ],
+         [
+          -77.659535,
+          39.9373498
+         ],
+         [
+          -77.659647,
+          39.9373649
+         ],
+         [
+          -77.6597589,
+          39.93738
+         ],
+         [
+          -77.6599828,
+          39.9374103
+         ],
+         [
+          -77.6602067,
+          39.9374405
+         ],
+         [
+          -77.6602629,
+          39.9374481
+         ],
+         [
+          -77.6608354,
+          39.9375254
+         ],
+         [
+          -77.6609953,
+          39.937545
+         ],
+         [
+          -77.6611124,
+          39.9376708
+         ],
+         [
+          -77.6610987,
+          39.9377349
+         ],
+         [
+          -77.6610645,
+          39.9378919
+         ],
+         [
+          -77.6610615,
+          39.9379082
+         ],
+         [
+          -77.661091,
+          39.9379121
+         ],
+         [
+          -77.6610721,
+          39.9379986
+         ],
+         [
+          -77.6610533,
+          39.9380852
+         ],
+         [
+          -77.6610167,
+          39.9382531
+         ],
+         [
+          -77.66101,
+          39.9382871
+         ]
+        ]
+       ],
+       "ids": [
+        [
+         1039238,
+         213687,
+         213686,
+         213817,
+         213816,
+         213833,
+         213929,
+         213928,
+         214510,
+         214509,
+         1038842,
+         1039239,
+         1038837,
+         213295,
+         1039240,
+         213102,
+         213269,
+         213270,
+         213103,
+         212923,
+         212538,
+         212541,
+         212924,
+         212949,
+         212950,
+         1039241,
+         212951,
+         213296,
+         213312,
+         213372,
+         213375,
+         212999,
+         213005,
+         1038845,
+         1038846,
+         1038847,
+         1038848,
+         1039237,
+         213233,
+         213235,
+         213318,
+         213588,
+         1039238
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0/query",
+   "params": {
+    "outFields": "BUILD_ID,OCC_CLS,PRIM_OCC,OUTBLDG,HEIGHT,SQMETERS,SOURCE,IMAGE_DATE,PROD_DATE,VAL_METHOD,LONGITUDE,LATITUDE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "f": "json",
+    "spatialRel": "esriSpatialRelIntersects",
+    "inSR": 4326,
+    "geometry": "-77.6611124,39.9373498,-77.6591526,39.9385627",
+    "geometryType": "esriGeometryEnvelope"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "GlobalID",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "BUILD_ID": 2921676,
+       "OCC_CLS": "Government",
+       "PRIM_OCC": "General Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 2411.313,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6602002971288,
+       "LATITUDE": 39.9375926244902
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6604089,
+          39.9375083
+         ],
+         [
+          -77.6604237,
+          39.9374652
+         ],
+         [
+          -77.6608435,
+          39.9375507
+         ],
+         [
+          -77.6607732,
+          39.9377554
+         ],
+         [
+          -77.6601295,
+          39.9376243
+         ],
+         [
+          -77.6601517,
+          39.9375597
+         ],
+         [
+          -77.6601377,
+          39.9375568
+         ],
+         [
+          -77.6600637,
+          39.9377723
+         ],
+         [
+          -77.6596439,
+          39.9376868
+         ],
+         [
+          -77.6597327,
+          39.9374283
+         ],
+         [
+          -77.6598447,
+          39.9374511
+         ],
+         [
+          -77.6598632,
+          39.9373972
+         ],
+         [
+          -77.660157,
+          39.937457
+         ],
+         [
+          -77.6601348,
+          39.9375217
+         ],
+         [
+          -77.6602468,
+          39.9375445
+         ],
+         [
+          -77.660269,
+          39.9374798
+         ],
+         [
+          -77.6604089,
+          39.9375083
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921841,
+       "OCC_CLS": "Unclassified",
+       "PRIM_OCC": "Unclassified",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 331.3348,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6608697629167,
+       "LATITUDE": 39.9381706947322
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6607789,
+          39.9380751
+         ],
+         [
+          -77.6609663,
+          39.9380877
+         ],
+         [
+          -77.6609463,
+          39.9382653
+         ],
+         [
+          -77.6607588,
+          39.9382527
+         ],
+         [
+          -77.6607789,
+          39.9380751
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921950,
+       "OCC_CLS": "Unclassified",
+       "PRIM_OCC": "Unclassified",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 466.4709,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6607454850545,
+       "LATITUDE": 39.938514968157
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6605306,
+          39.9385239
+         ],
+         [
+          -77.6605595,
+          39.9384491
+         ],
+         [
+          -77.6604902,
+          39.9384332
+         ],
+         [
+          -77.6605025,
+          39.9384012
+         ],
+         [
+          -77.661002,
+          39.9385156
+         ],
+         [
+          -77.6609607,
+          39.9386224
+         ],
+         [
+          -77.6605306,
+          39.9385239
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921763,
+       "OCC_CLS": "Unclassified",
+       "PRIM_OCC": "Unclassified",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 933.4603,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6608297243789,
+       "LATITUDE": 39.9378553456673
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6610637,
+          39.9377665
+         ],
+         [
+          -77.6610282,
+          39.9379764
+         ],
+         [
+          -77.6609564,
+          39.9379692
+         ],
+         [
+          -77.6609508,
+          39.9380023
+         ],
+         [
+          -77.6610082,
+          39.9380081
+         ],
+         [
+          -77.6610063,
+          39.9380192
+         ],
+         [
+          -77.6607767,
+          39.9379961
+         ],
+         [
+          -77.6607898,
+          39.9379188
+         ],
+         [
+          -77.6605601,
+          39.9378957
+         ],
+         [
+          -77.6605901,
+          39.9377189
+         ],
+         [
+          -77.6610637,
+          39.9377665
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921727,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Retail Trade",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 211.2682,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6592968166835,
+       "LATITUDE": 39.9378674812528
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6594089,
+          39.9378257
+         ],
+         [
+          -77.6593845,
+          39.9379356
+         ],
+         [
+          -77.6591847,
+          39.9379092
+         ],
+         [
+          -77.6592092,
+          39.9377994
+         ],
+         [
+          -77.6594089,
+          39.9378257
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921776,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Retail Trade",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 121.5996,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6592232631717,
+       "LATITUDE": 39.9380134076759
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6592888,
+          39.9380639
+         ],
+         [
+          -77.6591449,
+          39.9380515
+         ],
+         [
+          -77.6591578,
+          39.9379629
+         ],
+         [
+          -77.6593016,
+          39.9379753
+         ],
+         [
+          -77.6592888,
+          39.9380639
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921622,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Professional/Technical Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 430.1985,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6593925779898,
+       "LATITUDE": 39.9374648156991
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6595291,
+          39.9373952
+         ],
+         [
+          -77.6594801,
+          39.9375808
+         ],
+         [
+          -77.6592532,
+          39.9375454
+         ],
+         [
+          -77.6593021,
+          39.9373597
+         ],
+         [
+          -77.6595291,
+          39.9373952
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 2921581,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Professional/Technical Services",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 2925.556,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1589846400000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6609758130911,
+       "LATITUDE": 39.9370744190731
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6609429,
+          39.9368184
+         ],
+         [
+          -77.660979,
+          39.9366877
+         ],
+         [
+          -77.6613613,
+          39.9367502
+         ],
+         [
+          -77.661262,
+          39.9371099
+         ],
+         [
+          -77.6611912,
+          39.9370983
+         ],
+         [
+          -77.66114,
+          39.9372836
+         ],
+         [
+          -77.6610268,
+          39.937265
+         ],
+         [
+          -77.6609816,
+          39.9374285
+         ],
+         [
+          -77.6605569,
+          39.937359
+         ],
+         [
+          -77.6606562,
+          39.9369993
+         ],
+         [
+          -77.6609394,
+          39.9370457
+         ],
+         [
+          -77.6609935,
+          39.9368495
+         ],
+         [
+          -77.6610643,
+          39.9368611
+         ],
+         [
+          -77.6610703,
+          39.9368393
+         ],
+         [
+          -77.6609429,
+          39.9368184
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "BUILD_ID": 6005656,
+       "OCC_CLS": "Commercial",
+       "PRIM_OCC": "Retail Trade",
+       "OUTBLDG": null,
+       "HEIGHT": null,
+       "SQMETERS": 4089.742,
+       "SOURCE": "ORNL",
+       "IMAGE_DATE": 1525824000000,
+       "PROD_DATE": 1591660800000,
+       "VAL_METHOD": "Automated",
+       "LONGITUDE": -77.6594173650674,
+       "LATITUDE": 39.938549354031
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -77.6595293,
+          39.9384324
+         ],
+         [
+          -77.6599048,
+          39.9384522
+         ],
+         [
+          -77.6598692,
+          39.9388524
+         ],
+         [
+          -77.6596093,
+          39.9388387
+         ],
+         [
+          -77.6596112,
+          39.9388164
+         ],
+         [
+          -77.6594668,
+          39.9388088
+         ],
+         [
+          -77.6594619,
+          39.9388644
+         ],
+         [
+          -77.6590575,
+          39.9388431
+         ],
+         [
+          -77.6591228,
+          39.9381094
+         ],
+         [
+          -77.6594405,
+          39.9381262
+         ],
+         [
+          -77.6594138,
+          39.9384263
+         ],
+         [
+          -77.6594716,
+          39.9384294
+         ],
+         [
+          -77.6594646,
+          39.9385072
+         ],
+         [
+          -77.6595224,
+          39.9385102
+         ],
+         [
+          -77.6595293,
+          39.9384324
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "url": "https://epqs.nationalmap.gov/v1/json",
+   "params": {
+    "x": "-77.6601823",
+    "y": "39.9379304",
+    "units": "Meters",
+    "wkid": 4326
+   },
+   "response": {
+    "location": {
+     "x": -77.6601823,
+     "y": 39.9379304,
+     "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+     }
+    },
+    "locationId": 0,
+    "value": "188.324111938",
+    "rasterId": 70719,
+    "resolution": 1
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "found",
+   "matches": [
+    {
+     "label": "157 LINCOLN WAY E, CHAMBERSBURG, PA, 17201",
+     "lat": 39.9373393,
+     "lon": -77.6596344,
+     "precision": "typed",
+     "geocoder": "census",
+     "basis": "public",
+     "src": "census",
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "parts": {
+      "street": "199 LINCOLN WAY E",
+      "city": "CHAMBERSBURG",
+      "state": "PA",
+      "zip": "17201"
+     }
+    }
+   ]
+  },
+  "parcels": {
+   "ok": true,
+   "src": "pa_franklin",
+   "parcels": [
+    {
+     "src": "pa_franklin",
+     "id": {
+      "county_pin": "00006546"
+     },
+     "addr": "157 LINCOLN WAY EAST",
+     "key": "157 LINCOLN WAY E",
+     "label": "157 Lincoln Way East, Chambersburg, Franklin County",
+     "muni": "Chambersburg",
+     "county": "Franklin",
+     "state": "PA",
+     "ring_ll": [
+      [
+       -77.66101,
+       39.9382871
+      ],
+      [
+       -77.6610059,
+       39.9383028
+      ],
+      [
+       -77.6609987,
+       39.9383359
+      ],
+      [
+       -77.6609846,
+       39.9384009
+      ],
+      [
+       -77.660974,
+       39.9384496
+      ],
+      [
+       -77.6609682,
+       39.9384761
+      ],
+      [
+       -77.6609493,
+       39.9385627
+      ],
+      [
+       -77.6600467,
+       39.9384437
+      ],
+      [
+       -77.6600186,
+       39.93844
+      ],
+      [
+       -77.6600375,
+       39.9383527
+      ],
+      [
+       -77.6600277,
+       39.9383512
+      ],
+      [
+       -77.6600625,
+       39.9381691
+      ],
+      [
+       -77.6593707,
+       39.9380774
+      ],
+      [
+       -77.6593776,
+       39.9380477
+      ],
+      [
+       -77.6594105,
+       39.9379017
+      ],
+      [
+       -77.659396,
+       39.9379018
+      ],
+      [
+       -77.6593635,
+       39.9380458
+      ],
+      [
+       -77.6591526,
+       39.9380181
+      ],
+      [
+       -77.6591839,
+       39.9378736
+      ],
+      [
+       -77.659207,
+       39.9377668
+      ],
+      [
+       -77.6592643,
+       39.9375024
+      ],
+      [
+       -77.6593832,
+       39.9375183
+      ],
+      [
+       -77.6593265,
+       39.9377825
+      ],
+      [
+       -77.6594202,
+       39.9377948
+      ],
+      [
+       -77.6594342,
+       39.9377967
+      ],
+      [
+       -77.659488,
+       39.9375582
+      ],
+      [
+       -77.659535,
+       39.9373498
+      ],
+      [
+       -77.659647,
+       39.9373649
+      ],
+      [
+       -77.6597589,
+       39.93738
+      ],
+      [
+       -77.6599828,
+       39.9374103
+      ],
+      [
+       -77.6602067,
+       39.9374405
+      ],
+      [
+       -77.6602629,
+       39.9374481
+      ],
+      [
+       -77.6608354,
+       39.9375254
+      ],
+      [
+       -77.6609953,
+       39.937545
+      ],
+      [
+       -77.6611124,
+       39.9376708
+      ],
+      [
+       -77.6610987,
+       39.9377349
+      ],
+      [
+       -77.6610645,
+       39.9378919
+      ],
+      [
+       -77.6610615,
+       39.9379082
+      ],
+      [
+       -77.661091,
+       39.9379121
+      ],
+      [
+       -77.6610721,
+       39.9379986
+      ],
+      [
+       -77.6610533,
+       39.9380852
+      ],
+      [
+       -77.6610167,
+       39.9382531
+      ],
+      [
+       -77.66101,
+       39.9382871
+      ]
+     ],
+     "centroid": [
+      -77.6601823,
+      39.9379304
+     ],
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "facts": [
+      {
+       "k": "floor_area_sqft",
+       "label": "Building area (sq ft)",
+       "v": 46528,
+       "basis": "public",
+       "src": "pa_franklin",
+       "source": "Franklin County tax records (FC_TaxRecords)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "note": "commercial building record"
+      },
+      {
+       "k": "stories",
+       "label": "Storeys",
+       "v": 4,
+       "basis": "public",
+       "src": "pa_franklin",
+       "source": "Franklin County tax records (FC_TaxRecords)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved",
+       "note": "commercial building record"
+      },
+      {
+       "k": "land_use",
+       "label": "Land use",
+       "v": "Other Miscellaneous, Exempt",
+       "basis": "public",
+       "src": "pa_franklin",
+       "source": "Franklin County tax records (FC_TaxRecords)",
+       "as_of": "2026-11-23",
+       "date_kind": "retrieved"
+      }
+     ],
+     "building_facts": true,
+     "match": "exact",
+     "distance_m": 80.7
+    }
+   ]
+  },
+  "footprints": {
+   "ok": true,
+   "src": "structures",
+   "query": "envelope",
+   "buildings": [
+    {
+     "src": "structures",
+     "build_id": 2921676,
+     "ring_ll": [
+      [
+       -77.6604089,
+       39.9375083
+      ],
+      [
+       -77.6604237,
+       39.9374652
+      ],
+      [
+       -77.6608435,
+       39.9375507
+      ],
+      [
+       -77.6607732,
+       39.9377554
+      ],
+      [
+       -77.6601295,
+       39.9376243
+      ],
+      [
+       -77.6601517,
+       39.9375597
+      ],
+      [
+       -77.6601377,
+       39.9375568
+      ],
+      [
+       -77.6600637,
+       39.9377723
+      ],
+      [
+       -77.6596439,
+       39.9376868
+      ],
+      [
+       -77.6597327,
+       39.9374283
+      ],
+      [
+       -77.6598447,
+       39.9374511
+      ],
+      [
+       -77.6598632,
+       39.9373972
+      ],
+      [
+       -77.660157,
+       39.937457
+      ],
+      [
+       -77.6601348,
+       39.9375217
+      ],
+      [
+       -77.6602468,
+       39.9375445
+      ],
+      [
+       -77.660269,
+       39.9374798
+      ],
+      [
+       -77.6604089,
+       39.9375083
+      ]
+     ],
+     "centroid": [
+      -77.6602003,
+      39.9375926
+     ],
+     "area_m2": 2411.3,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Government",
+     "use": "General Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921841,
+     "ring_ll": [
+      [
+       -77.6607789,
+       39.9380751
+      ],
+      [
+       -77.6609663,
+       39.9380877
+      ],
+      [
+       -77.6609463,
+       39.9382653
+      ],
+      [
+       -77.6607588,
+       39.9382527
+      ],
+      [
+       -77.6607789,
+       39.9380751
+      ]
+     ],
+     "centroid": [
+      -77.6608698,
+      39.9381707
+     ],
+     "area_m2": 331.3,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Unclassified",
+     "use": "Unclassified",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921950,
+     "ring_ll": [
+      [
+       -77.6605306,
+       39.9385239
+      ],
+      [
+       -77.6605595,
+       39.9384491
+      ],
+      [
+       -77.6604902,
+       39.9384332
+      ],
+      [
+       -77.6605025,
+       39.9384012
+      ],
+      [
+       -77.661002,
+       39.9385156
+      ],
+      [
+       -77.6609607,
+       39.9386224
+      ],
+      [
+       -77.6605306,
+       39.9385239
+      ]
+     ],
+     "centroid": [
+      -77.6607455,
+      39.938515
+     ],
+     "area_m2": 466.5,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Unclassified",
+     "use": "Unclassified",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921763,
+     "ring_ll": [
+      [
+       -77.6610637,
+       39.9377665
+      ],
+      [
+       -77.6610282,
+       39.9379764
+      ],
+      [
+       -77.6609564,
+       39.9379692
+      ],
+      [
+       -77.6609508,
+       39.9380023
+      ],
+      [
+       -77.6610082,
+       39.9380081
+      ],
+      [
+       -77.6610063,
+       39.9380192
+      ],
+      [
+       -77.6607767,
+       39.9379961
+      ],
+      [
+       -77.6607898,
+       39.9379188
+      ],
+      [
+       -77.6605601,
+       39.9378957
+      ],
+      [
+       -77.6605901,
+       39.9377189
+      ],
+      [
+       -77.6610637,
+       39.9377665
+      ]
+     ],
+     "centroid": [
+      -77.6608297,
+      39.9378553
+     ],
+     "area_m2": 933.5,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Unclassified",
+     "use": "Unclassified",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921727,
+     "ring_ll": [
+      [
+       -77.6594089,
+       39.9378257
+      ],
+      [
+       -77.6593845,
+       39.9379356
+      ],
+      [
+       -77.6591847,
+       39.9379092
+      ],
+      [
+       -77.6592092,
+       39.9377994
+      ],
+      [
+       -77.6594089,
+       39.9378257
+      ]
+     ],
+     "centroid": [
+      -77.6592968,
+      39.9378675
+     ],
+     "area_m2": 211.3,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Retail Trade",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921776,
+     "ring_ll": [
+      [
+       -77.6592888,
+       39.9380639
+      ],
+      [
+       -77.6591449,
+       39.9380515
+      ],
+      [
+       -77.6591578,
+       39.9379629
+      ],
+      [
+       -77.6593016,
+       39.9379753
+      ],
+      [
+       -77.6592888,
+       39.9380639
+      ]
+     ],
+     "centroid": [
+      -77.6592233,
+      39.9380134
+     ],
+     "area_m2": 121.6,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Retail Trade",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921622,
+     "ring_ll": [
+      [
+       -77.6595291,
+       39.9373952
+      ],
+      [
+       -77.6594801,
+       39.9375808
+      ],
+      [
+       -77.6592532,
+       39.9375454
+      ],
+      [
+       -77.6593021,
+       39.9373597
+      ],
+      [
+       -77.6595291,
+       39.9373952
+      ]
+     ],
+     "centroid": [
+      -77.6593926,
+      39.9374648
+     ],
+     "area_m2": 430.2,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Professional/Technical Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 2921581,
+     "ring_ll": [
+      [
+       -77.6609429,
+       39.9368184
+      ],
+      [
+       -77.660979,
+       39.9366877
+      ],
+      [
+       -77.6613613,
+       39.9367502
+      ],
+      [
+       -77.661262,
+       39.9371099
+      ],
+      [
+       -77.6611912,
+       39.9370983
+      ],
+      [
+       -77.66114,
+       39.9372836
+      ],
+      [
+       -77.6610268,
+       39.937265
+      ],
+      [
+       -77.6609816,
+       39.9374285
+      ],
+      [
+       -77.6605569,
+       39.937359
+      ],
+      [
+       -77.6606562,
+       39.9369993
+      ],
+      [
+       -77.6609394,
+       39.9370457
+      ],
+      [
+       -77.6609935,
+       39.9368495
+      ],
+      [
+       -77.6610643,
+       39.9368611
+      ],
+      [
+       -77.6610703,
+       39.9368393
+      ],
+      [
+       -77.6609429,
+       39.9368184
+      ]
+     ],
+     "centroid": [
+      -77.6609758,
+      39.9370744
+     ],
+     "area_m2": 2925.6,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Professional/Technical Services",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-05-19"
+    },
+    {
+     "src": "structures",
+     "build_id": 6005656,
+     "ring_ll": [
+      [
+       -77.6595293,
+       39.9384324
+      ],
+      [
+       -77.6599048,
+       39.9384522
+      ],
+      [
+       -77.6598692,
+       39.9388524
+      ],
+      [
+       -77.6596093,
+       39.9388387
+      ],
+      [
+       -77.6596112,
+       39.9388164
+      ],
+      [
+       -77.6594668,
+       39.9388088
+      ],
+      [
+       -77.6594619,
+       39.9388644
+      ],
+      [
+       -77.6590575,
+       39.9388431
+      ],
+      [
+       -77.6591228,
+       39.9381094
+      ],
+      [
+       -77.6594405,
+       39.9381262
+      ],
+      [
+       -77.6594138,
+       39.9384263
+      ],
+      [
+       -77.6594716,
+       39.9384294
+      ],
+      [
+       -77.6594646,
+       39.9385072
+      ],
+      [
+       -77.6595224,
+       39.9385102
+      ],
+      [
+       -77.6595293,
+       39.9384324
+      ]
+     ],
+     "centroid": [
+      -77.6594174,
+      39.9385494
+     ],
+     "area_m2": 4089.7,
+     "height_m": null,
+     "height_checked": false,
+     "occupancy": "Commercial",
+     "use": "Retail Trade",
+     "outbuilding": false,
+     "imagery_source": "ORNL",
+     "method": "Automated",
+     "basis": "public",
+     "as_of": "2018-05-09",
+     "date_kind": "imagery",
+     "produced": "2020-06-09"
+    }
+   ]
+  },
+  "elevation": {
+   "ok": true,
+   "src": "usgs_epqs",
+   "fact": {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 188.3,
+    "basis": "public",
+    "src": "usgs_epqs",
+    "source": "Elevation Point Query Service (3DEP)",
+    "as_of": "2026-11-23",
+    "date_kind": "retrieved"
+   }
+  }
+ },
+ "card": {
+  "type": "card",
+  "kind": "floor_sketch",
+  "id": "fs-41b4800e",
+  "title": "Floor sketch",
+  "address": "157 Lincoln Way E, Chambersburg, PA 17201",
+  "issue": "Not sure (generic checks)",
+  "basis": "likely",
+  "area": {
+   "status": "in",
+   "label": "Inside the Punctual Pros service area (Franklin County, York hub)"
+  },
+  "house": {
+   "text": "4 stories over a full basement. (likely) Built 1978. (likely) Electric heat. (likely)",
+   "year": 1978,
+   "year_basis": "likely",
+   "stories": 4,
+   "foundation": "basement",
+   "basement": "full",
+   "fuel": "electric",
+   "fuel_basis": "likely"
+  },
+  "focus": [
+   "main_water",
+   "panel"
+  ],
+  "floors": [
+   {
+    "id": "basement",
+    "name": "Basement",
+    "w": 324,
+    "h": 127,
+    "rooms": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 324,
+      "h": 127,
+      "label": "Unfinished basement"
+     }
+    ],
+    "items": [
+     {
+      "kind": "main_water",
+      "label": "Main water shutoff",
+      "short": "W",
+      "basis": "likely",
+      "focus": true,
+      "note": "Front wall where the line comes in from the street, near the water meter",
+      "detail": null,
+      "x": 48.6,
+      "y": 116.9
+     },
+     {
+      "kind": "panel",
+      "label": "Electrical panel",
+      "short": "P",
+      "basis": "likely",
+      "focus": true,
+      "note": "On a side or front wall, near where the power line enters",
+      "detail": null,
+      "x": 19.4,
+      "y": 63.5
+     },
+     {
+      "kind": "water_heater",
+      "label": "Water heater",
+      "short": "WH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Utility corner, near the floor drain",
+      "detail": null,
+      "x": 275.4,
+      "y": 19.0
+     },
+     {
+      "kind": "air_handler",
+      "label": "Air handler",
+      "short": "AH",
+      "basis": "likely",
+      "focus": false,
+      "note": "Center of the basement, where the ducts meet",
+      "detail": null,
+      "x": 162.0,
+      "y": 63.5
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer cleanout",
+      "short": "C",
+      "basis": "likely",
+      "focus": false,
+      "note": "Front wall where the drain leaves for the street",
+      "detail": null,
+      "x": 162.0,
+      "y": 116.9
+     }
+    ],
+    "runs": [
+     {
+      "kind": "water",
+      "label": "Water",
+      "points": [
+       [
+        48.6,
+        116.9
+       ],
+       [
+        275.4,
+        19.0
+       ]
+      ],
+      "basis": "likely"
+     },
+     {
+      "kind": "drain",
+      "label": "Drain",
+      "points": [
+       [
+        162.0,
+        10.1
+       ],
+       [
+        162.0,
+        116.9
+       ]
+      ],
+      "basis": "likely"
+     }
+    ]
+   }
+  ],
+  "outside": [
+   {
+    "kind": "heat_pump",
+    "label": "Heat pump",
+    "short": "HP",
+    "floor": "basement",
+    "side": "right",
+    "at": 0.35,
+    "basis": "likely",
+    "focus": false,
+    "note": "Outside on a pad along a side wall"
+   }
+  ],
+  "front": "bottom",
+  "source_line": "Public record and likely layout. No company record for this address.",
+  "sources": [
+   {
+    "n": 1,
+    "title": "Franklin County tax records (FC_TaxRecords)",
+    "publisher": "Franklin County, Pennsylvania",
+    "url": "https://fcgis.franklincountypa.gov/fcgishosting/rest/services/TaxRecords/FC_TaxRecords/MapServer/0",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 2,
+    "title": "Elevation Point Query Service (3DEP)",
+    "publisher": "U.S. Geological Survey",
+    "url": "https://epqs.nationalmap.gov/v1/docs",
+    "date": "2026-11-23"
+   },
+   {
+    "n": 3,
+    "title": "USA Structures (building outlines)",
+    "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+    "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+    "date": "2018-05-09"
+   }
+  ],
+  "place": {
+   "label": "157 Lincoln Way E, Chambersburg, PA 17201",
+   "lat": 39.9375926,
+   "lon": -77.6602003,
+   "precision": "parcel",
+   "geocoder": "parcel centroid",
+   "basis": "public",
+   "src": 1
+  },
+  "building": {
+   "frame": {
+    "origin": {
+     "lon": -77.6602003,
+     "lat": 39.9375926
+    },
+    "units": "m",
+    "x": "east",
+    "y": "north"
+   },
+   "footprint": {
+    "ring_m": [
+     [
+      -17.8,
+      -9.38
+     ],
+     [
+      -19.07,
+      -14.18
+     ],
+     [
+      -54.9,
+      -4.66
+     ],
+     [
+      -48.9,
+      18.12
+     ],
+     [
+      6.04,
+      3.53
+     ],
+     [
+      4.15,
+      -3.66
+     ],
+     [
+      5.34,
+      -3.99
+     ],
+     [
+      11.66,
+      20.0
+     ],
+     [
+      47.49,
+      10.49
+     ],
+     [
+      39.91,
+      -18.29
+     ],
+     [
+      30.35,
+      -15.75
+     ],
+     [
+      28.77,
+      -21.75
+     ],
+     [
+      3.7,
+      -15.09
+     ],
+     [
+      5.59,
+      -7.89
+     ],
+     [
+      -3.97,
+      -5.35
+     ],
+     [
+      -5.86,
+      -12.56
+     ],
+     [
+      -17.8,
+      -9.38
+     ]
+    ],
+    "area_m2": 2453.1,
+    "w_ft": 324,
+    "d_ft": 127,
+    "rot_deg": 171.0,
+    "basis": "public",
+    "src": 3,
+    "as_of": "2018-05-09",
+    "method": "outline from imagery",
+    "outbuildings": [
+     {
+      "ring_m": [
+       [
+        -49.39,
+        53.71
+       ],
+       [
+        -65.38,
+        55.11
+       ],
+       [
+        -63.67,
+        74.88
+       ],
+       [
+        -47.67,
+        73.48
+       ],
+       [
+        -49.39,
+        53.71
+       ]
+      ],
+      "basis": "public"
+     },
+     {
+      "ring_m": [
+       [
+        -28.19,
+        103.67
+       ],
+       [
+        -30.66,
+        95.35
+       ],
+       [
+        -24.74,
+        93.58
+       ],
+       [
+        -25.79,
+        90.01
+       ],
+       [
+        -68.43,
+        102.75
+       ],
+       [
+        -64.9,
+        114.64
+       ],
+       [
+        -28.19,
+        103.67
+       ]
+      ],
+      "basis": "public"
+     },
+     {
+      "ring_m": [
+       [
+        -73.69,
+        19.36
+       ],
+       [
+        -70.66,
+        42.72
+       ],
+       [
+        -64.54,
+        41.92
+       ],
+       [
+        -64.06,
+        45.61
+       ],
+       [
+        -68.96,
+        46.25
+       ],
+       [
+        -68.8,
+        47.49
+       ],
+       [
+        -49.2,
+        44.92
+       ],
+       [
+        -50.32,
+        36.31
+       ],
+       [
+        -30.71,
+        33.74
+       ],
+       [
+        -33.27,
+        14.06
+       ],
+       [
+        -73.69,
+        19.36
+       ]
+      ],
+      "basis": "public"
+     },
+     {
+      "ring_m": [
+       [
+        67.55,
+        25.95
+       ],
+       [
+        69.63,
+        38.18
+       ],
+       [
+        86.69,
+        35.24
+       ],
+       [
+        84.59,
+        23.02
+       ],
+       [
+        67.55,
+        25.95
+       ]
+      ],
+      "basis": "public"
+     }
+    ]
+   },
+   "height": {
+    "eave_m": 10.8,
+    "ridge_m": 13.4,
+    "from": "storeys",
+    "basis": "likely",
+    "src": 3
+   },
+   "storeys": {
+    "n": 4,
+    "basis": "public",
+    "src": 1
+   },
+   "parcel": {
+    "ring_m": [
+     [
+      -69.11,
+      77.31
+     ],
+     [
+      -63.93,
+      107.99
+     ],
+     [
+      15.51,
+      94.33
+     ],
+     [
+      13.9,
+      84.61
+     ],
+     [
+      14.73,
+      84.45
+     ],
+     [
+      11.76,
+      64.18
+     ],
+     [
+      70.81,
+      53.97
+     ],
+     [
+      67.41,
+      34.41
+     ],
+     [
+      68.65,
+      34.42
+     ],
+     [
+      71.42,
+      50.45
+     ],
+     [
+      89.43,
+      47.37
+     ],
+     [
+      79.89,
+      -10.04
+     ],
+     [
+      69.74,
+      -8.27
+     ],
+     [
+      74.58,
+      21.14
+     ],
+     [
+      65.39,
+      22.72
+     ],
+     [
+      56.79,
+      -27.03
+     ],
+     [
+      -54.21,
+      -7.48
+     ],
+     [
+      -67.86,
+      -5.3
+     ],
+     [
+      -77.85,
+      8.71
+     ],
+     [
+      -73.51,
+      35.13
+     ],
+     [
+      -76.02,
+      35.57
+     ],
+     [
+      -69.11,
+      77.31
+     ]
+    ],
+    "area_m2": 14745.6,
+    "basis": "public",
+    "src": 1
+   },
+   "front": {
+    "bearing_deg": 120,
+    "basis": "public",
+    "from": "geocoded street point"
+   }
+  },
+  "front_basis": "public",
+  "facts": [
+   {
+    "k": "floor_area_sqft",
+    "label": "Building area (sq ft)",
+    "v": 46528,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "stories",
+    "label": "Storeys",
+    "v": 4,
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "land_use",
+    "label": "Land use",
+    "v": "Other Miscellaneous, Exempt",
+    "basis": "public",
+    "src": 1,
+    "as_of": "2026-11-23"
+   },
+   {
+    "k": "ground_elevation_m",
+    "label": "Ground elevation (m)",
+    "v": 188.3,
+    "basis": "public",
+    "src": 2,
+    "as_of": "2026-11-23"
+   }
+  ]
+ },
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-pa_franklin_full",
+  "cmd": {
+   "title": "157 Lincoln Way E, Chambersburg, PA 17201",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 39.9611,
+     "lon": -77.6562,
+     "label": "Chambersburg, PA",
+     "sub": "Town",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 39.937593,
+     "lon": -77.6602,
+     "label": "157 Lincoln Way E, Chambersburg",
+     "sub": "Parcel match · outline from imagery dated May 2018",
+     "precision": "parcel",
+     "zoom": 18.5,
+     "pitch": 60,
+     "bearing": 120,
+     "hold_ms": 8000,
+     "outline": [
+      [
+       -77.6604088,
+       39.9375083
+      ],
+      [
+       -77.6604237,
+       39.9374652
+      ],
+      [
+       -77.6608435,
+       39.9375507
+      ],
+      [
+       -77.6607732,
+       39.9377554
+      ],
+      [
+       -77.6601295,
+       39.9376243
+      ],
+      [
+       -77.6601517,
+       39.9375597
+      ],
+      [
+       -77.6601377,
+       39.9375568
+      ],
+      [
+       -77.6600637,
+       39.9377723
+      ],
+      [
+       -77.6596439,
+       39.9376868
+      ],
+      [
+       -77.6597327,
+       39.9374283
+      ],
+      [
+       -77.6598447,
+       39.9374511
+      ],
+      [
+       -77.6598632,
+       39.9373972
+      ],
+      [
+       -77.660157,
+       39.937457
+      ],
+      [
+       -77.6601348,
+       39.9375217
+      ],
+      [
+       -77.6602468,
+       39.9375445
+      ],
+      [
+       -77.660269,
+       39.9374798
+      ],
+      [
+       -77.6604088,
+       39.9375083
+      ]
+     ],
+     "height_m": 13.4,
+     "height_basis": "likely"
+    }
+   ]
+  }
+ }
+}

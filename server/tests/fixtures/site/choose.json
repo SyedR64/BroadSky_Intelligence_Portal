@@ -1,0 +1,1131 @@
+{
+ "name": "choose",
+ "typed": "200 Georgia Rd, Freehold, NJ",
+ "issue": "sink repair",
+ "what": "Freehold Township park land, four public lots at one address",
+ "status": "choose",
+ "recorded": "2026-11-23",
+ "calls": [
+  {
+   "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+   "params": {
+    "address": "200 Georgia Rd, Freehold, NJ",
+    "benchmark": "Public_AR_Current",
+    "format": "json"
+   },
+   "response": {
+    "result": {
+     "input": {
+      "address": {
+       "address": "200 Georgia Rd, Freehold, NJ"
+      },
+      "benchmark": {
+       "isDefault": true,
+       "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+       "id": "4",
+       "benchmarkName": "Public_AR_Current"
+      }
+     },
+     "addressMatches": [
+      {
+       "tigerLine": {
+        "side": "R",
+        "tigerLineId": "90522305"
+       },
+       "coordinates": {
+        "x": -74.296533123152,
+        "y": 40.193688539143
+       },
+       "addressComponents": {
+        "zip": "07728",
+        "streetName": "GEORGIA",
+        "preType": "",
+        "city": "FREEHOLD",
+        "preDirection": "",
+        "suffixDirection": "",
+        "fromAddress": "200",
+        "state": "NJ",
+        "suffixType": "RD",
+        "toAddress": "288",
+        "suffixQualifier": "",
+        "preQualifier": ""
+       },
+       "matchedAddress": "200 GEORGIA RD, FREEHOLD, NJ, 07728"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0/query",
+   "params": {
+    "where": "COUNTY='MONMOUTH' AND MUN_NAME LIKE 'FREEHOLD%' AND PROP_LOC LIKE '200 GEORGIA%'",
+    "outFields": "PAMS_PIN,PCL_MUN,PCLBLOCK,PCLLOT,PCLQCODE,PROP_CLASS,COUNTY,MUN_NAME,PROP_LOC,ZIP5,IMPRVT_VAL,BLDG_DESC,LAND_DESC,CALC_ACRE,BLDG_CLASS,YR_CONSTR,DWELL,FAC_NAME,PCL_PBDATE",
+    "returnGeometry": "true",
+    "outSR": 4326,
+    "geometryPrecision": 7,
+    "resultRecordCount": 12,
+    "f": "json"
+   },
+   "response": {
+    "objectIdFieldName": "OBJECTID",
+    "uniqueIdField": {
+     "name": "OBJECTID",
+     "isSystemMaintained": true
+    },
+    "globalIdFieldName": "",
+    "geometryProperties": {
+     "shapeAreaFieldName": "Shape__Area",
+     "shapeLengthFieldName": "Shape__Length",
+     "units": "esriMeters"
+    },
+    "geometryType": "esriGeometryPolygon",
+    "spatialReference": {
+     "wkid": 4326,
+     "latestWkid": 4326
+    },
+    "features": [
+     {
+      "attributes": {
+       "PAMS_PIN": "1317_93_40",
+       "PCL_MUN": "1317",
+       "PCLBLOCK": "93",
+       "PCLLOT": "40",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "MONMOUTH",
+       "MUN_NAME": "FREEHOLD TWP",
+       "PROP_LOC": "200 GEORGIA RD",
+       "ZIP5": "07728",
+       "IMPRVT_VAL": 0,
+       "BLDG_DESC": "PARK",
+       "LAND_DESC": "18.00 AC",
+       "CALC_ACRE": 18,
+       "BLDG_CLASS": null,
+       "YR_CONSTR": 0,
+       "DWELL": 0,
+       "FAC_NAME": "PARK",
+       "PCL_PBDATE": 1772773200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.2981819,
+          40.1949709
+         ],
+         [
+          -74.2981925,
+          40.1948595
+         ],
+         [
+          -74.2981849,
+          40.1948089
+         ],
+         [
+          -74.2996534,
+          40.1946602
+         ],
+         [
+          -74.3003027,
+          40.1946287
+         ],
+         [
+          -74.3005055,
+          40.1982853
+         ],
+         [
+          -74.2982996,
+          40.197925
+         ],
+         [
+          -74.2982927,
+          40.1979238
+         ],
+         [
+          -74.2983,
+          40.1978868
+         ],
+         [
+          -74.2983123,
+          40.1977311
+         ],
+         [
+          -74.2983189,
+          40.1972726
+         ],
+         [
+          -74.2983198,
+          40.1969615
+         ],
+         [
+          -74.2983035,
+          40.1965778
+         ],
+         [
+          -74.2983076,
+          40.1961114
+         ],
+         [
+          -74.2982713,
+          40.1955022
+         ],
+         [
+          -74.2981819,
+          40.1949709
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "PAMS_PIN": "1317_93_39",
+       "PCL_MUN": "1317",
+       "PCLBLOCK": "93",
+       "PCLLOT": "39",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "MONMOUTH",
+       "MUN_NAME": "FREEHOLD TWP",
+       "PROP_LOC": "200 GEORGIA RD",
+       "ZIP5": "07728",
+       "IMPRVT_VAL": 327800,
+       "BLDG_DESC": "TURKEY SWAMP PK",
+       "LAND_DESC": "80.00 AC",
+       "CALC_ACRE": 80,
+       "BLDG_CLASS": null,
+       "YR_CONSTR": 0,
+       "DWELL": 0,
+       "FAC_NAME": "PARK",
+       "PCL_PBDATE": 1772773200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.3054136,
+          40.2005048
+         ],
+         [
+          -74.3019815,
+          40.1985264
+         ],
+         [
+          -74.3014965,
+          40.1984472
+         ],
+         [
+          -74.3009578,
+          40.1983592
+         ],
+         [
+          -74.3005055,
+          40.1982853
+         ],
+         [
+          -74.3003027,
+          40.1946287
+         ],
+         [
+          -74.3045557,
+          40.1930493
+         ],
+         [
+          -74.3051962,
+          40.195353
+         ],
+         [
+          -74.3083259,
+          40.1979492
+         ],
+         [
+          -74.3083077,
+          40.1979916
+         ],
+         [
+          -74.3081211,
+          40.198426
+         ],
+         [
+          -74.3068677,
+          40.2013428
+         ],
+         [
+          -74.3054136,
+          40.2005048
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "PAMS_PIN": "1317_93_37",
+       "PCL_MUN": "1317",
+       "PCLBLOCK": "93",
+       "PCLLOT": "37",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "MONMOUTH",
+       "MUN_NAME": "FREEHOLD TWP",
+       "PROP_LOC": "200 GEORGIA RD",
+       "ZIP5": "07728",
+       "IMPRVT_VAL": 0,
+       "BLDG_DESC": null,
+       "LAND_DESC": "73.44 AC",
+       "CALC_ACRE": 73.44,
+       "BLDG_CLASS": null,
+       "YR_CONSTR": 0,
+       "DWELL": 0,
+       "FAC_NAME": "VACANT LAND",
+       "PCL_PBDATE": 1772773200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.3025737,
+          40.2035194
+         ],
+         [
+          -74.3018379,
+          40.2030026
+         ],
+         [
+          -74.299428,
+          40.203335
+         ],
+         [
+          -74.2991067,
+          40.2028258
+         ],
+         [
+          -74.2990147,
+          40.2026799
+         ],
+         [
+          -74.2987834,
+          40.2023132
+         ],
+         [
+          -74.2977068,
+          40.2026854
+         ],
+         [
+          -74.2971465,
+          40.2028791
+         ],
+         [
+          -74.296962,
+          40.2029429
+         ],
+         [
+          -74.2966693,
+          40.202447
+         ],
+         [
+          -74.2959196,
+          40.2023911
+         ],
+         [
+          -74.2959602,
+          40.2020721
+         ],
+         [
+          -74.2962812,
+          40.2013177
+         ],
+         [
+          -74.2967491,
+          40.2003253
+         ],
+         [
+          -74.2975222,
+          40.1994453
+         ],
+         [
+          -74.2981942,
+          40.1984743
+         ],
+         [
+          -74.3013194,
+          40.1990064
+         ],
+         [
+          -74.3014965,
+          40.1984472
+         ],
+         [
+          -74.3019815,
+          40.1985264
+         ],
+         [
+          -74.3054136,
+          40.2005048
+         ],
+         [
+          -74.3050747,
+          40.2015094
+         ],
+         [
+          -74.3034071,
+          40.2015843
+         ],
+         [
+          -74.30343,
+          40.2041209
+         ],
+         [
+          -74.3025737,
+          40.2035194
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "PAMS_PIN": "1317_93_38",
+       "PCL_MUN": "1317",
+       "PCLBLOCK": "93",
+       "PCLLOT": "38",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "MONMOUTH",
+       "MUN_NAME": "FREEHOLD TWP",
+       "PROP_LOC": "200 GEORGIA RD",
+       "ZIP5": "07728",
+       "IMPRVT_VAL": 0,
+       "BLDG_DESC": null,
+       "LAND_DESC": "4.39 AC",
+       "CALC_ACRE": 4.39,
+       "BLDG_CLASS": null,
+       "YR_CONSTR": 0,
+       "DWELL": 0,
+       "FAC_NAME": "VACANT LAND",
+       "PCL_PBDATE": 1772773200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.2981942,
+          40.1984743
+         ],
+         [
+          -74.2981384,
+          40.1984652
+         ],
+         [
+          -74.29826,
+          40.1980898
+         ],
+         [
+          -74.2982927,
+          40.1979238
+         ],
+         [
+          -74.2982996,
+          40.197925
+         ],
+         [
+          -74.3005055,
+          40.1982853
+         ],
+         [
+          -74.3009578,
+          40.1983592
+         ],
+         [
+          -74.3014965,
+          40.1984472
+         ],
+         [
+          -74.3013194,
+          40.1990064
+         ],
+         [
+          -74.2981942,
+          40.1984743
+         ]
+        ]
+       ]
+      }
+     },
+     {
+      "attributes": {
+       "PAMS_PIN": "1317_93_47",
+       "PCL_MUN": "1317",
+       "PCLBLOCK": "93",
+       "PCLLOT": "47",
+       "PCLQCODE": "",
+       "PROP_CLASS": "15C",
+       "COUNTY": "MONMOUTH",
+       "MUN_NAME": "FREEHOLD TWP",
+       "PROP_LOC": "200 GEORGIA RD REAR",
+       "ZIP5": "07728",
+       "IMPRVT_VAL": 0,
+       "BLDG_DESC": null,
+       "LAND_DESC": "2.20 AC",
+       "CALC_ACRE": 2.2,
+       "BLDG_CLASS": null,
+       "YR_CONSTR": 0,
+       "DWELL": 0,
+       "FAC_NAME": "VACANT LAND",
+       "PCL_PBDATE": 1772773200000
+      },
+      "geometry": {
+       "rings": [
+        [
+         [
+          -74.3068677,
+          40.2013428
+         ],
+         [
+          -74.30683,
+          40.2014306
+         ],
+         [
+          -74.3050747,
+          40.2015094
+         ],
+         [
+          -74.3054136,
+          40.2005048
+         ],
+         [
+          -74.3068677,
+          40.2013428
+         ]
+        ]
+       ]
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "adapters": {
+  "geocode": {
+   "ok": true,
+   "src": "census",
+   "status": "found",
+   "matches": [
+    {
+     "label": "200 GEORGIA RD, FREEHOLD, NJ, 07728",
+     "lat": 40.1936885,
+     "lon": -74.2965331,
+     "precision": "typed",
+     "geocoder": "census",
+     "basis": "public",
+     "src": "census",
+     "as_of": "2026-11-23",
+     "date_kind": "retrieved",
+     "parts": {
+      "street": "200 GEORGIA RD",
+      "city": "FREEHOLD",
+      "state": "NJ",
+      "zip": "07728"
+     }
+    }
+   ]
+  },
+  "parcels": {
+   "ok": true,
+   "src": "nj_parcels",
+   "parcels": [
+    {
+     "src": "nj_parcels",
+     "id": {
+      "pams_pin": "1317_93_40",
+      "muni_code": "1317",
+      "block": "93",
+      "lot": "40",
+      "qual": null
+     },
+     "addr": "200 GEORGIA RD",
+     "key": "200 GEORGIA RD",
+     "label": "200 Georgia Rd, Freehold Twp",
+     "muni": "FREEHOLD TWP",
+     "county": "Monmouth",
+     "state": "NJ",
+     "zip": "07728",
+     "ring_ll": [
+      [
+       -74.2981819,
+       40.1949709
+      ],
+      [
+       -74.2981925,
+       40.1948595
+      ],
+      [
+       -74.2981849,
+       40.1948089
+      ],
+      [
+       -74.2996534,
+       40.1946602
+      ],
+      [
+       -74.3003027,
+       40.1946287
+      ],
+      [
+       -74.3005055,
+       40.1982853
+      ],
+      [
+       -74.2982996,
+       40.197925
+      ],
+      [
+       -74.2982927,
+       40.1979238
+      ],
+      [
+       -74.2983,
+       40.1978868
+      ],
+      [
+       -74.2983123,
+       40.1977311
+      ],
+      [
+       -74.2983189,
+       40.1972726
+      ],
+      [
+       -74.2983198,
+       40.1969615
+      ],
+      [
+       -74.2983035,
+       40.1965778
+      ],
+      [
+       -74.2983076,
+       40.1961114
+      ],
+      [
+       -74.2982713,
+       40.1955022
+      ],
+      [
+       -74.2981819,
+       40.1949709
+      ]
+     ],
+     "centroid": [
+      -74.2986498,
+      40.196407
+     ],
+     "as_of": "2026-03-06",
+     "date_kind": "published",
+     "facts": [
+      {
+       "k": "property_class",
+       "label": "Property class",
+       "v": "15C (public property)",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "building_desc",
+       "label": "Assessor building description",
+       "v": "PARK",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 18.0,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "facility",
+       "label": "Facility",
+       "v": "PARK",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      }
+     ],
+     "match": "exact",
+     "distance_m": 352.1
+    },
+    {
+     "src": "nj_parcels",
+     "id": {
+      "pams_pin": "1317_93_38",
+      "muni_code": "1317",
+      "block": "93",
+      "lot": "38",
+      "qual": null
+     },
+     "addr": "200 GEORGIA RD",
+     "key": "200 GEORGIA RD",
+     "label": "200 Georgia Rd, Freehold Twp",
+     "muni": "FREEHOLD TWP",
+     "county": "Monmouth",
+     "state": "NJ",
+     "zip": "07728",
+     "ring_ll": [
+      [
+       -74.2981942,
+       40.1984743
+      ],
+      [
+       -74.2981384,
+       40.1984652
+      ],
+      [
+       -74.29826,
+       40.1980898
+      ],
+      [
+       -74.2982927,
+       40.1979238
+      ],
+      [
+       -74.2982996,
+       40.197925
+      ],
+      [
+       -74.3005055,
+       40.1982853
+      ],
+      [
+       -74.3009578,
+       40.1983592
+      ],
+      [
+       -74.3014965,
+       40.1984472
+      ],
+      [
+       -74.3013194,
+       40.1990064
+      ],
+      [
+       -74.2981942,
+       40.1984743
+      ]
+     ],
+     "centroid": [
+      -74.299496,
+      40.1983307
+     ],
+     "as_of": "2026-03-06",
+     "date_kind": "published",
+     "facts": [
+      {
+       "k": "property_class",
+       "label": "Property class",
+       "v": "15C (public property)",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 4.39,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "facility",
+       "label": "Facility",
+       "v": "VACANT LAND",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      }
+     ],
+     "match": "exact",
+     "distance_m": 574.9
+    },
+    {
+     "src": "nj_parcels",
+     "id": {
+      "pams_pin": "1317_93_39",
+      "muni_code": "1317",
+      "block": "93",
+      "lot": "39",
+      "qual": null
+     },
+     "addr": "200 GEORGIA RD",
+     "key": "200 GEORGIA RD",
+     "label": "200 Georgia Rd, Freehold Twp",
+     "muni": "FREEHOLD TWP",
+     "county": "Monmouth",
+     "state": "NJ",
+     "zip": "07728",
+     "ring_ll": [
+      [
+       -74.3054136,
+       40.2005048
+      ],
+      [
+       -74.3019815,
+       40.1985264
+      ],
+      [
+       -74.3014965,
+       40.1984472
+      ],
+      [
+       -74.3009578,
+       40.1983592
+      ],
+      [
+       -74.3005055,
+       40.1982853
+      ],
+      [
+       -74.3003027,
+       40.1946287
+      ],
+      [
+       -74.3045557,
+       40.1930493
+      ],
+      [
+       -74.3051962,
+       40.195353
+      ],
+      [
+       -74.3083259,
+       40.1979492
+      ],
+      [
+       -74.3083077,
+       40.1979916
+      ],
+      [
+       -74.3081211,
+       40.198426
+      ],
+      [
+       -74.3068677,
+       40.2013428
+      ],
+      [
+       -74.3054136,
+       40.2005048
+      ]
+     ],
+     "centroid": [
+      -74.304336,
+      40.1977386
+     ],
+     "as_of": "2026-03-06",
+     "date_kind": "published",
+     "facts": [
+      {
+       "k": "property_class",
+       "label": "Property class",
+       "v": "15C (public property)",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "building_desc",
+       "label": "Assessor building description",
+       "v": "TURKEY SWAMP PK",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "assessed_improvements",
+       "label": "Assessed value of improvements ($)",
+       "v": 327800,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 80.0,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "facility",
+       "label": "Facility",
+       "v": "PARK",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      }
+     ],
+     "match": "exact",
+     "distance_m": 802.2
+    },
+    {
+     "src": "nj_parcels",
+     "id": {
+      "pams_pin": "1317_93_37",
+      "muni_code": "1317",
+      "block": "93",
+      "lot": "37",
+      "qual": null
+     },
+     "addr": "200 GEORGIA RD",
+     "key": "200 GEORGIA RD",
+     "label": "200 Georgia Rd, Freehold Twp",
+     "muni": "FREEHOLD TWP",
+     "county": "Monmouth",
+     "state": "NJ",
+     "zip": "07728",
+     "ring_ll": [
+      [
+       -74.3025737,
+       40.2035194
+      ],
+      [
+       -74.3018379,
+       40.2030026
+      ],
+      [
+       -74.299428,
+       40.203335
+      ],
+      [
+       -74.2991067,
+       40.2028258
+      ],
+      [
+       -74.2990147,
+       40.2026799
+      ],
+      [
+       -74.2987834,
+       40.2023132
+      ],
+      [
+       -74.2977068,
+       40.2026854
+      ],
+      [
+       -74.2971465,
+       40.2028791
+      ],
+      [
+       -74.296962,
+       40.2029429
+      ],
+      [
+       -74.2966693,
+       40.202447
+      ],
+      [
+       -74.2959196,
+       40.2023911
+      ],
+      [
+       -74.2959602,
+       40.2020721
+      ],
+      [
+       -74.2962812,
+       40.2013177
+      ],
+      [
+       -74.2967491,
+       40.2003253
+      ],
+      [
+       -74.2975222,
+       40.1994453
+      ],
+      [
+       -74.2981942,
+       40.1984743
+      ],
+      [
+       -74.3013194,
+       40.1990064
+      ],
+      [
+       -74.3014965,
+       40.1984472
+      ],
+      [
+       -74.3019815,
+       40.1985264
+      ],
+      [
+       -74.3054136,
+       40.2005048
+      ],
+      [
+       -74.3050747,
+       40.2015094
+      ],
+      [
+       -74.3034071,
+       40.2015843
+      ],
+      [
+       -74.30343,
+       40.2041209
+      ],
+      [
+       -74.3025737,
+       40.2035194
+      ]
+     ],
+     "centroid": [
+      -74.2996512,
+      40.2015807
+     ],
+     "as_of": "2026-03-06",
+     "date_kind": "published",
+     "facts": [
+      {
+       "k": "property_class",
+       "label": "Property class",
+       "v": "15C (public property)",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "lot_acres",
+       "label": "Lot (acres)",
+       "v": 73.44,
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      },
+      {
+       "k": "facility",
+       "label": "Facility",
+       "v": "VACANT LAND",
+       "basis": "public",
+       "src": "nj_parcels",
+       "source": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+       "as_of": "2026-03-06",
+       "date_kind": "published"
+      }
+     ],
+     "match": "exact",
+     "distance_m": 917.7
+    }
+   ]
+  }
+ },
+ "card": null,
+ "map_command": {
+  "type": "card",
+  "kind": "map_command",
+  "id": "mc-choose",
+  "cmd": {
+   "title": "200 Georgia Rd, Freehold, NJ",
+   "source": "site",
+   "steps": [
+    {
+     "kind": "site",
+     "lat": 40.193689,
+     "lon": -74.296533,
+     "label": "Freehold, NJ",
+     "sub": "Town",
+     "precision": "town",
+     "zoom": 12.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 40.196407,
+     "lon": -74.29865,
+     "label": "200 Georgia Rd, Freehold Twp",
+     "sub": "One of several lots at this address",
+     "precision": "typed",
+     "zoom": 16.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 40.198331,
+     "lon": -74.299496,
+     "label": "200 Georgia Rd, Freehold Twp",
+     "sub": "One of several lots at this address",
+     "precision": "typed",
+     "zoom": 16.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 40.197739,
+     "lon": -74.304336,
+     "label": "200 Georgia Rd, Freehold Twp",
+     "sub": "One of several lots at this address",
+     "precision": "typed",
+     "zoom": 16.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    },
+    {
+     "kind": "site",
+     "lat": 40.201581,
+     "lon": -74.299651,
+     "label": "200 Georgia Rd, Freehold Twp",
+     "sub": "One of several lots at this address",
+     "precision": "typed",
+     "zoom": 16.5,
+     "pitch": 0,
+     "bearing": 0,
+     "hold_ms": 4000
+    }
+   ]
+  }
+ }
+}

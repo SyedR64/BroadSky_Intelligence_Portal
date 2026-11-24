@@ -79,3 +79,46 @@
 .ca-dr-note{flex-basis:100%}
 @media (max-width:420px){.ca-fields{grid-template-columns:minmax(0,1fr);gap:2px}.ca-fields dd{margin-bottom:var(--sys-sp-2)}}
 @media (pointer:coarse){.ca-sketch .sys-chip[data-ca],.ca-draft .sys-btn{min-height:44px}}
+
+/* live address: the real outline behind the plan (public record, solid) with the plan rectangle over it (layout likely, dashed) */
+.ca-fs-outline{fill:var(--sys-surface-2);stroke:var(--sys-ink);stroke-width:2.5;stroke-linejoin:round}
+.ca-fs.has-outline .ca-fs-wall{fill:none;stroke:var(--sys-mute);stroke-dasharray:8 6}
+.ca-fs.has-outline .ca-fs-wall-line{stroke-dasharray:8 6}
+.ca-fs-m.is-public circle{fill:var(--sys-ink-2);stroke:var(--sys-surface);stroke-width:2}
+.ca-fs-m.is-public text{fill:var(--sys-surface)}
+.ca-eq-m.is-public{background:var(--sys-ink-2);color:var(--sys-surface)}
+.ca-sw-pub{fill:var(--sys-ink-2);stroke:var(--sys-surface);stroke-width:1.5}
+.ca-sw-line.k-outline{stroke:var(--sys-ink);stroke-width:2.5}
+.ca-sw-line.k-wire,.ca-sw-line.k-power{stroke-width:1.5}
+.ca-fs-run.k-wire,.ca-fs-run.k-power{stroke-width:1.5}
+.ca-fs-run.k-duct{stroke-width:6;stroke-linecap:butt}
+.ca-fs-placebar{margin:0}
+.ca-fs-placebar .sys-chip{min-height:24px;padding:0 10px;font-size:var(--sys-fs-xs);max-width:100%;overflow-wrap:anywhere}
+.ca-fs-ex{min-height:22px}
+
+/* facts with their source and date, closed by default */
+.ca-facts{border-top:1px solid var(--sys-line);padding-top:var(--sys-sp-2)}
+.ca-facts>summary{cursor:pointer;min-height:32px;display:flex;align-items:center;font:600 var(--sys-fs-sm)/1.3 var(--sys-font);color:var(--sys-ink)}
+.ca-facts[open]>summary{margin-bottom:var(--sys-sp-2)}
+.ca-fact-list dd{display:flex;flex-direction:column;gap:2px}
+.ca-fact-list dd .sys-chip{align-self:flex-start;min-height:20px;padding:0 8px;font-size:var(--sys-fs-2xs)}
+.ca-fact-src{font:500 var(--sys-fs-xs)/1.4 var(--sys-font);color:var(--sys-mute)}
+.ca-fact-srcs{margin:var(--sys-sp-2) 0 0;padding-left:1.2em;font-size:var(--sys-fs-xs);line-height:1.5;color:var(--sys-ink-2);overflow-wrap:anywhere}
+
+/* 3D and "Show on map" */
+.ca-fs-acts{margin:0;gap:var(--sys-sp-2);flex-wrap:wrap}
+.ca-fs-mapslot{display:contents}
+.ca-3d{min-width:0}
+.ca-3d .h3{box-shadow:none}
+.ca-map,.ca-view{min-width:0}
+.ca-map{gap:var(--sys-sp-2);box-shadow:none}
+.ca-map .sys-card-title{margin:0;overflow-wrap:anywhere}
+.ca-map-foot{justify-content:flex-start;margin-top:0}
+@media (pointer:coarse){.ca-fs-acts .sys-btn,.ca-map .sys-btn{min-height:44px}}
+
+/* the role's signature question (assets/agent.js): the first chip, under the question box */
+.ca-sigbox{margin-top:var(--sys-sp-3)}
+.ca-sigbox[hidden]{display:none}
+.ca-sig{font-weight:600;border-color:var(--co,var(--sys-brand));max-width:100%;white-space:normal;text-align:left}
+.ca-sig-turn{display:flex;flex-direction:column;gap:var(--sys-sp-3);margin-bottom:var(--sys-sp-4)}
+@media (pointer:coarse){.ca-sigbox .sys-chip{min-height:44px}}
