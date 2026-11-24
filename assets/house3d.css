@@ -36,3 +36,4 @@
   .h3-key{border-radius:var(--sys-r-sm);column-gap:0}
   .h3-row .sys-chip{min-height:44px}
 }
+.h3-note{margin:0;color:var(--sys-ink-2);font-size:var(--sys-fs-sm)}

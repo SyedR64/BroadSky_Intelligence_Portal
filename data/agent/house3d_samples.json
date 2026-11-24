@@ -1,5 +1,5 @@
 {
- "about": "Floor sketch cards for the 3D house view and scripts/check_house3d.py. The first three were captured from server/workspace.py site_brief (company example data and the public branch). The cards whose id starts fs-live are live-shaped fixtures built from design_live_address.md sections 2.5 and 3 (made-up street names, no lookup made); recorded live cards replace them later.",
+ "about": "Floor sketch cards for the 3D house view and scripts/check_house3d.py. The first three were captured from server/workspace.py site_brief (company example data and the public branch). The cards whose id starts fs-live are live-shaped fixtures built from design_live_address.md sections 2.5 and 3 (made-up street names, no lookup made); recorded live cards replace them later. The last three follow the floor plan card contract (FLOORPLAN_SPEC section 3): a large building (building.kind \"large\", layout.from \"none\": one ground floor with no rooms, items or runs, water service and sewer outside on the street side), the same at six storeys, and a house whose runs are square and carry risers on three floors. Addresses are made up.",
  "samples": [
   {
    "role": "pp-hvac-technician",
@@ -1907,6 +1907,1642 @@
     ],
     "source_line": "",
     "sources": []
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "sink repair",
+   "shape": "contract: large building, two storeys, no layout on record, shell only",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-large-large",
+    "title": "Floor sketch",
+    "address": "40 Fixture Plaza, Toms River, NJ 08753",
+    "issue": "Sink leaking",
+    "basis": "likely",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (Ocean County, Toms River hub)"
+    },
+    "focus": [
+     "fixture_shutoffs",
+     "main_water",
+     "sewer_cleanout"
+    ],
+    "floors": [
+     {
+      "id": "first",
+      "name": "Ground floor",
+      "w": 148,
+      "h": 263,
+      "rooms": [],
+      "items": [],
+      "runs": [],
+      "wet_walls": []
+     }
+    ],
+    "outside": [
+     {
+      "kind": "main_water",
+      "label": "Water service",
+      "short": "WS",
+      "floor": "first",
+      "side": "front",
+      "at": 0.3,
+      "basis": "likely",
+      "focus": true,
+      "note": "Outside on the street side"
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer",
+      "short": "S",
+      "floor": "first",
+      "side": "front",
+      "at": 0.7,
+      "basis": "likely",
+      "focus": true,
+      "note": "Outside on the street side"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: public property records. Interior layout is not on public record.",
+    "sources": [
+     {
+      "n": 1,
+      "title": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+      "publisher": "NJ Office of GIS (NJOGIS)",
+      "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+      "date": "2026-06-04"
+     },
+     {
+      "n": 3,
+      "title": "Elevation Point Query Service (3DEP)",
+      "publisher": "U.S. Geological Survey",
+      "url": "https://epqs.nationalmap.gov/v1/docs",
+      "date": "2026-11-23"
+     },
+     {
+      "n": 4,
+      "title": "NJ Construction Permit Data",
+      "publisher": "NJ Department of Community Affairs",
+      "url": "https://data.nj.gov/Reference-Data/NJ-Construction-Permit-Data/w9se-dmra",
+      "date": ""
+     },
+     {
+      "n": 5,
+      "title": "USA Structures (building outlines)",
+      "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+      "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+      "date": "2024-08-03"
+     },
+     {
+      "n": 2,
+      "title": "Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024",
+      "publisher": "Broad Sky OS",
+      "url": "",
+      "date": "2026-11-17"
+     }
+    ],
+    "example": false,
+    "place": {
+     "label": "40 Fixture Plaza, Toms River, NJ 08753",
+     "lat": 39.9520639,
+     "lon": -74.1969148,
+     "precision": "parcel",
+     "geocoder": "parcel centroid",
+     "basis": "public",
+     "src": 1
+    },
+    "facts": [
+     {
+      "k": "property_class",
+      "label": "Property class",
+      "v": "15C (public property)",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "building_desc",
+      "label": "Assessor building description",
+      "v": "2SB 15226",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "stories",
+      "label": "Storeys",
+      "v": 2,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "material",
+      "label": "Walls",
+      "v": "brick",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "floor_area_sqft",
+      "label": "Building area (sq ft)",
+      "v": 15226,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "assessed_improvements",
+      "label": "Assessed value of improvements ($)",
+      "v": 5124000,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "lot_acres",
+      "label": "Lot (acres)",
+      "v": 3.462,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "facility",
+      "label": "Facility",
+      "v": "TOWN HALL",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     {
+      "k": "ground_elevation_m",
+      "label": "Ground elevation (m)",
+      "v": 7.9,
+      "basis": "public",
+      "src": 3,
+      "as_of": "2026-11-23"
+     }
+    ],
+    "permits": [
+     {
+      "date": "2022-11-02",
+      "type": "Alteration",
+      "trades": [],
+      "basis": "public",
+      "src": 4
+     },
+     {
+      "date": "2022-03-16",
+      "type": "Alteration",
+      "trades": [],
+      "basis": "public",
+      "src": 4
+     },
+     {
+      "date": "2022-03-01",
+      "type": "Alteration",
+      "trades": [],
+      "basis": "public",
+      "src": 4
+     },
+     {
+      "date": "2021-08-19",
+      "type": "Alteration",
+      "trades": [],
+      "basis": "public",
+      "src": 4
+     },
+     {
+      "date": "2021-08-11",
+      "type": "Alteration",
+      "trades": [],
+      "basis": "public",
+      "src": 4
+     }
+    ],
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -74.1967022,
+       "lat": 39.9517805
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        -9.72,
+        37.42
+       ],
+       [
+        -11.85,
+        38.15
+       ],
+       [
+        -9.43,
+        45.25
+       ],
+       [
+        33.17,
+        30.75
+       ],
+       [
+        7.31,
+        -45.25
+       ],
+       [
+        -33.17,
+        -31.47
+       ]
+      ],
+      "area_m2": 3449.3,
+      "w_ft": 263,
+      "d_ft": 148,
+      "rot_deg": 198.8,
+      "basis": "public",
+      "src": 5,
+      "as_of": "2024-08-03",
+      "axis_deg": 18.8,
+      "method": "outline from imagery",
+      "imagery": "ORNL",
+      "outbuildings": [
+       {
+        "ring_m": [
+         [
+          -30.05,
+          32.46
+         ],
+         [
+          -37.16,
+          34.83
+         ],
+         [
+          -33.36,
+          46.21
+         ],
+         [
+          -26.24,
+          43.84
+         ]
+        ],
+        "basis": "public"
+       },
+       {
+        "ring_m": [
+         [
+          22.83,
+          52.2
+         ],
+         [
+          7.2,
+          57.52
+         ],
+         [
+          7.93,
+          59.64
+         ],
+         [
+          -33.27,
+          73.66
+         ],
+         [
+          -28.43,
+          87.87
+         ],
+         [
+          -22.75,
+          85.93
+         ],
+         [
+          -6.07,
+          134.94
+         ],
+         [
+          6.01,
+          130.83
+         ],
+         [
+          10.69,
+          121.32
+         ],
+         [
+          2.6,
+          117.33
+         ],
+         [
+          6.12,
+          110.19
+         ],
+         [
+          -2.83,
+          83.91
+         ],
+         [
+          1.44,
+          82.45
+         ],
+         [
+          1.91,
+          83.87
+         ],
+         [
+          30.33,
+          74.2
+         ]
+        ],
+        "basis": "public"
+       }
+      ]
+     },
+     "height": {
+      "eave_m": 7.2,
+      "ridge_m": 7.2,
+      "from": "storeys",
+      "basis": "likely",
+      "src": 3
+     },
+     "storeys": {
+      "n": 2,
+      "basis": "public",
+      "src": 1
+     },
+     "front": {
+      "bearing_deg": 19,
+      "basis": "public",
+      "from": "geocoded street point"
+     },
+     "parcel": {
+      "ring_m": [
+       [
+        37.53,
+        46.26
+       ],
+       [
+        29.48,
+        20.89
+       ],
+       [
+        23.67,
+        22.73
+       ],
+       [
+        3.73,
+        -40.18
+       ],
+       [
+        -5.57,
+        -44.44
+       ],
+       [
+        -74.95,
+        -14.59
+       ],
+       [
+        -76.88,
+        -10.47
+       ],
+       [
+        -72.05,
+        5.76
+       ],
+       [
+        -67.14,
+        7.06
+       ],
+       [
+        -44.85,
+        0.42
+       ],
+       [
+        -38.72,
+        20.97
+       ],
+       [
+        -23.97,
+        16.58
+       ],
+       [
+        -20.31,
+        28.85
+       ],
+       [
+        -35.06,
+        33.24
+       ],
+       [
+        -35.76,
+        30.88
+       ],
+       [
+        -62.2,
+        38.76
+       ],
+       [
+        -31.25,
+        142.6
+       ],
+       [
+        24.45,
+        126.35
+       ],
+       [
+        15.11,
+        94.33
+       ],
+       [
+        42.61,
+        86.31
+       ],
+       [
+        30.61,
+        48.46
+       ]
+      ],
+      "area_m2": 12639.6,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-06-04"
+     },
+     "kind": "large",
+     "kind_from": "footprint 37,128 sq ft"
+    },
+    "front_basis": "public",
+    "layout": {
+     "from": "none",
+     "basis": "likely",
+     "note": "Interior layout is not on public record."
+    }
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "sink repair",
+   "shape": "contract: large building, six storeys (the shell is drawn to the full height)",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-large-large_tall",
+    "title": "Floor sketch",
+    "address": "8 Probe Plaza, York, PA 17401",
+    "issue": "Sink leaking",
+    "basis": "likely",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (York County, York hub)"
+    },
+    "focus": [
+     "fixture_shutoffs",
+     "main_water",
+     "sewer_cleanout"
+    ],
+    "floors": [
+     {
+      "id": "first",
+      "name": "Ground floor",
+      "w": 499,
+      "h": 557,
+      "rooms": [],
+      "items": [],
+      "runs": [],
+      "wet_walls": []
+     }
+    ],
+    "outside": [
+     {
+      "kind": "main_water",
+      "label": "Water service",
+      "short": "WS",
+      "floor": "first",
+      "side": "front",
+      "at": 0.3,
+      "basis": "likely",
+      "focus": true,
+      "note": "Outside on the street side"
+     },
+     {
+      "kind": "sewer_cleanout",
+      "label": "Sewer",
+      "short": "S",
+      "floor": "first",
+      "side": "front",
+      "at": 0.7,
+      "basis": "likely",
+      "focus": true,
+      "note": "Outside on the street side"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: public property records. Interior layout is not on public record.",
+    "sources": [
+     {
+      "n": 1,
+      "title": "York County parcels and assessment (OPEN_DATA Parcels)",
+      "publisher": "York County Planning Commission",
+      "url": "https://arcweb1.ycpc.org/server/rest/services/OPEN_DATA/Parcels/FeatureServer/0",
+      "date": "2026-11-23"
+     },
+     {
+      "n": 3,
+      "title": "Elevation Point Query Service (3DEP)",
+      "publisher": "U.S. Geological Survey",
+      "url": "https://epqs.nationalmap.gov/v1/docs",
+      "date": "2026-11-23"
+     },
+     {
+      "n": 4,
+      "title": "USA Structures (building outlines)",
+      "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+      "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+      "date": "2023-03-26"
+     },
+     {
+      "n": 2,
+      "title": "Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024",
+      "publisher": "Broad Sky OS",
+      "url": "",
+      "date": "2026-11-17"
+     }
+    ],
+    "example": false,
+    "place": {
+     "label": "8 Probe Plaza, York, PA 17401",
+     "lat": 39.96373,
+     "lon": -76.7277694,
+     "precision": "parcel",
+     "geocoder": "parcel centroid",
+     "basis": "public",
+     "src": 1
+    },
+    "facts": [
+     {
+      "k": "year_built",
+      "label": "Year built",
+      "v": 2005,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-11-23"
+     },
+     {
+      "k": "floor_area_sqft",
+      "label": "Building area (sq ft)",
+      "v": 120389,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-11-23"
+     },
+     {
+      "k": "land_use",
+      "label": "Land use code",
+      "v": "E / 663",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-11-23"
+     },
+     {
+      "k": "utilities",
+      "label": "Utilities",
+      "v": "All Public",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-11-23"
+     },
+     {
+      "k": "ground_elevation_m",
+      "label": "Ground elevation (m)",
+      "v": 118.4,
+      "basis": "public",
+      "src": 3,
+      "as_of": "2026-11-23"
+     }
+    ],
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -76.7274161,
+       "lat": 39.9634759
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        10.2,
+        -10.31
+       ],
+       [
+        31.0,
+        -0.74
+       ],
+       [
+        57.2,
+        -62.36
+       ],
+       [
+        51.36,
+        -74.54
+       ],
+       [
+        -4.47,
+        -96.44
+       ],
+       [
+        -11.34,
+        -76.93
+       ],
+       [
+        -34.83,
+        -86.88
+       ],
+       [
+        -48.67,
+        -41.15
+       ],
+       [
+        -52.17,
+        -42.39
+       ],
+       [
+        -67.89,
+        -5.75
+       ],
+       [
+        -78.24,
+        31.66
+       ],
+       [
+        -72.23,
+        33.77
+       ],
+       [
+        -73.64,
+        37.78
+       ],
+       [
+        -35.62,
+        51.16
+       ],
+       [
+        -26.15,
+        46.63
+       ],
+       [
+        -20.64,
+        58.12
+       ],
+       [
+        -2.13,
+        64.64
+       ],
+       [
+        7.04,
+        48.18
+       ],
+       [
+        10.61,
+        55.62
+       ],
+       [
+        5.19,
+        58.22
+       ],
+       [
+        1.49,
+        68.72
+       ],
+       [
+        73.83,
+        96.44
+       ],
+       [
+        78.24,
+        83.92
+       ],
+       [
+        39.31,
+        74.72
+       ],
+       [
+        49.95,
+        39.68
+       ],
+       [
+        52.96,
+        40.73
+       ],
+       [
+        64.15,
+        23.3
+       ],
+       [
+        31.39,
+        6.15
+       ],
+       [
+        23.03,
+        34.69
+       ],
+       [
+        12.03,
+        30.82
+       ],
+       [
+        20.3,
+        7.31
+       ],
+       [
+        15.3,
+        5.55
+       ],
+       [
+        17.24,
+        0.04
+       ],
+       [
+        -9.75,
+        -11.14
+       ],
+       [
+        -7.81,
+        -16.65
+       ],
+       [
+        5.98,
+        -19.1
+       ]
+      ],
+      "area_m2": 15214.6,
+      "w_ft": 557,
+      "d_ft": 499,
+      "rot_deg": 67.8,
+      "basis": "public",
+      "src": 4,
+      "as_of": "2023-03-26",
+      "axis_deg": 67.8,
+      "method": "outline from imagery",
+      "imagery": "ORNL",
+      "outbuildings": []
+     },
+     "height": {
+      "eave_m": 21.6,
+      "ridge_m": 21.6,
+      "from": "storeys",
+      "basis": "likely",
+      "src": 3
+     },
+     "storeys": {
+      "n": 6,
+      "basis": "public",
+      "src": 1
+     },
+     "front": {
+      "bearing_deg": 248,
+      "basis": "public",
+      "from": "geocoded street point"
+     },
+     "parcel": {
+      "ring_m": [
+       [
+        -76.07,
+        42.94
+       ],
+       [
+        -54.39,
+        50.68
+       ],
+       [
+        -25.37,
+        62.01
+       ],
+       [
+        -4.12,
+        70.93
+       ],
+       [
+        23.51,
+        2.78
+       ],
+       [
+        -52.75,
+        -27.76
+       ],
+       [
+        -75.51,
+        28.21
+       ],
+       [
+        -79.8,
+        39.71
+       ],
+       [
+        -78.58,
+        41.5
+       ]
+      ],
+      "area_m2": 6041.1,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-11-23"
+     },
+     "kind": "large",
+     "kind_from": "footprint 163,763 sq ft"
+    },
+    "front_basis": "public",
+    "layout": {
+     "from": "none",
+     "basis": "likely",
+     "note": "Interior layout is not on public record."
+    }
+   }
+  },
+  {
+   "role": "pp-plumber",
+   "issue": "sink repair",
+   "shape": "contract: square runs with risers on basement, first and second floors, power and duct runs",
+   "card": {
+    "type": "card",
+    "kind": "floor_sketch",
+    "id": "fs-square0001",
+    "title": "Floor sketch",
+    "address": "21 Squarerun Ct, Lititz, PA 17543",
+    "issue": "Sink leaking",
+    "basis": "likely",
+    "area": {
+     "status": "in",
+     "label": "Inside the Punctual Pros service area (Lancaster County, Lancaster hub)"
+    },
+    "house": {
+     "text": "Two stories over a full basement. (likely) Built 1994. Electric heat. (likely)",
+     "year": 1994,
+     "year_basis": "public",
+     "stories": 2,
+     "foundation": "basement",
+     "basement": "full",
+     "fuel": "electric",
+     "fuel_basis": "likely"
+    },
+    "focus": [
+     "fixture_shutoffs",
+     "main_water",
+     "sewer_cleanout"
+    ],
+    "floors": [
+     {
+      "id": "basement",
+      "name": "Basement",
+      "w": 56,
+      "h": 33,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 0,
+        "w": 36.3,
+        "h": 33,
+        "label": "Basement",
+        "short": "Basemen",
+        "kind": "basement",
+        "floor": "basement",
+        "basis": "likely"
+       },
+       {
+        "x": 36.3,
+        "y": 0,
+        "w": 19.7,
+        "h": 23.1,
+        "label": "Storage",
+        "short": "Storage",
+        "kind": "storage",
+        "floor": "basement",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "main_water",
+        "label": "Main water shutoff",
+        "short": "MW",
+        "basis": "likely",
+        "focus": true,
+        "note": "On the street-side wall where the service comes in",
+        "detail": null,
+        "x": 6,
+        "y": 31.2,
+        "room": "Basement"
+       },
+       {
+        "kind": "sewer_cleanout",
+        "label": "Sewer cleanout",
+        "short": "C",
+        "basis": "likely",
+        "focus": true,
+        "note": "Capped pipe near the street wall",
+        "detail": null,
+        "x": 28,
+        "y": 31.2,
+        "room": "Basement"
+       },
+       {
+        "kind": "water_heater",
+        "label": "Water heater",
+        "short": "WH",
+        "basis": "likely",
+        "focus": false,
+        "note": "In the storage corner",
+        "detail": null,
+        "x": 46,
+        "y": 6,
+        "room": "Storage"
+       },
+       {
+        "kind": "air_handler",
+        "label": "Air handler",
+        "short": "AH",
+        "basis": "likely",
+        "focus": false,
+        "note": "Near the middle of the basement",
+        "detail": null,
+        "x": 28,
+        "y": 16.5,
+        "room": "Basement"
+       },
+       {
+        "kind": "panel",
+        "label": "Electric panel",
+        "short": "EP",
+        "basis": "likely",
+        "focus": false,
+        "note": "On the side wall",
+        "detail": null,
+        "x": 3.3,
+        "y": 16.5,
+        "room": "Basement"
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          6,
+          31.2
+         ],
+         [
+          6,
+          20
+         ],
+         [
+          18,
+          20
+         ],
+         [
+          26,
+          20
+         ],
+         [
+          46,
+          20
+         ],
+         [
+          46,
+          6
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          18,
+          20,
+          "up"
+         ],
+         [
+          26,
+          20,
+          "up"
+         ]
+        ]
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          20,
+          14
+         ],
+         [
+          20,
+          31.2
+         ],
+         [
+          28,
+          31.2
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          20,
+          14,
+          "up"
+         ]
+        ]
+       },
+       {
+        "kind": "power",
+        "label": "Power",
+        "points": [
+         [
+          0.5,
+          16.5
+         ],
+         [
+          3.3,
+          16.5
+         ]
+        ],
+        "basis": "likely"
+       },
+       {
+        "kind": "duct",
+        "label": "Duct",
+        "points": [
+         [
+          28,
+          16.5
+         ],
+         [
+          40,
+          16.5
+         ],
+         [
+          40,
+          8
+         ]
+        ],
+        "basis": "likely"
+       }
+      ],
+      "wet_walls": []
+     },
+     {
+      "id": "first",
+      "name": "First floor",
+      "w": 56,
+      "h": 33,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 19,
+        "w": 18,
+        "h": 14,
+        "label": "Living room",
+        "short": "Living",
+        "kind": "living",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 18,
+        "y": 19,
+        "w": 18.3,
+        "h": 14,
+        "label": "Kitchen",
+        "short": "Kitchen",
+        "kind": "kitchen",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 12.5,
+        "w": 36.3,
+        "h": 6.5,
+        "label": "Hall",
+        "short": "Hall",
+        "kind": "hall",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 12.5,
+        "label": "Dining",
+        "short": "Dining",
+        "kind": "dining",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 14,
+        "y": 0,
+        "w": 8,
+        "h": 12.5,
+        "label": "Half bath",
+        "short": "Bath",
+        "kind": "bath",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 22,
+        "y": 0,
+        "w": 6,
+        "h": 12.5,
+        "label": "Stairs",
+        "short": "Stairs",
+        "kind": "stairs",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 28,
+        "y": 0,
+        "w": 8.3,
+        "h": 12.5,
+        "label": "Utility",
+        "short": "Utility",
+        "kind": "utility",
+        "floor": "first",
+        "basis": "likely"
+       },
+       {
+        "x": 36.3,
+        "y": 0,
+        "w": 19.7,
+        "h": 23.1,
+        "label": "Family room",
+        "short": "Family",
+        "kind": "family",
+        "floor": "first",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "fixture_shutoffs",
+        "label": "Kitchen sink shutoffs",
+        "short": "FX",
+        "basis": "likely",
+        "focus": true,
+        "note": "Under the kitchen sink",
+        "detail": null,
+        "x": 30,
+        "y": 31.2,
+        "room": "Kitchen"
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          26,
+          20
+         ],
+         [
+          26,
+          31.2
+         ],
+         [
+          30,
+          31.2
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          26,
+          20,
+          "down"
+         ]
+        ]
+       },
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          18,
+          20
+         ],
+         [
+          18,
+          6
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          18,
+          20,
+          "down"
+         ],
+         [
+          18,
+          6,
+          "up"
+         ]
+        ]
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          20,
+          4
+         ],
+         [
+          20,
+          14
+         ],
+         [
+          20,
+          29
+         ],
+         [
+          30,
+          29
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          20,
+          14,
+          "down"
+         ],
+         [
+          20,
+          14,
+          "up"
+         ]
+        ]
+       }
+      ],
+      "wet_walls": []
+     },
+     {
+      "id": "second",
+      "name": "Second floor",
+      "w": 56,
+      "h": 33,
+      "rooms": [
+       {
+        "x": 0,
+        "y": 19,
+        "w": 18,
+        "h": 14,
+        "label": "Bedroom 1",
+        "short": "Bed 1",
+        "kind": "bedroom",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 18,
+        "y": 19,
+        "w": 18.3,
+        "h": 14,
+        "label": "Bedroom 2",
+        "short": "Bed 2",
+        "kind": "bedroom",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 12.5,
+        "w": 36.3,
+        "h": 6.5,
+        "label": "Hall",
+        "short": "Hall",
+        "kind": "hall",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 12.5,
+        "label": "Bedroom 3",
+        "short": "Bed 3",
+        "kind": "bedroom",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 14,
+        "y": 0,
+        "w": 8,
+        "h": 12.5,
+        "label": "Bath",
+        "short": "Bath",
+        "kind": "bath",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 22,
+        "y": 0,
+        "w": 6,
+        "h": 12.5,
+        "label": "Stairs",
+        "short": "Stairs",
+        "kind": "stairs",
+        "floor": "second",
+        "basis": "likely"
+       },
+       {
+        "x": 28,
+        "y": 0,
+        "w": 8.3,
+        "h": 12.5,
+        "label": "Bedroom 4",
+        "short": "Bed 4",
+        "kind": "bedroom",
+        "floor": "second",
+        "basis": "likely"
+       }
+      ],
+      "items": [
+       {
+        "kind": "fixture_shutoffs",
+        "label": "Bath shutoffs",
+        "short": "FX",
+        "basis": "likely",
+        "focus": false,
+        "note": "Under the bath sink",
+        "detail": null,
+        "x": 20,
+        "y": 3,
+        "room": "Bath"
+       }
+      ],
+      "runs": [
+       {
+        "kind": "water",
+        "label": "Water",
+        "points": [
+         [
+          18,
+          6
+         ],
+         [
+          18,
+          3
+         ],
+         [
+          20,
+          3
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          18,
+          6,
+          "down"
+         ]
+        ]
+       },
+       {
+        "kind": "drain",
+        "label": "Drain",
+        "points": [
+         [
+          20,
+          14
+         ],
+         [
+          20,
+          3
+         ]
+        ],
+        "basis": "likely",
+        "risers": [
+         [
+          20,
+          14,
+          "down"
+         ]
+        ]
+       }
+      ],
+      "wet_walls": []
+     }
+    ],
+    "outside": [
+     {
+      "kind": "heat_pump",
+      "label": "Heat pump",
+      "short": "HP",
+      "floor": "basement",
+      "side": "right",
+      "at": 0.35,
+      "basis": "likely",
+      "focus": false,
+      "note": "Outside on a pad along a side wall"
+     }
+    ],
+    "front": "bottom",
+    "source_line": "Source: public property records where shown; layout is a rule of thumb for houses built around 1994 in Lancaster County.",
+    "sources": [
+     {
+      "n": 1,
+      "title": "New Jersey parcels and MOD-IV tax list (Parcels_Composite_NJ_WM)",
+      "publisher": "NJ Office of GIS (NJOGIS)",
+      "url": "https://services2.arcgis.com/XVOqAjTOJ5P6ngMu/arcgis/rest/services/Parcels_Composite_NJ_WM/FeatureServer/0",
+      "date": "2026-10-01"
+     },
+     {
+      "n": 3,
+      "title": "USA Structures (building outlines)",
+      "publisher": "FEMA Geospatial Response Office; Oak Ridge National Laboratory",
+      "url": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0",
+      "date": "2024-08-01"
+     },
+     {
+      "n": 2,
+      "title": "Where equipment usually is: trade rules of thumb and Census housing data, 2020–2024",
+      "publisher": "Broad Sky OS",
+      "url": "",
+      "date": "2026-11-17"
+     }
+    ],
+    "example": false,
+    "place": {
+     "label": "21 Squarerun Ct, Lititz, PA 17543",
+     "lat": 40.0499837,
+     "lon": -76.2998811,
+     "precision": "parcel",
+     "geocoder": "parcel centroid",
+     "basis": "public",
+     "src": 1
+    },
+    "facts": [
+     {
+      "k": "year_built",
+      "label": "Year built",
+      "v": 1994,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     },
+     {
+      "k": "stories",
+      "label": "Storeys",
+      "v": 2,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     },
+     {
+      "k": "living_area_sqft",
+      "label": "Living area",
+      "v": 2300,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     },
+     {
+      "k": "beds",
+      "label": "Bedrooms",
+      "v": 4,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     },
+     {
+      "k": "attached_garage",
+      "label": "Attached garage",
+      "v": "yes",
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     }
+    ],
+    "building": {
+     "frame": {
+      "origin": {
+       "lon": -76.2998846,
+       "lat": 40.0500041
+      },
+      "units": "m",
+      "x": "east",
+      "y": "north"
+     },
+     "footprint": {
+      "ring_m": [
+       [
+        -9.84,
+        -0.45
+       ],
+       [
+        -0.82,
+        -6.79
+       ],
+       [
+        0.9,
+        -4.32
+       ],
+       [
+        5.82,
+        -7.78
+       ],
+       [
+        9.84,
+        -2.02
+       ],
+       [
+        -4.1,
+        7.78
+       ]
+      ],
+      "area_m2": 152.9,
+      "w_ft": 56,
+      "d_ft": 33,
+      "rot_deg": 35.1,
+      "basis": "public",
+      "src": 3,
+      "as_of": "2024-08-01",
+      "axis_deg": 125.1,
+      "method": "outline from imagery",
+      "imagery": "test",
+      "outbuildings": []
+     },
+     "height": {
+      "eave_m": 5.4,
+      "ridge_m": 8.2,
+      "from": "storeys",
+      "basis": "likely",
+      "src": 3
+     },
+     "storeys": {
+      "n": 2,
+      "basis": "public",
+      "check": {
+       "ratio": 1.4,
+       "n_est": 1.5,
+       "n_given": 2.0,
+       "disagree_by": 0.6,
+       "uncertain": false,
+       "basis": "likely",
+       "note": "agrees"
+      },
+      "src": 1
+     },
+     "front": {
+      "bearing_deg": 215,
+      "basis": "public",
+      "from": "geocoded street point"
+     },
+     "parcel": {
+      "ring_m": [
+       [
+        -19.94,
+        -4.4
+       ],
+       [
+        3.85,
+        -21.11
+       ],
+       [
+        21.66,
+        4.4
+       ],
+       [
+        -2.13,
+        21.11
+       ]
+      ],
+      "area_m2": 904.3,
+      "basis": "public",
+      "src": 1,
+      "as_of": "2026-10-01"
+     },
+     "kind": "house",
+     "kind_from": "footprint 1,646 sq ft"
+    },
+    "front_basis": "public",
+    "layout": {
+     "from": "outline",
+     "basis": "likely"
+    }
    }
   }
  ]

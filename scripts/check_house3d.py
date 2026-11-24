@@ -11,6 +11,11 @@ and, for every sample card at 1440x900 and 390x844 in light and dark:
   - the view, floor, layer and "Behind this wall" controls work, and tapping an item opens its card;
   - "Download model" saves <address>.glb, which loads back in three.js GLTFLoader with the same item and run count;
   - "Example address" is written only on a card from company example data, and a company record there says "(example data)";
+  - a large building (building.kind "large" or layout.from "none"): the shell only, the real outline stood up with a line at each
+    storey and a flat roof, no rooms, no inside walls, no lines, no "Behind this wall", no floor chips, the layout note shown, and no
+    word house, home, garage, living, bedroom or kitchen on screen, in the labels or in the file;
+  - square runs (every segment axis-aligned in the card): drawn as the card has them (never moved), and a run with risers draws
+    vertical pieces through the floor, paired on the floor above or below;
   - a live card: the outline is public and solid, the walls follow it, the parcel edge is drawn, the shell's basis follows the
     height, rooms, inside walls, items and runs sit inside the outline, wire and duct runs are drawn, "Behind this wall" lists the
     runs touching each wall with their basis and never calls a wall clear, and the file carries the footprint, the parcel and a
@@ -56,6 +61,8 @@ def serve(port):
 
 
 FORBIDDEN_WALL = ('clear', 'nothing here', 'safe', 'no pipes', 'no wires')
+HOUSE_WORDS = ('house', 'home', 'garage', 'living', 'bedroom', 'kitchen')
+RUN_LAYER = {'water': 'water', 'drain': 'drain', 'gas': 'gas', 'wire': 'elec', 'electric': 'elec', 'power': 'elec', 'duct': 'hvac'}
 SHELL_ROLES = {'item', 'run', 'wall', 'slab', 'room', 'roof', 'outline', 'parcel', 'outbuilding'}
 
 
@@ -133,9 +140,9 @@ def live_checks(check, page, card, st, tag):
     check(f'inside walls inside the outline [{tag}]', inner and all(
         (in_ring(w[k], ring) or to_ring_dist(w[k], ring) < 0.05) for w in inner for k in ('a', 'b'))
         and all(in_ring([(w['a'][0] + w['b'][0]) / 2, (w['a'][1] + w['b'][1]) / 2], ring) for w in inner), f'{len(inner)}')
-    n_wd = sum(1 for f in card['floors'] for r in f.get('runs') or [] if r['kind'] in ('wire', 'duct'))
-    wd = [o for o in st['runs'] if o['kind'] in ('wire', 'duct')]
-    check(f'wire and duct runs drawn [{tag}]', n_wd > 0 and len(wd) == n_wd and all(o['layer'] == ('elec' if o['kind'] == 'wire' else 'hvac') for o in wd)
+    n_wd = sum(1 for f in card['floors'] for r in f.get('runs') or [] if r['kind'] in ('wire', 'duct', 'power'))
+    wd = [o for o in st['runs'] if o['kind'] in ('wire', 'duct', 'power')]
+    check(f'wire and duct runs drawn [{tag}]', n_wd > 0 and len(wd) == n_wd and all(o['layer'] == RUN_LAYER[o['kind']] for o in wd)
           and all(o['transparent'] for o in wd if o['likely']))
     addr = page.inner_text('.h3-addr')
     txt = page.inner_text('.h3').lower()
@@ -167,6 +174,80 @@ def live_checks(check, page, card, st, tag):
             ok, bad = False, tx
     page.click('[data-h3="wallmode"]')
     check(f'behind each wall lists runs and basis [{tag}]', ok and seen > 0, bad[:200])
+
+
+def is_square(pts):
+    return all(abs(a[0] - b[0]) < 0.05 or abs(a[1] - b[1]) < 0.05 for a, b in zip(pts, pts[1:]))
+
+
+def square_checks(check, card, st, tag):
+    """A card whose runs are all square: the scene draws them as given, risers stand through the floor and pair up across floors."""
+    runs = [r for lvl in st['levels'] for f in card['floors'] if f['id'] == lvl for r in f.get('runs') or [] if len(r.get('points') or []) >= 2]
+    if not runs or not all(is_square(r['points']) for r in runs):
+        return
+    rows = st['runs']
+    same = len(rows) == len(runs) and all(
+        len(o['points']) == len(r['points']) and all(abs(p[0] - q[0]) < 0.01 and abs(p[1] - q[1]) < 0.01 for p, q in zip(o['points'], r['points']))
+        and o['kind'] == r['kind'] for o, r in zip(rows, runs))
+    check(f'square runs drawn as the card has them [{tag}]', same and not any(o['snapped'] for o in rows) and all(is_square(o['points']) for o in rows),
+          str([o['points'] for o in rows if not is_square(o['points']) or o['snapped']])[:200])
+    want = [len(r.get('risers') or []) for r in runs]
+    check(f'risers counted on every run [{tag}]', [o['risers'] for o in rows] == want, f"{[o['risers'] for o in rows]} vs {want}")
+    tall = all((o['top'] - o['bottom'] > 0.45) == (n > 0) for o, n in zip(rows, want))
+    check(f'a riser stands through the floor, a plain run lies flat [{tag}]', tall,
+          str([(o['kind'], round(o['top'] - o['bottom'], 2), n) for o, n in zip(rows, want)]))
+    # the same spot on the floor above or below carries the matching riser
+    spots = {}
+    for lvl in st['levels']:
+        for f in card['floors']:
+            if f['id'] == lvl:
+                for r in f.get('runs') or []:
+                    for x, y, d in r.get('risers') or []:
+                        spots.setdefault(lvl, []).append((x, y, d, r['kind']))
+    order = st['levels']
+    ok, bad = True, ''
+    for i, lvl in enumerate(order):
+        for x, y, d, k in spots.get(lvl, []):
+            j = i + (1 if d == 'up' else -1)
+            partner = 'down' if d == 'up' else 'up'
+            if not (0 <= j < len(order) and any(abs(x - a) < 0.05 and abs(y - b) < 0.05 and dd == partner and kk == k for a, b, dd, kk in spots.get(order[j], []))):
+                ok, bad = False, f'{lvl} {k} riser {d} at {x},{y} has no {partner} riser on the next floor'
+    check(f'risers pair on the next floor [{tag}]', ok and any(spots.values()), bad)
+
+
+def large_checks(check, page, card, st, tag):
+    """A large building: the shell only, and the plan says the interior is not on record."""
+    b = card['building']
+    site = st['site']
+    ring = site['ring']
+    shell = {o['name']: o for o in st['shell']}
+    out = shell.get('Building outline')
+    check(f'large: outline is public and solid [{tag}]', out is not None and out['basis'] == 'public' and not out['transparent'] and not out['dashedEdges']
+          and len(ring) == len(b['footprint']['ring_m']))
+    first = [w for w in st['walls'] if w['level'] == st['levels'][0] and not w['inside']]
+    edges = sum(1 for i in range(len(ring)) if ((ring[i][0] - ring[(i + 1) % len(ring)][0]) ** 2 + (ring[i][1] - ring[(i + 1) % len(ring)][1]) ** 2) ** 0.5 > 0.16)
+    on_ring = all(min(((w[k][0] - q[0]) ** 2 + (w[k][1] - q[1]) ** 2) ** 0.5 for q in ring) < 0.05 for w in first for k in ('a', 'b'))
+    check(f'large: walls follow the outline [{tag}]', len(first) == edges and on_ring, f'{len(first)} walls, {edges} edges')
+    n = b['storeys']['n']
+    check(f'large: one level per storey [{tag}]', st['large'] is True and len(st['levels']) == min(12, n) and st['levels'][0] == 'first', str(st['levels']))
+    check(f'large: no rooms, no inside walls, no lines, no items inside [{tag}]', st['rooms'] == 0 and not [w for w in st['walls'] if w['inside']]
+          and not [o for o in st['shell'] if o['role'] == 'room'] and st['runs'] == [] and all(o['level'] == 'outside' for o in st['items']))
+    lines = [o for o in st['shell'] if o['role'] == 'storey']
+    check(f'large: a line at the top of each storey [{tag}]', len(lines) == len(st['levels']) and all(o['level'] == lv for o, lv in zip(lines, st['levels'])))
+    rows = st['levelRows']
+    height = rows[-1]['base'] + rows[-1]['height']
+    check(f'large: stood up to the storeys, flat roof above [{tag}]', st['roof']['flat'] and abs(st['roof']['top'] - height) < 0.01
+          and all(abs(rows[i + 1]['base'] - (rows[i]['base'] + rows[i]['height'])) < 0.01 for i in range(len(rows) - 1))
+          and (not b.get('height', {}).get('eave_m') or abs(height - max(2.4 * n, min(5 * n, b['height']['eave_m']))) < 0.2), f"{height} vs {b.get('height')}")
+    check(f'large: the outside items stand outside on the street side [{tag}]', len(st['items']) == len(card['outside']) and all(o['level'] == 'outside' for o in st['items'])
+          and all(not in_ring(o['at'], ring) for o in st['items']))
+    check(f'large: no floor chips, no "Behind this wall" [{tag}]', page.locator('[data-h3="floor"]').count() == 0 and page.locator('[data-h3="wallmode"]').count() == 0
+          and page.evaluate("() => (window.h.selectWall(0), document.querySelector('.h3-info').hidden)") is True)
+    check(f'large: the note says the interior is not on record [{tag}]', page.inner_text('.h3-note').strip() == card['layout']['note'] and st['note'] == card['layout']['note'])
+    seen = page.evaluate("""() => { const el = document.querySelector('.h3'); const out = [el.innerText];
+        el.querySelectorAll('[aria-label],[title]').forEach(e => out.push(e.getAttribute('aria-label') || '', e.getAttribute('title') || '')); return out.join(' | ').toLowerCase(); }""")
+    check(f'large: no house word on screen or in a label [{tag}]', not any(w in seen for w in HOUSE_WORDS), seen[:200])
+    check(f'large: not called example [{tag}]', 'example' not in seen)
 
 
 def file_checks(check, card, back, tag):
@@ -260,11 +341,12 @@ def main():
                     page.click('[data-h3="layer"][data-layer="walls"]')
                     levels = st['levels']
                     top_i = len(levels) - 1
-                    page.click(f'[data-h3="floor"][data-floor="0"]')
-                    st2 = page.evaluate('window.h.stats()')
-                    check(f'floor switch [{tag}]', st2['floor'] == levels[0] and not any(
-                        w['visible'] for w in st2['walls'] if w['level'] != levels[0]))
-                    page.click('[data-h3="floor"][data-floor="all"]')
+                    if not st['large']:
+                        page.click(f'[data-h3="floor"][data-floor="0"]')
+                        st2 = page.evaluate('window.h.stats()')
+                        check(f'floor switch [{tag}]', st2['floor'] == levels[0] and not any(
+                            w['visible'] for w in st2['walls'] if w['level'] != levels[0]))
+                        page.click('[data-h3="floor"][data-floor="all"]')
                     for v in ('cutaway', 'top', 'outside'):
                         page.click(f'[data-h3="view"][data-v="{v}"]')
                         st2 = page.evaluate('window.h.stats()')
@@ -293,17 +375,22 @@ def main():
                     page.wait_for_timeout(120)
                     after = page.evaluate("document.querySelector('.h3-canvas').toDataURL().length")
                     check(f'drag turns the house [{tag}]', before != after)
-                    # Behind this wall
-                    page.click('[data-h3="wallmode"]')
-                    page.evaluate("() => window.h.select('Front wall')")
-                    txt = page.inner_text('.h3-info')
-                    exp = [x for x in st['behind'] if x['name'] == 'Front wall'][0]['list']
-                    wires = any(r['kind'] in ('wire', 'electric') for f in card['floors'] for r in f.get('runs') or [])
-                    check(f'behind this wall [{tag}]', 'Front wall' in txt and all(x['label'] in txt for x in exp)
-                          and ('Wire runs: not in records' in txt) == (not wires) and not any(f in txt.lower() for f in FORBIDDEN_WALL), txt[:160])
-                    page.click('[data-h3="wallmode"]')
+                    # Behind this wall (not offered on a large building)
+                    if not st['large']:
+                        page.click('[data-h3="wallmode"]')
+                        page.evaluate("() => window.h.select('Front wall')")
+                        txt = page.inner_text('.h3-info')
+                        exp = [x for x in st['behind'] if x['name'] == 'Front wall'][0]['list']
+                        wires = any(r['kind'] in ('wire', 'electric') for f in card['floors'] for r in f.get('runs') or [])
+                        check(f'behind this wall [{tag}]', 'Front wall' in txt and all(x['label'] in txt for x in exp)
+                              and ('Wire runs: not in records' in txt) == (not wires) and not any(f in txt.lower() for f in FORBIDDEN_WALL), txt[:160])
+                        page.click('[data-h3="wallmode"]')
                     if isinstance(card.get('building'), dict):
-                        live_checks(check, page, card, st, tag)
+                        if st['large']:
+                            large_checks(check, page, card, st, tag)
+                        else:
+                            live_checks(check, page, card, st, tag)
+                            square_checks(check, card, st, tag)
                     # the file
                     if theme == 'light':
                         with page.expect_download() as dl:
@@ -337,6 +424,10 @@ def main():
                               and any(n.endswith('(likely)') for n in back['names']) == (n_likely > 0), ', '.join(back['names'][:12]))
                         if isinstance(card.get('building'), dict):
                             file_checks(check, card, back, tag)
+                        if st['large']:
+                            low = ' '.join(back['names']).lower()
+                            check(f'large: the file holds a building, no rooms, no house word [{tag}]', 'Building' in back['names'] and 'Rooms' not in back['names']
+                                  and 'House' not in back['names'] and not any(w in low for w in HOUSE_WORDS) and back['runs'] == 0, ', '.join(back['names'][:14]))
                     if a.shots and i < 2 and theme == 'light' and vw == 1440:
                         os.makedirs(a.shots, exist_ok=True)
                         page.evaluate('() => window.h.select(null)')
@@ -381,6 +472,52 @@ def main():
             ok = ok and pfront == 'bottom' and abs(rot - want) < 0.5
         check('rotation: given, turned for a front at the top, or worked out from the outline', ok and any(r[0] is None for r in rots)
               and any(r[1] == 'top' for r in rots), str(rots))
+        # the large rule and the square-run rules, read without drawing
+        cards = [s['card'] for s in samples]
+        large = [c for c in cards if (c.get('building') or {}).get('kind') == 'large']
+        square = [c for c in cards if (c.get('building') or {}).get('kind') == 'house' and any(
+            r.get('risers') for f in c['floors'] for r in f.get('runs') or [])]
+        check('samples hold two large cards and a square-run house with risers', len(large) == 2 and len(square) == 1
+              and all(c['layout']['from'] == 'none' and [f['id'] for f in c['floors']] == ['first'] and c['floors'][0]['name'] == 'Ground floor'
+                      and not c['floors'][0]['rooms'] and not c['floors'][0]['items'] and not c['floors'][0]['runs'] for c in large))
+        check('large rule: kind "large" or layout "none", never a house', page.evaluate('''cards => {
+              const L = window.H.isLargeCard, c = cards[0];
+              return L({ building: { kind: 'large' } }) && L({ layout: { from: 'none' } }) && !L({ building: { kind: 'house' }, layout: { from: 'outline' } })
+                && !L({}) && !L(null) && !L({ building: {} }) && L(c) && !L({ ...c, building: { ...c.building, kind: 'house' }, layout: { from: 'outline' } }); }''', large))
+        check('large rule: a card that carries rooms, items and runs still draws none', page.evaluate('''cards => cards.every(c => {
+              const f = { ...c.floors[0], rooms: [{ x: 5, y: 5, w: 20, h: 20, label: 'Living room' }], items: [{ kind: 'main_water', label: 'Main', x: 9, y: 9 }],
+                runs: [{ kind: 'water', points: [[9, 9], [9, 30]] }] };
+              const p = window.H.planOf({ ...c, floors: [f] });
+              return p.large && p.levels.every(l => l.rooms.length === 0 && l.items.length === 0 && l.runs.length === 0) && p.outside.length === c.outside.length; })''', large))
+        check('large rule: storeys stand to the recorded height, capped at twelve, ground floor named by the card', page.evaluate('''cards => cards.every(c => {
+              const mk = n => window.H.planOf({ ...c, building: { ...c.building, storeys: { n, basis: 'public' }, height: { eave_m: n * 3.6, basis: 'likely' } } });
+              const a = mk(3), b = mk(30);
+              return a.levels.length === 3 && a.levels[0].name === 'Ground floor' && a.levels[1].name === 'Floor 2' && Math.abs(a.levels[2].base - 2 * a.storeyH) < 1e-6
+                && Math.abs(a.storeyH - 3.6) < 1e-6 && b.levels.length === 12 && !a.levels.some(l => l.below); })''', large))
+        check('large rule: no outline (town precision) still draws a shell and says so', page.evaluate('''cards => cards.every(c => {
+              const p = window.H.planOf({ ...c, place: { ...c.place, precision: 'town' } });
+              return p.large && p.site === null && p.levels.length >= 1 && p.note === c.layout.note; })''', large))
+        check('large rule: no house word in the large cards', not any(w in json.dumps(c).lower() for c in large for w in HOUSE_WORDS))
+        check('square runs stay square: a point on the wall is kept, one far outside is moved in, a flipped card stays square', page.evaluate('''c => {
+              const sq = p => p.levels.every(l => l.runs.every(r => r.points.every((q, i) => !i || Math.abs(q[0] - r.points[i - 1][0]) < 0.05 || Math.abs(q[1] - r.points[i - 1][1]) < 0.05)));
+              const base = window.H.planOf(c);
+              if (!sq(base) || base.snapped !== 0) return 'base ' + base.snapped;
+              const first = c.floors.find(f => f.id === 'first'), r0 = first.runs[0];
+              const near = window.H.planOf({ ...c, floors: c.floors.map(f => f.id !== 'first' ? f : { ...f, runs: [{ ...r0, points: [[r0.points[0][0], 33.2], ...r0.points.slice(1)] }] }) });
+              const far = window.H.planOf({ ...c, floors: c.floors.map(f => f.id !== 'first' ? f : { ...f, runs: [{ ...r0, points: [[r0.points[0][0], 60], ...r0.points.slice(1)] }] }) });
+              const flip = window.H.planOf({ ...c, front: 'top' });
+              const rs = p => p.levels.find(l => l.id === 'first').runs[0].points[0];
+              if (near.snapped !== 0 || rs(near)[1] !== 33.2) return 'near ' + near.snapped + ' ' + rs(near);
+              if (far.snapped < 1 || rs(far)[1] > 33.05) return 'far ' + far.snapped + ' ' + rs(far);
+              const f1 = base.levels.find(l => l.id === 'first').runs[0];
+              const g1 = flip.levels.find(l => l.id === 'first').runs[0];
+              const w = base.w, h = base.h;
+              if (!sq(flip) || flip.snapped !== 0 || g1.points.some((q, i) => Math.abs(q[0] - (w - f1.points[i][0])) > 0.01 || Math.abs(q[1] - (h - f1.points[i][1])) > 0.01)) return 'flip';
+              if (JSON.stringify(g1.risers) !== JSON.stringify(f1.risers.map(q => [w - q[0], h - q[1], q[2]]))) return 'flip risers ' + JSON.stringify(g1.risers);
+              return 'ok'; }''', square[0]) == 'ok')
+        check('power runs are electrical, and a service line alone is not wire in the walls', page.evaluate('''c => {
+              const p = window.H.planOf(c);
+              return p.levels.some(l => l.runs.some(r => r.kind === 'power')) && p.wires === false; }''', square[0]))
         ctx.close()
         br.close()
     httpd.shutdown()

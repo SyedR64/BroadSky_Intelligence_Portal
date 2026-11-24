@@ -11,6 +11,11 @@
      items and runs (laid out in the plan rectangle, floors[].w by .h feet) are fitted inside the real outline.
    - A card with no `building` (or whose place is known only to the town) draws as before: the footprint is a rectangle worked out
      from the floor area, so the shell is likely.
+   - A large or non-residential building (`building.kind` "large", or `layout.from` "none") draws as a shell only: the real outline
+     stood up to the recorded or likely height, a line at each storey, a flat roof, and what stands outside on the street side. No
+     rooms, no inside walls, no lines and no "Behind this wall": the interior is not on public record, and the view says so.
+   - Runs are square (axis-aligned in the plan). A run's `risers` are short vertical pieces through the floor at the same spot on both
+     floors the line joins; each floor draws its own half, so the two meet in the middle.
    Every element is marked by its basis: "public" (a named public record) solid in one tone, "record" (a company system) solid in
    another, anything else likely (translucent, dashed edges or dashed line, label ends in "likely"). "Example address" is written
    only on a card built from company example data (isExampleCard).
@@ -37,9 +42,12 @@ const KIND_LAYER = {
   panel: 'elec', generator: 'elec', service_switch: 'elec',
   furnace: 'hvac', boiler: 'hvac', heat_pump: 'hvac', air_handler: 'hvac', condenser: 'hvac', oil_tank: 'hvac',
 };
-const RUN_LAYER = { water: 'water', drain: 'drain', gas: 'gas', wire: 'elec', electric: 'elec', duct: 'hvac' };
-const RUN_NAME = { water: 'Water line', drain: 'Drain', gas: 'Gas line', wire: 'Wire run', electric: 'Wire run', duct: 'Duct' };
-const RUN_R = { water: 0.03, gas: 0.025, drain: 0.055, wire: 0.015, electric: 0.015, duct: 0.12 };
+const RUN_LAYER = { water: 'water', drain: 'drain', gas: 'gas', wire: 'elec', electric: 'elec', power: 'elec', duct: 'hvac' };
+const RUN_NAME = { water: 'Water line', drain: 'Drain', gas: 'Gas line', wire: 'Wire run', electric: 'Wire run', power: 'Power line', duct: 'Duct' };
+const RUN_R = { water: 0.03, gas: 0.025, drain: 0.055, wire: 0.015, electric: 0.015, power: 0.02, duct: 0.12 };
+const RISER_UP = 1.1, RISER_DOWN = 1.0, RISER_STUB = 0.5;   // metres a riser stands above or below the line it belongs to
+const LARGE_STOREY = 3.6, RUN_EDGE_FT = 0.35;   // a large building's storey height when none is recorded; how near the wall a line point may sit
+const MAX_STOREYS = 12;            // a large building is drawn up to this many storeys
 // Symbol sizes in metres [width, height, depth], and the height the symbol's base sits at. Generic shapes, never a likeness.
 const SHAPE = {
   furnace: ['box', 0.6, 1.3, 0.75, 0], boiler: ['box', 0.65, 1.1, 0.8, 0], air_handler: ['box', 0.6, 1.2, 0.6, 0],
@@ -95,6 +103,13 @@ export function isExampleCard(card) {
   if (c.example === true) return true;
   if (c.example === false || (c.building && typeof c.building === 'object') || (c.place && typeof c.place === 'object')) return false;
   return (c.basis === 'record' || c.basis === 'mixed') && /sandbox|fictional|example data/i.test(String(c.source_line || ''));
+}
+
+/** True for a large or non-residential building: the card says `building.kind` is "large", or that no layout is known (`layout.from`
+    is "none"). Such a card is drawn as a shell only, never with rooms. */
+export function isLargeCard(card) {
+  const c = card && typeof card === 'object' ? card : {};
+  return !!((c.building && typeof c.building === 'object' && c.building.kind === 'large') || (c.layout && typeof c.layout === 'object' && c.layout.from === 'none'));
 }
 
 /* ── plane geometry in plan feet (x to the right, y towards the front) ───────────────────────────────────────────────────── */
@@ -256,20 +271,23 @@ export function planOf(card) {
     floors = floors.map(f => ({ ...f,
       rooms: (Array.isArray(f.rooms) ? f.rooms : []).map(r => (r && typeof r === 'object' ? { ...r, x: w - num(r.x) - num(r.w), y: h - num(r.y) - num(r.h) } : r)),
       items: (Array.isArray(f.items) ? f.items : []).map(i => (i && typeof i === 'object' ? { ...i, x: w - num(i.x), y: h - num(i.y) } : i)),
-      runs: (Array.isArray(f.runs) ? f.runs : []).map(r => (r && typeof r === 'object' && Array.isArray(r.points) ? { ...r, points: r.points.map(P) } : r)) }));
+      runs: (Array.isArray(f.runs) ? f.runs : []).map(r => (r && typeof r === 'object' && Array.isArray(r.points)
+        ? { ...r, points: r.points.map(P), risers: (Array.isArray(r.risers) ? r.risers : []).map(q => (Array.isArray(q) ? [...P(q), q[2]] : q)) } : r)) }));
     front = 'bottom';
   }
+  const large = isLargeCard(c);
   const site = siteOf(c, w, h, flipped);
-  const stories = Math.max(1, (site && site.storeys) || num(house.stories) || 1);
-  const storeyH = site && site.eave ? Math.min(3.6, Math.max(2.4, site.eave / stories)) : STOREY;
-  const hasBase = house.foundation === 'basement' && house.basement !== 'none' || floors.some(f => f.id === 'basement');
+  const stories = Math.max(1, (site && site.storeys) || (!large && num(house.stories)) || 1);
+  const storeyH = large ? (site && site.eave ? Math.min(5, Math.max(2.4, site.eave / stories)) : LARGE_STOREY)
+    : site && site.eave ? Math.min(3.6, Math.max(2.4, site.eave / stories)) : STOREY;
+  const hasBase = large ? floors.some(f => f.id === 'basement') : house.foundation === 'basement' && house.basement !== 'none' || floors.some(f => f.id === 'basement');
   const levels = [];
   if (hasBase) levels.push({ id: 'basement', name: 'Basement', base: -BASE_H, height: BASE_H, below: true });
-  const names = ['First floor', 'Second floor', 'Third floor'], ids = ['first', 'second', 'third'];
-  const n = Math.min(3, Math.ceil(stories));
+  const names = large ? ['Ground floor'] : ['First floor', 'Second floor', 'Third floor'], ids = ['first', 'second', 'third'];
+  const n = Math.min(large ? MAX_STOREYS : 3, Math.ceil(stories));
   for (let i = 0; i < n; i++) {
     const half = i === n - 1 && stories % 1 !== 0;
-    levels.push({ id: ids[i], name: names[i], base: i * storeyH, height: half ? HALF : storeyH, half });
+    levels.push({ id: ids[i] || `s${i + 1}`, name: names[i] || (large ? `Floor ${i + 1}` : ids[i]), base: i * storeyH, height: half ? HALF : storeyH, half });
   }
   for (const f of floors) {
     if (!levels.some(l => l.id === f.id)) levels.push({ id: String(f.id), name: String(f.name || f.id), base: levels.length * storeyH, height: storeyH });
@@ -277,11 +295,14 @@ export function planOf(card) {
   levels.sort((a, b) => a.base - b.base);
   let snapped = 0;
   const fit = p => { if (!site) return p; const s = snapInside(p, site.ring); if (s) { snapped++; return s; } return p; };
+  // a line point on the wall (within a few inches) stays where it is: moving it would turn a square run crooked
+  const fitRun = p => (site && nearestOnRing(p, site.ring).d < RUN_EDGE_FT ? p : fit(p));
   for (const l of levels) {
     const f = floors.find(x => x.id === l.id);
     l.inCard = !!f;
     if (f && f.name) l.name = String(f.name);
-    l.rooms = (f && Array.isArray(f.rooms) ? f.rooms : []).filter(r => r && typeof r === 'object').map(r => ({
+    // a large building has no interior on record: whatever the card holds inside is not drawn
+    l.rooms = (!large && f && Array.isArray(f.rooms) ? f.rooms : []).filter(r => r && typeof r === 'object').map(r => ({
       x: num(r.x), y: num(r.y), w: num(r.w), h: num(r.h), label: String(r.label || 'Room'), basis: basisOf(r.basis),
     }));
     if (site) {
@@ -291,26 +312,34 @@ export function planOf(card) {
       }
       l.rooms = l.rooms.filter(r => r.poly);
     }
-    l.items = (f && Array.isArray(f.items) ? f.items : []).filter(i => i && typeof i === 'object').map((it, i) => {
+    l.items = (!large && f && Array.isArray(f.items) ? f.items : []).filter(i => i && typeof i === 'object').map((it, i) => {
       const o = { ...it, key: `${l.id}-i${i}` };
       if (site) { const p = fit([num(it.x), num(it.y)]); if (p[0] !== num(it.x) || p[1] !== num(it.y)) { o.x = p[0]; o.y = p[1]; o.snapped = true; } }
       return o;
     });
-    l.runs = (f && Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points))
-      .map((r, i) => ({ ...r, key: `${l.id}-r${i}`, points: r.points.filter(p => Array.isArray(p)).map(p => fit([num(p[0]), num(p[1])])) }))
+    l.runs = (!large && f && Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points))
+      .map((r, i) => {
+        const raw = r.points.filter(p => Array.isArray(p)).map(p => [num(p[0]), num(p[1])]);
+        const points = raw.map(fitRun);
+        const risers = (Array.isArray(r.risers) ? r.risers : []).filter(q => Array.isArray(q) && q.length >= 2)
+          .map(q => { const p = fitRun([num(q[0]), num(q[1])]); return [p[0], p[1], q[2] === 'down' ? 'down' : 'up']; });
+        return { ...r, key: `${l.id}-r${i}`, points, risers, snapped: points.some((p, k) => p[0] !== raw[k][0] || p[1] !== raw[k][1]) };
+      })
       .filter(r => r.points.length >= 2);
   }
   const outside = (Array.isArray(c.outside) ? c.outside : []).filter(o => o && typeof o === 'object').map((o, i) => ({ ...o, key: `out-${i}` }));
   const focusLevel = (() => {
     const focus = (Array.isArray(c.focus) ? c.focus : []).map(String);
+    if (large) return levels[levels.length - 1]?.id;
     for (const k of focus) { const l = levels.find(x => x.items.some(i => String(i.kind) === k)); if (l) return l.id; }
     let best = levels[0]?.id, nmax = -1;
     for (const l of levels) { const k = l.items.length + l.runs.length; if (k > nmax) { nmax = k; best = l.id; } }
     return best;
   })();
   const address = String(c.address || (c.place && c.place.label) || '');
-  return { address, w, h, levels, outside, front, focusLevel, focus: (Array.isArray(c.focus) ? c.focus : []).map(String),
-    wires: levels.some(l => l.runs.some(r => RUN_LAYER[r.kind] === 'elec')), site, storeyH, snapped, example: isExampleCard(c),
+  const note = large ? String((c.layout && c.layout.note) || 'Interior layout is not on public record.') : '';
+  return { address, w, h, levels, outside, front, focusLevel, focus: (Array.isArray(c.focus) ? c.focus : []).map(String), large, note,
+    wires: levels.some(l => l.runs.some(r => r.kind === 'wire' || r.kind === 'electric')), site, storeyH, snapped, example: isExampleCard(c),
     shellBasis: site && site.heightBasis !== 'likely' && site.storeysBasis !== 'likely' ? site.heightBasis : 'likely' };
 }
 
@@ -435,19 +464,27 @@ function segment(T, a, b, r) {
   const m = a.clone().add(b).multiplyScalar(0.5); g.translate(m.x, m.y, m.z);
   return g;
 }
-/** A line through points as one mesh: whole when solid, short dashes when dashed. */
-function lineGeom(T, pts, r, dashed) {
+/** One straight piece a to b: whole when solid, short dashes when dashed. */
+function pieces(T, a, b, r, dashed, dash = 0.28, gap = 0.18) {
+  const parts = [], L = a.distanceTo(b);
+  if (!dashed) { const s = segment(T, a, b, r); if (s) parts.push(s); return parts; }
+  for (let t = 0; t < L; t += dash + gap) {
+    const s = segment(T, a.clone().lerp(b, t / L), a.clone().lerp(b, Math.min(L, t + dash) / L), r); if (s) parts.push(s);
+  }
+  return parts;
+}
+/** A line through points as one mesh: whole when solid, short dashes when dashed. `risers` are [x, z, y0, y1] short vertical pieces
+    through a floor (a collar marks the spot) that join the same mesh; `dash` and `gap` set the dash length when dashed. */
+function lineGeom(T, pts, r, dashed, { risers = [], dash = 0.28, gap = 0.18 } = {}) {
   const parts = [];
-  const dash = 0.28, gap = 0.18;
   for (let i = 0; i < pts.length - 1; i++) {
-    const a = pts[i], b = pts[i + 1], L = a.distanceTo(b);
-    if (!dashed) { const s = segment(T, a, b, r); if (s) parts.push(s); }
-    else {
-      for (let t = 0; t < L; t += dash + gap) {
-        const s = segment(T, a.clone().lerp(b, t / L), a.clone().lerp(b, Math.min(L, t + dash) / L), r); if (s) parts.push(s);
-      }
-    }
+    const a = pts[i], b = pts[i + 1];
+    parts.push(...pieces(T, a, b, r, dashed, dash, gap));
     if (!dashed && i > 0) { const j = new T.SphereGeometry(r, 8, 6); j.translate(a.x, a.y, a.z); parts.push(j); }
+  }
+  for (const [x, z, y0, y1] of risers) {
+    parts.push(...pieces(T, new T.Vector3(x, y0, z), new T.Vector3(x, y1, z), r * 1.6, dashed, dash, gap));
+    const c = new T.SphereGeometry(r * 3, 10, 8); c.translate(x, y0, z); parts.push(c);
   }
   return parts.length ? mergeGeoms(T, parts) : null;
 }
@@ -501,8 +538,8 @@ function buildModel(T, card) {
   const flip = plan.front === 'top' ? -1 : 1;
   const X = x => (num(x) - plan.w / 2) * kx, Z = y => flip * (num(y) - plan.h / 2) * kz;
   const M = p => [X(p[0]), Z(p[1])];
-  const root = new T.Group(); root.name = 'House';
-  root.userData = { role: 'house', address: plan.address, example: plan.example };
+  const root = new T.Group(); root.name = plan.large ? 'Building' : 'House';
+  root.userData = { role: plan.large ? 'building' : 'house', kind: plan.large ? 'large' : 'house', address: plan.address, example: plan.example };
   const mats = [];
   const mat = (colorKey, basis, kind = 'solid') => {
     const likely = !isSolid(basis);
@@ -526,6 +563,13 @@ function buildModel(T, card) {
   const sysGroups = (parent, lvl) => Object.fromEntries(LAYERS.filter(([k]) => k !== 'walls').map(([k, n]) => [k, group(parent, n, { role: 'group', layer: k, level: lvl })]));
 
   const items = [], runs = [], walls = [], shell = [];
+  // drawing heights: drains low, wires in the joists of a basement and at outlet height in a wall above, ducts at the ceiling
+  const runY = (l, kind) => {
+    const ceil = l.base + l.height - 0.25;
+    return kind === 'duct' ? ceil - 0.05
+      : (kind === 'wire' || kind === 'electric' || kind === 'power') ? (l.below ? ceil + 0.1 : l.base + 0.4)
+        : l.below ? (kind === 'drain' ? l.base + 0.15 : ceil) : (kind === 'drain' ? l.base - 0.35 : l.base - 0.18);
+  };
   const top = plan.levels.reduce((m, l) => Math.max(m, l.base + l.height), 0);
   const shellBasis = plan.shellBasis;
   const ringM = site ? site.ring.map(M) : null;
@@ -553,6 +597,19 @@ function buildModel(T, card) {
       addEdges(m, 'walls', basis);
       wg.add(m); walls.push(m); shell.push(m);
     }
+    if (plan.large) {
+      // a line round the outline at the top of each storey: the one thing inside a large shell that is drawn
+      const ring = ringM || [[-W / 2, -D / 2], [W / 2, -D / 2], [W / 2, D / 2], [-W / 2, D / 2]];
+      const pts = ring.map(q => new T.Vector3(q[0], l.base + l.height, q[1])); pts.push(pts[0].clone());
+      const sb = site && !l.below ? shellBasis : 'likely';
+      const geo = lineGeom(T, pts, 0.04, !isSolid(sb), { dash: 0.7, gap: 0.45 });
+      if (geo) {
+        const m = new T.Mesh(geo, mat('walls', sb));
+        m.name = `${l.name} top`;
+        m.userData = { role: 'storey', layer: 'walls', level: l.id, basis: sb, label: `${l.name} top` };
+        wg.add(m); shell.push(m);
+      }
+    }
     if (l.rooms.length) {
       const rg = group(g, 'Rooms', { role: 'group', layer: 'structure', level: l.id });
       for (const r of l.rooms) {
@@ -578,21 +635,26 @@ function buildModel(T, card) {
     }
     for (const r of l.runs) {
       const layer = RUN_LAYER[r.kind] || 'water';
-      const ceil = l.base + l.height - 0.25;
-      // drawing heights: drains low, wires in the joists of a basement and at outlet height in a wall above, ducts at the ceiling
-      const y = r.kind === 'duct' ? ceil - 0.05
-        : (r.kind === 'wire' || r.kind === 'electric') ? (l.below ? ceil + 0.1 : l.base + 0.4)
-          : l.below ? (r.kind === 'drain' ? l.base + 0.15 : ceil) : (r.kind === 'drain' ? l.base - 0.35 : l.base - 0.18);
+      const y = runY(l, r.kind);
       const pts = r.points.map(p => new T.Vector3(X(p[0]), y, Z(p[1])));
       if (r.kind === 'drain' && pts.length >= 2) pts[pts.length - 1].y -= 0.1;   // a drain falls towards its exit
-      const geo = lineGeom(T, pts, RUN_R[r.kind] || 0.03, !isSolid(r.basis));
+      // a riser stands through the floor at its spot: up into the wall of the floor above, down into the floor below. Each floor draws
+      // its own half, so the two meet; with no floor beyond, a short stub shows where the line leaves the plan.
+      const li = plan.levels.indexOf(l);
+      const rise = (r.risers || []).map(q => {
+        const up = q[2] !== 'down', nb = plan.levels[li + (up ? 1 : -1)];
+        const y1 = up ? Math.min(y + RISER_UP, nb ? nb.base + nb.height - 0.1 : y + RISER_STUB) : Math.max(y - RISER_DOWN, nb ? nb.base + 0.1 : y - RISER_STUB);
+        return [X(q[0]), Z(q[1]), y, y1];
+      });
+      const geo = lineGeom(T, pts, RUN_R[r.kind] || 0.03, !isSolid(r.basis), { risers: rise });
       if (!geo) continue;
       const b = basisOf(r.basis);
       const m = new T.Mesh(geo, mat(layer, b));
       const label = RUN_NAME[r.kind] || 'Line';
       m.name = `${label}${b === 'likely' ? ' (likely)' : ''}`;
-      m.userData = { role: 'run', kind: String(r.kind || ''), layer, level: l.id, basis: b, likely: b === 'likely',
-        label, key: r.key, pick: true, anchor: pts[Math.floor((pts.length - 1) / 2)].clone().lerp(pts[Math.ceil((pts.length - 1) / 2)], 0.5).toArray() };
+      m.userData = { role: 'run', kind: String(r.kind || ''), layer, level: l.id, basis: b, likely: b === 'likely', risers: rise.length,
+        label, key: r.key, pick: true, anchor: pts[Math.floor((pts.length - 1) / 2)].clone().lerp(pts[Math.ceil((pts.length - 1) / 2)], 0.5).toArray(),
+        points: r.points.map(p => [p[0], p[1]]), snapped: !!r.snapped };
       sg[layer].add(m); runs.push(m);
     }
   }
@@ -611,7 +673,10 @@ function buildModel(T, card) {
   // the roof: its shape is in no record, so it is likely. A gable over the plan rectangle, or a hip that follows an odd outline.
   const ridge = site && site.ridge > (site.eave || top) ? Math.min(6, site.ridge - (site.eave || top)) : Math.min(W, D) * 0.32;
   const rectLike = !site || site.area / Math.max(1, site.U * site.V) >= 0.97;
-  const roof = new T.Mesh(rectLike ? roofGeom(T, W + 0.3, D + 0.3, ridge) : tentRoofGeom(T, ringM, ridge), mat('shell', 'likely', 'shell'));
+  // a large building has a flat roof slab over its outline; a house has a gable, or a hip that follows an odd outline
+  const roofG = plan.large ? prismGeom(T, ringM || [[-W / 2, -D / 2], [W / 2, -D / 2], [W / 2, D / 2], [-W / 2, D / 2]], 0, 0.3)
+    : rectLike ? roofGeom(T, W + 0.3, D + 0.3, ridge) : tentRoofGeom(T, ringM, ridge);
+  const roof = new T.Mesh(roofG, mat('shell', 'likely', 'shell'));
   roof.position.y = top; roof.name = 'Roof';
   roof.userData = { role: 'roof', layer: 'walls', level: 'roof', basis: 'likely' };
   addEdges(roof, 'shell', 'likely');
@@ -694,7 +759,7 @@ export async function houseGLB(card) {
   if (site) {
     top = new T.Group(); top.name = 'Site';
     const b = card.building || {};
-    top.userData = { role: 'site', address: model.plan.address, example: false,
+    top.userData = { role: 'site', kind: model.plan.large ? 'large' : 'house', address: model.plan.address, example: false,
       frame: { origin: site.origin, units: 'm', x: 'east', y: 'up', z: 'south' },
       footprint: { ring_m: site.ringM, area_m2: Math.round(site.area * 10) / 10, basis: site.basis, as_of: site.asOf || undefined, method: site.method || undefined,
         plan_rot_deg: Math.round(site.rot * 100) / 100, outbuildings: site.outbuildings.map(o => ({ ring_m: o.ringM, basis: 'public' })) },
@@ -761,7 +826,7 @@ function writeGLB(T, root, mats) {
     const e = {};
     for (const k of ['role', 'kind', 'layer', 'level', 'basis', 'label', 'note', 'detail', 'address', 'as_of', 'outline_basis']) if (u && u[k] !== undefined && u[k] !== '') e[k] = u[k];
     for (const k of ['frame', 'footprint', 'parcel', 'height', 'storeys', 'front', 'place']) if (u && u[k] && typeof u[k] === 'object') e[k] = JSON.parse(JSON.stringify(u[k]));
-    if (u && (u.role === 'house' || u.role === 'site')) e.example = !!u.example;
+    if (u && (u.role === 'house' || u.role === 'building' || u.role === 'site')) e.example = !!u.example;
     if (u && u.role === 'item') { e.outside = !!u.outside; if (u.snapped) e.snapped = true; }
     return e;
   };
@@ -794,7 +859,7 @@ function writeGLB(T, root, mats) {
 
 /** A file name from the address: "<address>.glb", with characters file systems refuse taken out. */
 export function glbName(card) {
-  const a = String(card?.address || 'House').replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120) || 'House';
+  const a = String(card?.address || (isLargeCard(card) ? 'Building' : 'House')).replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120) || (isLargeCard(card) ? 'Building' : 'House');
   return `${a}.glb`;
 }
 
@@ -840,7 +905,8 @@ export function renderHouse3D(container, card, opts = {}) {
   const plan = planOf(card);
   const el = document.createElement('section');
   el.className = 'h3 sys-card'; el.dataset.co = 'pp';
-  el.setAttribute('aria-label', '3D house');
+  el.setAttribute('aria-label', plan.large ? '3D building' : '3D house');
+  if (plan.large) el.classList.add('is-large');
   const levelChips = plan.levels.map((l, i) => chip(`data-h3="floor" data-floor="${i}"`, l.name, false)).join('');
   // the key names only the kinds of basis this card holds; the address line is the typed address, marked only for example data
   const held = new Set(['likely']);
@@ -851,16 +917,17 @@ export function renderHouse3D(container, card, opts = {}) {
   const key = (held.has('public') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-pub"></span>Public record</span> ' : '')
     + (held.has('record') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-rec"></span>Company record</span> ' : '')
     + '<span class="h3-key-i"><span class="h3-key-dash"></span>Likely</span>';
-  el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || 'House')}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
+  el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || (plan.large ? 'Building' : 'House'))}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
     + (opts.onClose ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm h3-close" data-h3="close">Close</button>` : '') + `</div>`
-    + `<div class="h3-stage"><canvas class="h3-canvas" role="img" aria-label="3D house model"></canvas><div class="h3-labels" aria-hidden="true"></div>`
+    + (plan.note ? `<p class="h3-note">${esc(plan.note)}</p>` : '')
+    + `<div class="h3-stage"><canvas class="h3-canvas" role="img" aria-label="${plan.large ? '3D building model' : '3D house model'}"></canvas><div class="h3-labels" aria-hidden="true"></div>`
     + `<p class="h3-key">${key}</p>`
     + `<div class="h3-info" aria-live="polite" hidden></div></div>`
     + `<div class="h3-bar">`
     + `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`
-    + `<div class="sys-chips h3-row" role="group" aria-label="Floor">${chip('data-h3="floor" data-floor="all"', 'All floors', true)}${levelChips}</div>`
+    + (plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Floor">${chip('data-h3="floor" data-floor="all"', 'All floors', true)}${levelChips}</div>`)
     + `<div class="sys-chips h3-row" role="group" aria-label="Layers">${LAYERS.map(([k, n]) => chip(`data-h3="layer" data-layer="${k}"`, n, true)).join('')}</div>`
-    + `<div class="h3-row h3-acts">${chip('data-h3="wallmode"', 'Behind this wall', false)}<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-h3="download">Download model</button></div>`
+    + `<div class="h3-row h3-acts">${plan.large ? '' : chip('data-h3="wallmode"', 'Behind this wall', false)}<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-h3="download">Download model</button></div>`
     + `</div>`;
   container.appendChild(el);
   const canvas = el.querySelector('canvas'), labelsEl = el.querySelector('.h3-labels'), info = el.querySelector('.h3-info');
@@ -987,7 +1054,7 @@ export function renderHouse3D(container, card, opts = {}) {
       b.setAttribute('aria-pressed', String(v === state.floor));
     });
     el.querySelectorAll('[data-h3="layer"]').forEach(b => b.setAttribute('aria-pressed', String(state.layers[b.dataset.layer] !== false)));
-    el.querySelector('[data-h3="wallmode"]').setAttribute('aria-pressed', String(state.wallMode));
+    el.querySelector('[data-h3="wallmode"]')?.setAttribute('aria-pressed', String(state.wallMode));
     el.classList.toggle('is-wallmode', state.wallMode);
     draw();
   }
@@ -1008,7 +1075,7 @@ export function renderHouse3D(container, card, opts = {}) {
     // far enough that the whole house (its bounding sphere) fits the narrower side of the picture
     const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
     const vf = (camera.fov * Math.PI) / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * aspect);
-    const r = (orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * k;
+    const r = (orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * (plan.large && name === 'top' ? k * 1.3 : k);   // a long shell seen from above needs room
     const goal = { theta: th, phi: ph, r };
     if (instant || reduced()) { Object.assign(orbit, goal); apply(); return; }
     const from = { theta: orbit.theta, phi: orbit.phi, r: orbit.r }, t0 = performance.now();
@@ -1172,14 +1239,18 @@ export function renderHouse3D(container, card, opts = {}) {
     if (!model) return null;
     const row = o => ({ name: o.name, role: o.userData.role, kind: o.userData.kind, layer: o.userData.layer, level: o.userData.level, basis: o.userData.basis,
       likely: !!o.userData.likely, visible: o.visible && isShown(o), dashedEdges: o.children.some(c => c.material?.isLineDashedMaterial),
-      transparent: !!o.material.transparent });
+      transparent: !!o.material.transparent,
+      ...(o.userData.role === 'run' ? (() => { o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
+        return { points: o.userData.points, risers: o.userData.risers || 0, snapped: !!o.userData.snapped, top: bb.max.y, bottom: bb.min.y }; })() : {}) });
     const at = o => [Math.round(o.position.x * 1000) / 1000, Math.round(o.position.z * 1000) / 1000];
     const S = plan.site;
     const toM = p => [(p[0] - plan.w / 2) * S.kx, (p[1] - plan.h / 2) * S.kz];
     return { items: model.items.map(o => ({ ...row(o), at: at(o), snapped: !!o.userData.snapped })), runs: model.runs.map(row),
       walls: model.walls.map(o => ({ ...row(o), inside: !!o.userData.inside, a: S ? toM(o.userData.wall.a) : null, b: S ? toM(o.userData.wall.b) : null })),
       roofVisible: model.roof.visible,
-      shell: model.shell.map(row), address: plan.address, example: plan.example,
+      shell: model.shell.map(row), address: plan.address, example: plan.example, large: plan.large, note: plan.note,
+      rooms: plan.levels.reduce((n, l) => n + l.rooms.length, 0), levelRows: plan.levels.map(l => ({ id: l.id, name: l.name, base: l.base, height: l.height })),
+      roof: { top: model.size.top, flat: plan.large },
       site: S ? { ring: S.ring.map(toM), parcel: S.parcel.map(toM), basis: S.basis, heightBasis: S.heightBasis, storeysBasis: S.storeysBasis,
         shellBasis: plan.shellBasis, rot: S.rot, snapped: plan.snapped, storeyH: plan.storeyH, area: S.area } : null,
       view: state.view, floor: state.floor, layers: { ...state.layers }, levels: plan.levels.map(l => l.id),
@@ -1192,8 +1263,8 @@ export function renderHouse3D(container, card, opts = {}) {
     renderer?.dispose(); el.remove();
   }
   api.pickAt = (x, y) => pick(x, y);
-  api.selectWall = i => select(model?.walls[i] || null);
-  api.select = key => select([...(model?.items || []), ...(model?.runs || []), ...(model?.walls || []), model?.outline, model?.parcel].filter(Boolean)
+  api.selectWall = i => select(plan.large ? null : model?.walls[i] || null);
+  api.select = key => select([...(model?.items || []), ...(model?.runs || []), ...(plan.large ? [] : model?.walls || []), model?.outline, model?.parcel].filter(Boolean)
     .find(o => o.userData.key === key || o.name === key) || null);
   return api;
 }
