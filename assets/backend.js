@@ -340,7 +340,8 @@ export const Backend = {
   },
 
   /**
-   * The address lookup: POST /site-brief { text, role, connected? } (the server makes no model call). Resolves the server's
+   * The address lookup: POST /site-brief { text, role, connected?, pick?, building? } (the server makes no model call). opts.pick
+   * is a lot key from an earlier 'choose' answer; opts.building (1 to 8) picks one of the buildings on the lot, largest first. Resolves the server's
    * answer { status, text, cards, choices, sources, degraded }. Throws BackendError with a sentence for the visitor:
    * code 'offline' (no backend), 'no_site' (a backend without the lookup, the Worker), 'timeout', 'network', or the HTTP case.
    * opts: { signal, pick } (pick: the key of a lot from an earlier 'choose' answer).
@@ -353,6 +354,7 @@ export const Backend = {
     const body = { text: t, role: String(role || '').slice(0, 40) };
     if (Array.isArray(connected)) body.connected = connected.filter(x => typeof x === 'string').slice(0, 16).map(x => x.slice(0, 16));
     if (opts.pick) body.pick = String(opts.pick).slice(0, 80);
+    if (Number.isInteger(opts.building) && opts.building >= 1 && opts.building <= 8) body.building = opts.building;   // which building on the lot, 1 = the largest
     let res;
     try {
       res = await fetchWithTimeout(this.endpoint + '/site-brief', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, SITE_TIMEOUT_MS, opts.signal);

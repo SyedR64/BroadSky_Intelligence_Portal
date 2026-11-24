@@ -758,12 +758,14 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   return s1 + '</svg>';
 }
 
+const LOT_NOTE = /^(\d+ buildings on this lot\.|Showing the (largest|one that best fits the recorded size|one you picked)\.|Outline: about [\d,]+ sq ft of ground\.|Record: [\d,]+ sq ft\.|They do not agree\.)$/;
 /** "Built 1962" becomes "Built 1962 (likely)" when the year is inferred; the same for the fuel and, on a likely sketch, the layout. */
 function houseText(ev) {
   const h = ev.house && typeof ev.house === 'object' ? ev.house : {};
   const t = String(h.text || '').trim(); if (!t || /\(likely\)/i.test(t)) return t;
   const likely = s => s.replace(/\.?\s*$/, ' (likely).');
   return t.split(/(?<=\.)\s+/).map((s, i) => {
+    if (LOT_NOTE.test(s)) return s;   // the server's notes on which building is drawn state counts and recorded numbers
     if (/\bbuilt\b/i.test(s)) return h.year_basis === 'likely' ? likely(s) : s;
     if (/\b(heat|gas|oil|propane|electric)\b/i.test(s)) return h.fuel_basis === 'likely' ? likely(s) : s;
     if (i === 0 && ev.basis === 'likely' && !/public record/i.test(s)) return likely(s);   // a recorded fact is not made likely

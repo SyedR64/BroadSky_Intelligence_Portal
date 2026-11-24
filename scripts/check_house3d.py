@@ -256,6 +256,23 @@ def large_checks(check, page, card, st, tag):
     check(f'large: not called example [{tag}]', 'example' not in seen)
 
 
+def other_checks(check, card, st, tag):
+    """Another sizeable building on the lot (outbuildings kind "building") stands as a plain block about 4 m high named "Other
+    building"; a shed or detached garage stays a 2.4 m "Outbuilding"."""
+    outs = ((card.get('building') or {}).get('footprint') or {}).get('outbuildings') or []
+    if not outs:
+        return
+    got = [o for o in st['shell'] if o['role'] == 'outbuilding']
+    others = [o for o in got if o.get('kind') == 'building']
+    sheds = [o for o in got if o.get('kind') != 'building']
+    n_other = sum(1 for o in outs if o.get('kind') == 'building')
+    check(f'another building on the lot is "Other building", about 4 m, not an outbuilding [{tag}]',
+          len(others) == n_other and all(o['name'].startswith('Other building') and o['label'] == 'Other building' and abs((o.get('top') or 0) - 4) < 0.05 for o in others),
+          json.dumps(others)[:200])
+    check(f'a shed stays a 2.4 m outbuilding [{tag}]', len(sheds) == len(outs) - n_other
+          and all(o['name'].startswith('Outbuilding') and abs((o.get('top') or 0) - 2.4) < 0.05 for o in sheds), json.dumps(sheds)[:200])
+
+
 def file_checks(check, card, back, tag):
     b = card['building']
     site = back.get('site') or {}
@@ -399,6 +416,7 @@ def main():
                         else:
                             live_checks(check, page, card, st, tag)
                             square_checks(check, card, st, tag)
+                        other_checks(check, card, st, tag)
                     # the file
                     if theme == 'light':
                         with page.expect_download() as dl:
@@ -488,6 +506,8 @@ def main():
         check('samples hold two large cards and a square-run house with risers', len(large) == 2 and len(square) == 1
               and all(c['layout']['from'] == 'none' and [f['id'] for f in c['floors']] == ['first'] and c['floors'][0]['name'] == 'Ground floor'
                       and not c['floors'][0]['rooms'] and not c['floors'][0]['items'] and not c['floors'][0]['runs'] for c in large))
+        check('samples hold a lot with another building and a shed (the town hall card)', any(
+            {o.get('kind') for o in ((c.get('building') or {}).get('footprint') or {}).get('outbuildings') or []} == {'building', None} for c in cards))
         check('large rule: kind "large" or layout "none", never a house', page.evaluate('''cards => {
               const L = window.H.isLargeCard, c = cards[0];
               return L({ building: { kind: 'large' } }) && L({ layout: { from: 'none' } }) && !L({ building: { kind: 'house' }, layout: { from: 'outline' } })

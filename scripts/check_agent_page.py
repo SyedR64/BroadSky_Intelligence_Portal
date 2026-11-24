@@ -989,6 +989,90 @@ def map_checks(browser, site):
     ctx.close()
 
 
+# ── several buildings on one lot: the address box's chooser ─────────────────────────────────────
+CHOOSER_JS = """async ([fx, notes]) => {
+  // the backend is stubbed in the page: Backend.siteBrief answers from the recorded card, its lot block set to the building asked
+  const src = await (await fetch('./assets/site-lookup.js')).text();
+  const stamp = (src.match(/from '\\.\\/backend\\.js(\\?v=[^']*)'/) || [, ''])[1];
+  const { Backend } = await import('./assets/backend.js' + stamp);
+  const S = await import('./assets/site-lookup.js' + stamp);
+  window.__calls = [];
+  window.MapCmd = { run: c => c, validate: () => ({ ok: true }) };
+  Backend.siteBrief = async (text, role, connected, opts = {}) => {
+    window.__calls.push({ text, building: opts.building ?? null, pick: opts.pick ?? null });
+    const card = JSON.parse(JSON.stringify(fx.card));
+    const k = opts.building || card.building.lot.shown;
+    card.building.lot = { ...card.building.lot, shown: k, why: opts.building ? 'chosen' : card.building.lot.why,
+      buildings: card.building.lot.buildings.map(b => ({ ...b, shown: b.n === k })) };
+    card.house = { ...(card.house || {}), text: notes };
+    return { status: 'found', text: '33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record).', cards: [card, fx.map_command], choices: [], sources: [], degraded: [] };
+  };
+  let box = document.getElementById('sl-t'); if (!box) { box = document.createElement('div'); box.id = 'sl-t'; document.querySelector('.ca-main').prepend(box); }
+  box.replaceChildren();
+  const m = S.mount(box, { role: 'pp-plumber' });
+  await m.lookup(fx.typed);
+  return true;
+}"""
+CHOOSER_MEASURE = """() => {
+  const g = document.querySelector('#sl-t [role="group"][aria-label="Buildings on this lot, largest first"]');
+  const bs = g ? [...g.querySelectorAll('button')] : [];
+  const ans = document.querySelector('#sl-t .sl-ans');
+  const small = [];
+  for (const el of ans ? ans.querySelectorAll('*') : []) {
+    if (el.closest('svg') || !el.getClientRects().length) continue;
+    if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+    const fs = parseFloat(getComputedStyle(el).fontSize); if (fs < 11) small.push(el.tagName + ' ' + fs + ' ' + el.textContent.trim().slice(0, 30));
+  }
+  const after = g && ans ? !!(ans.querySelector('.sl-text').compareDocumentPosition(g) & Node.DOCUMENT_POSITION_FOLLOWING) : false;
+  return { n: bs.length, labels: bs.map(b => b.textContent), pressed: bs.map(b => b.getAttribute('aria-pressed')),
+    cls: bs.map(b => b.className), bg: bs.map(b => getComputedStyle(b).backgroundColor), after,
+    house: document.querySelector('#sl-t .ca-house')?.textContent || '', small, calls: window.__calls,
+    sideways: document.documentElement.scrollWidth > innerWidth, wide: bs.some(b => b.getBoundingClientRect().right > innerWidth + 0.5) };
+}"""
+NOTES = ('2 buildings on this lot. Showing the one that best fits the recorded size. '
+         'Outline: about 22,500 sq ft of ground. Record: 15,226 sq ft. They do not agree.')
+
+
+def chooser_checks(browser, site):
+    """Several sizeable buildings on one lot: under the answer, one button each ("Building 1 · 37,100 sq ft"), largest first, the
+    drawn one pressed and looking pressed; another one runs the lookup again with building set and the answer is replaced in
+    place. The notes on the card read as the server wrote them (no "likely" added). No sideways scroll at 360 and 390 px, no
+    text under 11 px. The backend is a stub in the page (no network)."""
+    fx = json.load(open(SITE_CARD, encoding='utf-8'))
+    lot = fx['card']['building'].get('lot') or {}
+    check('chooser: the recorded town hall card carries a lot block of two buildings, the second shown', lot.get('n') == 2 and lot.get('shown') == 2, json.dumps(lot))
+    for w, h, dark in ((360, 780, False), (390, 844, True), (1440, 900, False)):
+        tag = f"chooser {w} px {'dark' if dark else 'light'}"
+        ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-plumber&backend=off')
+        wait_ready(page)
+        page.evaluate(CHOOSER_JS, [fx, NOTES])
+        r = page.evaluate(CHOOSER_MEASURE)
+        check(f'{tag}: one row of buttons under the answer, largest first, with the ground area',
+              r['n'] == 2 and r['after'] and r['labels'] == ['Building 1 · 37,100 sq ft', 'Building 2 · 22,500 sq ft']
+              and all('sys-btn' in c and 'sys-btn--secondary' in c and 'sys-btn--sm' in c for c in r['cls']), json.dumps({k: r[k] for k in ('n', 'labels', 'after')}))
+        check(f'{tag}: the drawn building is pressed and looks pressed', r['pressed'] == ['false', 'true'] and r['bg'][0] != r['bg'][1], json.dumps({k: r[k] for k in ('pressed', 'bg')}))
+        check(f'{tag}: the card says how many buildings and which one, word for word', r['house'].endswith(NOTES) and 'likely' not in r['house'].lower(), r['house'])
+        check(f'{tag}: no sideways scroll, the buttons wrap, no text under 11 px', not r['sideways'] and not r['wide'] and not r['small'], json.dumps({k: r[k] for k in ('sideways', 'wide', 'small')})[:300])
+        if not r['n']:
+            check(f'{tag}: pressing Building 1 runs the lookup again with building 1', False, 'no chooser row')
+            ctx.close()
+            continue
+        page.locator('#sl-t [data-sl="building"]').first.click()
+        poll(lambda: page.evaluate("() => (window.__calls || []).length >= 2 && !!document.querySelector('#sl-t [data-sl=\"building\"][aria-pressed=\"true\"]')"), 6)
+        r2 = page.evaluate(CHOOSER_MEASURE)
+        focus = page.evaluate("() => document.activeElement?.dataset?.sl === 'building' && document.activeElement.getAttribute('aria-pressed') === 'true'")
+        check(f'{tag}: pressing Building 1 runs the lookup again with building 1 and replaces the answer in place',
+              [c['building'] for c in r2['calls']] == [None, 1] and r2['calls'][1]['text'] == fx['typed'] and r2['pressed'] == ['true', 'false']
+              and page.locator('#sl-t .sl-ans').count() == 1 and focus, json.dumps({k: r2[k] for k in ('calls', 'pressed')}) + f' focus {focus}')
+        r3 = page.evaluate(CHOOSER_MEASURE)
+        check(f'{tag}: pressing the shown building again does nothing', (page.locator('#sl-t [data-sl="building"][aria-pressed="true"]').click() or True)
+              and len(page.evaluate('window.__calls')) == 2 and r3['n'] == 2)
+        check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
+        ctx.close()
+
+
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
 def axe_checks(browser, site):
     url = f'{site}/agent.html?role={TECH}&backend=off&apps=all'
@@ -1074,6 +1158,7 @@ def main():
                 plan_phone_checks(browser, site)
                 view_card_checks(browser, site)
                 map_checks(browser, site)
+                chooser_checks(browser, site)
                 if not args.only_wave3:
                     page_checks(browser, site, catalog)
                     replay_checks(browser, site)

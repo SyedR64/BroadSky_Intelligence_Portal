@@ -2,7 +2,7 @@
    no model call) and comes back as a short answer, the floor plan of the real building, a 3D control and a map command.
 
      BSPSite.mount(container, { out })   draws the "Address" box; its answers land in `out` (default: under the box)
-     BSPSite.lookup(text, opts)          runs one lookup. opts: { host, role, connected, pick }. With no host and no box on
+     BSPSite.lookup(text, opts)          runs one lookup. opts: { host, role, connected, pick, building }. With no host and no box on
                                          screen it opens the home with ?address=<text>, which runs the lookup there
      BSPSite.renderCards(host, cards)    draws answer cards: the plan (assets/agent-cards.js renderCard), the five pictures
                                          (assets/agent-views.js renderView), the draft; returns the map command, if any
@@ -157,6 +157,25 @@ function drawAnswer(out, res, text, opts) {
   const deg = Array.isArray(res.degraded) ? [...new Set(res.degraded.map(say))].slice(0, 3) : [];
   if (deg.length) chips.push(`<span class="sys-chip sys-chip--info">No answer from ${esc(deg.join(', '))}</span>`);
   if (chips.length) a.insertAdjacentHTML('beforeend', `<div class="sys-chips sl-chips">${chips.join('')}</div>`);
+  // several buildings on the lot: one button each, largest first; the drawn one is pressed, another runs the lookup again for it
+  const lot = (res.cards || []).find(c => c && c.kind === 'floor_sketch')?.building?.lot;
+  const bs = lot && Number(lot.n) >= 2 && Array.isArray(lot.buildings) ? lot.buildings.filter(b => b && Number.isInteger(b.n) && b.n >= 1 && b.n <= 8) : [];
+  if (st === 'found' && bs.length >= 2) {
+    const g = document.createElement('div'); g.className = 'sl-choose'; g.setAttribute('role', 'group'); g.setAttribute('aria-label', 'Buildings on this lot, largest first');
+    for (const x of bs) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'sys-btn sys-btn--secondary sys-btn--sm'; b.dataset.sl = 'building';
+      const on = x.shown === true || x.n === lot.shown;
+      b.setAttribute('aria-pressed', String(on));
+      b.textContent = `Building ${x.n}` + (Number(x.sqft) > 0 ? ` · ${Number(x.sqft).toLocaleString('en-US')} sq ft` : '');
+      b.addEventListener('click', async () => {
+        if (b.getAttribute('aria-pressed') === 'true') return;
+        await lookup(text, { ...opts, host: out, building: x.n });
+        out.querySelector(`[data-sl="building"][aria-pressed="true"]`)?.focus({ preventScroll: true });
+      });
+      g.appendChild(b);
+    }
+    a.appendChild(g);
+  }
   // several lots at one address: one button each, a street address and no owner
   const list = (Array.isArray(res.choices) ? res.choices : Array.isArray(res.choose) ? res.choose : []).slice(0, 8)
     .map(c => (typeof c === 'string' ? { label: c } : c)).filter(c => c && c.label);
@@ -213,7 +232,7 @@ export async function lookup(text, opts = {}) {
   let res, guard;
   try {
     res = await Promise.race([
-      Backend.siteBrief(typed, role, connected, { signal: ctrl.signal, pick: opts.pick }),
+      Backend.siteBrief(typed, role, connected, { signal: ctrl.signal, pick: opts.pick, building: opts.building }),
       new Promise((_, no) => { guard = setTimeout(() => { ctrl.abort(); no(Object.assign(new Error('The address lookup took too long. Try again.'), { code: 'timeout' })); }, GUARD_MS); }),
     ]);
   } catch (e) {
@@ -225,7 +244,7 @@ export async function lookup(text, opts = {}) {
   } finally { clearTimeout(guard); }
   if (my !== seq) return { status: 'stopped', text: '' };
   out.removeAttribute('aria-busy');
-  const cmd = drawAnswer(out, res, typed, { role, connected });
+  const cmd = drawAnswer(out, res, typed, { role, connected, pick: opts.pick });   // a building pick keeps the lot pick
   if (cmd) await sendMap(cmd);
   return { status: res.status || 'error', text: res.text || '', cmd };
 }

@@ -241,14 +241,15 @@ function siteOf(c, w, h, flipped) {
   const ring = ringM.map(toPlan);
   const pc = b.parcel && typeof b.parcel === 'object' ? b.parcel : null;
   const parcelM = pc ? cleanRing(pc.ring_m) : [];
-  const outb = (Array.isArray(fp.outbuildings) ? fp.outbuildings : []).map(o => cleanRing(o && o.ring_m)).filter(r => r.length >= 3);
+  // another sizeable building on the lot (kind 'building', a second building and not a shed) is drawn as a plain block
+  const outb = (Array.isArray(fp.outbuildings) ? fp.outbuildings : []).map(o => ({ r: cleanRing(o && o.ring_m), other: !!o && o.kind === 'building' })).filter(o => o.r.length >= 3);
   const hgt = b.height && typeof b.height === 'object' ? b.height : {};
   const st = b.storeys && typeof b.storeys === 'object' ? b.storeys : {};
   return {
     ringM, ring, kx, kz, rot: R.r, centre: R.c, U: R.U, V: R.V,
     basis: basisOf(fp.basis || 'public'), asOf: String(fp.as_of || ''), method: String(fp.method || ''), area: Math.abs(polyArea(ringM)),
     parcelM, parcel: parcelM.map(toPlan), parcelBasis: basisOf(pc && pc.basis || 'public'),
-    outbuildings: outb.map(r => ({ ringM: r, ring: r.map(toPlan) })),
+    outbuildings: outb.map(o => ({ ringM: o.r, ring: o.r.map(toPlan), other: o.other })),
     eave: num(hgt.eave_m), ridge: num(hgt.ridge_m), heightBasis: basisOf(hgt.basis), storeys: num(st.n), storeysBasis: basisOf(st.basis),
     frontBasis: basisOf(b.front && b.front.basis), precision: String(c.place && c.place.precision || ''),
     origin: b.frame && b.frame.origin && typeof b.frame.origin === 'object' ? { lon: num(b.frame.origin.lon), lat: num(b.frame.origin.lat) } : null,
@@ -697,10 +698,13 @@ function buildModel(T, card) {
       parcel.userData = { role: 'parcel', layer: 'site', level: 'site', basis: site.parcelBasis, label: 'Parcel edge', key: 'parcel', pick: true };
       sgp.add(parcel); shell.push(parcel);
     }
-    site.outbuildings.forEach((ob, i) => {
-      const m = new T.Mesh(prismGeom(T, ob.ring.map(M), 0, 2.4), mat('shell', 'likely', 'shell'));
-      m.name = `Outbuilding${site.outbuildings.length > 1 ? ` ${i + 1}` : ''}`;
-      m.userData = { role: 'outbuilding', layer: 'site', level: 'site', basis: 'likely', outline_basis: 'public', label: 'Outbuilding' };
+    const sheds = site.outbuildings.filter(o => !o.other), others = site.outbuildings.filter(o => o.other);
+    site.outbuildings.forEach(ob => {
+      // a shed or detached garage: 2.4 m; another building on the lot: a plain flat block about 4 m high, named for what it is
+      const set = ob.other ? others : sheds, i = set.indexOf(ob), word = ob.other ? 'Other building' : 'Outbuilding';
+      const m = new T.Mesh(prismGeom(T, ob.ring.map(M), 0, ob.other ? 4 : 2.4), mat('shell', 'likely', 'shell'));
+      m.name = `${word}${set.length > 1 ? ` ${i + 1}` : ''}`;
+      m.userData = { role: 'outbuilding', kind: ob.other ? 'building' : 'outbuilding', layer: 'site', level: 'site', basis: 'likely', outline_basis: 'public', label: word };
       addEdges(m, 'shell', 'likely');
       sgp.add(m); shell.push(m);
     });
@@ -762,7 +766,7 @@ export async function houseGLB(card) {
     top.userData = { role: 'site', kind: model.plan.large ? 'large' : 'house', address: model.plan.address, example: false,
       frame: { origin: site.origin, units: 'm', x: 'east', y: 'up', z: 'south' },
       footprint: { ring_m: site.ringM, area_m2: Math.round(site.area * 10) / 10, basis: site.basis, as_of: site.asOf || undefined, method: site.method || undefined,
-        plan_rot_deg: Math.round(site.rot * 100) / 100, outbuildings: site.outbuildings.map(o => ({ ring_m: o.ringM, basis: 'public' })) },
+        plan_rot_deg: Math.round(site.rot * 100) / 100, outbuildings: site.outbuildings.map(o => ({ ring_m: o.ringM, basis: 'public', ...(o.other ? { kind: 'building' } : {}) })) },
       ...(site.parcelM.length >= 3 ? { parcel: { ring_m: site.parcelM, basis: site.parcelBasis } } : {}),
       height: { eave_m: site.eave || undefined, ridge_m: site.ridge || undefined, basis: site.heightBasis, from: (b.height && b.height.from) || undefined },
       storeys: { n: model.plan.levels.filter(l => !l.below).length, basis: site.storeysBasis },
@@ -1241,7 +1245,8 @@ export function renderHouse3D(container, card, opts = {}) {
       likely: !!o.userData.likely, visible: o.visible && isShown(o), dashedEdges: o.children.some(c => c.material?.isLineDashedMaterial),
       transparent: !!o.material.transparent,
       ...(o.userData.role === 'run' ? (() => { o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox;
-        return { points: o.userData.points, risers: o.userData.risers || 0, snapped: !!o.userData.snapped, top: bb.max.y, bottom: bb.min.y }; })() : {}) });
+        return { points: o.userData.points, risers: o.userData.risers || 0, snapped: !!o.userData.snapped, top: bb.max.y, bottom: bb.min.y }; })() : {}),
+      ...(o.userData.role === 'outbuilding' ? (() => { o.geometry.computeBoundingBox(); return { top: o.geometry.boundingBox.max.y, label: o.userData.label }; })() : {}) });
     const at = o => [Math.round(o.position.x * 1000) / 1000, Math.round(o.position.z * 1000) / 1000];
     const S = plan.site;
     const toM = p => [(p[0] - plan.w / 2) * S.kx, (p[1] - plan.h / 2) * S.kz];

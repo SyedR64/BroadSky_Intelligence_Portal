@@ -19,6 +19,7 @@
 .sl-chips{margin:0}
 .sl-choose{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2)}
 .sl-choose .sys-btn{max-width:100%;white-space:normal;text-align:left}
+.sl-choose .sys-btn[aria-pressed="true"],.sl-choose .sys-btn[aria-pressed="true"]:hover{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}   /* the system's pressed button */
 .sl-cards{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
 .sl-cards>*{min-width:0;max-width:100%}
 .sl-card{min-width:0}
