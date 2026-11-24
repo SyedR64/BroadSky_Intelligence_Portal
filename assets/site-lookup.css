@@ -27,14 +27,6 @@
 .sl-src p{margin:0}
 
 /* the real outline, north up: the building solid (a public record), the parcel edge thin */
-.sl-outline{max-width:420px;margin:var(--sys-sp-2) 0;display:flex;flex-direction:column;gap:var(--sys-sp-1);min-width:0}
-.sl-outline svg{display:block;width:100%;max-width:420px;height:auto;max-height:200px}
-.sl-ol-bldg{fill:color-mix(in srgb,var(--sys-ink) 14%,transparent);stroke:var(--sys-ink);stroke-width:1.6px;vector-effect:non-scaling-stroke;stroke-linejoin:round}
-.sl-ol-parcel{fill:none;stroke:var(--sys-mute-2);stroke-width:1px;vector-effect:non-scaling-stroke}
-.sl-outline figcaption{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-1) var(--sys-sp-2);font-size:var(--sys-fs-xs);color:var(--sys-mute)}
-.sl-ol-key{display:inline-block;width:12px;height:10px;border:1.6px solid var(--sys-ink);background:color-mix(in srgb,var(--sys-ink) 14%,transparent);border-radius:2px}
-.sl-ol-key--parcel{border:1px solid var(--sys-mute-2);background:none}
-.sl-ol-n{margin-left:auto;font-weight:600;color:var(--sys-ink-2)}
 
 /* the 3D control and the view it opens */
 .sl-3d{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}

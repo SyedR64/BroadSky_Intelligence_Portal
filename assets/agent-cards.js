@@ -337,7 +337,7 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const rx = ring ? ring.map(p => p[0]) : [0], ry = ring ? ring.map(p => p[1]) : [0];
   const x0 = Math.min(0, ...rx) - 64, y0 = Math.min(0, ...ry) - 64, x1 = Math.max(W, ...rx) + 64, y1 = Math.max(H, ...ry) + 80;
   let s = `<svg class="ca-fs${ring ? ' has-outline' : ''}" viewBox="${x0} ${y0} ${x1 - x0} ${y1 - y0}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`;
-  if (ring) s += `<polygon class="ca-fs-outline" points="${ring.map(p => p.join(',')).join(' ')}"/>`;
+  if (ring) s += `<polygon class="ca-fs-outline" data-outline points="${ring.map(p => p.join(',')).join(' ')}"/>`;   // the one outline drawing (the address box uses it too)
   s += `<rect class="ca-fs-wall" x="0" y="0" width="${W}" height="${H}" rx="4"/>`;
   // Marker positions: outside markers sit off the walls; inside markers closer than one marker apart are eased apart so each stays readable.
   const all = [...inside.map(m => ({ m, x: num(m.x) * PX, y: num(m.y) * PX, fixed: false, ring: isFocus(m, focus) })), ...outs.map(m => { const [x, y] = outsidePoint(m, W, H, front); return { m, x, y, fixed: true, ring: isFocus(m, focus) }; })];

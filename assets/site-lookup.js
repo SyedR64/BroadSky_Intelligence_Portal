@@ -52,30 +52,6 @@ function viewOf(c, said = '') {
   return normBasis({ kind: v.kind, title: v.title, lead: same(v.lead, said) ? '' : v.lead, data: v.data, basis: v.basis, source: v.source || v.source_line || '', as_of: v.as_of });
 }
 
-/* ── the real outline, drawn under the plan's title when the plan card does not draw it itself (it marks it data-outline) ── */
-function ringOk(r) { return Array.isArray(r) && r.length >= 3 && r.every(p => Array.isArray(p) && Number.isFinite(Number(p[0])) && Number.isFinite(Number(p[1]))); }
-const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const monYr = s => { const m = /^(\d{4})-(\d{2})/.exec(String(s || '')); return m ? `${MON[Number(m[2]) - 1]} ${m[1]}` : ''; };
-export function outlineSVG(card) {
-  const b = card?.building, ring = b?.footprint?.ring_m;
-  if (!ringOk(ring)) return null;
-  const parcel = ringOk(b?.parcel?.ring_m) ? b.parcel.ring_m : null;
-  const pts = [...ring, ...(parcel || [])].map(p => [Number(p[0]), Number(p[1])]);
-  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
-  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-  const pad = Math.max(2, (Math.max(x1 - x0, y1 - y0)) * 0.06), W = x1 - x0 + 2 * pad, H = y1 - y0 + 2 * pad;
-  const P = r => r.map(p => `${(Number(p[0]) - x0 + pad).toFixed(2)},${(y1 - Number(p[1]) + pad).toFixed(2)}`).join(' ');   // north up
-  const date = monYr(b.footprint.as_of);
-  const label = `Building outline${date ? `, imagery dated ${date}` : ''}${parcel ? ', with the parcel edge' : ''}`;
-  const f = document.createElement('figure');
-  f.className = 'sl-outline'; f.dataset.outline = '';
-  f.innerHTML = `<svg viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="${esc(label)}" focusable="false"><title>${esc(label)}</title>`
-    + (parcel ? `<polygon class="sl-ol-parcel" points="${P(parcel)}"/>` : '')
-    + `<polygon class="sl-ol-bldg" points="${P(ring)}"/></svg>`
-    + `<figcaption><span class="sl-ol-key"></span>Outline${date ? ` · imagery ${esc(date)}` : ''}${parcel ? '<span class="sl-ol-key sl-ol-key--parcel"></span>Parcel' : ''}<span class="sl-ol-n" aria-hidden="true">N ↑</span></figcaption>`;
-  return f;
-}
-
 /* ── the 3D control: opens assets/house3d.js under the plan, only where the browser draws WebGL ── */
 function webgl() {
   try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch { return false; }
@@ -123,13 +99,8 @@ export function renderCards(host, cards, ctx = {}) {
     try { el = renderCard(c, { turn: host }); } catch (e) { console.warn('card failed', e); }
     if (!el) continue;
     host.appendChild(el);
-    if (c.kind === 'floor_sketch') {
-      if (!el.querySelector('[data-outline]')) {
-        const ol = outlineSVG(c);
-        if (ol) { const t = el.querySelector('.ca-fs-title'); const after = t?.nextElementSibling?.classList.contains('ca-house') ? t.nextElementSibling : t; after ? after.after(ol) : el.prepend(ol); }
-      }
-      if (!el.querySelector('[data-ca="3d"],[data-sl="3d"]')) { const d = threeD(c); if (d) el.after(d); }
-    }
+    // the plan card draws the real outline itself (agent-cards.js, marked data-outline) and its own 3D control (data-ca="3d")
+    if (c.kind === 'floor_sketch' && !el.querySelector('[data-ca="3d"],[data-sl="3d"]')) { const d = threeD(c); if (d) el.after(d); }
   }
   return cmd;
 }
@@ -278,6 +249,6 @@ export function mount(container, opts = {}) {
 }
 mount.n = 0;
 
-export const BSPSite = { lookup, mount, renderCards, sendMap, openMap, outlineSVG };
+export const BSPSite = { lookup, mount, renderCards, sendMap, openMap };
 if (typeof window !== 'undefined' && !window.BSPSite) window.BSPSite = BSPSite;   // a page's own stand-in (a test's stub) keeps its place
 export default BSPSite;
