@@ -459,13 +459,19 @@ def main():
             check('a company role in view gets its own tour', a['intent'] == 'globe_best3' and len(maps) == 1 and maps[0].get('tour') == 'best3-cet' and not posts2, f"maps={maps} {a['text'][:80]!r}")
             pg2.context.close()
             pg3, posts3 = open_globe_page()
+            bodies3 = []
+            pg3.on('request', lambda r: bodies3.append(r.post_data_json) if r.url.startswith(MAIN) and r.url.endswith('/site-brief') else None)
             a = ask_docked(pg3, OWNER_ADDR)
-            want = '#/home/overview?address=' + urllib.parse.quote(OWNER_ADDR, safe="-_.!~*'()")
-            poll(lambda: pg3.evaluate('() => location.hash') == want, timeout=10)
+            poll(lambda: posts3, timeout=10)
             got_hash = pg3.evaluate('() => location.hash')
             parsed = pg3.evaluate("async t => { const G = (await import('/assets/globe-intents.js')).default; const p = G.parseAddress(t); return p && { street: p.street, town: p.town, job: p.job }; }", OWNER_ADDR)
             check('typed street address with a job: parsed into street, town and job', parsed == {'street': '418 Wexcombe Ln', 'town': 'Lititz', 'job': 'sink repair'}, json.dumps(parsed))
-            check('until the lookup exists: one short line and the address goes to the home screen, no model call', a['intent'] == 'site_address' and 'address lookup' in a['text'] and wc(a['text'].split('\n')[0]) <= 30 and got_hash == want and not posts3, f"{a['text'][:100]!r} hash={got_hash[:60]} backend={posts3}")
+            # the home owns the address box (window.BSPSite): the typed sentence goes word for word to POST /site-brief on the local backend,
+            # which makes no model call, and the answer stays on the home
+            check('the home looks the address up: one short line, the typed text word for word to /site-brief, no model call',
+                  a['intent'] == 'site_address' and 'Looking up' in a['text'] and wc(a['text'].split('\n')[0]) <= 30 and got_hash.split('?')[0] == '#/home/overview'
+                  and posts3 and all(p.startswith('POST ') and p.endswith('/site-brief') for p in posts3) and bodies3 and (bodies3[0] or {}).get('text') == OWNER_ADDR,
+                  f"{a['text'][:100]!r} hash={got_hash[:60]} backend={posts3} body={str(bodies3[:1])[:120]}")
             pg3.close()
             pg4, posts4 = open_globe_page(stub=True)
             a = ask_docked(pg4, OWNER_ADDR)
