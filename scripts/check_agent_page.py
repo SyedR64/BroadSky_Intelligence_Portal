@@ -536,7 +536,8 @@ PREPARED = os.path.join(ROOT, 'data', 'agent', 'prepared.json')
 VIEWS = os.path.join(ROOT, 'data', 'agent', 'views_samples.json')
 SITE_CARD = os.path.join(ROOT, 'server', 'tests', 'fixtures', 'site', 'nj_full.json')
 # a firm role, a company office role and a field role, each with its own picture
-SIG_ROLES = (('bsp-partner', 'ranked_bars'), ('cet-estimator', 'pipeline_board'), ('pp-plumber', 'floor_sketch'))
+# a firm role with ranked bars (the partner's catalogue question is now its live deals board), a company office role, a field role
+SIG_ROLES = (('bsp-associate', 'ranked_bars'), ('cet-estimator', 'pipeline_board'), ('pp-plumber', 'floor_sketch'))
 # the 3D view's pinned three.js (WAVE3 ruling 11), the only other host a page here may load
 THREE_RX = re.compile(r'^https://(unpkg\.com|cdn\.jsdelivr\.net/npm)/three@\d+\.\d+\.\d+/')
 SIZES = ((1440, 900, False), (390, 844, True), (1440, 900, True), (390, 844, False))

@@ -1788,7 +1788,9 @@ class Widget {
     return rec;
   }
   /** A typed command that needs no model (best three targets, an address with a job), for the portal assistant and the role agent only; null otherwise. */
-  globeIntent(q) { return this.id === 'portal' || this.opts?.hostedOnly ? GI.classify(q, { co: roleCo() }) : null; }
+  // the Ask panel takes both typed commands; the role agent takes the best-three tour only, and answers an address with its own
+  // site tool (it holds the customer's job and history)
+  globeIntent(q) { const g = this.id === 'portal' || this.opts?.hostedOnly ? GI.classify(q, { co: roleCo() }) : null; return g && (this.id === 'portal' || g.kind === 'best3') ? g : null; }
   /** Answers built in the browser go to the chat log; the hosted research agent logs its own on the server. */
   logAnswer(q, rec) {
     if (rec.kind === 'claude' && rec.via === 'hosted') return;

@@ -421,7 +421,7 @@ async function signatureAnswer(role, sig, prep) {
   if (sig.view === 'globe_tour' && tourId) {
     state.tours ||= loadJSON('data/research/globe_tours.json').then(d => (Array.isArray(d?.tours) ? d.tours : [])).catch(() => []);
     const tours = await state.tours, tour = tours.find(t => t.id === tourId);
-    if (tour) {
+    if (tour && !cards.some(c => c.kind === 'map_command')) {   // the prepared answer carries its own map command once rebuilt
       if (/^best3/.test(tourId) && norm(prep?.question) !== norm(sig.question)) {
         try {
           const GI = await import('./globe-intents.js?v=20261123172325');
@@ -470,7 +470,8 @@ async function askSignature() {
     const ans = prep ? await signatureAnswer(role, sig, prep) : { text: 'The prepared answer did not load. Ask the agent instead.', cards: [] };
     if (state.role !== role) return;   // the role changed while it loaded: the new role's thread starts empty
     body.innerHTML = `<p>${esc(ans.text)}</p>`;
-    state.liveTurn = turn;   // cards painted now belong to an answer given now: a map command runs once
+    // a globe-tour signature flies the globe at once; any other answer keeps its plan on screen and offers "Show on map"
+    state.liveTurn = sig.view === 'globe_tour' ? turn : null;
     try { for (const c of ans.cards) paintInTurn(turn, c); } finally { state.liveTurn = null; }
     const w = state.inst;
     if (w && Array.isArray(w.history) && turn.classList.contains('ch-turn')) w.history.push({ role: 'user', html: esc(sig.question), text: sig.question }, { role: 'assistant', html: body.innerHTML, text: ans.text });
