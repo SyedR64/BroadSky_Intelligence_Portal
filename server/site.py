@@ -827,7 +827,7 @@ def answer_text(live, card, area=None, record=False):
         pub.append(f"{hf['sqft']:,} sq ft")
     if hf.get('stories'):
         n = hf['stories']
-        pub.append({1: 'one storey', 2: 'two storeys', 3: 'three storeys'}.get(n, f'{n:g} storeys'))
+        pub.append(site_plan.stories_words(n))
     if pub:
         parts.append(f"{short}. " + W._uc(', '.join(pub)) + ' (public record).')
     elif fp:
@@ -859,7 +859,7 @@ def _large_text(live, card, short, hf, tail):
         pub.append(f"{hf['sqft']:,} sq ft")
     if hf.get('stories'):
         n = hf['stories']
-        pub.append({1: 'one storey', 2: 'two storeys', 3: 'three storeys'}.get(n, f'{n:g} storeys'))
+        pub.append(site_plan.stories_words(n))
     has_ring = bool(fp.get('ring_m'))
     if pub:
         parts = [f"{short}. " + W._uc(', '.join(pub)) + ' (public record).']

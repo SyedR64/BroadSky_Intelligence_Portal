@@ -85,7 +85,7 @@ def building_kind(live, footprint_m2, facts=None):
             return {'kind': 'large', 'from': f'recorded floor area {a:,.0f} sq ft'}
     n = _num((by.get('stories') or {}).get('v'))
     if n and n >= STOREYS_LARGE:
-        return {'kind': 'large', 'from': f'{n:g} storeys on record'}
+        return {'kind': 'large', 'from': f'{n:g} stories on record'}
     for k in NONRES_KEYS:
         f = by.get(k)
         if not f:
@@ -800,8 +800,9 @@ def large_unplaced():
             {'kind': 'main_water', 'label': 'Building shutoff', 'short': 'MS', 'basis': 'likely', 'focus': True, 'note': LARGE_SHUTOFF}]
 
 
-def _storeys_words(n):
-    return {1: 'one storey', 2: 'two storeys', 3: 'three storeys'}.get(n, f'{n:g} storeys')
+def stories_words(n):
+    """The number of stories as a person reads it: 'one story', 'two stories', '4 stories'."""
+    return {1: 'one story', 2: 'two stories', 3: 'three stories'}.get(n, f'{n:g} stories')
 
 
 def large_card(card, w, h, live, kind):
@@ -824,7 +825,7 @@ def large_card(card, w, h, live, kind):
     st = (b.get('storeys') or {})
     bits = []
     if st.get('basis') == 'public' and isinstance(st.get('n'), (int, float)):
-        bits.append(_storeys_words(st['n'])[:1].upper() + _storeys_words(st['n'])[1:] + ' (public record).')
+        bits.append(stories_words(st['n'])[:1].upper() + stories_words(st['n'])[1:] + ' (public record).')
     if hs.get('year') and hs.get('year_basis') == 'public':
         bits.append(f"Built {hs['year']}.")
     hs['text'] = ' '.join(bits)                                  # the note says it once, on the plan

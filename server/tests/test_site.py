@@ -336,7 +336,7 @@ def test_answers_are_short_and_never_call_a_real_address_example(env):
         assert not re.search(r'\b(example|sandbox|fictional)\b', json.dumps(res['cards']).replace('"example": false', ''), re.I), name
     res, _ = fx_brief(env, 'nj_full')
     # Changed for FLOORPLAN_SPEC R6: a town hall's answer names the facility and only what holds for any building.
-    assert res['text'].startswith('33 Washington St, Toms River. Town hall, 15,226 sq ft, two storeys (public record).')
+    assert res['text'].startswith('33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record).')
     assert 'Likely: fixture shutoffs under each sink' in res['text'] and res['text'].endswith('map below.')
 
 

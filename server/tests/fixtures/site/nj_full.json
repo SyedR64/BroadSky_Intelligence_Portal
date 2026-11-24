@@ -743,7 +743,7 @@
       },
       {
        "k": "stories",
-       "label": "Storeys",
+       "label": "Stories",
        "v": 2,
        "basis": "public",
        "src": "nj_parcels",
@@ -1609,7 +1609,7 @@
    },
    {
     "k": "stories",
-    "label": "Storeys",
+    "label": "Stories",
     "v": 2,
     "basis": "public",
     "src": 1,

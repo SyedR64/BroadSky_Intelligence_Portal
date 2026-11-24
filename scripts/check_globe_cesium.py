@@ -191,7 +191,7 @@ def run_screen(browser, base, ck, shots):
     ck.ok("MapCmd.site(card): town step, then the building (typed label, outline, parcel, height, street-facing bearing)", ok_site, json.dumps(s)[:400])
     ck.ok("MapCmd.site(card): outline date and facts on the card",
           s["steps"][1]["sub"] == "Parcel match · outline from imagery dated Aug 2010"
-          and s["steps"][1]["figures"] == [["Built", "1854", None], ["Storeys", "3", "est"], ["Height", "18 m", "est"]], json.dumps([s["steps"][1]["sub"], s["steps"][1]["figures"]]))
+          and s["steps"][1]["figures"] == [["Built", "1854", None], ["Stories", "3", "est"], ["Height", "18 m", "est"]], json.dumps([s["steps"][1]["sub"], s["steps"][1]["figures"]]))
     ox, oy = s["steps"][1]["outline"][1]
     ck.ok("MapCmd.site(card): local metres become lon/lat (20 m east, 15 m south)", abs((ox + 76.3047) * 111320 * 0.7657 - 20) < 0.2 and abs((oy - 40.0396) * 110574 + 15) < 0.2, f"{ox},{oy}")
     ck.ok("MapCmd.site(response): the endpoint's whole response works the same", r["siteResp"] == s)

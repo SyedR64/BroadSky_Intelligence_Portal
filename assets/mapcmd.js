@@ -182,7 +182,7 @@ export function site(card) {
   const year = card.house?.year, yearBasis = card.house?.year_basis || 'likely';
   const figures = [];
   if (year) figures.push(['Built', String(year), yearBasis === 'likely' ? 'est' : null]);
-  if (storeys) figures.push(['Storeys', String(storeys), storeysBasis === 'likely' ? 'est' : null]);
+  if (storeys) figures.push(['Stories', String(storeys), storeysBasis === 'likely' ? 'est' : null]);
   if (outline && height != null) figures.push(['Height', `${Math.round(height * 10) / 10} m`, heightBasis === 'likely' ? 'est' : null]);
   const dated = monthYear(fp.as_of);
   const sub = precision === 'parcel' ? `Parcel match${outline && dated ? ` · outline from imagery dated ${dated}` : ''}`

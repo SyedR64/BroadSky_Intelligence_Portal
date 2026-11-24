@@ -28,6 +28,7 @@ import functools
 import http.server
 import json
 import os
+import re
 import sys
 import threading
 
@@ -155,6 +156,9 @@ def live_checks(check, page, card, st, tag):
     old = b['footprint'].get('as_of', '') < '2021'
     check(f'outline card [{tag}]', 'Building outline' in t and 'Public record' in t and 'Outline from imagery dated' in t
           and ('may be out of date' in t) == old and ('parcel not matched' in t) == (card.get('place', {}).get('precision') == 'typed'), t[:160])
+    m = re.search(r'\b(\d+) (story|stories)\b', t)
+    check(f'outline card spells story, stories, never the other spelling [{tag}]',
+          bool(m) and m.group(2) == ('story' if m.group(1) == '1' else 'stories') and 'storey' not in t.lower(), t[:160])
     page.evaluate('() => window.h.select(null)')
     # Behind this wall, on every wall that has something near it: each run listed with its basis; no wall is called clear
     page.click('[data-h3="wallmode"]')

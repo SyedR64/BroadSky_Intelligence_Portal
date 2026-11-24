@@ -1181,7 +1181,7 @@
       },
       {
        "k": "stories",
-       "label": "Storeys",
+       "label": "Stories",
        "v": 4,
        "basis": "public",
        "src": "pa_franklin",
@@ -2295,7 +2295,7 @@
    },
    {
     "k": "stories",
-    "label": "Storeys",
+    "label": "Stories",
     "v": 4,
     "basis": "public",
     "src": 1,

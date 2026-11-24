@@ -433,7 +433,7 @@ def _nj_parcel(attrs, geom, today):
         F.append(_fact('building_desc', 'Assessor building description', desc[:40], src, as_of, 'published'))
         r = read_bldg_desc(desc)
         if r['stories']:
-            F.append(_fact('stories', 'Storeys', r['stories'], src, as_of, 'published', note='read from the assessor building description'))
+            F.append(_fact('stories', 'Stories', r['stories'], src, as_of, 'published', note='read from the assessor building description'))
         if r['material']:
             F.append(_fact('material', 'Walls', r['material'], src, as_of, 'published', note='read from the assessor building description'))
         if r['garage_cars']:
@@ -595,7 +595,7 @@ def _pa_facts(county, a, src, as_of, today):
         add('living_area_sqft', 'Living area (sq ft)', la)
         if not la:
             add('floor_area_sqft', 'Building area (sq ft)', pos(a.get('COMM_BUILDING_SQ_FT'), 200), 'commercial building record')
-        add('stories', 'Storeys', pos(a.get('NUM_STORIE'), 1, 6))
+        add('stories', 'Stories', pos(a.get('NUM_STORIE'), 1, 6))
         add('assessed_building', 'Assessed building value ($)', pos(a.get('APRBLDG')))
         add('land_use', 'Land use code', ' / '.join(str(x) for x in (a.get('CLASS'), a.get('LUC')) if x) or None)
         add('utilities', 'Utilities', a.get('UTILITY'))
@@ -607,10 +607,10 @@ def _pa_facts(county, a, src, as_of, today):
         la = pos(a.get('CNS_AREA_LIVING'), 200)
         add('living_area_sqft', 'Living area (sq ft)', la)
         st = pos(a.get('CNS_STORIES'), 1, 6)
-        add('stories', 'Storeys', st)
+        add('stories', 'Stories', st)
         if not la and not st and a.get('COMM_OUTBLDG_1_SQ_FT'):
             add('floor_area_sqft', 'Building area (sq ft)', pos(a.get('COMM_OUTBLDG_1_SQ_FT'), 200), 'commercial building record')
-            add('stories', 'Storeys', pos(a.get('COMM_OUTBLDG_1_STORIES'), 1, 30), 'commercial building record')
+            add('stories', 'Stories', pos(a.get('COMM_OUTBLDG_1_STORIES'), 1, 30), 'commercial building record')
         add('style', 'Style', (str(a.get('CNS_STYLE_DESC') or '').strip().title() or None))
         add('heat_source', 'Heat source', (str(a.get('HEAT_SOURCE') or '').strip() or None))
         add('heat_distribution', 'Heat distribution', (str(a.get('HEAT_DISTRIBUTION') or '').strip() or None))

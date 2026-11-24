@@ -277,7 +277,7 @@ def test_check_storeys_agrees_and_disagrees():
     two = g.check_storeys(100, 2150, 2)
     assert two['uncertain'] is False and two['n_est'] == 2.0
     bad = g.check_storeys(60, 2900, 1)      # 270 m2 on a 60 m2 footprint is not one storey
-    assert bad['uncertain'] is True and bad['note'] == 'storeys uncertain' and bad['basis'] == 'likely'
+    assert bad['uncertain'] is True and bad['note'] == 'stories uncertain' and bad['basis'] == 'likely'
     # with no storeys given the estimate comes from area
     est = g.check_storeys(100, 2150, None)
     assert est['n_est'] == 2.0 and est['n_given'] is None and est['uncertain'] is False

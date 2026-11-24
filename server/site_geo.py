@@ -588,7 +588,7 @@ def check_storeys(footprint_m2, living_sqft, storeys=None, garage_m2=0.0):
     {ratio, n_est, n_given, disagree_by, uncertain, basis, note}:
       n_est    nearest of 1, 1.5, 2, 2.5, 3 to the ratio (likely),
       uncertain  true when a given number of storeys is more than one
-                 storey away from the ratio ("storeys uncertain").
+                 storey away from the ratio ("stories uncertain").
     """
     try:
         fp = float(footprint_m2) - float(garage_m2 or 0.0)
@@ -606,7 +606,7 @@ def check_storeys(footprint_m2, living_sqft, storeys=None, garage_m2=0.0):
     n_est = min((1.0, 1.5, 2.0, 2.5, 3.0), key=lambda k: abs(k - ratio))
     dis = None if given is None else abs(given - ratio)
     unc = dis is not None and dis > 1.0
-    note = 'storeys uncertain' if unc else ('agrees' if given is not None else 'from area')
+    note = 'stories uncertain' if unc else ('agrees' if given is not None else 'from area')
     return {'ratio': round(ratio, 2), 'n_est': n_est, 'n_given': given,
             'disagree_by': None if dis is None else round(dis, 2), 'uncertain': unc, 'basis': 'likely', 'note': note}
 

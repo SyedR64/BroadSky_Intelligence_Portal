@@ -1176,7 +1176,7 @@ export function renderHouse3D(container, card, opts = {}) {
       if (then && asOf - then > 5 * 365.25 * 864e5) lines.push('Outline may be out of date');
       if (S.precision === 'typed') lines.push('Nearest outline to the point; parcel not matched');
       const n = plan.levels.filter(l => !l.below).length;
-      lines.push(`${n} ${n === 1 ? 'storey' : 'storeys'}: ${BASIS_WORD[S.storeysBasis].toLowerCase()} · Height: ${BASIS_WORD[S.heightBasis].toLowerCase()}`);
+      lines.push(`${n} ${n === 1 ? 'story' : 'stories'}: ${BASIS_WORD[S.storeysBasis].toLowerCase()} · Height: ${BASIS_WORD[S.heightBasis].toLowerCase()}`);
     }
     return `<div class="h3-info-h"><b>${esc(u.label)}</b>${basisChip(u.basis)}<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-h3="dismiss" aria-label="Close">×</button></div>`
       + lines.map(t => `<p class="h3-info-l">${esc(t)}</p>`).join('');

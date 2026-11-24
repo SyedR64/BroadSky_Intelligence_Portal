@@ -124,7 +124,7 @@ def invented(mp, pts, rot=0, st=1, sqft=1500, year=1990, beds=3, garage=False, s
             'parcel': {'ring_ll': closed(lot), 'src': 'nj_parcels', 'as_of': '2026-10-01'}, 'geocode': {'lon': st_ll[0], 'lat': st_ll[1]},
             'town_place': None, 'building': {'ring_ll': closed(ring), 'height_m': None, 'as_of': '2024-08-01', 'imagery_source': 'test'},
             'outbuildings': [], 'permits': [],
-            'facts': [f('year_built', 'Year built', year), f('stories', 'Storeys', st), f('living_area_sqft', 'Living area', sqft),
+            'facts': [f('year_built', 'Year built', year), f('stories', 'Stories', st), f('living_area_sqft', 'Living area', sqft),
                       f('beds', 'Bedrooms', beds)] + ([f('attached_garage', 'Attached garage', 'yes')] if garage else []),
             'choose': [], 'degraded': [], 'seconds': 0.1}
     mp.setattr(SITE, 'lookup', lambda parsed, area=None, pick=None, deadline_s=8.0, live=live: json.loads(json.dumps(live)))
@@ -277,7 +277,7 @@ def test_recorded_public_buildings_are_large_with_no_rooms(env, name):
 
 def test_town_hall_answer_reads_as_the_ruling_says(env):
     res = recorded(env, 'nj_full')
-    assert res['text'] == ('33 Washington St, Toms River. Town hall, 15,226 sq ft, two storeys (public record). Likely: fixture shutoffs '
+    assert res['text'] == ('33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record). Likely: fixture shutoffs '
                            'under each sink; building shutoff in the mechanical room, ask the site contact. Outline, 3D and map below.')
     assert card_of(res)['building']['kind_from'].startswith('footprint ')
 
