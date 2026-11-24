@@ -58,6 +58,7 @@
   import { App } from './assets/core.js?v=20261123172325';
   import { modules, ALIASES, LEVELS, ONLY, MENUS, MENU_NAMES, OWN_PARAM, COMPANIES } from './modules/registry.js?v=20261123172325';
   import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261123172325';
+  import { MapCmd } from './assets/mapcmd.js?v=20261123172325';
 
   // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
   const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
@@ -84,6 +85,15 @@
   App.alias(ALIASES);
   App.levels({ table: LEVELS, only: ONLY, menus: MENUS, names: MENU_NAMES, param: OWN_PARAM, companies: COMPANIES });
   App.start();
+
+  // 3b · the globe from a framed page: the agent inside its frame sends postMessage({ type: 'bsp:map', cmd }) (or { detail }).
+  // The map bus answers those messages itself once it has MapCmd.site; until then the shell hands them to it here.
+  window.addEventListener('message', e => {
+    if (e.origin !== location.origin || !e.data || e.data.type !== 'bsp:map') return;
+    const cmd = e.data.cmd || e.data.detail;
+    if (!cmd || typeof cmd !== 'object' || typeof MapCmd.site === 'function') return;
+    try { MapCmd.run(cmd); } catch (err) { console.warn('[map] framed command failed', err); }
+  });
 
   // 4 · grounded assistant: the frame's Ask button and ⌘J open the same widget
   const launchClear = (tries = 0) => {
