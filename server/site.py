@@ -697,7 +697,9 @@ def map_command(live, card=None):
             c = site_geo.ring_centroid(fp['ring_m'])
             lon, lat = site_geo.point_m_to_ll(c, b['frame']['origin'])
         step = {'kind': 'site', 'lat': round(lat, 6), 'lon': round(lon, 6), 'label': _short_label(live), 'sub': sub, 'precision': prec,
-                'zoom': min(ZOOM[prec], CEIL[prec]), 'pitch': 60 if prec == 'parcel' else 45, 'bearing': round(((b.get('front') or {}).get('bearing_deg') or 0)),
+                'zoom': min(ZOOM[prec], CEIL[prec]), 'pitch': 60 if prec == 'parcel' else 45, 'front_deg': round(((b.get('front') or {}).get('bearing_deg') or 0)),
+                # the camera looks AT the front wall, so it heads the opposite way to the way the front faces
+                'bearing': round((((b.get('front') or {}).get('bearing_deg') or 0) + 180) % 360),
                 'hold_ms': 8000}
         if fp.get('ring_m') and b.get('frame'):
             step['outline'] = [[round(x, 7), round(y, 7)] for x, y in site_geo.m_to_ll(fp['ring_m'], b['frame']['origin'])][:48]
