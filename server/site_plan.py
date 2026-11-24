@@ -33,11 +33,17 @@ FLOOR_AREA_SQFT_LARGE = 8000       # recorded floor area over this
 STOREYS_LARGE = 4                  # this many storeys or more
 NONRES_KEYS = ('property_class', 'land_use', 'facility', 'tax_exempt', 'use_type', 'building_use', 'zoning_use')
 NONRES_WORDS = re.compile(r'\b(public|exempt|commercial|industrial|institutional|institution|school|church|charity|government|'
-                          r'municipal|hospital|office|retail|warehouse|railroad|cemetery|utility company|non.?residential)\b', re.I)
+                          r'municipal|hospital|retail|warehouse|railroad|cemetery|utility company|non.?residential|apartments?|'
+                          r'business|telephone|telegraph)\b', re.I)
+# assessor class codes that are not one-family homes (NJ: 4A commercial, 4B industrial, 4C apartments, 5A/5B railroad,
+# 6A/6B telephone and petroleum, 15A to 15F exempt), tested on the code before the words
+NONRES_CODES = re.compile(r'^\s*(4[ABC]|5[AB]|6[AB]|15[A-F])\b', re.I)
+OFFICE_USE = re.compile(r'^\s*(an? )?office( building| buildings| use|s)?\s*$', re.I)   # an office, not a home with one
 
 LARGE_NOTE = 'Interior layout is not on public record.'
 LARGE_SHUTOFF = 'In the mechanical room, usually on the street side at the lowest floor; ask the site contact'
-LARGE_SOURCE_LINE = 'Source: public property records where shown; the interior layout is not on public record.'
+LARGE_SOURCE_LINE = 'Source: public property records where shown.'
+HOUSE_FACTS = ('beds', 'baths', 'attached_garage', 'garage', 'bedrooms', 'bathrooms')   # a large card never lists these
 BANNED_LARGE = re.compile(r'\b(house|houses|home|homes|garage|garages|living|bedroom|bedrooms|kitchen|kitchens)\b', re.I)
 
 WET = ('kitchen', 'bath', 'laundry')
@@ -45,6 +51,11 @@ ITEM_IN = 1.5          # feet an item sits in from the wall it is on
 ROUTE_IN = 1.0         # feet a run keeps from the outline
 STACK_OFF = 5.0        # feet between a fixture marker and the riser beside it, where the room allows
 TURN_FT = 6.0          # a turn costs this many feet of run, so lines stay simple
+STACK_REACH = 12.0     # feet (along the run) a fixture may sit from its stack before it gets its own drop
+SHARE_COST = 0.8       # extra cost per foot for a drain on the water line's own route: it takes a parallel one when it can
+FIX_NOTE = {'kitchen': 'Under the sink', 'bath': 'Under the sink and behind the toilet', 'laundry': 'At the washer hookup'}
+METER = {'kind': 'electric_meter', 'label': 'Electric meter', 'short': 'EM', 'basis': 'likely',
+         'note': 'Outside, where the service line comes in'}
 ORDER = ['basement', 'first', 'second']
 
 
@@ -80,7 +91,8 @@ def building_kind(live, footprint_m2, facts=None):
         if not f:
             continue
         v = str(f['v']).strip()
-        if k == 'facility' or (k == 'tax_exempt' and v.lower() in ('yes', 'y', 'true', '1')) or NONRES_WORDS.search(v):
+        if (k == 'facility' or (k == 'tax_exempt' and v.lower() in ('yes', 'y', 'true', '1')) or NONRES_CODES.search(v)
+                or NONRES_WORDS.search(v) or OFFICE_USE.search(v)):
             return {'kind': 'large', 'from': f"{str(f.get('label') or k).lower()}: {v[:40]}"}
     return {'kind': 'house', 'from': f'footprint {fp_sqft:,.0f} sq ft' if fp_sqft else 'no outline'}
 
@@ -282,7 +294,7 @@ class Floor:
 
     def wet(self):
         if self.fl['id'] == 'basement':
-            return [r for r in self.rooms if r.get('kind') in ('kitchen', 'bath')]
+            return [r for r in self.rooms if r.get('kind') in ('kitchen', 'bath', 'laundry')]
         return [r for r in self.rooms if r.get('kind') in WET]
 
     def spot(self, spot):
@@ -398,8 +410,10 @@ class Router:
             self._edge[k] = self.node(i, j) and self.node(i2, j2) and seg_clear((self.xs[i], self.ys[j]), (self.xs[i2], self.ys[j2]), self.ring, self.m)
         return self._edge[k]
 
-    def route(self, a, b):
-        """Axis-aligned points from a to b (both must be grid points), or None."""
+    def route(self, a, b, avoid=None):
+        """Axis-aligned points from a to b (both must be grid points), or None. `avoid`: grid edges that cost SHARE_COST a
+        foot more (another line's route). The grid edges of the route found are left in self.last."""
+        self.last = set()
         ka, kb = (self.xi.get(round(a[0], 3)), self.yi.get(round(a[1], 3))), (self.xi.get(round(b[0], 3)), self.yi.get(round(b[1], 3)))
         if None in ka or None in kb or not self.node(*ka) or not self.node(*kb):
             return None
@@ -426,12 +440,16 @@ class Router:
                     s = prev[s]
                     path.append((s[0], s[1]))
                 path.reverse()
+                self.last = {(min(p[0], q[0]), min(p[1], q[1]), max(p[0], q[0]), max(p[1], q[1])) for p, q in zip(path, path[1:])}
                 return self._points(path, a, b)
             for nd, (di, dj) in enumerate(dirs):
                 i2, j2 = i + di, j + dj
                 if not (0 <= i2 < len(xs) and 0 <= j2 < len(ys)) or not self.edge(i, j, i2, j2):
                     continue
-                g2 = g + abs(xs[i2] - xs[i]) + abs(ys[j2] - ys[j]) + (TURN_FT if d not in (-1, nd) else 0.0)
+                L = abs(xs[i2] - xs[i]) + abs(ys[j2] - ys[j])
+                g2 = g + L + (TURN_FT if d not in (-1, nd) else 0.0)
+                if avoid and (min(i, i2), min(j, j2), max(i, i2), max(j, j2)) in avoid:
+                    g2 += SHARE_COST * L
                 s2 = (i2, j2, nd)
                 if g2 < best.get(s2, math.inf) - 1e-9:
                     best[s2] = g2
@@ -519,9 +537,11 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
         for f in floors:
             f['items'] = [it for it in f['items'] if it.get('kind') != 'fixture_shutoffs']
         put = 0
-        for i in living:
+        for i in ids:
             for r, p in wets[i]:
-                it = dict(fx, x=_r(p[0]), y=_r(p[1]), room=r['label'])
+                if i not in living and r.get('kind') != 'laundry':
+                    continue
+                it = dict(fx, x=_r(p[0]), y=_r(p[1]), room=r['label'], note=FIX_NOTE.get(r.get('kind'), fx.get('note')))
                 F[i].fl['items'].append(it)
                 put += 1
         if not put:                                              # no wet room on the plan: the nearest sensible wall
@@ -548,37 +568,46 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
         at = default_at if not isinstance(at, (int, float)) else at
         return wall_point(ring, {'front': 'front', 'rear': 'rear', 'left': 'left', 'right': 'right'}.get(side, default_side), at)
 
-    # the stack: where lines go between floors, at a wet wall of the lowest floor people live on
+    # the stack: where lines go between floors, inside a wet room on every floor it serves (a wet wall, never a hall)
     wet_floors = [i for i in living if wets[i]]
     S = None
+
+    def wet_here(i, c):
+        return any(_in_room(r, c, -0.3) and r.get('kind') in WET + ('utility',) for r in F[i].rooms)
+
+    def drop_spot(rooms_pts, floors_served, near_pts, aim):
+        """The best riser point: in a wet room on each floor it serves, clear of the fixture markers, near `aim`."""
+        best = None
+        for r, _ in rooms_pts:
+            m = min(1.0, r['w'] / 2, r['h'] / 2)
+            nx, ny = max(1, int(r['w'] - 2 * m) + 1), max(1, int(r['h'] - 2 * m) + 1)
+            for gx in range(nx + 1):
+                for gy in range(ny + 1):
+                    c = [r['x'] + m + (r['w'] - 2 * m) * gx / nx, r['y'] + m + (r['h'] - 2 * m) * gy / ny]
+                    if not ok(c, ring, ROUTE_IN):
+                        continue
+                    dry = sum(1 for i in floors_served if not wet_here(i, c))
+                    near = min([math.hypot(c[0] - q[0], c[1] - q[1]) for q in near_pts] + [99.0])
+                    cost = sum(math.hypot(c[0] - q[0], c[1] - q[1]) for q in aim)
+                    key = (dry, near < 3.0, round(cost, 3), round(c[0], 3), round(c[1], 3))
+                    if best is None or key < best[0]:
+                        best = (key, c)
+        return _rp(best[1]) if best else None
+
     if wet_floors and (('water' in kinds_brought) or ('drain' in kinds_brought)):
         low = wet_floors[0]
         above = [i for i in wet_floors if ORDER.index(i) > ORDER.index(low)] if low in ORDER else []
         cands = sorted(wets[low], key=lambda rp: (0 if rp[0].get('kind') == 'bath' else 1))
-        target = None
         if above:
             pairs = [(math.hypot(p[0] - q[0], p[1] - q[1]), k, rp, q) for k, rp in enumerate(cands) for _, q in wets[above[0]]]
             _, _, best, target = min(pairs, key=lambda t: (round(t[0], 3), t[1]))
+            pool = [best] + [rq for rq in wets[above[0]] if rq[1] == target]
+            aim = [best[1], target]
         else:
             best = cands[0]
-        r, p = best
+            pool, aim = [best], [best[1]]
         fixtures = [q for i in ids for _, q in wets[i]]
-        cands = []
-        for d in (STACK_OFF, STACK_OFF * 0.75, STACK_OFF * 0.5):
-            for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d)):
-                cands.append([p[0] + dx, p[1] + dy])
-                if target is not None:
-                    cands.append([target[0] + dx, target[1] + dy])
-        best_c = None
-        for k, c in enumerate(cands):
-            if not ok(c, ring, ITEM_IN):
-                continue
-            near = min(math.hypot(c[0] - q[0], c[1] - q[1]) for q in fixtures)
-            cost = math.hypot(c[0] - p[0], c[1] - p[1]) + (math.hypot(c[0] - target[0], c[1] - target[1]) if target is not None else 0.0)
-            key = (near < STACK_OFF * 0.75 - 1e-6, near < STACK_OFF * 0.5 - 1e-6, round(cost, 3), k)
-            if best_c is None or key < best_c[0]:
-                best_c = (key, c)
-        S = _rp(best_c[1] if best_c else ensure(p, ring))
+        S = drop_spot(pool, [low] + above[:1], fixtures, aim) or _rp(ensure(best[1], ring))
     bottom = ids[0]
     src_floor = next((i for i in ids if item(i, 'water_heater')), None) or next((i for i in ids if item(i, 'main_water')), None)
     src = item(src_floor, 'water_heater', 'main_water') if src_floor else None
@@ -618,15 +647,25 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
                     st = wr[0][1]
                 plans[i].append((base(r), _rp(st), a, []))
             elif k == 'power':
+                # the service line comes in through the wall nearest the panel, from the meter outside on that wall (R5)
                 b = item(i, 'panel')
                 if not b:
                     continue
-                spot = 'entry-right' if (locations or {}).get('panel', {}).get('spot') == 'garage' else 'entry-left'
-                side, frac = WALL_SPOTS[spot]
-                a = _rp(wall_point(ring, side, frac))
+                x0, y0, x1, y1 = bounds(ring)
+                best = None
+                for side in ('left', 'right', 'front', 'rear'):
+                    frac = (b[1] - y0) / max(1e-6, y1 - y0) if side in ('left', 'right') else (b[0] - x0) / max(1e-6, x1 - x0)
+                    q = wall_point(ring, side, frac, ROUTE_IN + 0.05)
+                    d = abs(q[0] - b[0]) + abs(q[1] - b[1])
+                    if best is None or d < best[0] - 1e-9:
+                        best = (d, side, frac, q)
+                _, side, frac, q = best
+                a = _rp(q)
                 if abs(a[0] - b[0]) < 0.05 and abs(a[1] - b[1]) < 0.05:
                     continue
                 plans[i].append((base(r), a, b, []))
+                if outside is not None and not any(o.get('kind') == METER['kind'] for o in outside):
+                    outside.append(dict(METER, side=side, at=round(min(1.0, max(0.0, frac)), 3), floor=i))
             else:                                                # a kind the rules do not place: its own ends, inside
                 pts = r.get('points') or []
                 if len(pts) >= 2:
@@ -634,60 +673,92 @@ def dress_house(floors, ring, locations, outside, scale=(1.0, 1.0)):
                     b = _rp(ensure([pts[-1][0] * sx_, pts[-1][1] * sy_], ring))
                     plans[i].append((base(r), a, b, []))
 
-    # wet rooms: supply up from the heater, drain down to where it leaves (R5), with risers at the stack
+    # wet rooms: supply up from the heater, drain down to where it leaves (R5), with risers at the stack. A fixture more than
+    # STACK_REACH from the main stack gets its own drop beside it (a second stack), so no line crosses half the house.
     water_t = next((r for i in ids for r in tmpl[i] if r.get('kind') == 'water'), None)
     drain_t = next((r for i in ids for r in tmpl[i] if r.get('kind') == 'drain'), None)
     pos = {i: k for k, i in enumerate(ids)}
     if S is not None:
-        top_wet = max(pos[i] for i in wet_floors)
-        if water_t is not None and src is not None:
-            sf = pos[src_floor]
-            for i in ids:
-                if pos[i] < sf:
+        fixtures = [q for i in ids for _, q in wets[i]]
+        stacks = [{'pt': S, 'use': {}}]                        # use: floor -> [fixture points]
+        man = lambda p, q: abs(p[0] - q[0]) + abs(p[1] - q[1])
+        for i in ids:
+            if pos[i] == 0:
+                continue
+            for r, p in wets[i]:
+                p = _rp(p)
+                if man(p, S) <= STACK_REACH:
+                    stacks[0]['use'].setdefault(i, []).append(p)
                     continue
-                up = pos[i] < top_wet
-                ends = [_rp(p) for _, p in wets[i]]
-                if pos[i] == sf:
-                    for p in ends:
-                        plans[i].append((base(water_t), src, p, []))
-                    if up:
-                        plans[i].append((base(water_t), src, S, [[S[0], S[1], 'up']]))
-                elif pos[i] <= top_wet:
-                    ris = [[S[0], S[1], 'down']] + ([[S[0], S[1], 'up']] if up else [])
+                st = next((t for t in stacks[1:] if man(p, t['pt']) <= STACK_REACH and wet_here(i, t['pt'])), None)
+                if st is None:
+                    pt = drop_spot([(r, p)], [i], fixtures, [p]) or _rp(ensure(p, ring))
+                    st = {'pt': pt, 'use': {}}
+                    stacks.append(st)
+                st['use'].setdefault(i, []).append(p)
+        for st in stacks:
+            top = max([pos[i] for i in st['use']] + [0])
+            if top == 0:
+                continue
+            P_ = st['pt']
+            if water_t is not None and src is not None:
+                sf = pos[src_floor]
+                for i in ids:
+                    if pos[i] < sf or pos[i] > top:
+                        continue
+                    up = pos[i] < top
+                    ends = st['use'].get(i, [])
+                    if pos[i] == sf:
+                        if up:
+                            plans[i].append((base(water_t), src, P_, [[P_[0], P_[1], 'up']]))
+                        continue
+                    ris = [[P_[0], P_[1], 'down']] + ([[P_[0], P_[1], 'up']] if up else [])
                     if not ends:
-                        plans[i].append((base(water_t), S, S, ris))
+                        plans[i].append((base(water_t), P_, P_, ris))
                     for k, p in enumerate(ends):
-                        plans[i].append((base(water_t), S, p, ris if k == 0 else []))
-        if drain_t is not None:
-            for i in ids:
-                up = pos[i] < top_wet
-                ends = [_rp(p) for _, p in wets[i]]
-                if pos[i] == 0:
-                    for p in ends:
-                        plans[i].append((base(drain_t), p, exit_pt, []))
-                    if up:
-                        plans[i].append((base(drain_t), S, exit_pt, [[S[0], S[1], 'up']]))
-                elif pos[i] <= top_wet:
-                    ris = [[S[0], S[1], 'down']] + ([[S[0], S[1], 'up']] if up else [])
+                        plans[i].append((base(water_t), P_, p, ris if k == 0 else []))
+            if drain_t is not None:
+                for i in ids:
+                    if pos[i] > top:
+                        continue
+                    up = pos[i] < top
+                    ends = st['use'].get(i, [])
+                    if pos[i] == 0:
+                        plans[i].append((base(drain_t), P_, exit_pt, [[P_[0], P_[1], 'up']]))
+                        continue
+                    ris = [[P_[0], P_[1], 'down']] + ([[P_[0], P_[1], 'up']] if up else [])
                     if not ends:
-                        plans[i].append((base(drain_t), S, S, ris))
+                        plans[i].append((base(drain_t), P_, P_, ris))
                     for k, p in enumerate(ends):
-                        plans[i].append((base(drain_t), p, S, ris if k == 0 else []))
+                        plans[i].append((base(drain_t), p, P_, ris if k == 0 else []))
+        # the bottom floor's own fixtures: straight from the supply, straight to where the drain leaves
+        b0 = ids[0]
+        for r, p in wets[b0]:
+            p = _rp(p)
+            if water_t is not None and src is not None and pos[src_floor] == 0:
+                plans[b0].append((base(water_t), src, p, []))
+            if drain_t is not None:
+                plans[b0].append((base(drain_t), p, exit_pt, []))
 
     ends = [p for i in ids for _, a, b, _ in plans[i] for p in (a, b)]
     routers = [Router(ring, ROUTE_IN, ends)]
     failed = []
     for i in ids:
         runs = []
-        for b, a, z, ris in plans[i]:
+        wet_edges = set()
+        order = sorted(range(len(plans[i])), key=lambda k: (plans[i][k][0].get('kind') == 'drain', k))
+        for b, a, z, ris in (plans[i][k] for k in order):
+            avoid = wet_edges if b.get('kind') == 'drain' else None
             if a == z:
                 pts = [list(a), list(z)]
             else:
-                pts = routers[0].route(a, z)
+                pts = routers[0].route(a, z, avoid)
+                if pts is not None and b.get('kind') == 'water':
+                    wet_edges |= routers[0].last
                 if pts is None:
                     if len(routers) == 1:
                         routers.append(Router(ring, ROUTE_IN / 2, ends))
-                    pts = routers[1].route(a, z)
+                    pts = routers[1].route(a, z, None)
             if pts is None:
                 failed.append(f"{i} {b.get('kind')} {a}->{z}")
                 continue
@@ -724,7 +795,7 @@ def large_unplaced():
     """Likely for any building, with no place on the plan: fixture shutoffs at each fixture and the building shutoff."""
     return [{'kind': 'fixture_shutoffs', 'label': 'Fixture shutoffs', 'short': 'FX', 'basis': 'likely', 'focus': True,
              'note': 'At each fixture: under each sink and behind each toilet'},
-            {'kind': 'main_water', 'label': 'Building shutoff', 'short': 'W', 'basis': 'likely', 'focus': True, 'note': LARGE_SHUTOFF}]
+            {'kind': 'main_water', 'label': 'Building shutoff', 'short': 'MS', 'basis': 'likely', 'focus': True, 'note': LARGE_SHUTOFF}]
 
 
 def _storeys_words(n):
@@ -733,10 +804,12 @@ def _storeys_words(n):
 
 def large_card(card, w, h, live, kind):
     """Turns the card into the R6 card for a large or non-residential building, in place."""
-    facts = card.get('facts') or []
+    facts = [f for f in card.get('facts') or [] if f.get('k') not in HOUSE_FACTS
+             and not BANNED_LARGE.search(str(f.get('label') or '')) and not BANNED_LARGE.search(str(f.get('v') or ''))]
     for f in facts:                                             # a recorded area is the building's floor area here
         if f.get('k') == 'living_area_sqft':
             f['label'] = 'Floor area'
+    card['facts'] = facts
     b = card.setdefault('building', {})
     b['kind'], b['kind_from'] = 'large', kind['from']
     card['floors'] = [{'id': 'first', 'name': 'Ground floor', 'w': w, 'h': h, 'rooms': [], 'items': [], 'runs': [], 'wet_walls': []}]
@@ -752,8 +825,7 @@ def large_card(card, w, h, live, kind):
         bits.append(_storeys_words(st['n'])[:1].upper() + _storeys_words(st['n'])[1:] + ' (public record).')
     if hs.get('year') and hs.get('year_basis') == 'public':
         bits.append(f"Built {hs['year']}.")
-    bits.append(LARGE_NOTE)
-    hs['text'] = ' '.join(bits)
+    hs['text'] = ' '.join(bits)                                  # the note says it once, on the plan
     card['house'] = hs
     card['basis'] = 'likely'
     return card

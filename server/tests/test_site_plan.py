@@ -461,3 +461,57 @@ def test_company_record_cards_are_unchanged():
                 json.dumps(fs, sort_keys=True, separators=(',', ':'), ensure_ascii=False), rid
             seen += 1
     assert seen >= 3
+
+
+# ---------------------------------------------------------------- review fixes: classes, large facts, the service line, the stack
+
+def test_building_kind_class_codes_and_office_words():
+    fact = lambda k, v: {'k': k, 'label': 'x', 'v': v}
+    m2 = 1500 / site_plan.SQFT_PER_M2
+    for v in ('4C (apartments)', '6A (telephone business)', '5B (railroad)', '15F (other exempt)', '4B (industrial)'):
+        assert site_plan.building_kind({'facts': [fact('property_class', v)]}, m2)['kind'] == 'large', v
+    assert site_plan.building_kind({'facts': [fact('land_use', 'Office')]}, m2)['kind'] == 'large'
+    assert site_plan.building_kind({'facts': [fact('land_use', 'Single family w/ home office')]}, m2)['kind'] == 'house'
+    assert site_plan.building_kind({'facts': [fact('property_class', '2 (residential)')]}, m2)['kind'] == 'house'
+
+
+def test_large_card_drops_house_facts_and_says_the_note_once(env):
+    big = [(0, 0), (30, 0), (30, 16), (0, 16)]                 # 30 x 16 m: over 4,500 sq ft, so large
+    card = card_of(invented(env, big, beds=5, garage=True))
+    assert card['building']['kind'] == 'large'
+    assert not [f for f in card['facts'] if f['k'] in ('beds', 'attached_garage')]
+    for s in strings(card):
+        assert not BANNED.search(s[1]), s
+    texts = [card.get('house', {}).get('text') or '', card.get('source_line') or '', (card.get('layout') or {}).get('note') or '']
+    assert sum(t.count(site_plan.LARGE_NOTE) for t in texts) == 1
+
+
+def test_service_line_comes_in_at_a_wall_from_the_meter_outside(env):
+    card = card_of(invented(env, [(0, 0), (13, 0), (13, 8.5), (0, 8.5)], issue='an electrical job, where are the wires'))
+    ring = plan_ring_of(card)
+    meter = [o for o in card['outside'] if o['kind'] == 'electric_meter']
+    assert len(meter) == 1 and meter[0]['basis'] == 'likely'
+    for fl in card['floors']:
+        for r in fl['runs']:
+            if r['kind'] != 'power':
+                continue
+            panel = next(i for i in fl['items'] if i['kind'] == 'panel')
+            assert r['points'][-1] == [panel['x'], panel['y']]
+            assert site_plan.wall_dist(r['points'][0], ring) <= site_plan.ROUTE_IN + 0.2      # it starts at the wall
+
+
+def test_fixture_notes_fit_the_room_and_risers_sit_in_wet_rooms(env):
+    card = card_of(invented(env, [(0, 0), (13, 0), (13, 8.5), (0, 8.5)], st=2, beds=3))
+    notes = {}
+    for fl in card['floors']:
+        for it in fl['items']:
+            if it['kind'] == 'fixture_shutoffs':
+                kind = next(r['kind'] for r in fl['rooms'] if r['label'] == it['room'])
+                notes.setdefault(kind, set()).add(it['note'])
+    assert notes.get('kitchen') == {'Under the sink'}
+    assert 'behind each toilet' not in json.dumps(card)
+    first = next(f for f in card['floors'] if f['id'] == 'first')
+    for r in first['runs']:
+        for x, y, _ in r.get('risers') or []:
+            room = site_plan.room_of(first['rooms'], (x, y))
+            assert room and room['kind'] in ('kitchen', 'bath', 'laundry'), (r['kind'], room and room['label'])

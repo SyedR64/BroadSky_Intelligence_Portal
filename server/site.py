@@ -626,7 +626,7 @@ def dress(card, live, house, add):
             ring_ft = site_plan.plan_ring(blk, w_ft, d_ft)
             locs = (W._rules().get('locations') or {}).get(house.get('foundation') or 'basement') or {}
             if ring_ft:                                          # items by room, runs square inside the outline (R3, R5)
-                rep = site_plan.dress_house(floors, ring_ft, locs, card.get('outside'), (w_ft / (fw0 or w_ft), d_ft / (fh0 or d_ft)))
+                rep = site_plan.dress_house(floors, ring_ft, locs, card.setdefault('outside', []), (w_ft / (fw0 or w_ft), d_ft / (fh0 or d_ft)))
                 if rep['failed']:
                     log.warning('site: %d run(s) could not be routed inside the outline', len(rep['failed']))
             else:
@@ -670,6 +670,9 @@ def dress(card, live, house, add):
     for o in card.get('outside') or []:
         if o.get('basis') != 'record':
             o['basis'] = 'likely'
+    hs = card.get('house')
+    if isinstance(hs, dict) and isinstance(hs.get('text'), str):    # "Electric heat (likely)." reads better than "heat. (likely)"
+        hs['text'] = re.sub(r'\.\s*\(likely\)', ' (likely).', hs['text'])
     card['basis'] = 'likely'
     return card
 
@@ -857,14 +860,19 @@ def _large_text(live, card, short, hf, tail):
     if hf.get('stories'):
         n = hf['stories']
         pub.append({1: 'one storey', 2: 'two storeys', 3: 'three storeys'}.get(n, f'{n:g} storeys'))
+    has_ring = bool(fp.get('ring_m'))
     if pub:
         parts = [f"{short}. " + W._uc(', '.join(pub)) + ' (public record).']
-    else:
+    elif has_ring:
         parts = [f'{short} is on the map.', 'No public building record.',
                  f"Outline from imagery dated {_mon(fp.get('as_of'))}." if fp.get('as_of') else 'Outline from imagery.']
+    else:
+        parts = [f'{short} is on the map.', 'No public building record.']
+    if not has_ring:
+        parts.append('No building outline.')
     parts.append('Likely: fixture shutoffs under each sink; building shutoff in the mechanical room, ask the site contact.')
     parts += tail
-    parts.append('?Outline, 3D and map below.')
+    parts.append('?Outline, 3D and map below.' if has_ring else '?Map below.')
     txt = fit_words(parts)
     head, rest = (short, txt[len(short):]) if txt.startswith(short) else ('', txt)
     if site_plan.BANNED_LARGE.search(rest):                     # a recorded word that reads as a house never reaches the answer
