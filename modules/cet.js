@@ -1,12 +1,12 @@
-import * as Copy from './copy.js?v=20261124170325';
+import * as Copy from './copy.js?v=20261124183445';
 /* ═══════════════════════════════════════════════════════════════════════════
    CET — Commonwealth Electrical Technologies, also branded CET Energy Solutions (Worcester, MA; 400+ professionals;
    six add-ons, four of them reported in October 2026; licensed in about ten states, reported). The data on these screens
    covers the six New England states only.
    ═══════════════════════════════════════════════════════════════════════════ */
-import { esc as E } from '../assets/core.js?v=20261124170325';
-import { companyLinks } from './company-links.js?v=20261124170325';
-import { embedView } from './embed.js?v=20261124170325';
+import { esc as E } from '../assets/core.js?v=20261124183445';
+import { companyLinks } from './company-links.js?v=20261124183445';
+import { embedView } from './embed.js?v=20261124183445';
 
 const COLOR = 'var(--co-cet)';
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
@@ -51,7 +51,7 @@ const SRC = {
 };
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
-function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261124170325'; document.head.appendChild(l); } }
+function ensureCss() { if (!document.getElementById('css-cet')) { const l = document.createElement('link'); l.id = 'css-cet'; l.rel = 'stylesheet'; l.href = 'modules/cet.css?v=20261124183445'; document.head.appendChild(l); } }
 const safe = p => Promise.resolve(p).catch(e => { console.warn(e?.message || String(e)); return null; });
 const sum = (a, f) => a.reduce((s, x) => s + (Number(f(x)) || 0), 0);
 const median = a => { const v = a.filter(x => x != null && !isNaN(x)).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };

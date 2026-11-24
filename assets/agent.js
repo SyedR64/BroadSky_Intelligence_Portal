@@ -8,10 +8,10 @@
    ?embed=1&dock=1 (the home's right column, modules/home.js): the signature question as one card, the chips as quiet rows, the
    thread, the composer at the bottom. A typed site address goes to the home ('bsp:address'), for every role, as the Ask panel
    does it: the home answers it in its own wide column and says back where the answer is ('bsp:address-done'). */
-import { Frame } from './frame.js?v=20261124170325';
-import { Chat, PERSONAS } from './chat.js?v=20261124170325';
-import { Session, CONN_STATES } from './session.js?v=20261124170325';
-import { classify, parseAddress, addressReply } from './globe-intents.js?v=20261124170325';
+import { Frame } from './frame.js?v=20261124183445';
+import { Chat, PERSONAS } from './chat.js?v=20261124183445';
+import { Session, CONN_STATES } from './session.js?v=20261124183445';
+import { classify, parseAddress, addressReply } from './globe-intents.js?v=20261124183445';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
@@ -459,7 +459,7 @@ async function loadPrepared(roleId) {
   const shape = j => (j && typeof j === 'object' && (j.text || Array.isArray(j.cards)) ? { question: String(j.question || j.q || ''), text: String(j.text || ''), cards: Array.isArray(j.cards) ? j.cards : [] } : null);
   if (!backendOff()) {
     try {
-      const m = await import('./backend.js?v=20261124170325');
+      const m = await import('./backend.js?v=20261124183445');
       const B = m.Backend || m.default, base = B && await B.discover();
       if (base) {
         const r = await fetch(`${base}/prepared?role=${encodeURIComponent(roleId)}`, { cache: 'no-store' });
@@ -482,7 +482,7 @@ async function signatureAnswer(role, sig, prep) {
     if (tour && !cards.some(c => c.kind === 'map_command')) {   // the prepared answer carries its own map command once rebuilt
       if (/^best3/.test(tourId) && norm(prep?.question) !== norm(sig.question)) {
         try {
-          const GI = await import('./globe-intents.js?v=20261124170325');
+          const GI = await import('./globe-intents.js?v=20261124183445');
           text = GI.bestReply({ tour: tourId, co: tourId.split('-')[1] || null }, tours);
           cards = cards.filter(c => c.kind === 'action_draft').map(d => ({ ...d, id: `${d.id || 'ad'}-sig`, title: sig.draft?.title || d.title,
             fields: (Array.isArray(d.fields) ? d.fields : []).map(f => (f?.label === 'Message' ? { ...f, value: text } : f)) }));
@@ -646,7 +646,7 @@ function showCurrentRole() {
 /** Say up front when the agent is offline (no backend, or one without the company agent), not only after a question. */
 async function checkBackend() {
   try {
-    const m = await import('./backend.js?v=20261124170325');
+    const m = await import('./backend.js?v=20261124183445');
     const B = m.Backend || m.default;
     const ok = B && await B.discover() && B.health?.workspace;
     if (ok) return;
@@ -678,7 +678,7 @@ export async function boot() {
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
   applyRoleAccent();
   registerPersona(state.role);
-  state.cards = await import('./agent-cards.js?v=20261124170325').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
+  state.cards = await import('./agent-cards.js?v=20261124183445').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
 
   state.inst = Chat.mount(document.getElementById('ca-chat'), {
     persona: 'ag-' + state.role.id, mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false,

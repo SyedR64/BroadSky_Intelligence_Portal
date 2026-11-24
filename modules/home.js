@@ -1,10 +1,10 @@
 /* Home: the first screen for every level (firm, company, role) and the agent inside the shell */
-import { dataset, srcLabel } from './copy.js?v=20261124170325';
-import { loadScoreboard, templateExit } from './fin.js?v=20261124170325';
-import { Session } from '../assets/session.js?v=20261124170325';
-import { embedView } from './embed.js?v=20261124170325';
-import { Counter } from '../assets/counter.js?v=20261124170325';
-import { BSPSite } from '../assets/site-lookup.js?v=20261124170325';
+import { dataset, srcLabel } from './copy.js?v=20261124183445';
+import { loadScoreboard, templateExit } from './fin.js?v=20261124183445';
+import { Session } from '../assets/session.js?v=20261124183445';
+import { embedView } from './embed.js?v=20261124183445';
+import { Counter } from '../assets/counter.js?v=20261124183445';
+import { BSPSite } from '../assets/site-lookup.js?v=20261124183445';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', entry: '2024-04' },
@@ -57,7 +57,7 @@ const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${e
    the role home for office and field. It redraws when the role changes. Each draws into the home column; the role's agent
    is docked at the right (mountDock below) and an address answer opens under the head (#hm-out). Sources and method text
    carry data-src and data-method: the shell moves them into its Sources and Method drawers. ── */
-const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261124170325'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261124183445'; document.head.appendChild(l); } };
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts the agent made that wait for the person's OK (assets/agent.js writes it)
 const AGENT = '#/home/agent';                // never with a question in the address (OS spec 9.4)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];

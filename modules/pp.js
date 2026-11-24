@@ -1,12 +1,12 @@
-import * as Copy from './copy.js?v=20261124170325';
+import * as Copy from './copy.js?v=20261124183445';
 /* ═══════════════════════════════════════════════════════════════════════════
    Punctual Pros — residential HVAC · plumbing · electrical (Central PA + Jersey Shore)
    Views: overview · weather & demand · new-mover marketing · territory · market · filings
    ═══════════════════════════════════════════════════════════════════════════ */
-import { renderFilings } from '../assets/components.js?v=20261124170325';
-import { esc as E } from '../assets/core.js?v=20261124170325';
-import { companyLinks } from './company-links.js?v=20261124170325';
-import { embedView } from './embed.js?v=20261124170325';
+import { renderFilings } from '../assets/components.js?v=20261124183445';
+import { esc as E } from '../assets/core.js?v=20261124183445';
+import { companyLinks } from './company-links.js?v=20261124183445';
+import { embedView } from './embed.js?v=20261124183445';
 
 /* System palette only (UNIFIED.md §6, §8): company accents for categories, status tokens for status. */
 const PAL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', amber: 'var(--sys-warn)', green: 'var(--sys-good)', red: 'var(--sys-bad)', sky: 'var(--sys-info)', purple: 'var(--co-fl)', cyan: 'var(--co-fh)', ts: 'var(--co-ts)', muted: 'var(--sys-mute)', dim: 'var(--sys-mute-2)' };
@@ -108,7 +108,7 @@ const nameConflict = t => /punctual\s*pros/i.test(String(t?.company || ''));
 const pick = (o, ...ks) => { for (const k of ks) if (o && o[k] != null && o[k] !== '') return o[k]; return null; };
 
 function css() {
-  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261124170325'; document.head.appendChild(l); }
+  if (!document.getElementById('css-pp')) { const l = document.createElement('link'); l.id = 'css-pp'; l.rel = 'stylesheet'; l.href = 'modules/pp.css?v=20261124183445'; document.head.appendChild(l); }
 }
 
 /* ── shared data ──────────────────────────────────────────────────────── */
