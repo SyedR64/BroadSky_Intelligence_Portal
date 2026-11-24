@@ -1915,8 +1915,11 @@ def site_module():
     """server/site.py, loaded by its path: a bare `import site` returns Python's own startup module of that name."""
     if _site['mod'] is None:
         m = sys.modules.get('site')
+        b = sys.modules.get('bsp_site')   # workspace.site_module() may have loaded it first: one module, one cache
         if m is not None and callable(getattr(m, 'brief', None)):
             _site['mod'] = m
+        elif b is not None and callable(getattr(b, 'brief', None)):
+            _site['mod'] = b
         elif os.path.isfile(SITE_PATH):
             spec = importlib.util.spec_from_file_location('bsp_site', SITE_PATH)
             mod = importlib.util.module_from_spec(spec)
@@ -2028,7 +2031,9 @@ def validate_site(body):
     ws, connected = site_workspace(body.get('role'), body.get('connected'), 'connected' in body)
     if not site_allowed(ws['role']):
         raise HttpError(403, 'role_not_allowed', 'Address lookups are not part of this role.')
-    return text, ws['role'], connected
+    pick = body.get('pick')
+    pick = str(pick)[:80] if isinstance(pick, (str, int)) and str(pick).strip() else None   # a lot key from an earlier 'choose' answer
+    return text, ws['role'], connected, pick
 
 
 def site_failed(why):
@@ -2062,7 +2067,7 @@ def site_precision(out):
 
 async def handle_site_brief(request, cors):
     t0 = time.monotonic()
-    text, role_id, connected = validate_site(await read_json(request))
+    text, role_id, connected, pick = validate_site(await read_json(request))
     limit_visitor(_site_buckets, ip_key(client_ip(request)), SITE['per_visitor'], 'address lookups')
     try:
         mod = site_module()
@@ -2077,7 +2082,8 @@ async def handle_site_brief(request, cors):
     deadline = max(0.5, min(SITE['lookup_deadline'], left - 0.75))
     why = None
     try:
-        out = await run_in_slot('site', functools.partial(mod.brief, text, role_id, connected=connected, deadline_s=deadline), left)
+        kw = {'connected': connected, 'deadline_s': deadline, **({'pick': pick} if pick else {})}
+        out = await run_in_slot('site', functools.partial(mod.brief, text, role_id, **kw), left)
     except asyncio.TimeoutError:
         out, why = site_failed('timeout'), 'timeout'
     except Exception as e:   # the message may quote the typed text: only its type is logged
