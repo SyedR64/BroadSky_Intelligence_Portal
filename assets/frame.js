@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261124123408';
+       import { Frame } from '../../assets/frame.js?v=20261124160552';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -42,9 +42,15 @@
                                                     where ⌘K already opens the portal search)
      chat     an existing Chat widget instance the Ask button should open
      humanize true|'observe'|false                 (default 'observe': one pass now, then on DOM changes)
+
+   Returns { top, footer, root, page, nav, variant, embed, openChat, humanize, setTheme, getTheme, toggleTheme, setChat,
+   setAsk, setAskState }. In the embed variant setAsk and setAskState do nothing.
+     setAsk(fn)          fn or null. While a function is set, the Ask button and the Ask hotkey call fn() instead of opening
+                         the assistant; null restores that and removes aria-expanded from the Ask button.
+     setAskState(open)   aria-expanded="true|false" on the Ask button (for a page whose handler opens its own panel).
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { Session } from './session.js?v=20261124123408';
+import { Session } from './session.js?v=20261124160552';
 
 /* The site lives at broadsky-agent.vercel.app. Older addresses (GitHub Pages and the project's earlier Vercel names) forward there, keeping the page, query and portal view. */
 export const HOME = 'https://broadsky-agent.vercel.app/';
@@ -72,6 +78,7 @@ export const COMPANIES = {
   fh:  { name: 'Fair Harbor', short: 'Fair Harbor', slug: 'fair-harbor', os: 'HarborOS', osFile: 'harboros.html' },
 };
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
+const VIEW_ORDER = ['bsp', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh'];   // the "Viewing as" sheet: the firm, then the companies in the shell menu's order
 
 /** The four page links on standalone pages. Inside the shell (variant 'app') the side menu carries them instead. */
 export const NAV = [
@@ -145,9 +152,9 @@ function topHTML(o) {
   const menu = o.nav.length || o.cta;
   return `<div class="sys-top-in">
     <a class="sys-brand" href="${esc(url(APP))}" aria-label="${esc(PRODUCT)}, home">${MARK}<span class="sys-brand-name">${esc(PRODUCT)}</span></a>
+    ${o.viewAs ? viewAsHTML() : ''}
     ${o.nav.length ? `<nav class="sys-nav" aria-label="Primary">${links}</nav>` : ''}
     <div class="sys-top-actions">
-      ${o.viewAs ? viewAsHTML() : ''}
       <button class="sys-ask" type="button" data-sys-ask aria-label="Ask the assistant${o.hotkey ? ` (${IS_MAC ? 'Command' : 'Control'} ${o.hotkey.split('+').pop().toUpperCase()})` : ''}"${keyName ? ` title="Ask the assistant (${keyName})"` : ''}><span class="sys-dot" aria-hidden="true"></span>Ask</button>
       ${o.themeToggle ? `<button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon sys-theme" type="button" data-sys-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme"></button>` : ''}
       ${cta}
@@ -158,100 +165,248 @@ function topHTML(o) {
 }
 
 /* ── "Viewing as" switch (OS build spec 4.2) ──────────────────────────────────
-   Closed: the role's title and organisation. Open: the five levels, then the roles of the chosen level grouped by
-   organisation. Choosing a role calls Session.setRole (assets/session.js), which keeps the choice, writes ?role= into
-   the address and tells every listener (the shell redraws its menu and home). Navigation, not security: the words are
-   always "Viewing as". */
-const CHEV = '<svg class="sys-viewas-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+   Closed: a short path right after the brand, "/ ● Organisation / Role ⌄", and while a role other than the default is in
+   view a quiet "Back to <default>" (in the sheet's header when the bar has no room for it). Open: a sheet under the top
+   bar that maps every role at once, the firm then the companies, one column per organisation and one row per tier; on a
+   phone a stacked list. Choosing a role calls Session.setRole (assets/session.js), which keeps the choice, writes ?role=
+   into the address and tells every listener (the shell redraws its menu and home). Navigation, not security: the words
+   are always "Viewing as". */
+const SVG = (d, w = 1.6) => `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+const CHEV = '<svg class="sys-viewas-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const BACK_ICON = SVG('M9.5 4 5.5 8l4 4'), CLOSE_ICON = SVG('m4 4 8 8M12 4l-8 8');
+const FIND_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>';
+/** The map's rows: a level reads as its tier (firm and company leadership are both Leadership). */
+const TIER = { firm_leadership: 'Leadership', firm_team: 'Team', co_leadership: 'Leadership', co_office: 'Office', co_field: 'Field' };
 /** The organisation's display name: the firm reads "Broad Sky"; a company reads its catalogue name. */
 function orgName(id) {
   if (!id || id === 'bsp') return 'Broad Sky';
   const o = Session.orgs().find(x => x.id === id);
   return (o && o.name) || (COMPANIES[id] && COMPANIES[id].short) || id;
 }
+const backHTML = () => `<button class="sys-btn sys-btn--ghost sys-btn--sm sys-viewas-back" type="button" data-sys-viewas-back hidden>${BACK_ICON}<span></span></button>`;
 function viewAsHTML() {
   return `<div class="sys-viewas" data-sys-viewas>
-      <button class="sys-viewas-btn" type="button" aria-expanded="false" aria-controls="sys-viewas-pop" aria-haspopup="true">
-        <span class="sys-viewas-k">Viewing as</span><span class="sys-viewas-v"><b data-sys-viewas-title></b><span data-sys-viewas-org></span></span>${CHEV}
+      <span class="sys-viewas-slash sys-viewas-slash--lead" aria-hidden="true">/</span>
+      <button class="sys-viewas-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="sys-viewas-pop">
+        <span class="sys-viewas-org"><span class="sys-dot" aria-hidden="true"></span><span class="sys-viewas-org-t"></span></span>
+        <span class="sys-viewas-slash" aria-hidden="true">/</span>
+        <span class="sys-viewas-title"></span>${CHEV}
       </button>
-      <div class="sys-viewas-pop" id="sys-viewas-pop" role="group" aria-label="Viewing as" hidden>
-        <div class="sys-chips sys-viewas-levels" role="group" aria-label="Level" data-sys-viewas-levels></div>
-        <div class="sys-viewas-roles" data-sys-viewas-roles></div>
-      </div>
+      ${backHTML()}
     </div>`;
 }
 function bindViewAs(top) {
   const box = top.querySelector('[data-sys-viewas]');
   if (!box) return;
-  const btn = box.querySelector('.sys-viewas-btn'), pop = box.querySelector('.sys-viewas-pop');
-  const levelsEl = box.querySelector('[data-sys-viewas-levels]'), rolesEl = box.querySelector('[data-sys-viewas-roles]');
-  let level = Session.level();
+  const inner = top.querySelector('.sys-top-in'), btn = box.querySelector('.sys-viewas-btn');
+  const org = box.querySelector('.sys-viewas-org'), orgT = box.querySelector('.sys-viewas-org-t'), titleEl = box.querySelector('.sys-viewas-title');
+  const barBack = box.querySelector('[data-sys-viewas-back]');
+  // the sheet and its dimmed layer sit beside the bar, not in it (the bar's backdrop filter would hold a fixed child)
+  const scrim = document.createElement('div');
+  scrim.className = 'sys-viewas-scrim'; scrim.hidden = true;
+  const pop = document.createElement('div');
+  pop.className = 'sys-viewas-pop'; pop.id = 'sys-viewas-pop'; pop.hidden = true;
+  pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-modal', 'true'); pop.setAttribute('aria-labelledby', 'sys-viewas-h');
+  pop.innerHTML = `<div class="sys-viewas-head">
+      <h2 class="sys-card-title" id="sys-viewas-h">Viewing as</h2>
+      <div class="sys-viewas-tools">
+        ${backHTML()}
+        <label class="sys-viewas-find"><span class="sys-vh">Find a role</span>${FIND_ICON}<input class="sys-input" type="search" placeholder="Find a role" autocomplete="off" spellcheck="false"></label>
+        <button class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" type="button" data-sys-viewas-close aria-label="Close">${CLOSE_ICON}</button>
+      </div>
+    </div>
+    <div class="sys-viewas-scroll"></div>`;
+  top.after(scrim, pop);
+  const find = pop.querySelector('input'), closeBtn = pop.querySelector('[data-sys-viewas-close]'), sheetBack = pop.querySelector('[data-sys-viewas-back]');
+  const body = pop.querySelector('.sys-viewas-scroll');
+  const listMode = matchMedia('(max-width: 720px)'), reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* the model: organisations in order (the firm, then the companies), each with one band of roles per level */
+  let cols = [], order = [], fit = 0;
+  const model = () => {
+    const roles = Session.roles(), levels = Session.levels(), ids = VIEW_ORDER;
+    for (const r of roles) if (!ids.includes(r.org || 'bsp')) ids.push(r.org);
+    cols = ids.map(id => {
+      const firm = id === 'bsp', lv = levels.filter(l => l.id.startsWith(firm ? 'firm_' : 'co_'));
+      const mine = roles.filter(r => (r.org || 'bsp') === id);
+      return { id, firm, name: orgName(id), tiers: lv.map(l => TIER[l.id] || l.name), bands: lv.map(l => mine.filter(r => r.level === l.id)) };
+    }).filter(c => c.bands.some(b => b.length));
+    cols.forEach((c, i) => { c.i = i; c.flat = c.bands.flat(); });
+    order = cols.flatMap(c => c.flat);
+  };
+  const roleBtn = (r, c, cur) => `<button type="button" class="sys-viewas-role" data-role="${esc(r.id)}" data-ci="${c.i}" tabindex="-1" aria-label="${esc(r.title)}, ${esc(c.name)}"${r.id === cur ? ' aria-current="true"' : ''}><span>${esc(r.title)}</span></button>`;
+  /* the map: one grid so the rows of both blocks share a baseline; each column is a display:contents group */
+  const mapHTML = cur => {
+    const firm = cols.filter(c => c.firm), cos = cols.filter(c => !c.firm), F = firm.length, C = cos.length;
+    const rows = Math.max(1, ...cols.map(c => c.bands.length)), cs = F ? F + 3 : 1;   // cs: the companies' label column
+    const lab = (t, gc, i) => `<div class="sys-viewas-lab" style="grid-column:${gc};grid-row:${i + 3}" aria-hidden="true"><span>${esc(t)}</span></div>`;
+    const col = (c, gc) => `<div class="sys-viewas-col" role="group" aria-label="${esc(c.name)}" data-co="${esc(c.id)}">
+        <div class="sys-viewas-colhead" style="grid-column:${gc};grid-row:2" aria-hidden="true"><span class="sys-dot"></span><span>${esc(c.name)}</span></div>
+        ${c.bands.map((b, i) => `<div class="sys-viewas-cell${c.firm ? ' sys-viewas-cell--firm' : ''}" style="grid-column:${gc};grid-row:${i + 3}">${b.map(r => roleBtn(r, c, cur)).join('')}</div>`).join('')}
+      </div>`;
+    const tpl = `${F ? `max-content repeat(${F},minmax(max-content,1fr)) 1px ` : ''}max-content repeat(${C},minmax(max-content,1fr))`;
+    return `<div class="sys-viewas-map" style="grid-template-columns:${tpl};grid-template-rows:repeat(${rows + 2},auto)">
+      ${F ? `<p class="sys-viewas-blk" style="grid-column:1/${F + 2};grid-row:1">Firm</p>
+        <div class="sys-viewas-cap" style="grid-column:1;grid-row:2" aria-hidden="true"></div>
+        ${firm[0].tiers.map((t, i) => lab(t, 1, i)).join('')}${firm.map((c, i) => col(c, i + 2)).join('')}
+        <div class="sys-viewas-sep" style="grid-column:${F + 2};grid-row:2/-1" aria-hidden="true"></div>` : ''}
+      ${C ? `<p class="sys-viewas-blk" style="grid-column:${cs}/-1;grid-row:1">Portfolio companies</p>
+        <div class="sys-viewas-cap" style="grid-column:${cs};grid-row:2" aria-hidden="true"></div>
+        ${cos[0].tiers.map((t, i) => lab(t, cs, i)).join('')}${cos.map((c, i) => col(c, cs + 1 + i)).join('')}` : ''}
+    </div>`;
+  };
+  /* phones: one section per organisation, its tiers as small headings */
+  const listHTML = cur => cols.map(c => `<section class="sys-viewas-sec" role="group" aria-labelledby="sys-viewas-o-${esc(c.id)}" data-co="${esc(c.id)}">
+      <h3 class="sys-viewas-sec-h" id="sys-viewas-o-${esc(c.id)}"><span class="sys-dot" aria-hidden="true"></span>${esc(c.name)}</h3>
+      ${c.bands.map((b, i) => b.length ? `<p class="sys-viewas-tier">${esc(c.tiers[i])}</p><div class="sys-viewas-tier-roles">${b.map(r => roleBtn(r, c, cur)).join('')}</div>` : '').join('')}
+    </section>`).join('');
+
+  const btns = () => [...body.querySelectorAll('.sys-viewas-role')];
+  const btnFor = id => id ? body.querySelector(`.sys-viewas-role[data-role="${CSS.escape(id)}"]`) : null;
+  const rove = b => { for (const x of body.querySelectorAll('.sys-viewas-role[tabindex="0"]')) x.tabIndex = -1; if (b) b.tabIndex = 0; };
+  const focusRole = (b, opening) => {
+    if (!b) return;
+    rove(b); b.focus({ preventScroll: true });
+    b.scrollIntoView({ block: opening && listMode.matches ? 'center' : 'nearest', inline: 'nearest', behavior: reduce.matches || opening ? 'auto' : 'smooth' });
+  };
+  const levelName = id => (Session.levels().find(l => l.id === id) || {}).name || '';
+  const hay = r => [r.title, orgName(r.org), (Session.orgs().find(o => o.id === r.org) || {}).name, (COMPANIES[r.org] || {}).name, levelName(r.level), TIER[r.level], r.dept].filter(Boolean).join(' ').toLowerCase();
+  /** Dims the roles the search leaves out; returns the matches in map order (none when the field is empty). */
+  const applySearch = () => {
+    const words = find.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const hits = words.length ? order.filter(r => { const h = hay(r); return words.every(w => h.includes(w)); }) : null, set = hits && new Set(hits.map(r => r.id));
+    for (const b of btns()) b.classList.toggle('is-dim', !!set && !set.has(b.dataset.role));
+    return hits || [];
+  };
+  const render = () => {
+    model();
+    const cur = Session.role().id;
+    body.innerHTML = listMode.matches ? listHTML(cur) : mapHTML(cur);
+    body.scrollLeft = 0; body.scrollTop = 0; body.classList.remove('is-scrolled');
+    rove(btnFor(cur) || btns()[0]);
+    applySearch();
+  };
+  const markCurrent = () => {
+    const cur = Session.role().id;
+    for (const b of btns()) b.dataset.role === cur ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current');
+    if (!pop.contains(document.activeElement)) rove(btnFor(cur));
+  };
+  body.addEventListener('scroll', () => body.classList.toggle('is-scrolled', body.scrollLeft > 4), { passive: true });
+
+  /* the path, the Back button and how much of the path the bar has room for */
+  const defRole = () => Session.roles().find(r => r.id === Session.DEFAULT_ROLE);
+  const paintBack = () => {
+    const d = defRole(), show = !!d && Session.role().id !== d.id;
+    for (const b of [barBack, sheetBack]) b.lastElementChild.textContent = d ? `Back to ${d.title}` : '';
+    barBack.hidden = !show || fit > 0;
+    sheetBack.hidden = !show || fit === 0;
+  };
+  // narrowing order: Back moves into the sheet, then the organisation's name and its slash go (the dot stays), then the
+  // role title ellipses. Measured, so it holds for every variant of the bar and every length of name.
+  const over = el => el.getClientRects().length > 0 && el.scrollWidth > el.clientWidth + 1;
+  const tight = () => inner.scrollWidth > inner.clientWidth + 1 || over(titleEl) || over(orgT);
+  const setFit = n => { fit = n; box.dataset.fit = String(n); paintBack(); };
+  const refit = () => { setFit(0); if (tight()) setFit(1); if (tight()) setFit(2); };
   const paintLabel = () => {
-    const r = Session.role(), org = orgName(r.org);
-    box.querySelector('[data-sys-viewas-title]').textContent = r.title;
-    box.querySelector('[data-sys-viewas-org]').textContent = ` · ${org}`;
-    btn.setAttribute('aria-label', `Viewing as ${r.title}, ${org}. Change`);
+    const r = Session.role(), name = orgName(r.org);
+    org.dataset.co = r.org || 'bsp';
+    orgT.textContent = name; titleEl.textContent = r.title;
+    btn.setAttribute('aria-label', `Viewing as ${r.title}, ${name}. Change`);
+    btn.title = `${r.title} · ${name}`;
     box.dataset.level = r.level;
+    refit();
   };
-  const paintLevels = () => {
-    const all = Session.roles();
-    levelsEl.innerHTML = Session.levels().map(l => {
-      const n = all.filter(r => r.level === l.id).length;
-      return `<button type="button" class="sys-chip" data-level="${esc(l.id)}" aria-pressed="${l.id === level}">${esc(l.name)}<span class="sys-muted sys-num">${n}</span></button>`;
-    }).join('');
-  };
-  const paintRoles = () => {
-    const cur = Session.role().id, groups = new Map();
-    for (const r of Session.roles().filter(x => x.level === level)) {
-      const k = r.org || 'bsp';
-      if (!groups.has(k)) groups.set(k, []);
-      groups.get(k).push(r);
-    }
-    const order = ['bsp', ...CO_ORDER];
-    const keys = [...groups.keys()].sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
-    rolesEl.innerHTML = keys.map(k => `<div class="sys-viewas-group"${k !== 'bsp' ? ` data-co="${esc(k)}"` : ''}>
-        <p class="sys-card-label"><span class="sys-dot" aria-hidden="true"></span>${esc(orgName(k))}</p>
-        <ul class="sys-viewas-list">${groups.get(k).map(r => `<li><button type="button" class="sys-viewas-role" data-role="${esc(r.id)}"${r.id === cur ? ' aria-current="true"' : ''}>${esc(r.title)}</button></li>`).join('')}</ul>
-      </div>`).join('') || '<p class="sys-muted">No roles at this level.</p>';
-  };
+
+  /* open and close */
   const isOpen = () => !pop.hidden;
-  const open = focus => {
-    level = Session.level(); paintLevels(); paintRoles();
-    pop.hidden = false; btn.setAttribute('aria-expanded', 'true'); box.classList.add('is-open');
-    if (focus) (rolesEl.querySelector('[aria-current]') || levelsEl.querySelector('[aria-pressed="true"]'))?.focus();
+  const open = () => {
+    if (isOpen()) return;
+    top.querySelector('.sys-menu[aria-expanded="true"]')?.click();   // one sheet at a time
+    find.value = '';
+    render(); paintBack();
+    pop.hidden = false; scrim.hidden = false;
+    pop.classList.remove('is-in'); void pop.offsetWidth; pop.classList.add('is-in');
+    btn.setAttribute('aria-expanded', 'true');
+    focusRole(btnFor(Session.role().id) || btns()[0], true);
   };
-  const close = (refocus) => {
+  const close = (refocus = true) => {
     if (!isOpen()) return;
-    pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); box.classList.remove('is-open');
+    pop.hidden = true; scrim.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
     if (refocus) btn.focus();
   };
-  btn.addEventListener('click', e => { isOpen() ? close(false) : open(e.detail === 0); });   // keyboard activation moves focus inside
-  btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !isOpen()) { e.preventDefault(); open(true); } });
-  levelsEl.addEventListener('click', e => {
-    const b = e.target.closest('button[data-level]'); if (!b) return;
-    level = b.dataset.level; paintLevels(); paintRoles();
-    levelsEl.querySelector(`[data-level="${level}"]`)?.focus();
-  });
-  rolesEl.addEventListener('click', e => {
-    const b = e.target.closest('button[data-role]'); if (!b) return;
-    Session.setRole(b.dataset.role);
+  const choose = id => {
+    if (id && id !== Session.role().id) Session.setRole(id);
     close(true);
-  });
+  };
+  const back = fromSheet => { Session.setRole(Session.DEFAULT_ROLE); if (fromSheet) close(true); else btn.focus(); };
+
+  /* arrows: Up and Down within a column across its rows; Left and Right to the next column, the same row (or the nearest
+     row that has a role), the nearest place in it. On a phone the list is one column. */
+  const nextFrom = (b, key) => {
+    const all = btns();
+    if (key === 'Home') return all[0];
+    if (key === 'End') return all[all.length - 1];
+    if (listMode.matches) {
+      const i = all.indexOf(b);
+      if (key === 'ArrowDown') return all[Math.min(all.length - 1, i + 1)];
+      if (key === 'ArrowUp') return all[Math.max(0, i - 1)];
+      return null;
+    }
+    const c = cols[Number(b.dataset.ci)], id = b.dataset.role;
+    if (!c) return null;
+    if (key === 'ArrowDown' || key === 'ArrowUp') {
+      const j = c.flat.findIndex(r => r.id === id) + (key === 'ArrowDown' ? 1 : -1);
+      return j >= 0 && j < c.flat.length ? btnFor(c.flat[j].id) : null;
+    }
+    const n = cols[c.i + (key === 'ArrowRight' ? 1 : -1)];
+    if (!n) return null;
+    const band = c.bands.findIndex(bd => bd.some(r => r.id === id)), pos = c.bands[band].findIndex(r => r.id === id);
+    const near = n.bands.map((bd, x) => x).filter(x => n.bands[x].length).sort((a, z) => Math.abs(a - band) - Math.abs(z - band) || a - z);
+    if (!near.length) return null;
+    const nb = n.bands[near[0]], k = near[0] === band ? Math.min(pos, nb.length - 1) : (near[0] < band ? nb.length - 1 : 0);
+    return btnFor(nb[k].id);
+  };
   pop.addEventListener('keydown', e => {
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); return; }
-    // <html> carries data-level and data-role too (assets/session.js), so only the switch's own buttons count
-    const inLevels = e.target.closest('button[data-level]'), inRoles = e.target.closest('button[data-role]');
-    const step = (list, el, d) => { const i = list.indexOf(el); const n = list[(i + d + list.length) % list.length]; if (n) { e.preventDefault(); n.focus(); } };
-    if (inLevels && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) step([...levelsEl.querySelectorAll('[data-level]')], inLevels, e.key === 'ArrowRight' ? 1 : -1);
-    if (inRoles && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) step([...rolesEl.querySelectorAll('[data-role]')], inRoles, e.key === 'ArrowDown' ? 1 : -1);
+    if (e.key === 'Tab') {   // focus stays in the sheet: Back (when it is here), search, close, the role in view
+      const stops = [sheetBack, find, closeBtn, body.querySelector('.sys-viewas-role[tabindex="0"]') || btns()[0]].filter(x => x && !x.hidden);
+      const i = stops.indexOf(document.activeElement);
+      e.preventDefault();
+      stops[(i + (e.shiftKey ? -1 : 1) + stops.length) % stops.length].focus();
+      return;
+    }
+    if (e.target === find) {
+      if (e.key === 'Enter') { e.preventDefault(); const m = applySearch(); if (m.length) choose(m[0].id); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); const m = applySearch(); focusRole(btnFor(m[0] && m[0].id) || btnFor(Session.role().id) || btns()[0]); }
+      return;
+    }
+    const b = e.target.closest && e.target.closest('.sys-viewas-role');
+    if (!b) return;
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) { e.preventDefault(); focusRole(nextFrom(b, e.key)); return; }
+    if (e.key.length === 1 && e.key !== ' ' && !e.metaKey && !e.ctrlKey && !e.altKey) {   // typing a letter searches
+      e.preventDefault();
+      find.focus(); find.value += e.key; applySearch();
+    }
   });
-  // leaving the switch (click elsewhere, or Tab past its last control) closes it
-  document.addEventListener('pointerdown', e => { if (isOpen() && !box.contains(e.target)) close(false); });
-  box.addEventListener('focusout', e => { if (isOpen() && e.relatedTarget && !box.contains(e.relatedTarget)) close(false); });
+  pop.addEventListener('focusin', e => { const b = e.target.closest && e.target.closest('.sys-viewas-role'); if (b) rove(b); });
+  pop.addEventListener('click', e => { const b = e.target.closest('.sys-viewas-role'); if (b) choose(b.dataset.role); });
+  find.addEventListener('input', applySearch);
+  closeBtn.addEventListener('click', () => close(true));
+  scrim.addEventListener('click', () => close(true));
+  sheetBack.addEventListener('click', () => back(true));
+  barBack.addEventListener('click', () => back(false));
+  btn.addEventListener('click', () => { isOpen() ? close(true) : open(); });   // open puts focus on the role in view
+  btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !isOpen()) { e.preventDefault(); open(); } });
+  // a press anywhere else (the rest of the bar included) closes the sheet
+  document.addEventListener('pointerdown', e => { if (isOpen() && !pop.contains(e.target) && !btn.contains(e.target) && !scrim.contains(e.target)) close(false); }, true);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen()) close(true); });
-  Session.onChange((r, what) => { if (what === 'role') { paintLabel(); if (isOpen()) { level = r.level; paintLevels(); paintRoles(); } } });
+  listMode.addEventListener?.('change', () => { if (isOpen()) { const had = pop.contains(document.activeElement) && document.activeElement.closest('.sys-viewas-role'); render(); if (had) focusRole(btnFor(Session.role().id), true); } });
+  if ('ResizeObserver' in window) new ResizeObserver(() => refit()).observe(inner);
+  document.fonts?.ready?.then(refit);
+  Session.onChange((r, what) => { if (what === 'role') { paintLabel(); if (isOpen()) markCurrent(); } });
   paintLabel();
-  Session.ready().then(() => { paintLabel(); if (isOpen()) { paintLevels(); paintRoles(); } });
+  Session.ready().then(() => { paintLabel(); if (isOpen()) { const onRole = document.activeElement?.closest?.('.sys-viewas-role'); render(); if (onRole) focusRole(btnFor(Session.role().id)); } });
 }
 /** The concept notice: a small tag that stays in the page bar (the full sentence is its tooltip and is read by screen readers). */
 function conceptTagHTML() {
@@ -302,7 +457,7 @@ function footerHTML() {
 }
 
 /* ── chat wiring ──────────────────────────────────────────────────────────── */
-const state = { mounted: null, chat: null, persona: 'portal', theme: 'light', observer: null, loading: null };
+const state = { mounted: null, chat: null, persona: 'portal', theme: 'light', observer: null, loading: null, askFn: null };
 
 /* ── theme: one preference for every page ─────────────────────────────────────
    html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme' (light by default). Each page's
@@ -367,13 +522,15 @@ async function openChat() {
   return state.loading;
 }
 
+/** The Ask button and hotkey: the page's own handler while one is set (setAsk), else the assistant. */
+function ask() { return state.askFn ? state.askFn() : openChat(); }
 function bindHotkey(spec) {
   if (!spec) return;
   const key = spec.split('+').pop().toLowerCase();
   document.addEventListener('keydown', e => {
     if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== key) return;
     e.preventDefault();
-    openChat();
+    ask();
   });
 }
 
@@ -628,11 +785,14 @@ function mount(opts = {}) {
   paintThemeToggles();
 
   // ask + hotkey
-  top.querySelector('[data-sys-ask]').addEventListener('click', () => openChat());
+  const askBtn = top.querySelector('[data-sys-ask]');
+  askBtn.addEventListener('click', () => ask());
   bindHotkey(o.hotkey);
+  const setAsk = fn => { state.askFn = typeof fn === 'function' ? fn : null; if (!state.askFn) askBtn.removeAttribute('aria-expanded'); };
+  const setAskState = isOpen => askBtn.setAttribute('aria-expanded', String(!!isOpen));
 
   finishMount(body, opts);
-  state.mounted = { top, banner: null, footer, root: ROOT, page: w, nav: o.nav, variant, embed: false, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
+  state.mounted = { top, banner: null, footer, root: ROOT, page: w, nav: o.nav, variant, embed: false, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; }, setAsk, setAskState };
   return state.mounted;
 }
 
@@ -657,7 +817,7 @@ function mountEmbed(opts, w) {
     a.target = '_top';
   }, true);
   finishMount(body, opts);
-  state.mounted = { top: null, banner: null, footer: null, root: ROOT, page: w, nav: [], variant: 'embed', embed: true, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; } };
+  state.mounted = { top: null, banner: null, footer: null, root: ROOT, page: w, nav: [], variant: 'embed', embed: true, openChat, humanize, setTheme, getTheme, toggleTheme, setChat: inst => { state.chat = inst; }, setAsk: () => {}, setAskState: () => {} };
   return state.mounted;
 }
 

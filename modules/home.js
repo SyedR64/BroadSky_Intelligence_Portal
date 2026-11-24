@@ -1,11 +1,10 @@
 /* Home: the first screen for every level (firm, company, role) and the agent inside the shell */
-import { dataset, srcLabel } from './copy.js?v=20261124123408';
-import { loadScoreboard, templateExit } from './fin.js?v=20261124123408';
-import { Session } from '../assets/session.js?v=20261124123408';
-import { embedView } from './embed.js?v=20261124123408';
-import { Counter } from '../assets/counter.js?v=20261124123408';
-import { Backend } from '../assets/backend.js?v=20261124123408';
-import { BSPSite } from '../assets/site-lookup.js?v=20261124123408';
+import { dataset, srcLabel } from './copy.js?v=20261124160552';
+import { loadScoreboard, templateExit } from './fin.js?v=20261124160552';
+import { Session } from '../assets/session.js?v=20261124160552';
+import { embedView } from './embed.js?v=20261124160552';
+import { Counter } from '../assets/counter.js?v=20261124160552';
+import { BSPSite } from '../assets/site-lookup.js?v=20261124160552';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
   { id: 'pp', name: 'Punctual Pros', short: 'PP', color: 'var(--co-pp)', hex: '#f08a3c', sector: 'Residential HVAC · plumbing · electrical', entry: '2024-04' },
@@ -55,9 +54,10 @@ const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${e
 
 /* ── Home by level (OS spec 5). One screen, three homes, chosen by the role in view ("Viewing as", assets/session.js):
    the firm home for the firm levels, the company home for company leadership (and the fund home for investor relations),
-   the role home for office and field. It redraws when the role changes. Sources and method text carry data-src and
-   data-method: the shell moves them into its Sources and Method drawers. ── */
-const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261124123408'; document.head.appendChild(l); } };
+   the role home for office and field. It redraws when the role changes. Each draws into the home column; the role's agent
+   is docked at the right (mountDock below) and an address answer opens under the head (#hm-out). Sources and method text
+   carry data-src and data-method: the shell moves them into its Sources and Method drawers. ── */
+const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261124160552'; document.head.appendChild(l); } };
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts the agent made that wait for the person's OK (assets/agent.js writes it)
 const AGENT = '#/home/agent';                // never with a question in the address (OS spec 9.4)
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -84,54 +84,29 @@ function waitingHTML(role, esc) {
     ? `<ul class="hm-list">${xs.slice(0, 5).map(x => `<li><a class="hm-item" href="${AGENT}"><span class="hm-time">${esc(x.app || 'Draft')}</span><span class="hm-main"><b>${esc(x.title || 'Draft')}</b></span><span class="sys-chip">Not sent</span></a></li>`).join('')}</ul>`
     : '<p class="hm-empty">Nothing waiting.</p>'}</section>`;
 }
-const askHTML = () => `<a class="sys-btn sys-btn--primary hm-ask" href="${AGENT}">Ask the agent</a>`;
+const askHTML = () => `<a class="sys-btn sys-btn--primary hm-ask" href="${AGENT}" data-hm="ask">Ask the agent</a>`;
 const kpi = (esc, t) => ({ label: fill(t.label), value: `${esc(fill(t.value))}${t.modeled ? '<span class="sys-est">est.</span>' : ''}`, sub: esc(fill(t.sub)) });
 const headHTML = (esc, title, lead, org, id) => `<header class="hm-head">${org ? `<p class="sys-card-label hm-org">${esc(org)}</p>` : ''}<h1 class="sys-h1"${id ? ` id="${id}"` : ''}>${esc(title)}</h1>${lead ? `<p class="sys-lead">${esc(lead)}</p>` : ''}</header>`;
-function wire(el) {
+function wire(el, role) {
   el.querySelectorAll('[data-hm="all"]').forEach(b => { b.onclick = () => { b.previousElementSibling?.classList.add('is-all'); b.hidden = true; }; });
+  // "Ask the agent" opens the docked agent; a modified click still opens the agent screen
+  el.querySelectorAll('[data-hm="ask"]').forEach(a => { a.onclick = e => { if (!dockCtl || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); dockCtl.open(); }; });
+  if (firstAddr) runAddress(el, role, firstAddr);
 }
 
-/* ── First on every home (wave 3 rulings 1 and 8): the role's signature question as one button, answered in place from the
-   prepared answer (no model call; the static copy when the backend is off), and on the homes of the firm levels and of the
-   Punctual Pros office and field roles one "Address" box (assets/site-lookup.js). #/home/overview?address=<text> (the Ask
-   panel hands a typed address over this way) runs the lookup at once. ── */
-const BOX_LEVELS = new Set(['firm_leadership', 'firm_team']);
-const hasBox = r => BOX_LEVELS.has(r.level) || (r.co === 'pp' && (r.level === 'co_field' || r.level === 'co_office'));
-const sigOf = r => (r.signature && r.signature.question ? r.signature : null);
-/** A globe tour the signature names (data/research/globe_tours.json#best3), as a map command. */
-const tourOf = s => { for (const d of (s && Array.isArray(s.data) ? s.data : [])) { const m = /globe_tours\.json#([a-z0-9-]{1,40})$/.exec(String(d)); if (m) return { tour: m[1] }; } return null; };
-let firstAddr = '';      // the address handed over in the hash, run once
-let firstUndo = null;    // removes the address box of the home on screen
-const firstHTML = (role, esc) => {
-  const s = sigOf(role), box = hasBox(role) || !!firstAddr;
-  if (!s && !box) return '';
-  return `<div class="hm-first${box ? ' hm-first--box' : ''}">${s ? `<button type="button" class="sys-btn sys-btn--primary hm-sig" data-hm="sig" aria-expanded="false" aria-controls="hm-out">${esc(s.question)}</button>` : ''}${box ? '<div class="hm-site" data-hm-site></div>' : ''}</div><div class="hm-out" id="hm-out"></div>`;
-};
-async function showPrepared(btn, out, role, esc) {
-  if (btn.getAttribute('aria-expanded') === 'true') { out.replaceChildren(); delete out.dataset.shows; btn.setAttribute('aria-expanded', 'false'); return; }
-  btn.setAttribute('aria-expanded', 'true'); out.dataset.shows = 'sig';
-  const my = (out._sig = (out._sig || 0) + 1);
-  out.innerHTML = '<p class="sl-line sl-progress" role="status">Opening the answer…</p>';
-  const ans = await Backend.prepared(role.id).catch(() => null);
-  if (out._sig !== my || out.dataset.shows !== 'sig' || !out.isConnected) return;
-  if (!ans) { out.innerHTML = '<p class="sl-line" role="status">The prepared answer did not load.</p>'; return; }
-  const a = document.createElement('div'); a.className = 'sl-ans hm-sig-ans';
-  if (ans.text) a.innerHTML = `<p class="sl-text">${esc(ans.text)}</p>`;
-  const cards = document.createElement('div'); cards.className = 'sl-cards'; a.appendChild(cards);
-  const cmd = BSPSite.renderCards(cards, ans.cards, { said: ans.text }) || tourOf(sigOf(role));
-  if (cmd) { const b = document.createElement('button'); b.type = 'button'; b.className = 'sys-btn sys-btn--ghost sys-btn--sm sl-map'; b.dataset.sl = 'map'; b.textContent = 'Show on the globe'; b.onclick = () => BSPSite.openMap(cmd); a.appendChild(b); }
-  out.replaceChildren(a);
-}
-function wireFirst(ctx, role) {
-  const { el, esc } = ctx, out = el.querySelector('#hm-out');
-  if (!out) return;
-  const btn = el.querySelector('[data-hm="sig"]'), slot = el.querySelector('[data-hm-site]');
-  const box = slot ? BSPSite.mount(slot, { out, role: role.id }) : null;
-  if (btn) btn.onclick = () => showPrepared(btn, out, role, esc);
-  // a lookup takes the answer area: the signature button closes
-  box?.el.addEventListener('submit', () => { out._sig = (out._sig || 0) + 1; out.dataset.shows = 'site'; btn?.setAttribute('aria-expanded', 'false'); });
-  firstUndo = () => box?.destroy();
-  if (box && firstAddr) { const t = firstAddr; firstAddr = ''; out.dataset.shows = 'site'; box.lookup(t); }
+/* ── The answer area (direction C): no first row any more. The signature question and the chips live in the agent docked at the
+   right (agent.html?embed=1&dock=1); an address lookup (assets/site-lookup.js: buildings, sources, 3D, globe) needs the width,
+   so it lands here, under the head, and takes no space until used. Two ways in: #/home/overview?address=<text> (the Ask panel
+   hands a typed address over this way) and an address typed in the dock on a home that had the address box (hasBox: the firm
+   levels, the Punctual Pros office and field), which the dock posts as 'bsp:address'. ── */
+let firstAddr = '';      // an address waiting for the answer area (the hash, or the dock before the home has drawn), run once
+const outHTML = () => '<div class="hm-out" id="hm-out" tabindex="-1" aria-live="polite"></div>';
+/** Runs the address lookup into the answer area of the home on screen, or keeps it until the home has drawn. */
+function runAddress(el, role, text) {
+  const out = el.querySelector('#hm-out');
+  if (!out) { firstAddr = text; return null; }
+  firstAddr = '';
+  return BSPSite.lookup(text, { host: out, role: role.id });
 }
 
 /* What moves each company's value, in ten words or fewer. The full sentence is the next action fin.js prints for both
@@ -168,13 +143,13 @@ async function firmHome(ctx, role, live) {
     const rev = dollars(r.rev, 'revenue'), ev = dollars(r.ev);
     return `<tr tabindex="0" data-id="${esc(r.id)}" aria-label="${esc(r.name)}: open the details">
       <td><span class="hm-co" ${coAttr(r.id)}><span class="sys-dot" aria-hidden="true"></span><b>${esc(LONG[r.id] || r.name)}</b></span></td>
-      <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub">${esc(addTxt(r.addOns, reportedOf(firm, r.id)))}</span></td>
+      <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub">${addTxt(r.addOns, reportedOf(firm, r.id)).split(', ').map(p => `<span class="hm-nw">${esc(p)}</span>`).join(', ')}</span></td>
       <td class="sys-n hm-cell" data-label="Revenue, est.">${rev ? esc(rev) : '—'}</td>
       <td class="sys-n hm-cell hm-ev" data-label="Entry value, est.">${ev ? esc(ev) : '—'}</td>
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
       <td class="hm-st">${stChip(status(r), r.flag.st)}</td></tr>`;
   };
-  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${firstHTML(role, esc)}
+  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${outHTML()}
     <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h">${rows.length ? `<div class="sys-table-wrap"><table class="sys-table">
       <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n hm-ev">Entry value <span class="sys-est">est.</span></th><th scope="col">What moves it</th><th scope="col">Status</th></tr></thead>
       <tbody>${rows.map(coRow).join('')}</tbody></table></div>` : ui.note('The company table did not load.', 'warn')}
@@ -185,7 +160,7 @@ async function firmHome(ctx, role, live) {
     <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
     <section class="hm-sec hm-figs" aria-labelledby="hm-figs-h"><h2 class="sys-card-title" id="hm-figs-h">Figures</h2>
       ${ui.kpis([{ label: 'Strategy and operations', value: '<span class="hm-run sys-num" aria-live="off">—</span>', sub: 'Open value today, est.' }])}</section></div>`;
-  wire(el); wireFirst(ctx, role);
+  wire(el, role);
 
   // a row opens the side panel: the full next action, the add-ons under BSP and the estimates behind the figures
   const openRow = r => {
@@ -223,27 +198,109 @@ async function companyHome(ctx, role, live) {
   const row = sb?.rows?.find(r => r.id === co);
   const tiles = (role.home?.kpis || []).slice(0, 3).map(t => kpi(esc, t));
   if (row) { const rep = reportedOf(firm, co); tiles.push({ label: 'Held by BSP', value: row.held != null ? `${row.held.toFixed(1)} yrs` : '—', sub: esc(rep ? addTxt(row.addOns, rep) : `${addTxt(row.addOns, 0)} · ${status(row)}`) }); }
-  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${firstHTML(role, esc)}
+  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${outHTML()}
     ${tiles.length ? ui.kpis(tiles) : ''}
     <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
     <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
   </div>`;
-  wire(el); wireFirst(ctx, role);
+  wire(el, role);
 }
 
-/* Office and field: today's items first, then the agent's question box (a link into the agent screen), then the role's figures. */
+/* Office and field: today's items first, then the button that opens the docked agent (a link to the agent screen without the
+   dock), then the role's figures. */
 async function roleHome(ctx, role) {
   const { el, ui, esc } = ctx;
   const org = (Session.orgs() || []).find(o => o.id === role.org);
   const field = role.level === 'co_field';
   const tiles = (role.home?.kpis || []).map(t => kpi(esc, t));
-  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${headHTML(esc, role.title, fill(role.home?.lead), org ? `${org.name} · ${role.dept}` : role.dept)}${firstHTML(role, esc)}
+  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${headHTML(esc, role.title, fill(role.home?.lead), org ? `${org.name} · ${role.dept}` : role.dept)}${outHTML()}
     ${todayHTML(role, esc, field ? 4 : 6)}
     ${askHTML()}
     ${tiles.length ? ui.kpis(tiles) : ''}
     <p class="sys-src hm-src" data-method>Sandbox records: fictional people and modeled numbers.</p>
   </div>`;
-  wire(el); wireFirst(ctx, role);
+  wire(el, role);
+}
+
+/* ── The agent docked at the right of the home (direction C). The chrome is the shell's: "Agent", one quiet line naming the role
+   in view (it opens the "Viewing as" switch), Clear while the thread has a message, Close. The body is the role agent page
+   itself in its dock form (agent.html?embed=1&dock=1), following the role in view like the agent screen. At 1200px and wider it
+   is a column, open unless the visitor closed it there (localStorage 'bsp-os-dock'); narrower it starts closed and opens over
+   the home from the right (a full-width sheet on phones). While the home is on screen the top bar's Ask and its hotkey toggle
+   it (Frame.mount().setAsk, reached as App.frame) and the floating launcher steps aside (html[data-home-dock], app.css). ── */
+const DOCK_KEY = 'bsp-os-dock';
+const X_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg>';
+const dockHTML = () => `<aside class="hm-dock" id="hm-dock" aria-labelledby="hm-dock-h" hidden>
+  <div class="hm-dock-head"><div class="hm-dock-title"><h2 class="sys-card-title" id="hm-dock-h">Agent</h2><button type="button" class="hm-dock-who" data-hm="who" aria-haspopup="true"></button></div>
+    <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-hm="clear" hidden>Clear</button>
+    <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" data-hm="close" aria-label="Close">${X_ICON}</button></div>
+  <div class="hm-dock-body"></div></aside>`;
+let dockCtl = null;      // the dock of the home on screen (the role home's "Ask the agent" opens it)
+
+function mountDock(ctx, split, onAddress) {
+  const wide = matchMedia('(min-width:1200px)');
+  const dock = split.querySelector('.hm-dock'), body = dock.querySelector('.hm-dock-body');
+  const who = dock.querySelector('[data-hm="who"]'), clear = dock.querySelector('[data-hm="clear"]');
+  const frame = ctx.app?.frame, askBtn = () => document.querySelector('[data-sys-ask]');
+  const saved = () => { try { return localStorage.getItem(DOCK_KEY); } catch { return null; } };
+  let open = false, unembed = null, iframe = null;
+  // the agent page loads the first time the dock opens, then follows the role in view (modules/embed.js)
+  const ensure = () => {
+    if (unembed) return;
+    unembed = embedView({ el: body }, 'agent.html', { title: 'Agent', params: { dock: '1' } });
+    iframe = body.querySelector('iframe');
+    iframe.addEventListener('load', () => {
+      // Escape inside the frame closes the overlay form, as it does on the dock's own buttons. Caught on the way down: the
+      // composer keeps its own Escape to itself; an open suggestion list still closes first
+      try {
+        const w = iframe.contentWindow;
+        w.addEventListener('keydown', e => { if (e.key === 'Escape' && open && !wide.matches && !w.document.querySelector('.ch-ac:not([hidden])')) { e.preventDefault(); e.stopPropagation(); set(false, { focus: true }); } }, true);
+      } catch { /* not same origin */ }
+    });
+  };
+  const composer = () => { try { return iframe?.contentDocument?.querySelector('#ca-chat textarea') || null; } catch { return null; } };
+  const focusIn = (n = 0) => { if (!open) return; const ta = composer(); if (ta) ta.focus({ preventScroll: true }); else if (n < 50) setTimeout(() => focusIn(n + 1), 100); };
+  /** opts.focus: into the composer on open, back to Ask on close; opts.keep: remember the choice (wide screens only);
+   *  opts.quiet: close without moving focus (an address went to the answer area, which takes it). */
+  function set(on, { focus = false, keep = false, quiet = false } = {}) {
+    const had = dock.contains(document.activeElement) || (!!iframe && document.activeElement === iframe);
+    open = on;
+    if (on) ensure();
+    dock.hidden = !on;
+    split.classList.toggle('is-docked', on);
+    frame?.setAskState?.(on);
+    if (keep && wide.matches) { try { localStorage.setItem(DOCK_KEY, on ? 'open' : 'closed'); } catch { /* this visit only */ } }
+    if (on && focus) focusIn();
+    else if (!on && !quiet && (focus || had)) askBtn()?.focus();
+  }
+  const toggle = () => set(!open, { focus: true, keep: true });
+  frame?.setAsk?.(toggle);
+  who.onclick = () => document.querySelector('[data-sys-viewas] .sys-viewas-btn')?.click();
+  clear.onclick = () => { try { iframe?.contentWindow?.postMessage({ type: 'bsp:dock-clear' }, location.origin); } catch { /* gone */ } };
+  dock.querySelector('[data-hm="close"]').onclick = () => set(false, { focus: true, keep: true });
+  dock.addEventListener('keydown', e => { if (e.key === 'Escape' && open && !wide.matches) { e.preventDefault(); set(false, { focus: true }); } });
+  // the overlay closes on a press anywhere else on the page (not on Ask, which toggles it, nor on the "Viewing as" switch)
+  const onDown = e => { const t = e.target; if (open && !wide.matches && t instanceof Element && !dock.contains(t) && !askBtn()?.contains(t) && !t.closest('[data-sys-viewas]')) set(false); };
+  document.addEventListener('pointerdown', onDown, true);
+  const onWide = () => set(wide.matches && saved() !== 'closed');
+  wide.addEventListener('change', onWide);
+  // the agent page in the frame: whether its thread has a message (Clear), and a site address typed into it
+  const onMsg = e => {
+    if (e.origin !== location.origin || !iframe || e.source !== iframe.contentWindow || !e.data || typeof e.data !== 'object') return;
+    if (e.data.type === 'bsp:dock') clear.hidden = !e.data.thread;
+    else if (e.data.type === 'bsp:address' && typeof e.data.text === 'string' && e.data.text.trim()) {
+      if (!wide.matches) set(false, { quiet: true });
+      onAddress(e.data.text.trim().slice(0, 300));
+    }
+  };
+  addEventListener('message', onMsg);
+  // the firm reads "Broad Sky", as in the top bar's path; a company reads its catalogue name
+  const update = role => { const org = role.org === 'bsp' || !role.org ? { name: 'Broad Sky' } : (Session.orgs() || []).find(o => o.id === role.org); const t = `${role.title}${org ? ` · ${org.name}` : ''}`; who.textContent = t; who.setAttribute('aria-label', `Viewing as ${t}`); };
+  onWide();
+  return {
+    update, open: () => set(true, { focus: true, keep: true }),
+    destroy() { removeEventListener('message', onMsg); document.removeEventListener('pointerdown', onDown, true); wide.removeEventListener('change', onWide); frame?.setAskState?.(false); frame?.setAsk?.(null); unembed?.(); },
+  };
 }
 
 async function overview(ctx) {
@@ -251,23 +308,41 @@ async function overview(ctx) {
   await Session.ready();
   let alive = true, gen = 0, undo = null;
   firstAddr = String(ctx.params?.address || '').trim().slice(0, 300);
-  const dropFirst = () => { if (firstUndo) { try { firstUndo(); } catch { /* gone */ } firstUndo = null; } };
+  // two columns: the home (scrolls on its own) and the dock; the content area itself no longer scrolls or pads
+  const host = ctx.el;
+  host.classList.add('hm-docked');
+  host.innerHTML = `<div class="hm-split"><div class="hm-mainc"></div>${dockHTML()}</div>`;
+  const split = host.firstElementChild, main = split.querySelector('.hm-mainc'), mctx = { ...ctx, el: main };
+  document.documentElement.dataset.homeDock = '';
+  const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+  const dock = dockCtl = mountDock(ctx, split, text => {
+    runAddress(main, Session.role(), text);
+    const out = main.querySelector('#hm-out');
+    if (out) { out.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); out.focus({ preventScroll: true }); }
+  });
   const draw = async () => {
-    const my = ++gen, live = () => alive && my === gen && ctx.el.isConnected;
+    const my = ++gen, live = () => alive && my === gen && main.isConnected;
     if (undo) { try { undo(); } catch { /* already gone */ } undo = null; }
-    dropFirst();
     ctx.inspector.close();
     const role = Session.role(), kind = homeKind(role);
-    ctx.el.dataset.home = kind;
-    const un = await (kind === 'firm' ? firmHome : kind === 'company' ? companyHome : roleHome)(ctx, role, live);
+    host.dataset.home = kind;
+    dock.update(role);
+    main.scrollTop = 0;
+    const un = await (kind === 'firm' ? firmHome : kind === 'company' ? companyHome : roleHome)(mctx, role, live);
     if (live()) undo = typeof un === 'function' ? un : null; else if (typeof un === 'function') un();
   };
   const stop = Session.onChange((r, what) => { if (alive && what === 'role') draw(); });
   // a draft approved or made on the agent screen (same browser) changes the "Waiting for approval" list
-  const onStore = e => { if (alive && e.key === APPROVALS_KEY) { const w = ctx.el.querySelector('#hm-wait'); if (w) w.outerHTML = waitingHTML(Session.role(), ctx.esc); } };
+  const onStore = e => { if (alive && e.key === APPROVALS_KEY) { const w = main.querySelector('#hm-wait'); if (w) w.outerHTML = waitingHTML(Session.role(), ctx.esc); } };
   addEventListener('storage', onStore);
   await draw();
-  return () => { alive = false; stop(); removeEventListener('storage', onStore); delete ctx.el.dataset.home; dropFirst(); firstAddr = ''; if (undo) { try { undo(); } catch { /* gone */ } } };
+  return () => {
+    alive = false; stop(); removeEventListener('storage', onStore); firstAddr = '';
+    main.querySelector('#hm-out')?._slCtrl?.abort();
+    dock.destroy(); if (dockCtl === dock) dockCtl = null;
+    delete host.dataset.home; host.classList.remove('hm-docked'); delete document.documentElement.dataset.homeDock;
+    if (undo) { try { undo(); } catch { /* gone */ } }
+  };
 }
 
 /* The agent inside the shell: agent.html in its embedded form, following the role in view. */

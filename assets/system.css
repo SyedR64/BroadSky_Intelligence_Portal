@@ -4,7 +4,7 @@
    playbooks, theater, print. Spec and checklist: UNIFIED.md.
 
    1 tokens · 2 dark variant · 3 company accents · 4 base · 5 frame (top bar,
-   sheet, Viewing as switch, banner, crumb) · 6 page scaffolding (hero, section, grid, card, KPI,
+   sheet, Viewing as path and sheet, banner, crumb) · 6 page scaffolding (hero, section, grid, card, KPI,
    table, note, est., chips, buttons, CTA, footer, prose) · 7 layouts (app,
    minimal, embed) · 8 responsive · 9 motion · 10 print
 
@@ -181,6 +181,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-top-actions{margin-left:auto;display:flex;align-items:center;gap:var(--sys-sp-2);flex-shrink:0}
 .sys-ask{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 6px 0 13px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink);font:600 13.5px/1 var(--sys-font);cursor:pointer;transition:border-color var(--sys-t),box-shadow var(--sys-t),transform var(--sys-t)}
 .sys-ask:hover{border-color:var(--sys-ink);box-shadow:var(--sys-sh-2)}
+.sys-ask[aria-expanded="true"]{border-color:var(--sys-ink);background:var(--sys-bg-3)}   /* a page's own Ask panel is open (frame.js setAskState) */
 .sys-ask .sys-dot{background:#22c55e;width:7px;height:7px}
 .sys-kbd{display:inline-flex;align-items:center;height:22px;padding:0 6px;border-radius:var(--sys-r-xs);background:var(--sys-bg-3);color:var(--sys-mute);font:500 11px/1 var(--sys-mono);letter-spacing:.02em}
 .sys-menu{display:none;width:40px;height:40px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0}
@@ -196,36 +197,89 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-sheet .sys-btn{width:100%;margin-top:var(--sys-sp-4)}
 
 /* ── 5b2 · frame: "Viewing as" switch (frame.js bindViewAs; OS build spec 4.2) ── */
-/* Closed: a pill with the role and organisation. Open: a panel under it with the
-   five levels as chips, then the roles of the chosen level grouped by organisation.
-   At 560px and narrower the panel is a sheet under the top bar.                 */
-.sys-viewas{position:relative;min-width:0;display:flex}
-.sys-viewas-btn{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:460px;height:40px;padding:0 10px 0 14px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink);font:500 13.5px/1.15 var(--sys-font);text-align:left;cursor:pointer;transition:border-color var(--sys-t),box-shadow var(--sys-t)}
-.sys-viewas-btn:hover,.sys-viewas.is-open .sys-viewas-btn{border-color:var(--sys-ink)}
-.sys-viewas-k{flex-shrink:0;font:600 var(--sys-fs-2xs)/1 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-mute)}
-.sys-viewas-v{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sys-ink-2)}
-.sys-viewas-v b{font-weight:600;color:var(--sys-ink)}
-.sys-viewas-chev{flex-shrink:0;width:12px;height:12px;color:var(--sys-mute);transition:transform var(--sys-t)}
-.sys-viewas.is-open .sys-viewas-chev{transform:rotate(180deg)}
-.sys-viewas-pop{position:absolute;right:0;top:calc(100% + 8px);z-index:90;width:min(400px,calc(100vw - 2 * var(--sys-gut)));max-height:calc(100dvh - var(--sys-top-h) - 24px);overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--sys-sp-4);padding:var(--sys-sp-4);background:var(--sys-surface);color:var(--sys-ink);border:1px solid var(--sys-line);border-radius:var(--sys-r);box-shadow:var(--sys-sh-3)}
-.sys-viewas-pop[hidden]{display:none}
-.sys-viewas-levels{gap:6px}
-.sys-viewas-levels .sys-chip{min-height:32px;padding:0 10px}
-.sys-viewas-levels .sys-chip .sys-num{font-size:11px}
-.sys-viewas-roles{display:flex;flex-direction:column;gap:var(--sys-sp-4);padding-top:var(--sys-sp-4);border-top:1px solid var(--sys-line)}
-.sys-viewas-group{display:flex;flex-direction:column;gap:6px}
-.sys-viewas-group:not([data-co]) .sys-dot{background:var(--sys-brand)}
-.sys-viewas-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.sys-viewas-role{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);color:var(--sys-ink-2);font:500 13.5px/1.2 var(--sys-font);cursor:pointer;transition:border-color var(--sys-t),color var(--sys-t),background var(--sys-t)}
-.sys-viewas-role:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
-.sys-viewas-role[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink);font-weight:600}
-@media (max-width:1180px){ .sys-viewas-btn{max-width:340px} }
-@media (max-width:960px){ .sys-viewas-k{display:none} }
-@media (max-width:560px){
-  .sys-viewas{flex:1 1 auto}
-  .sys-viewas-btn{width:100%;max-width:none;height:36px;padding:0 8px 0 12px;font-size:13px}
-  .sys-viewas-pop{position:fixed;left:0;right:0;top:var(--sys-top-h);width:auto;max-height:calc(100dvh - var(--sys-top-h));border-radius:0 0 var(--sys-r-lg) var(--sys-r-lg);border-left:0;border-right:0;padding:var(--sys-sp-4) var(--sys-gut) calc(var(--sys-sp-5) + env(safe-area-inset-bottom,0px))}
-  .sys-viewas-role{min-height:44px}
+/* Closed: a path right after the brand, "/ ● Organisation / Role ⌄", then a quiet
+   Back to the default role. As the bar narrows (frame.js measures) Back moves into
+   the sheet's header, then the organisation's name and its slash go (the dot
+   stays), then the role title ellipses. Open: a sheet under the bar over a dimmed
+   page mapping every role, organisations in columns and tiers in rows; when the
+   columns do not fit the map scrolls sideways under sticky row labels, and at
+   720px and narrower the sheet is full height with a stacked list (44px rows).  */
+.sys-viewas{display:flex;align-items:center;gap:var(--sys-sp-1);flex:0 1 auto;min-width:0;margin-left:calc(var(--sys-sp-4) - var(--sys-sp-5))}
+.sys-top:has(.sys-viewas) .sys-nav{flex-shrink:0}
+.sys-viewas-slash{flex-shrink:0;color:var(--sys-mute-2);font:400 15px/1 var(--sys-font)}
+.sys-viewas-slash--lead{margin-right:var(--sys-sp-1)}
+.sys-viewas-btn{display:inline-flex;align-items:center;gap:var(--sys-sp-2);min-width:0;height:36px;padding:0 var(--sys-sp-2) 0 var(--sys-sp-3);border:1px solid transparent;border-radius:var(--sys-r-pill);background:transparent;color:var(--sys-ink);font:500 14px/1.2 var(--sys-font);letter-spacing:-.005em;cursor:pointer;transition:background var(--sys-t),border-color var(--sys-t)}
+.sys-viewas-btn:hover{background:var(--sys-bg-3)}
+.sys-viewas-btn[aria-expanded="true"]{background:var(--sys-surface);border-color:var(--sys-line-2);box-shadow:var(--sys-sh-1)}
+.sys-viewas-org{display:inline-flex;align-items:center;gap:var(--sys-sp-2);flex:0 1 auto;min-width:0;color:var(--sys-ink-2)}
+:is(.sys-viewas-org,.sys-viewas-colhead,.sys-viewas-sec-h) .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
+.sys-viewas-org-t,.sys-viewas-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sys-viewas-title{flex:0 1 auto;font-weight:600;color:var(--sys-ink)}
+.sys-viewas-chev{flex-shrink:0;width:12px;height:12px;color:var(--sys-mute);transition:transform var(--sys-t) var(--sys-ease)}
+.sys-viewas-btn[aria-expanded="true"] .sys-viewas-chev{transform:rotate(180deg)}
+.sys-viewas[data-fit="2"] :is(.sys-viewas-org-t,.sys-viewas-btn>.sys-viewas-slash){display:none}
+.sys-viewas-back{flex-shrink:0;gap:6px;padding:0 var(--sys-sp-3) 0 var(--sys-sp-2);color:var(--sys-mute);font-weight:500}
+.sys-viewas-back:hover{color:var(--sys-ink)}
+.sys-viewas-back[hidden]{display:none}
+/* the firm's accent is the brand, whatever company the page itself belongs to */
+:is(.sys-viewas,.sys-viewas-pop) [data-co="bsp"]{--co:var(--sys-brand)}
+
+.sys-viewas-scrim{position:fixed;left:0;right:0;bottom:0;top:var(--sys-top-h);z-index:9600;background:color-mix(in srgb,var(--sys-ink) 28%,transparent)}
+/* dark: mix from the background, so the page darkens rather than lightens */
+:root[data-sys-theme="dark"]:not([data-theme="light"]) .sys-viewas-scrim{background:color-mix(in srgb,var(--sys-bg) 72%,transparent)}
+.sys-viewas-pop{position:fixed;top:var(--sys-top-h);left:50%;translate:-50% 0;z-index:9601;display:flex;flex-direction:column;width:min(var(--sys-wrap-wide),calc(100vw - 2 * var(--sys-sp-4)));max-height:calc(100dvh - var(--sys-top-h) - var(--sys-sp-5));background:var(--sys-surface);color:var(--sys-ink);border:1px solid var(--sys-line);border-top:0;border-radius:0 0 var(--sys-r-lg) var(--sys-r-lg);box-shadow:var(--sys-sh-3);overflow:hidden;font-family:var(--sys-font)}
+.sys-viewas-scrim[hidden],.sys-viewas-pop[hidden]{display:none}
+.sys-viewas-pop.is-in{animation:sys-viewas-drop var(--sys-t) var(--sys-ease)}
+.sys-viewas-scrim:not([hidden]){animation:sys-viewas-fade var(--sys-t) var(--sys-ease)}
+@keyframes sys-viewas-drop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes sys-viewas-fade{from{opacity:0}to{opacity:1}}
+.sys-viewas-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sys-sp-4);padding:var(--sys-sp-5) var(--sys-sp-5) var(--sys-sp-3)}
+.sys-viewas-head .sys-card-title{margin:0;white-space:nowrap}
+.sys-viewas-tools{display:flex;align-items:center;gap:var(--sys-sp-2);min-width:0}
+.sys-viewas-find{position:relative;display:flex;align-items:center;min-width:0}
+.sys-viewas-find svg{position:absolute;left:12px;width:15px;height:15px;color:var(--sys-mute);pointer-events:none}
+.sys-viewas-find .sys-input{width:220px;padding-left:34px}
+.sys-viewas-pop .sys-btn--icon{color:var(--sys-ink-2)}
+
+/* the map: Firm | Portfolio companies on one grid (frame.js writes its columns); the side padding lives in the map,
+   so the label spines can stick to the very edge */
+.sys-viewas-scroll{overflow:auto;min-height:0;padding:var(--sys-sp-3) 0 var(--sys-sp-5);overscroll-behavior:contain;scroll-padding-inline:var(--sys-sp-7) var(--sys-sp-5)}
+.sys-viewas-map{display:grid;align-items:stretch;padding-right:var(--sys-sp-5)}
+.sys-viewas-col{display:contents}
+.sys-viewas-cap{position:sticky;left:0;z-index:1;background:var(--sys-surface)}
+/* once the map has scrolled, the spines fade the columns passing under them */
+.sys-viewas-scroll.is-scrolled :is(.sys-viewas-lab,.sys-viewas-cap)::after{content:"";position:absolute;top:0;bottom:0;left:100%;width:var(--sys-sp-4);background:linear-gradient(90deg,var(--sys-surface),transparent);pointer-events:none}
+.sys-viewas-blk{position:sticky;left:0;z-index:2;justify-self:start;margin:0;padding:0 var(--sys-sp-3) var(--sys-sp-4) var(--sys-sp-5);background:var(--sys-surface);font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:var(--sys-tr-label);text-transform:uppercase;color:var(--sys-mute-2)}
+.sys-viewas-sep{width:1px;background:var(--sys-line)}
+.sys-viewas-colhead{display:flex;align-items:center;gap:var(--sys-sp-2);min-width:0;padding:0 var(--sys-sp-3) var(--sys-sp-3) 14px;font:600 14px/1.2 var(--sys-font);letter-spacing:-.01em;color:var(--sys-ink);white-space:nowrap}
+/* row labels: a narrow spine at the left of each block, read bottom to top */
+.sys-viewas-lab{position:sticky;left:0;z-index:1;display:flex;align-items:flex-start;padding:var(--sys-sp-3) var(--sys-sp-2) 0 var(--sys-sp-5);background:linear-gradient(var(--sys-line),var(--sys-line)) var(--sys-sp-5) 0/calc(100% - var(--sys-sp-5)) 1px no-repeat,var(--sys-surface)}
+.sys-viewas-lab span{writing-mode:vertical-rl;transform:rotate(180deg);padding:6px 0;font:600 var(--sys-fs-2xs)/1 var(--sys-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sys-mute);white-space:nowrap}
+.sys-viewas-cell{display:flex;flex-direction:column;gap:2px;min-width:0;padding:var(--sys-sp-3) var(--sys-sp-1) var(--sys-sp-4);border-top:1px solid var(--sys-line)}
+.sys-viewas-cell--firm{padding-right:var(--sys-sp-4)}
+/* a role: a full-width text button; the role in view is the ink pill */
+.sys-viewas-role{display:flex;align-items:center;width:100%;min-width:0;height:32px;padding:0 var(--sys-sp-3) 0 10px;border:0;border-radius:var(--sys-r-pill);background:transparent;color:var(--sys-ink-2);font:500 var(--sys-fs-sm)/1.2 var(--sys-font);letter-spacing:-.005em;text-align:left;cursor:pointer;transition:background var(--sys-t),color var(--sys-t),opacity var(--sys-t)}
+.sys-viewas-role span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sys-viewas-role:hover{background:var(--co-soft);color:var(--sys-ink)}
+.sys-viewas-role[aria-current]{background:var(--sys-ink);color:var(--sys-on-ink);font-weight:600}
+.sys-viewas-role:focus-visible{outline:2px solid var(--sys-focus);outline-offset:1px;box-shadow:var(--sys-ring)}
+.sys-viewas-role.is-dim{opacity:.28}
+.sys-viewas-role.is-dim:hover,.sys-viewas-role.is-dim:focus-visible{opacity:.7}
+@media (max-width:720px){
+  .sys-viewas-pop{left:0;right:0;translate:none;width:auto;height:calc(100dvh - var(--sys-top-h));max-height:none;border-radius:0;border-left:0;border-right:0}
+  .sys-viewas-head{padding:var(--sys-sp-4) var(--sys-sp-4) var(--sys-sp-3)}
+  .sys-viewas-tools{flex:1 1 auto;justify-content:flex-end}
+  .sys-viewas-find{flex:1 1 auto;max-width:280px}
+  .sys-viewas-find .sys-input{width:100%;font-size:16px}
+  .sys-viewas-tools .sys-viewas-back{width:36px;min-width:36px;padding:0}
+  .sys-viewas-tools .sys-viewas-back span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .sys-viewas-scroll{flex:1 1 auto;padding:0 var(--sys-sp-4) calc(var(--sys-sp-6) + env(safe-area-inset-bottom,0px))}
+  .sys-viewas-sec{padding:var(--sys-sp-4) 0 var(--sys-sp-3)}
+  .sys-viewas-sec+.sys-viewas-sec{border-top:1px solid var(--sys-line)}
+  .sys-viewas-sec-h{display:flex;align-items:center;gap:var(--sys-sp-2);margin:0;font:700 16px/1.2 var(--sys-font);letter-spacing:-.01em;color:var(--sys-ink)}
+  .sys-viewas-tier{margin:var(--sys-sp-3) 0 var(--sys-sp-1);font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
+  .sys-viewas-tier-roles{display:flex;flex-direction:column;gap:2px}
+  .sys-viewas-sec .sys-viewas-role{height:44px;padding:0 var(--sys-sp-3);font-size:15px}
 }
 
 /* ── 5c · frame: concept tag (in the page bar, or in the crumb row on a page without one) ── */
@@ -529,8 +583,6 @@ body[data-sys-layout="app"]>.sys-top{-webkit-backdrop-filter:none;backdrop-filte
 body[data-sys-layout="app"] .sys-top-in{max-width:none;padding:0 16px}
 body[data-sys-layout="app"] #app{flex:1 1 0;height:auto;min-height:0;width:100%}
 
-body[data-sys-layout="app"] .sys-viewas-pop{max-height:calc(100dvh - var(--sys-top-h) - 16px)}
-
 /* ── 7a2 · layout: embedded page (?embed=1, frame.js mountEmbed) ──────────── */
 /* The shell draws the page inside an iframe that fills its content area: no
    top bar, footer, crumb row, concept tag, page sub-bar or floating Ask button.
@@ -542,7 +594,7 @@ html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed]
 /* ── 7b · layout: minimal transparent frame (theater.html) ────────────────── */
 .sys-top--minimal{position:fixed;left:0;right:0;top:0;background:transparent;border-bottom:0;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
 .sys-top--minimal .sys-top-in{max-width:none}
-.sys-top--minimal .sys-brand,.sys-top--minimal .sys-nav,.sys-top--minimal .sys-top-actions,.sys-top--minimal .sys-sheet{pointer-events:auto}
+.sys-top--minimal .sys-brand,.sys-top--minimal .sys-viewas,.sys-top--minimal .sys-nav,.sys-top--minimal .sys-top-actions,.sys-top--minimal .sys-sheet{pointer-events:auto}
 .sys-top--minimal .sys-nav{padding:3px;border:1px solid var(--sys-line);border-radius:var(--sys-r-pill);background:color-mix(in srgb,var(--sys-bg) 55%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .sys-top--minimal .sys-nav a{height:30px;font-size:13px}
 .sys-top--minimal .sys-nav a[aria-current]::after{display:none}
@@ -587,6 +639,7 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 @media (max-width:1180px){
   .sys-brand-sub{display:none}
   .sys-top-in{gap:var(--sys-sp-4)}
+  .sys-viewas{margin-left:0}
   .sys-nav a{padding:0 9px}
 }
 @media (max-width:960px){
@@ -597,10 +650,10 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 @media (max-width:560px){
   .sys-ask .sys-kbd,.sys-top-cta{display:none}
   .sys-ask{padding:0 13px}
-  /* the brand keeps its mark only, so the "Viewing as" switch has room */
+  /* the brand keeps its mark only, so the "Viewing as" path has room */
   .sys-top-in{gap:var(--sys-sp-3)}
-  .sys-top-actions{flex:1 1 auto;min-width:0;justify-content:flex-end}
   .sys-top:has(.sys-viewas) .sys-brand-name{display:none}
+  .sys-viewas-btn{padding-left:var(--sys-sp-2)}
   .sys-crumb-in{height:40px}
   /* room for the 44px chat launcher under the last line of the page */
   .sys-footer{padding-bottom:calc(28px + 56px + env(safe-area-inset-bottom,0px))}
@@ -625,7 +678,7 @@ body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-i
 
 /* ── 9 · motion ───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion:reduce){
-  .sys-dot--live{animation:none}
+  .sys-dot--live,.sys-viewas-pop.is-in,.sys-viewas-scrim:not([hidden]){animation:none}
   [class*="sys-"]{transition:none!important}
   a.sys-card:hover,.sys-card--link:hover,.sys-btn:hover{transform:none}
 }

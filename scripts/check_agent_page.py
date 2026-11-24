@@ -180,15 +180,16 @@ def page_checks(browser, site, catalog):
     # Change role -> the top bar's Viewing as switch -> Managing partner
     pop = page.locator('#sys-viewas-pop')
 
-    def pick(level, role):
+    def pick(role):
+        # the sheet maps every role at once: open it and press the role
         page.locator('.ca-role-head .ca-change').click()
         opened = poll(lambda: pop.is_visible(), 3)
-        pop.locator(f'[data-level="{level}"]').click()
-        pop.locator(f'[data-role="{role}"]').click()
+        pop.locator(f'.sys-viewas-role[data-role="{role}"]').click()
         page.wait_for_timeout(300)
         return opened
 
-    check('Change role opens the Viewing as switch', pick('firm_leadership', 'bsp-managing-partner'))
+    check('Change role opens the Viewing as switch', pick('bsp-managing-partner'))
+    check('the Viewing as sheet closes after the pick', not pop.is_visible())
     title = page.inner_text('.ca-role-head .sys-card-title').strip()
     check('role head updates to Managing partner', title == 'Managing partner', title)
     check('apps panel lists DealCloud', 'DealCloud' in page.inner_text('#apps'))
@@ -203,7 +204,7 @@ def page_checks(browser, site, catalog):
     page.locator('.ca-filter [data-org="all"]').click()
     n_all = page.locator('.ca-access tbody tr').count()
     check('access table: 44 roles with All', n_all == 44, str(n_all))
-    pick('co_leadership', 'pp-ceo')
+    pick('pp-ceo')
     pressed = page.locator('.ca-filter [aria-pressed="true"]').inner_text().strip()
     n_pp = page.locator('.ca-access tbody tr').count()
     check('access table: a Punctual Pros role filters to Punctual Pros', pressed == 'Punctual Pros', pressed)
@@ -1036,7 +1037,7 @@ def site_answers(tmp):
 
 
 def _home_ctx(browser, site, w, h, dark, answers, delay_ms=0):
-    """The home of a field role with the address box; the backend is answered inside the context from the replayed answers
+    """The home of a field role whose dock takes addresses; the backend is answered inside the context from the replayed answers
     (POST /site-brief by its building), /health says the lookup is on, every other backend call fails, nothing else loads."""
     ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
     outside, calls = [], []
@@ -1091,8 +1092,11 @@ CHOOSER_MEASURE = """() => {
 
 
 def chooser_checks(browser, site, tmp):
-    """Several sizeable buildings on one lot, on the home's address box, from the real answers the server gives for the town hall
-    (nj_full replayed through server/site.py): under the answer one button each ("Building 1 · 37,100 sq ft"), largest first, the
+    """Several sizeable buildings on one lot, in the home's answer area, from the real answers the server gives for the town hall
+    (nj_full replayed through server/site.py). At 1440 px the address is typed into the docked agent's composer (inside its frame):
+    it is not sent to the agent, the thread shows it and the one-line reply, and the home runs the lookup in its own column. At
+    phone widths it comes in through #/home/overview?address= (the Ask panel's hand-over). Then: under the answer one button
+    each ("Building 1 · 37,100 sq ft"), largest first, the
     drawn one pressed and looking pressed; the card's notes word for word. Scrolled down to the row, pressing another keeps the
     old answer on screen while it loads, runs the lookup again with building set, replaces the answer in place, keeps the row in
     view and focused, and leaves one copy of the sources in the Sources drawer. Pressing the shown one does nothing. No sideways
@@ -1106,11 +1110,23 @@ def chooser_checks(browser, site, tmp):
         tag = f"chooser {w} px {'dark' if dark else 'light'}"
         ctx, page, outside, calls = _home_ctx(browser, site, w, h, dark, answers, delay_ms=700)
         con = Console(page, site)
-        page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview')
-        page.wait_for_selector('#hm-out .sl-in, .sl-in', timeout=15000)
-        page.fill('.sl-in', answers['typed'])
-        page.press('.sl-in', 'Enter')
-        ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out [data-sl=\"building\"]')"), 10)
+        if w >= 1200:
+            # the dock is open at this width: type the address into the agent's composer inside its frame
+            page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview')
+            page.wait_for_selector('#hm-out', state='attached', timeout=15000)
+            dock = page.frame_locator('.hm-dock iframe')
+            dock.locator('#ca-chat textarea').fill(answers['typed'])
+            dock.locator('#ca-chat textarea').press('Enter')
+            ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out [data-sl=\"building\"]')"), 10)
+            th = dock.locator('#ca-chat').evaluate("""el => ({ q: [...el.querySelectorAll('.ch-turn.user')].map(t => t.textContent.trim()),
+              a: [...el.querySelectorAll('.ch-turn.bot .ch-answer')].map(t => t.textContent.trim()) })""")
+            check(f'{tag}: the address typed in the dock stays out of the agent: its bubble, the one-line reply, the lookup in the home',
+                  ok and th['q'] == [answers['typed']] and len(th['a']) == 1 and th['a'][0].startswith('Looking up 33 Washington St'), json.dumps(th)[:240])
+        else:
+            # the Ask panel's hand-over: the typed address travels in the hash and runs in the answer area at once
+            page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview?address={urllib.parse.quote(answers["typed"])}')
+            page.wait_for_selector('#hm-out', state='attached', timeout=15000)
+            ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out [data-sl=\"building\"]')"), 10)
         page.wait_for_timeout(300)
         r = page.evaluate(CHOOSER_MEASURE)
         check(f'{tag}: one row of buttons under the answer, largest first, with the ground area',

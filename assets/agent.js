@@ -4,15 +4,21 @@
    decided where the answers are made. Spec: SPEC section 1 and 5.2. Copy rules: UNIFIED.md §0 and §7, OS spec section 7.
    The role and the connections live in the Broad Sky OS session (assets/session.js): the role is the one "Viewing as"
    names everywhere, and a tool connected for a company is connected for every role at that company.
-   ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers. */
-import { Frame } from './frame.js?v=20261124123408';
-import { Chat, PERSONAS } from './chat.js?v=20261124123408';
-import { Session, CONN_STATES } from './session.js?v=20261124123408';
+   ?embed=1 (inside the shell, #/home/agent): no role list or role card; today's list, the question box and the answers.
+   ?embed=1&dock=1 (the home's right column, modules/home.js): the signature question as one card, the chips as quiet rows, the
+   thread, the composer at the bottom. On the homes with the address lookup a typed site address goes to the home ('bsp:address'),
+   which answers it in its own wide column. */
+import { Frame } from './frame.js?v=20261124160552';
+import { Chat, PERSONAS } from './chat.js?v=20261124160552';
+import { Session, CONN_STATES } from './session.js?v=20261124160552';
+import { classify, parseAddress, addressReply } from './globe-intents.js?v=20261124160552';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
 const OFF = CONN_STATES[2];                 // disconnected by the visitor: the vendor's connector, not switched on
 const EMBED = (() => { try { return new URLSearchParams(location.search).get('embed') === '1'; } catch { return false; } })();
+const DOCK = EMBED && (() => { try { return new URLSearchParams(location.search).get('dock') === '1'; } catch { return false; } })();
+const ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
 const CO_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 const COMPANY_APPS = { servicetitan: 'pp', procore: 'cet', servicedesk: 'fl', shopify: 'fh' };
@@ -109,11 +115,40 @@ function accentOf(org) {
   const co = orgOf(org).co;
   try { return getComputedStyle(document.documentElement).getPropertyValue(co ? `--co-${co}` : '--sys-brand').trim() || undefined; } catch { return undefined; }
 }
+/* The roles whose home answers a typed site address (modules/home.js hasBox): the firm levels and the Punctual Pros office and field. */
+const addressRole = (r = state.role) => r.level === 'firm_leadership' || r.level === 'firm_team' || (orgOf(r.org).co === 'pp' && (r.level === 'co_office' || r.level === 'co_field'));
+/** The composer's placeholder; in the dock, an address role's names the address too ("the fund, a deal or an address"). */
+function placeholderOf(r) {
+  let p = r.placeholder || 'Ask the agent';
+  if (!DOCK || !addressRole(r)) return p;
+  if (/[?.]$/.test(p)) return `${p} Or an address`;
+  const i = p.lastIndexOf(' or ');
+  if (i > -1) p = `${p.slice(0, i)}, ${p.slice(i + 4)}`;
+  return `${p} or an address`;
+}
+/** Dock, address role: a site address (the test the Ask panel applies before it hands one to the home) is not sent to the agent.
+ *  The thread shows it and the one-line reply; the home runs the lookup in its own column. Returns true when it was handed over. */
+function handAddress(q) {
+  const w = state.inst;
+  if (!DOCK || !w || !addressRole() || window.parent === window) return false;
+  const g = classify(q, { co: orgOf(state.role.org).co || null });
+  // a line that is only an address ("418 Wexcombe Ln, Lititz") counts too: the home's old Address box took those
+  const addr = g ? (g.kind === 'address' ? g.addr : null) : (/^\s*\d/.test(q) ? parseAddress(q) : null);
+  if (!addr) return false;
+  w.root?.querySelector('.ch-thread')?.classList.add('open');
+  const u = w.userTurn(q), t = w.botShell(), line = esc(addressReply(addr, true));
+  t.querySelector('.ch-answer').innerHTML = `<p>${line}</p>`;
+  w.msgs.append(u, t);
+  if (Array.isArray(w.history)) w.history.push({ role: 'user', html: esc(q), text: q }, { role: 'assistant', html: `<p>${line}</p>`, text: addressReply(addr, true) });
+  scrollTurnIntoView(u);
+  try { window.parent.postMessage({ type: 'bsp:address', text: q }, location.origin); } catch { /* no shell around */ }
+  return true;
+}
 function registerPersona(role) {
   const sig = norm(sigOf(role)?.question);   // the signature question has its own chip, answered without the model
   PERSONAS['ag-' + role.id] = {
     name: 'Company agent', short: 'the agent', initials: 'AG', color: accentOf(role.org),
-    greeting: '', placeholder: role.placeholder || 'Ask the agent', suggestions: (role.chips || []).filter(c => norm(c) !== sig), intents: [], faq: [],
+    greeting: '', placeholder: placeholderOf(role), suggestions: (role.chips || []).filter(c => norm(c) !== sig), intents: [], faq: [],
   };
 }
 function applyRoleAccent() {
@@ -258,6 +293,10 @@ function renderHint() {
 function syncHint() {
   const el = $('.ca-hint'), open = !!state.inst?.root?.querySelector('.ch-thread.open');
   if (el) el.hidden = open;
+  if (!DOCK) return;
+  // the dock: the start cards step aside once the thread has a message, and the home's Clear follows the thread
+  $('main.ca')?.classList.toggle('ca-has-thread', open);
+  if (open !== state.dockThread) { state.dockThread = open; try { window.parent.postMessage({ type: 'bsp:dock', thread: open }, location.origin); } catch { /* no shell */ } }
 }
 
 /* ── consent and sync (one dialog, two steps; no inputs of any kind) ── */
@@ -401,7 +440,7 @@ async function loadPrepared(roleId) {
   const shape = j => (j && typeof j === 'object' && (j.text || Array.isArray(j.cards)) ? { question: String(j.question || j.q || ''), text: String(j.text || ''), cards: Array.isArray(j.cards) ? j.cards : [] } : null);
   if (!backendOff()) {
     try {
-      const m = await import('./backend.js?v=20261124123408');
+      const m = await import('./backend.js?v=20261124160552');
       const B = m.Backend || m.default, base = B && await B.discover();
       if (base) {
         const r = await fetch(`${base}/prepared?role=${encodeURIComponent(roleId)}`, { cache: 'no-store' });
@@ -424,7 +463,7 @@ async function signatureAnswer(role, sig, prep) {
     if (tour && !cards.some(c => c.kind === 'map_command')) {   // the prepared answer carries its own map command once rebuilt
       if (/^best3/.test(tourId) && norm(prep?.question) !== norm(sig.question)) {
         try {
-          const GI = await import('./globe-intents.js?v=20261124123408');
+          const GI = await import('./globe-intents.js?v=20261124160552');
           text = GI.bestReply({ tour: tourId, co: tourId.split('-')[1] || null }, tours);
           cards = cards.filter(c => c.kind === 'action_draft').map(d => ({ ...d, id: `${d.id || 'ad'}-sig`, title: sig.draft?.title || d.title,
             fields: (Array.isArray(d.fields) ? d.fields : []).map(f => (f?.label === 'Message' ? { ...f, value: text } : f)) }));
@@ -513,7 +552,9 @@ function mountActions() {
     const at = $('.ch-chips', root) || box; at.before(sb);
   }
   const sig = sigOf();
-  sb.innerHTML = sig ? `<button type="button" class="sys-chip ca-sig" data-ca="sig">${esc(sig.question)}</button>` : '';
+  // in the dock it is one card-button, the question in full and an arrow at the right
+  sb.innerHTML = !sig ? '' : DOCK ? `<button type="button" class="ca-sig ca-sig--card" data-ca="sig"><span>${esc(sig.question)}</span>${ARROW}</button>`
+    : `<button type="button" class="sys-chip ca-sig" data-ca="sig">${esc(sig.question)}</button>`;
   sb.hidden = !sig;
 }
 function scrollTurnIntoView(turnEl) {
@@ -586,7 +627,7 @@ function showCurrentRole() {
 /** Say up front when the agent is offline (no backend, or one without the company agent), not only after a question. */
 async function checkBackend() {
   try {
-    const m = await import('./backend.js?v=20261124123408');
+    const m = await import('./backend.js?v=20261124160552');
     const B = m.Backend || m.default;
     const ok = B && await B.discover() && B.health?.workspace;
     if (ok) return;
@@ -612,12 +653,13 @@ export async function boot() {
     return;
   }
   if (EMBED) document.documentElement.dataset.embed = '1';
+  if (DOCK) document.documentElement.dataset.dock = '1';
   await Session.ready();
   state.role = roleById(initialRole());   // read only: a role is stored when the visitor picks one, never by default
   if (params.get('apps') === 'all') setConnected(roleApps(), true);
   applyRoleAccent();
   registerPersona(state.role);
-  state.cards = await import('./agent-cards.js?v=20261124123408').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
+  state.cards = await import('./agent-cards.js?v=20261124160552').catch(e => { console.warn('company agent: card renderers did not load', e); return null; });
 
   state.inst = Chat.mount(document.getElementById('ca-chat'), {
     persona: 'ag-' + state.role.id, mode: 'inline', hostedOnly: true, expand: false, commands: false, engine: false,
@@ -632,6 +674,19 @@ export async function boot() {
   const sw = !EMBED && document.querySelector('[data-sys-viewas] .sys-viewas-btn');
   if (sw) { state.switchBtn = sw; $('.ca-roles')?.remove(); $('.ca-layout')?.classList.add('ca-layout--switch'); }
   if (EMBED) document.addEventListener('click', toTop, true);
+  if (DOCK) {
+    // a typed site address goes to the home, not to the agent (handAddress); everything else is asked as always
+    const ask0 = state.inst.ask.bind(state.inst);
+    state.inst.ask = (q, o) => (handAddress(String(q ?? '').trim()) ? Promise.resolve(null) : ask0(q, o));
+    // the "Reads …" line sits quietly under the composer
+    const hint = $('.ca-hint'), compose = $('.ch-compose', state.inst.root);
+    if (hint && compose) compose.appendChild(hint);
+    // the home's Clear: a fresh thread, the keyboard in the composer
+    window.addEventListener('message', e => {
+      if (e.origin !== location.origin || e.source !== window.parent || !e.data || e.data.type !== 'bsp:dock-clear') return;
+      state.inst.newChat({ focus: true });
+    });
+  }
 
   renderAll();
   state.filter = state.role.org; renderAccess(state.filter);

@@ -46,15 +46,59 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-figs .sys-kpis{margin-top:0;align-self:flex-start;grid-template-columns:minmax(220px,300px)}
 .hm-figs .sys-kpi-value{font-size:var(--sys-fs-xl)}
 
-/* first on every home: the signature question (one button) and, where the role has it, the address box, in one row;
-   the answer opens in place under them */
-.hm-first{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--sys-sp-3) var(--sys-sp-4);min-width:0}
-.hm-sig{flex:0 1 auto;max-width:100%;height:auto;min-height:44px;padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2);white-space:normal;text-align:left;line-height:var(--sys-lh-snug)}
-.hm-sig[aria-expanded="true"]{box-shadow:var(--sys-ring)}
-.hm-site{flex:1 1 320px;min-width:0;max-width:560px}
-.hm-out{min-width:0}
+/* the answer area under the head: an address lookup lands here (the dock hands it over); empty, it takes no space */
+.hm-out{min-width:0;scroll-margin-top:var(--sys-sp-4)}
 .hm-out:empty{display:none}
+.hm-out:focus,.hm-out:focus-visible{outline:none}   /* focus lands here only from script, to announce the answer: no ring on a region */
 .hm-out .sl-cards{max-width:960px}
+
+/* ── the home overview with the agent docked at the right (modules/home.js mountDock). The content area stops scrolling and
+   padding; the home column scrolls on its own; the dock is a column at 1200px and wider, an overlay from the right below ── */
+#content.hm-docked{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.hm-split{position:relative;flex:1 1 0;display:grid;grid-template-columns:minmax(0,1fr);min-height:0}
+.hm-mainc{min-width:0;min-height:0;overflow:auto;padding:var(--sys-sp-6) var(--sys-gut) var(--sys-sp-7)}
+.hm-dock{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--sys-bg-2);border-left:1px solid var(--sys-line)}
+.hm-dock[hidden]{display:none}
+@media (min-width:1200px){.hm-split.is-docked{grid-template-columns:minmax(0,1fr) 360px}}
+@media (max-width:1199px){
+  .hm-dock{position:absolute;top:0;right:0;bottom:0;z-index:20;width:min(400px,100%);box-shadow:var(--sys-sh-3);animation:hm-slide var(--sys-t) var(--sys-ease)}
+}
+@media (max-width:560px){.hm-dock{width:100%;border-left:0}}
+@keyframes hm-slide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.hm-dock-head{display:flex;align-items:flex-start;gap:var(--sys-sp-1);flex-shrink:0;padding:var(--sys-sp-4) var(--sys-sp-3) var(--sys-sp-2) var(--sys-sp-5)}
+.hm-dock-title{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0;padding-top:var(--sys-sp-1)}
+.hm-dock-title .sys-card-title{margin:0}
+.hm-dock-who{align-self:flex-start;max-width:100%;padding:2px 0;border:0;background:none;color:var(--sys-mute);font:500 var(--sys-fs-sm)/1.3 var(--sys-font);text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-dock-who:hover{color:var(--sys-ink);text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:3px}
+.hm-dock-who:focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px}
+.hm-dock-head .sys-btn{flex-shrink:0;color:var(--sys-ink-2)}
+.hm-dock-head .sys-btn[hidden]{display:none}
+.hm-dock-body{position:relative;flex:1 1 auto;min-height:0}
+
+/* the six-company table in the narrower column: entry value gives way, the add-on count sits under the years, tighter cells */
+.hm-nw{white-space:nowrap}
+.hm-split.is-docked .hm-cos .hm-ev{display:none}
+.hm-split.is-docked .hm-ask{display:none}   /* the open dock is the agent: the button would only repeat it */
+@media (min-width:1200px){
+  .hm-split.is-docked .hm-cos .hm-sub{display:block;margin:2px 0 0;white-space:normal}
+  .hm-split.is-docked .hm-cos td.sys-n{white-space:normal}
+  .hm-split.is-docked .hm-cos .sys-table :is(th,td){padding-left:10px;padding-right:10px}
+  .hm-split.is-docked .hm-cos td.hm-wrap{min-width:14ch}
+}
+@media (min-width:641px) and (max-width:1399px){
+  .hm-mainc .hm-cos .hm-sub{display:block;margin:2px 0 0;white-space:normal}
+  .hm-mainc .hm-cos td.sys-n{white-space:normal}
+  .hm-mainc .hm-cos .sys-table :is(th,td){padding-left:10px;padding-right:10px}
+  .hm-mainc .hm-cos td.hm-wrap{min-width:14ch}
+}
+/* today's list: the time column takes its longest entry ("due in 13 days"), so no time runs into its title */
+@media (min-width:641px){
+  .hm-mainc .hm-list{display:grid;grid-template-columns:max-content minmax(0,1fr) auto;column-gap:var(--sys-sp-3)}
+  .hm-mainc .hm-list>li{display:grid;grid-column:1/-1;grid-template-columns:subgrid}
+  .hm-mainc .hm-list>li.hm-hide{display:none}
+  .hm-mainc .hm-list.is-all>li.hm-hide{display:grid}
+  .hm-mainc .hm-item{grid-column:1/-1;grid-template-columns:subgrid}
+}
 
 /* the button into the agent screen */
 .hm-ask{align-self:flex-start}
@@ -70,7 +114,7 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 /* the agent screen: the page fills the content area */
 #content.flush .embed-host,.embed-host{padding:0}
 
-/* phones: one column, the next job and the question box on the first screen */
+/* phones: one column, the next job and the button into the agent on the first screen */
 @media (max-width:640px){
   .hm{gap:var(--sys-sp-3)}
   .hm-item{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time chip" "main chip";row-gap:0;padding:var(--sys-sp-2) var(--sys-sp-1)}
@@ -78,9 +122,6 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-item .hm-main{grid-area:main}
   .hm-item>.sys-chip{grid-area:chip}
   .hm-ask{align-self:stretch}
-  .hm-first{flex-direction:column;align-items:stretch;gap:var(--sys-sp-3)}
-  .hm-sig{width:100%;border-radius:var(--sys-r-sm)}
-  .hm-site{flex:0 0 auto;max-width:none}
   .hm-figs .sys-kpis{align-self:stretch;grid-template-columns:minmax(0,1fr)}
   /* the company table becomes one block per company: name and status, then the three figures, then what moves it */
   .hm-cos .sys-table-wrap{overflow:visible}
@@ -98,4 +139,6 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-cos td.hm-ev{display:none}
   .hm-cos .hm-cell{font-size:var(--sys-fs-xs)}
 }
-@media (pointer:coarse){.hm-item,.hm-ask,.hm-sig{min-height:48px}}
+@media (pointer:coarse){.hm-item,.hm-ask{min-height:48px}}
+@media (max-width:900px){.hm-mainc{padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-6)}}
+@media (prefers-reduced-motion:reduce){.hm-dock{animation:none}}
