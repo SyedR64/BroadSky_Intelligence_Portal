@@ -383,4 +383,20 @@ def test_static_copy_matches_live(tmp_path):
     assert doc == json.loads(json.dumps(views.build_prepared()))
     shipped = os.path.join(ROOT, 'data', 'agent', 'prepared.json')
     assert os.path.exists(shipped), 'run: uv run --no-project --python 3.12 python server/views.py'
-    assert json.load(open(shipped, encoding='utf-8')) == doc, 'data/agent/prepared.json is stale: run uv run --no-project --python 3.12 python server/views.py'
+    got = json.load(open(shipped, encoding='utf-8'))
+    # the live feeds move every night and the shipped copy is rebuilt weekly, so compare what must not drift: roles and questions
+    assert set(got['roles']) == set(doc['roles'])
+    assert {r: p['q'] for r, p in got['roles'].items()} == {r: p['q'] for r, p in doc['roles'].items()}, 'data/agent/prepared.json is stale: run uv run --no-project --python 3.12 python server/views.py'
+    bundled = os.path.join(ROOT, 'server', 'knowledge', 'prepared.json')
+    assert json.load(open(bundled, encoding='utf-8')) == got, 'server/knowledge/prepared.json must be the same file: run python server/views.py'
+
+
+def test_hosted_backend_serves_the_bundled_answers(monkeypatch):
+    # only server/ is deployed with the backend: with no catalogue to read, every role still gets its own question's answer
+    monkeypatch.setattr(views, 'CATALOG', os.path.join(ROOT, 'no-such-folder', 'catalog.json'))
+    monkeypatch.setattr(views, '_bundled', None)
+    shipped = json.load(open(os.path.join(ROOT, 'data', 'agent', 'prepared.json'), encoding='utf-8'))['roles']
+    for rid in ROLE_IDS:
+        p = views.prepared(rid)
+        assert p and p['q'] == shipped[rid]['q'], rid
+    assert 'best 3' in views.prepared('bsp-managing-partner')['q'].lower()
