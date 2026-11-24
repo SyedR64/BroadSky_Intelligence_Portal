@@ -57,8 +57,8 @@ class Stub:
         self.gate = None      # a threading.Event: the lookup waits on it (a stalled upstream)
         self.raise_ = None
 
-    def brief(self, text, role_id, connected=None, deadline_s=8.0):
-        self.calls.append({'text': text, 'role': role_id, 'connected': connected, 'deadline_s': deadline_s})
+    def brief(self, text, role_id, connected=None, deadline_s=8.0, **kw):
+        self.calls.append({'text': text, 'role': role_id, 'connected': connected, 'deadline_s': deadline_s, **kw})
         if self.gate is not None:
             self.gate.wait(30)
         if self.raise_:
@@ -132,6 +132,19 @@ def test_found_keeps_both_cards_and_the_typed_text_word_for_word(client, stub):
     assert j['cards'][1]['cmd']['steps'][0]['kind'] == 'site'
     assert stub.calls == [{'text': OWNER, 'role': 'pp-dispatcher', 'connected': ['servicetitan'], 'deadline_s': stub.calls[0]['deadline_s']}]
     assert 7.5 <= stub.calls[0]['deadline_s'] <= 8.0   # the lookup's own deadline sits inside the 9 s ceiling
+
+
+def test_building_one_to_eight_reaches_the_lookup_and_anything_else_is_dropped(client, stub):
+    for k in range(1, 9):
+        assert post(client, {'text': OWNER, 'role': 'pp-plumber', 'building': k}).status_code == 200
+    assert [c.get('building') for c in stub.calls] == list(range(1, 9))
+    stub.calls.clear()
+    for bad in (0, 9, -1, 2.5, '2', True, None, [1], {'n': 1}):
+        r = post(client, {'text': OWNER, 'role': 'pp-plumber', 'building': bad})
+        assert r.status_code == 200 and r.json()['status'] == 'found', bad
+    assert len(stub.calls) == 9 and all('building' not in c for c in stub.calls)
+    post(client, {'text': OWNER, 'role': 'pp-plumber', 'pick': 'p-0123456789', 'building': 2})
+    assert {k: stub.calls[-1].get(k) for k in ('pick', 'building')} == {'pick': 'p-0123456789', 'building': 2}
 
 
 def test_connected_is_none_when_not_sent(client, stub):

@@ -2575,8 +2575,10 @@ def _site_brief(ws, args, sources):
         # A real address: the public-record ladder (server/site.py), never an example record.
         S = site_module()
         try:
+            bld = args.get('building')                         # the person's pick among the buildings on the lot (address box only)
             live = S.lookup(parsed, area, pick=args.get('pick') if isinstance(args.get('pick'), str) else None,
-                            deadline_s=ws.get('_deadline') or S.TOTAL_S)
+                            deadline_s=ws.get('_deadline') or S.TOTAL_S,
+                            **({'building': bld} if isinstance(bld, int) and not isinstance(bld, bool) else {}))
         except Exception as e:   # noqa: BLE001
             log.warning('workspace: site lookup failed: %s', type(e).__name__)
             live = None

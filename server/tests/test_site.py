@@ -24,6 +24,7 @@ FIX = os.path.join(SERVER_DIR, 'tests', 'fixtures', 'site')
 sys.path.insert(0, SERVER_DIR)
 
 import property as homes          # noqa: E402  (never a bare "import property")
+import site_geo                   # noqa: E402
 import site_sources as sources    # noqa: E402
 import workspace                  # noqa: E402
 
@@ -476,6 +477,190 @@ def test_show_view_tool(env, monkeypatch):
     text, err, cards = workspace.run_tool('show_view', {'view': 'scorecard', 'company': 'cet'}, ws, SITE.LocalSources())
     assert err and 'outside your access' in text
     assert workspace.status_text('show_view', {}) == 'Building the picture'
+
+
+# ---------------------------------------------------------------- which building on the lot is drawn
+
+SQ = 0.09290304   # m2 per sq ft
+
+
+def bld(area, bid, outbuilding=False):
+    return {'area_m2': area, 'build_id': bid, 'outbuilding': outbuilding}
+
+
+def rec_facts(sqft=None, stories=None, k='floor_area_sqft'):
+    return ([{'k': k, 'v': sqft}] if sqft is not None else []) + ([{'k': 'stories', 'v': stories}] if stories is not None else [])
+
+
+def choose(cands, facts=(), building=None):
+    area, st = SITE.record_size(list(facts))
+    return SITE.choose_building(cands, area, st, building)
+
+
+def test_pick_house_over_a_detached_garage_or_a_shed():
+    house, garage, shed = bld(150, 1), bld(60, 2), bld(12, 3)
+    for others in ([garage], [shed]):
+        ch = choose([others[0], house])
+        assert ch['pick'] is house and ch['why'] == 'largest' and ch['sizeable'] == [house] and SITE._lot_block(ch | {'buildings': ch['sizeable']}) is None
+
+
+def test_pick_keeps_the_house_when_it_is_not_over_twice_the_record():
+    house, garage = bld(160, 1), bld(155, 2)
+    ch = choose([garage, house], rec_facts(1800, 2, 'living_area_sqft'))   # 900 sq ft a story = 83.6 m2; 160 is under 2 x
+    assert ch['pick'] is house and ch['why'] == 'largest' and ch['sizeable'] == [house, garage]
+
+
+def test_pick_farm_house_by_the_record_and_the_barn_without_one():
+    barn, house = bld(400, 1), bld(170, 2)
+    ch = choose([barn, house], rec_facts(2000, 2))
+    assert ch['pick'] is house and ch['why'] == 'record' and ch['shown'] == 2
+    ch = choose([barn, house])
+    assert ch['pick'] is barn and ch['why'] == 'largest' and ch['shown'] == 1
+    lot = SITE._lot_block({'why': ch['why'], 'shown': ch['shown'], 'buildings': ch['sizeable']})
+    assert lot == {'n': 2, 'shown': 1, 'why': 'largest', 'buildings': [{'n': 1, 'sqft': 4300, 'shown': True}, {'n': 2, 'sqft': 1800, 'shown': False}]}
+    assert SITE.building_notes({'building': {'lot': lot, 'kind': 'house'}}, {}) == '2 buildings on this lot. Showing the largest.'
+
+
+def test_pick_town_hall_numbers_from_the_fixture():
+    garage, hall, shed = bld(3447.6, 9520271), bld(2092.6, 9520410), bld(90.0, 9520278)
+    ch = choose([garage, hall, shed], rec_facts(15226, 2))
+    assert ch['pick'] is hall and ch['why'] == 'record' and ch['sizeable'] == [garage, hall] and ch['shown'] == 2
+
+
+def test_pick_with_no_stories_recorded_reads_one_story():
+    assert SITE.record_size(rec_facts(2000)) == (2000, 1)
+    barn, house = bld(400, 1), bld(170, 2)
+    ch = choose([barn, house], rec_facts(2000))   # 2,000 sq ft on one story = 185.8 m2: the 170 m2 house fits, the barn is over 2 x
+    assert ch['pick'] is house and ch['why'] == 'record'
+
+
+def test_pick_ignores_an_absurd_record():
+    barn, house = bld(400, 1), bld(170, 2)
+    for sqft in (150, 199, 2_000_001, 9_999_999):
+        assert SITE.record_size(rec_facts(sqft, 2))[0] is None
+        ch = choose([barn, house], rec_facts(sqft, 2))
+        assert ch['pick'] is barn and ch['why'] == 'largest', sqft
+
+
+def test_pick_equal_areas_is_deterministic():
+    a, b, c = bld(200, 7), bld(200, 3), bld(200, 5)
+    for order in ([a, b, c], [c, b, a], [b, a, c]):
+        ch = choose(order)
+        assert ch['pick'] is b and ch['sizeable'] == [b, c, a]
+
+
+def test_pick_the_persons_choice_and_an_out_of_range_one():
+    garage, hall = bld(3447.6, 1), bld(2092.6, 2)
+    ch = choose([garage, hall], rec_facts(15226, 2), building=1)
+    assert ch['pick'] is garage and ch['why'] == 'chosen' and ch['shown'] == 1
+    ch = choose([garage, hall], building=2)
+    assert ch['pick'] is hall and ch['why'] == 'chosen' and ch['shown'] == 2
+    for bad in (9, 0, -1, 3, True, '2', 2.0, None):
+        ch = choose([garage, hall], rec_facts(15226, 2), building=bad)
+        assert ch['pick'] is hall and ch['why'] == 'record', bad
+
+
+def test_pick_one_candidate_says_only_and_has_no_lot_block():
+    one = bld(180, 1)
+    ch = choose([one])
+    assert ch['pick'] is one and ch['why'] == 'only' and SITE._lot_block({'why': 'only', 'shown': ch['shown'], 'buildings': ch['sizeable']}) is None
+
+
+ORIGIN = {'lon': -76.3, 'lat': 40.1}
+
+
+def ring(cx, cy, w, h):
+    pts = [[cx - w / 2, cy - h / 2], [cx + w / 2, cy - h / 2], [cx + w / 2, cy + h / 2], [cx - w / 2, cy + h / 2]]
+    ll = site_geo.m_to_ll(pts + [pts[0]], ORIGIN)
+    return ll
+
+
+def outline(cx, cy, w, h, bid, outbuilding=False):
+    r = ring(cx, cy, w, h)
+    return {'ring_ll': r, 'centroid': site_geo.m_to_ll([[cx, cy]], ORIGIN)[0], 'area_m2': w * h, 'build_id': bid, 'outbuilding': outbuilding}
+
+
+
+def test_primary_building_marks_a_second_building_apart_from_a_shed():
+    lot = ring(0, 0, 120, 80)
+    barn, house, shed, flagged = outline(-30, 0, 20, 20, 1), outline(20, 0, 17, 10, 2), outline(40, 25, 4, 3, 3), outline(0, 30, 20, 20, 4, True)
+    far = outline(500, 0, 30, 30, 5)
+    prim, outs, lot_info = SITE._primary_building([shed, house, far, barn, flagged], lot, None, rec_facts(2000, 2))
+    assert prim is house and lot_info['why'] == 'record' and lot_info['shown'] == 2
+    assert [o['build_id'] for o in outs] == [1, 4, 3] and [bool(o.get('sizeable')) for o in outs] == [True, False, False]
+
+
+def test_primary_building_point_branch_is_unchanged():
+    near, other = outline(0, 0, 12, 10, 1), outline(60, 0, 30, 30, 2)
+    p = site_geo.m_to_ll([[0, 0]], ORIGIN)[0]
+    assert SITE._primary_building([other, near], None, p) == (near, [], None)
+    assert SITE._primary_building([other, near], None, site_geo.m_to_ll([[200, 200]], ORIGIN)[0]) == (None, [], None)
+
+
+LOT_RECORD = '2 buildings on this lot. Showing the one that best fits the recorded size.'
+LOT_CHOSEN = '2 buildings on this lot. Showing the one you picked.'
+TOWN_HALL_NOTE = 'Outline: about 22,500 sq ft of ground. Record: 15,226 sq ft. They do not agree.'
+
+
+def test_nj_full_draws_the_town_hall_and_says_so(env):
+    res, _ = fx_brief(env, 'nj_full')
+    fs = card_of(res)
+    b = fs['building']
+    assert b['footprint']['area_m2'] == pytest.approx(2092.6, abs=5) and b['kind'] == 'large'
+    assert b['lot'] == {'n': 2, 'shown': 2, 'why': 'record', 'buildings': [{'n': 1, 'sqft': 37100, 'shown': False}, {'n': 2, 'sqft': 22500, 'shown': True}]}
+    assert LOT_RECORD in fs['house']['text'] and TOWN_HALL_NOTE in fs['house']['text']
+    assert fs['house']['text'].index(LOT_RECORD) < fs['house']['text'].index(TOWN_HALL_NOTE)
+    outs = b['footprint']['outbuildings']
+    assert [o.get('kind') for o in outs] == ['building', None]      # the garage is another building; the small one a shed
+    assert res['text'].startswith('33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record).')
+    assert 'build_id' not in json.dumps(fs) and '9520' not in json.dumps(b['lot'])
+    step = card_of(res, 'map_command')['cmd']['steps'][-1]
+    assert step['outline'] and SITE.words(res['text']) <= 40
+
+
+def test_nj_full_building_one_is_the_persons_pick(env):
+    fx = load('nj_full')
+    env(fx['calls'])
+    res = SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, [], building=1)
+    fs = card_of(res)
+    b = fs['building']
+    assert b['footprint']['area_m2'] == pytest.approx(3447.6, abs=5)
+    assert b['lot']['why'] == 'chosen' and b['lot']['shown'] == 1 and [x['shown'] for x in b['lot']['buildings']] == [True, False]
+    assert LOT_CHOSEN in fs['house']['text'] and 'Outline: about 37,100 sq ft of ground. Record: 15,226 sq ft. They do not agree.' in fs['house']['text']
+    assert [o.get('kind') for o in b['footprint']['outbuildings']] == ['building', None]
+    again = card_of(SITE.brief(fx['typed'] + ' for a sink repair', PLUMBER, []))   # the default is cached apart from the pick
+    assert again['building']['lot']['why'] == 'record' and again['building']['footprint']['area_m2'] == pytest.approx(2092.6, abs=5)
+
+
+def test_building_reaches_the_lookup_and_bad_values_do_not(env, monkeypatch):
+    seen = []
+    real = SITE.lookup
+
+    def spy(parsed, area=None, pick=None, deadline_s=8.0, **kw):
+        seen.append(kw.get('building'))
+        return real(parsed, area, pick=pick, deadline_s=deadline_s, **kw)
+    monkeypatch.setattr(SITE, 'lookup', spy)
+    fx = load('nj_full')
+    env(fx['calls'])
+    for b in (2, 9, 0, True, '2', None):
+        SITE.brief(fx['typed'], PLUMBER, [], building=b)
+    assert seen == [2, None, None, None, None, None]
+
+
+def test_franklin_pick_is_unchanged(env):
+    res, _ = fx_brief(env, 'pa_franklin_full')
+    b = card_of(res)['building']
+    # the courthouse outline (2,411.3 m2 in the layer) is the largest, the record does not move it (no other sizeable one)
+    assert b['footprint']['area_m2'] == pytest.approx(2450.6, abs=1) and 'lot' not in b
+    assert 'buildings on this lot' not in (card_of(res).get('house') or {}).get('text', '')
+
+
+def test_a_house_card_never_carries_the_outline_note():
+    live = {'facts': rec_facts(1000, 1), 'building': {'area_m2': 400}}
+    card = {'building': {'kind': 'house', 'footprint': {'ring_m': [[0, 0], [20, 0], [20, 20]], 'area_m2': 400}}}
+    assert SITE.building_notes(card, live) == ''
+    card['building']['kind'] = 'large'
+    assert SITE.building_notes(card, live) == 'Outline: about 4,300 sq ft of ground. Record: 1,000 sq ft. They do not agree.'
 
 
 # ---------------------------------------------------------------- live (opt-in), a public building only

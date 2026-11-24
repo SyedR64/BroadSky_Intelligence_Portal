@@ -10,6 +10,7 @@ are seeded, so every run of this file checks the same 200+ shapes.
 """
 
 import datetime
+import gc
 import json
 import math
 import os
@@ -399,9 +400,13 @@ def test_two_hundred_generated_outlines(env, monkeypatch):
     real = site_plan.dress_house
 
     def timed(*a, **k):
-        t = time.perf_counter()
-        out = real(*a, **k)
-        times.append(time.perf_counter() - t)
+        gc.disable()                    # the plan's own time: a collection of other garbage that happens to land here is not it
+        try:
+            t = time.perf_counter()
+            out = real(*a, **k)
+            times.append(time.perf_counter() - t)
+        finally:
+            gc.enable()
         return out
     monkeypatch.setattr(site_plan, 'dress_house', timed)
     for k in range(210):

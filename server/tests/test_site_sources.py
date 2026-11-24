@@ -218,7 +218,8 @@ def test_card_examples_follow_the_basis_rules_and_size_limits():
         for fl in c['floors']:
             assert all(i['basis'] == 'likely' for i in fl['items']) and all(r['basis'] == 'likely' for r in fl['runs'])
         text = json.dumps(c)
-        assert '"record"' not in text
+        # no company-record basis on a public card (building.lot.why may say 'record': the pick followed the public record)
+        assert '"basis": "record"' not in text and '"record"' not in text.replace('"why": "record"', '')
         assert not re.search(r'example|fictional|sandbox|owner', text, re.I)
 
 

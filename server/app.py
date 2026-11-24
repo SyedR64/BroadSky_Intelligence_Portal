@@ -23,7 +23,7 @@ Routes (JSON unless noted; CORS limited to ALLOWED_ORIGINS):
   POST /thread          {thread_id, persona, title, messages_json}  (upsert)
   GET  /thread/:id
   GET  /stats           {threads, messages, feedback, ...}
-  POST /site-brief      {text, role, connected?} -> {ok, status, text, cards, choices, sources, degraded}  (no model call)
+  POST /site-brief      {text, role, connected?, pick?, building?} -> {ok, status, text, cards, choices, sources, degraded}  (no model call)
   GET  /prepared?role=  {ok, role, question, view, text, cards, draft, as_of}  a role's signature answer (no model call)
 
 Run: uvicorn app:app --host 0.0.0.0 --port $PORT   (see README.md)
@@ -2033,7 +2033,9 @@ def validate_site(body):
         raise HttpError(403, 'role_not_allowed', 'Address lookups are not part of this role.')
     pick = body.get('pick')
     pick = str(pick)[:80] if isinstance(pick, (str, int)) and str(pick).strip() else None   # a lot key from an earlier 'choose' answer
-    return text, ws['role'], connected, pick
+    building = body.get('building')                                  # which building on the lot, 1 = the largest; anything else dropped
+    building = building if isinstance(building, int) and not isinstance(building, bool) and 1 <= building <= 8 else None
+    return text, ws['role'], connected, pick, building
 
 
 def site_failed(why):
@@ -2067,7 +2069,7 @@ def site_precision(out):
 
 async def handle_site_brief(request, cors):
     t0 = time.monotonic()
-    text, role_id, connected, pick = validate_site(await read_json(request))
+    text, role_id, connected, pick, building = validate_site(await read_json(request))
     limit_visitor(_site_buckets, ip_key(client_ip(request)), SITE['per_visitor'], 'address lookups')
     try:
         mod = site_module()
@@ -2082,7 +2084,7 @@ async def handle_site_brief(request, cors):
     deadline = max(0.5, min(SITE['lookup_deadline'], left - 0.75))
     why = None
     try:
-        kw = {'connected': connected, 'deadline_s': deadline, **({'pick': pick} if pick else {})}
+        kw = {'connected': connected, 'deadline_s': deadline, **({'pick': pick} if pick else {}), **({'building': building} if building else {})}
         out = await run_in_slot('site', functools.partial(mod.brief, text, role_id, **kw), left)
     except asyncio.TimeoutError:
         out, why = site_failed('timeout'), 'timeout'

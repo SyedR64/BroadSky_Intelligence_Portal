@@ -198,11 +198,8 @@ def build_card(sc, place, parcel, buildings, extra_facts, permits):
         return len(sources)
 
     origin_parcel = parcel['centroid']
-    prim = None
-    for b in sorted(buildings, key=lambda b: -(b['area_m2'] or 0)):
-        if not b['outbuilding'] and parcel['ring_ll'] and inside(b['centroid'], parcel['ring_ll']):
-            prim = b
-            break
+    # the building on the lot: the real pick (server/site.py), so the example card draws what the endpoint draws
+    prim, outs, _lot = W.site_module()._primary_building(buildings, parcel['ring_ll'], None, facts) if parcel['ring_ll'] else (None, [], None)
     origin = prim['centroid'] if prim else origin_parcel
     year_f = fact_val(facts, 'year_built')
     area_f = fact_val(facts, 'living_area_sqft', 'floor_area_sqft')
@@ -231,10 +228,13 @@ def build_card(sc, place, parcel, buildings, extra_facts, permits):
         ring_m = cap(simplify(to_local(prim['ring_ll'], origin)), 48)
         w, d, rot = min_rect(ring_m)
         w_ft, d_ft = round(w * 3.28084), round(d * 3.28084)
-        outs = [b for b in buildings if b is not prim and parcel['ring_ll'] and inside(b['centroid'], parcel['ring_ll'])]
         building['footprint'] = {'ring_m': ring_m, 'area_m2': round(ring_area(ring_m), 1), 'w_ft': w_ft, 'd_ft': d_ft, 'rot_deg': round(rot, 1),
                                  'basis': 'public', 'src': n_of('structures', prim['as_of']), 'as_of': prim['as_of'], 'method': 'outline from imagery',
-                                 'outbuildings': [{'ring_m': cap(simplify(to_local(b['ring_ll'], origin)), 48), 'basis': 'public'} for b in outs[:4]]}
+                                 'outbuildings': [dict({'ring_m': cap(simplify(to_local(b['ring_ll'], origin)), 48), 'basis': 'public'},
+                                                       **({'kind': 'building'} if b.get('sizeable') else {})) for b in outs[:4]]}
+        lot = W.site_module()._lot_block(_lot)
+        if lot:
+            building['lot'] = lot
         hm = prim['height_m']
         n = stories if isinstance(stories, (int, float)) else 2
         if hm and 2.7 * n <= hm <= 12:
