@@ -19,7 +19,11 @@ and, for every sample card at 1440x900 and 390x844 in light and dark:
   - a live card: the outline is public and solid, the walls follow it, the parcel edge is drawn, the shell's basis follows the
     height, rooms, inside walls, items and runs sit inside the outline, wire and duct runs are drawn, "Behind this wall" lists the
     runs touching each wall with their basis and never calls a wall clear, and the file carries the footprint, the parcel and a
-    basis on every object, placed east and south of the card's origin.
+    basis on every object, placed east and south of the card's origin;
+  - framing (reduced motion, canvas 328, 358, 700 and 1000 px wide): on a lot with another building (the town hall sample and the
+    nj_full fixture) every corner of the drawn building and of each "Other building" block is at least 6 px inside the picture in
+    every view offered; any other card, and the town hall with its other building moved 600 m off, keeps the drawn building's own
+    frame (target, radius and distance as before, to the last digit).
 With --shots it saves the Outside, Cutaway and Top views of the first two samples. Network: only the library host.
 """
 
@@ -273,6 +277,77 @@ def other_checks(check, card, st, tag):
           and all(o['name'].startswith('Outbuilding') and abs((o.get('top') or 0) - 2.4) < 0.05 for o in sheds), json.dumps(sheds)[:200])
 
 
+FIXTURE = os.path.join(ROOT, 'server', 'tests', 'fixtures', 'site', 'nj_full.json')
+FRAME_WIDTHS = ((430, 932, 328), (430, 932, 358), (1440, 900, 700), (1440, 900, 1000))   # page size, canvas width
+VIEWS = {'outside': (0.62, 1.08, 0.95), 'cutaway': (0.38, 0.86, 0.88), 'top': (0, 0.001, 0.8)}   # as in assets/house3d.js
+
+
+def has_other(card):
+    return any(o.get('kind') == 'building' for o in ((card.get('building') or {}).get('footprint') or {}).get('outbuildings') or [])
+
+
+def main_frame(f, view, large):
+    """The camera of a card with no other building on the lot: the drawn building's own frame, as on main."""
+    import math
+    W, D, top, bottom = f['size']['W'], f['size']['D'], f['size']['top'], f['size']['bottom']
+    radius = 0.5 * math.hypot(W + 2, D + 2, top - bottom)
+    th, ph, k = VIEWS[view]
+    vf = f['fov'] * math.pi / 180
+    hf = 2 * math.atan(math.tan(vf / 2) * f['w'] / max(1, f['h']))
+    r = radius / math.sin(min(vf, hf) / 2) * (k * 1.3 if large and view == 'top' else k)
+    return [0, (top + bottom) / 2, 0], radius, r
+
+
+def same_num(a, b):
+    return abs(a - b) <= 1e-9 * max(1, abs(a), abs(b))
+
+
+def framing_checks(br, base, samples, check):
+    """The camera frames the drawn building and every "Other building" block together: in each view and at canvas widths 328, 358,
+    700 and 1000 px, every corner of both is at least 6 px inside the picture. A card with no other building (or one far off) keeps
+    the drawn building's own frame, to the last digit."""
+    fixture = json.load(open(FIXTURE))['card']
+    cards = [(f'sample {i}', s['card']) for i, s in enumerate(samples)] + [('nj_full fixture', fixture)]
+    # the same lot with its other building moved 600 m off: past the limit, so the drawn building keeps its own frame
+    far = json.loads(json.dumps(samples[6]['card']))
+    for o in far['building']['footprint']['outbuildings']:
+        if o.get('kind') == 'building':
+            o['ring_m'] = [[x + 600, y] for x, y in o['ring_m']]
+    cards.append(('sample 6, other building 600 m off', far))
+    n_other = 0
+    for vw, vh, cw in FRAME_WIDTHS:
+        ctx = br.new_context(viewport={'width': vw, 'height': vh}, reduced_motion='reduce')
+        ctx.route(f'{base}/__house3d_check.html*', lambda r: r.fulfill(status=200, content_type='text/html', body=PAGE % ''))
+        page = ctx.new_page()
+        page.goto(f'{base}/__house3d_check.html?i=0')
+        page.wait_for_function('window.done === true', timeout=60000)
+        for name, card in cards:
+            page.evaluate("""async ([c, w]) => { window.h.destroy(); const host = document.getElementById('host'); host.style.width = '';
+                window.h = window.H.renderHouse3D(host, c, {}); await window.h.ready;
+                const d = host.clientWidth - document.querySelector('.h3-canvas').clientWidth; host.style.width = (w + d) + 'px'; }""", [card, cw])
+            page.wait_for_timeout(120)
+            st = page.evaluate('window.h.stats()')
+            tag = f'{name} canvas {cw}'
+            other = has_other(card) and 'off' not in name
+            n_other += other
+            views = ('outside', 'top') if st['large'] else ('outside', 'cutaway', 'top')
+            for v in views:
+                page.evaluate('v => window.h.view(v)', v)
+                f = page.evaluate('window.h.stats().frame')
+                if other:
+                    inside = lambda b: b['box'][0] >= 6 and b['box'][1] >= 6 and b['box'][2] <= f['w'] - 6 and b['box'][3] <= f['h'] - 6 and not b['clipped']
+                    blocks = [o for o in f['outbuildings'] if o['kind'] == 'building']
+                    check(f'frame: the drawn building and the other building are whole in the picture, 6 px in [{tag} {v}]',
+                          abs(f['w'] - cw) <= 1 and blocks and inside(f['building']) and all(inside(o) for o in blocks),
+                          json.dumps({'w': f['w'], 'h': f['h'], 'building': f['building'], 'others': blocks}))
+                elif cw in (358, 1000):
+                    t, rad, r = main_frame(f, v, st['large'])
+                    check(f'frame: unchanged without another building nearby [{tag} {v}]', all(same_num(a, b) for a, b in zip(f['target'], t))
+                          and same_num(f['radius'], rad) and same_num(f['r'], r), json.dumps({'got': [f['target'], f['radius'], f['r']], 'want': [t, rad, r]}))
+        ctx.close()
+    check('frame: the samples and the fixture hold a lot with another building', n_other >= 8, str(n_other))
+
+
 def file_checks(check, card, back, tag):
     b = card['building']
     site = back.get('site') or {}
@@ -470,6 +545,7 @@ def main():
                     check(f'no console error [{tag}]', not errs, ' | '.join(errs)[:300])
                     page.close()
                 ctx.close()
+        framing_checks(br, base, samples, check)
         # no WebGL: nothing is drawn and the caller keeps the 2D sketch
         ctx = br.new_context(viewport={'width': 390, 'height': 844})
         ctx.add_init_script("""(() => { const g = HTMLCanvasElement.prototype.getContext;

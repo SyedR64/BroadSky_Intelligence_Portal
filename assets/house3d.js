@@ -57,6 +57,11 @@ const SHAPE = {
   gas_shutoff: ['ball', 0.09, 0, 0, 0.9], main_water: ['ball', 0.1, 0, 0, 0.4], fixture_shutoffs: ['ball', 0.08, 0, 0, 0.5],
   sewer_cleanout: ['cyl', 0.07, 0.3, 0, 0],
 };
+// the frame takes in another building on the lot only while it stays this close: past 2.5 times the drawn building's own
+// bounding radius the drawn building would shrink to a speck, so it keeps its own frame and the far building may fall outside
+const OTHER_FRAME_MAX = 2.5;
+// share of the half picture, each way from the centre, that the corners in that wider frame may reach (the rest is margin)
+const FIT_SHARE = 0.9;
 const VIEWS = { outside: [0.62, 1.08, 0.95], cutaway: [0.38, 0.86, 0.88], top: [0, 0.001, 0.8] };
 const COLOR_VARS = {
   water: '--sys-info', drain: '--sys-ink-2', gas: '--sys-warn', elec: '--sys-bad', hvac: '--sys-good', walls: '--sys-mute',
@@ -937,7 +942,7 @@ export function renderHouse3D(container, card, opts = {}) {
 
   const state = { layers: Object.fromEntries(LAYERS.map(([k]) => [k, true])), floor: 'all', view: opts.view || 'outside', wallMode: false, picked: null, dead: false };
   let T, renderer, scene, camera, model, raf = 0, colors = {};
-  const orbit = { theta: 0.62, phi: 1.08, r: 20, target: null, anim: null };
+  const orbit = { theta: 0.62, phi: 1.08, r: 20, target: null, anim: null, fit: null };
   const api = { fallback: false, destroy, setLayer, setFloor, view: setView, stats, ready: null, el };
 
   api.ready = (async () => {
@@ -958,11 +963,43 @@ export function renderHouse3D(container, card, opts = {}) {
     orbit.target = new T.Vector3(0, (top + bottom) / 2, 0);
     orbit.span = Math.max(W, D, top - bottom);
     orbit.radius = 0.5 * Math.hypot(W + 2, D + 2, top - bottom);
+    frameOthers(W, D, top, bottom);
     makeLabels();
     applyTheme(); bindInput(); resize(); setView(state.view, true); apply();
     el.dataset.ready = '1';
     return true;
   })();
+
+  // another building on the lot joins the frame, so the picture holds it whole; sheds and the parcel edge never widen it
+  function frameOthers(W, D, top, bottom) {
+    const others = model.shell.filter(o => o.userData.role === 'outbuilding' && o.userData.kind === 'building');
+    if (!others.length) return;
+    // the drawn building's box corners and every corner of the other blocks (the site group sits at the model's origin)
+    const pts = [];
+    for (let i = 0; i < 8; i++) pts.push(new T.Vector3(i & 1 ? W / 2 : -W / 2, i & 2 ? top : bottom, i & 4 ? D / 2 : -D / 2));
+    for (const o of others) { const p = o.geometry.attributes.position; for (let i = 0; i < p.count; i++) pts.push(new T.Vector3().fromBufferAttribute(p, i)); }
+    const box = new T.Box3().setFromPoints(pts);
+    const s = box.getSize(new T.Vector3()), radius = 0.5 * Math.hypot(s.x + 2, s.z + 2, s.y);
+    if (radius > OTHER_FRAME_MAX * orbit.radius) return;   // far off: the drawn building keeps its own frame
+    orbit.target = box.getCenter(new T.Vector3());
+    orbit.radius = radius;
+    orbit.fit = pts;
+    camera.far = Math.max(camera.far, orbit.radius * 14); camera.updateProjectionMatrix();   // the far block stays drawn out to the widest zoom
+  }
+  // how far back the camera stands, looking along (theta, phi), so every point is inside FIT_SHARE of the picture
+  function fitDistance(pts, theta, phi, vf, hf) {
+    const dir = new T.Vector3(Math.sin(phi) * Math.sin(theta), Math.cos(phi), Math.sin(phi) * Math.cos(theta));
+    const up = phi < 0.01 ? new T.Vector3(-Math.sin(theta), 0, -Math.cos(theta)) : new T.Vector3(0, 1, 0);
+    const m = new T.Matrix4().lookAt(dir, new T.Vector3(), up), right = new T.Vector3(), camUp = new T.Vector3(), z = new T.Vector3();
+    m.extractBasis(right, camUp, z);
+    const tx = Math.tan(hf / 2) * FIT_SHARE, ty = Math.tan(vf / 2) * FIT_SHARE, c = new T.Vector3();
+    let d = 0;
+    for (const p of pts) {
+      c.subVectors(p, orbit.target);
+      d = Math.max(d, c.dot(dir) + Math.abs(c.dot(right)) / tx, c.dot(dir) + Math.abs(c.dot(camUp)) / ty);
+    }
+    return d;
+  }
 
   /* colours follow the page theme */
   function applyTheme() {
@@ -1079,7 +1116,8 @@ export function renderHouse3D(container, card, opts = {}) {
     // far enough that the whole house (its bounding sphere) fits the narrower side of the picture
     const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
     const vf = (camera.fov * Math.PI) / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * aspect);
-    const r = (orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * (plan.large && name === 'top' ? k * 1.3 : k);   // a long shell seen from above needs room
+    const r = orbit.fit ? fitDistance(orbit.fit, th, ph, vf, hf)   // the drawn building and another on the lot, each whole in the picture
+      : (orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * (plan.large && name === 'top' ? k * 1.3 : k);   // a long shell seen from above needs room
     const goal = { theta: th, phi: ph, r };
     if (instant || reduced()) { Object.assign(orbit, goal); apply(); return; }
     const from = { theta: orbit.theta, phi: orbit.phi, r: orbit.r }, t0 = performance.now();
@@ -1259,7 +1297,32 @@ export function renderHouse3D(container, card, opts = {}) {
       site: S ? { ring: S.ring.map(toM), parcel: S.parcel.map(toM), basis: S.basis, heightBasis: S.heightBasis, storeysBasis: S.storeysBasis,
         shellBasis: plan.shellBasis, rot: S.rot, snapped: plan.snapped, storeyH: plan.storeyH, area: S.area } : null,
       view: state.view, floor: state.floor, layers: { ...state.layers }, levels: plan.levels.map(l => l.id),
-      behind: model.walls.map((w, i) => ({ i, name: w.name, level: w.userData.level, list: behindWall(plan, w.userData.level, w.userData.wall) })) };
+      behind: model.walls.map((w, i) => ({ i, name: w.name, level: w.userData.level, list: behindWall(plan, w.userData.level, w.userData.wall) })),
+      frame: frameStats() };
+  }
+  /** Where the camera stands and what the picture holds, for checks: the screen box (canvas px) of the drawn building's walls, slabs
+      and roof and of each outbuilding, for the camera as it is now, and whether any corner is cut by the near or far plane. */
+  function frameStats() {
+    const w = canvas.clientWidth, h = canvas.clientHeight, v = new T.Vector3();
+    placeCamera(); camera.updateMatrixWorld(); model.root.updateMatrixWorld(true);
+    const box = meshes => {
+      const b = [Infinity, Infinity, -Infinity, -Infinity]; let clipped = false;
+      for (const m of meshes) {
+        const p = m.geometry.attributes.position;
+        for (let i = 0; i < p.count; i++) {
+          v.fromBufferAttribute(p, i).applyMatrix4(m.matrixWorld).project(camera);
+          if (Math.abs(v.z) > 1) clipped = true;   // past the far plane or nearer than the near one
+          const x = (v.x + 1) / 2 * w, y = (1 - v.y) / 2 * h;
+          b[0] = Math.min(b[0], x); b[1] = Math.min(b[1], y); b[2] = Math.max(b[2], x); b[3] = Math.max(b[3], y);
+        }
+      }
+      return { box: b.map(n => Math.round(n * 10) / 10), clipped };
+    };
+    const building = [];
+    model.root.traverse(o => { if (o.isMesh && ['wall', 'slab', 'roof'].includes(o.userData.role)) building.push(o); });
+    return { w, h, fov: camera.fov, size: { ...model.size }, target: orbit.target.toArray(), radius: orbit.radius, r: orbit.r, theta: orbit.theta, phi: orbit.phi,
+      building: box(building),
+      outbuildings: model.shell.filter(o => o.userData.role === 'outbuilding').map(o => ({ name: o.name, kind: o.userData.kind, ...box([o]) })) };
   }
   function destroy() {
     state.dead = true; ro.disconnect(); themeObs.disconnect(); try { mq?.removeEventListener('change', applyTheme); } catch { /* */ }
