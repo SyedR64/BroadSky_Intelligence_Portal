@@ -616,9 +616,11 @@ def dress(card, live, house, add):
                 if f not in have:
                     floors.append({'id': f, 'name': W.FLOOR_NAMES[f], 'w': w_ft, 'h': d_ft, 'rooms': [], 'items': [], 'runs': []})
             floors.sort(key=lambda f: ['basement', 'first', 'second'].index(f['id']))
-            for fl in floors:
-                lay = site_geo.fit_layout(full_m, street_m, floor=fl['id'], storeys=stories, beds=hf.get('beds'), sqft=hf.get('sqft'),
-                                          garage=bool(hf.get('garage')) and fl['id'] == 'first')
+            fit_m = site_geo.simplify_ring(full_m)              # a dense outline would cost a lot per floor (R10)
+            under = any(f['id'] == 'basement' for f in floors)
+            for fl in floors:                                    # same garage and basement on every floor: one frame, one stair
+                lay = site_geo.fit_layout(fit_m, street_m, floor=fl['id'], storeys=stories, beds=hf.get('beds'), sqft=hf.get('sqft'),
+                                          garage=bool(hf.get('garage')), basement=under)
                 fl['rooms'] = [_rect_room(r['label'], r['kind'], r['rect_ft']['x'], r['rect_ft']['y'], r['rect_ft']['w'], r['rect_ft']['h'],
                                           fl['id'], r.get('short')) for r in lay['rooms']]
             ring_ft = site_plan.plan_ring(blk, w_ft, d_ft)

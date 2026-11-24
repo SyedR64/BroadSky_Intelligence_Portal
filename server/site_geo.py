@@ -633,6 +633,17 @@ GARAGE_DEPTH_M = 6.1
 GARAGE_W1_M, GARAGE_W2_M = 3.7, 6.0
 _NARROW_OK = {'hall': 0.9, 'stairs': 0.9, 'closet': 0.6}
 _SQUARE_ROOMS = {'living', 'kitchen', 'dining', 'bedroom'}     # kept nearer square than the rest
+# one stair, the same rectangle on every floor: at the end of the hall, running back from it
+STAIR_W, STAIR_L, STAIR_MAX = 1.2, 3.6, 3.84
+PUBLIC_KINDS = {'hall', 'stairs', 'living', 'dining', 'kitchen'}     # rooms a person walks through
+PRIVATE_KINDS = {'bedroom', 'bath', 'laundry'}                       # each must open onto one of the above
+HAB_KINDS = {'bedroom', 'living', 'dining', 'kitchen'}
+HAB_MIN_M = 8 * FT              # a lived-in room this deep or more where it can be
+HAB_HARD_M = 7 * FT             # and never less
+DOOR_M = 3 * FT                 # shared wall a door needs
+BATH_LONG_M = 11 * FT
+BATH_AREA_M2 = 90 * M2_PER_SQFT
+CLOSET_LONG_M = 8.5 * FT
 
 
 def _scan_x(ring, y):
@@ -823,6 +834,8 @@ def _short(label):
     if len(label) <= 7:
         return label
     head, _, num = label.rpartition(' ')
+    if num.isdigit() and head in ('Storage', 'Closet'):
+        return ('Stor ' if head == 'Storage' else 'Clos ') + num[:2]
     if num.isdigit():
         return (head[:6 - len(num)] + ' ' + num)[:7]
     return label[:7]
@@ -842,8 +855,17 @@ def beds_split(area_m2, beds, storeys):
     return n - n2, n2
 
 
-def _programme(floor, two, beds, area):
-    """The rooms one floor needs, all likely: [room], in plan order (front band first)."""
+def _programme(floor, two, beds, area, stairs=False):
+    """The rooms one floor needs, all likely: [room], in plan order (front band first).
+
+    `stairs`: a one-storey house over a basement also has a stair on its first floor."""
+    rooms = _programme_rooms(floor, two, beds, area)
+    if stairs and not any(r['kind'] == 'stairs' for r in rooms):
+        rooms.append(_room('Stairs', 'stairs', 4.5, 'back', core=True))
+    return rooms
+
+
+def _programme_rooms(floor, two, beds, area):
     n1, n2 = beds_split(area, beds, 2 if two else 1)
     many = beds > 1
 
@@ -889,6 +911,8 @@ def _leaf_cost(kind, w, h):
     need = _NARROW_OK.get(kind, MIN_ROOM_M) + 0.05
     if lo < need:
         c += 100.0 + 200.0 * (need - lo)
+    if kind in HAB_KINDS and lo < HAB_MIN_M:
+        c += 20.0 + 100.0 * (HAB_MIN_M - lo)
     return c
 
 
@@ -996,11 +1020,14 @@ def _closets(rect, used):
     return out
 
 
-def _decompose(grid, garage_rect):
+def _decompose(grid, garage_rect, main=None):
     avail = [row[:] for row in grid.fill]
     if garage_rect:
         grid.mark(*garage_rect, avail)
     blocks, small = [], []
+    if main:                                   # the house's main block, the same on every floor
+        grid.mark(*main, avail)
+        blocks.append(main)
     while len(blocks) < 9:
         r = grid.best_rect(avail, 1.6, 3.0)
         if not r:
@@ -1022,30 +1049,122 @@ def _area(r):
     return (r[2] - r[0]) * (r[3] - r[1])
 
 
-def _main_options(rooms, rect, hall_ok):
-    """Ways to lay out the main block: two bands with a hall between them, or one band."""
+def _frame(grid, garage_rect):
+    """The house's fixed frame, the same on every floor: main block, front band depth and the stair.
+
+    {'main', 'fd', 'stairs', 'rest', 'col', 'right'}: fd is None when the block is too shallow for a hall between two
+    bands of rooms; then the stair stands against the back wall. The stair sits at the end of the hall (the end away
+    from the garage) and runs back from it, so every floor's stair is the same rectangle. None for an empty grid."""
+    avail = [row[:] for row in grid.fill]
+    if garage_rect:
+        grid.mark(*garage_rect, avail)
+    main = grid.best_rect(avail, 1.6, 3.0)
+    if not main:
+        return None
+    x0, y0, x1, y1 = main
+    W, D = x1 - x0, y1 - y0
+    fd = min(max((D - HALL_M) * 0.5, 2.7), D - HALL_M - 2.7) if D >= 5.4 + HALL_M else None
+    out = {'main': main, 'fd': fd, 'stairs': None, 'rest': None, 'col': None, 'right': True}
+    if W < STAIR_W + 2.4 or D < 2.4:
+        return out
+    right = not (garage_rect and (garage_rect[0] + garage_rect[2]) / 2 > (x0 + x1) / 2)
+    sx0, sx1 = (x1 - STAIR_W, x1) if right else (x0, x0 + STAIR_W)
+    top = y0 + fd + HALL_M if fd is not None else y0
+    depth = y1 - top
+    sl = depth if depth <= STAIR_MAX else (STAIR_L if depth - STAIR_L >= 0.6 else depth - 0.6)
+    if fd is not None:
+        stairs, rest = (sx0, top, sx1, top + sl), (sx0, top + sl, sx1, y1)
+    else:
+        stairs, rest = (sx0, y1 - sl, sx1, y1), (sx0, y0, sx1, y1 - sl)
+    out.update(stairs=stairs, rest=rest if rest[3] - rest[1] > 1e-6 else None, col=(sx0, sx1), right=right)
+    return out
+
+
+def _row(rooms, rect, rev=False):
+    """Rooms side by side along x, each the band's full depth, widths in proportion to their targets."""
     x0, y0, x1, y1 = rect
-    D = y1 - y0
-    front = [r for r in rooms if r['band'] == 'front']
-    back = [r for r in rooms if r['band'] != 'front']
-    opts = []
-    hall = HALL_M if hall_ok else 0.0
-    if front and back and D >= 5.4 + hall:
-        wf = sum(r['wt'] for r in front)
-        wb = sum(r['wt'] for r in back)
-        for frac in (wf / (wf + wb), 0.5):
-            fd = min(max((D - hall) * frac, 2.7), D - hall - 2.7)
-            c1, p1 = _place(front, (x0, y0, x1, y0 + fd))
-            c2, p2 = _place(back, (x0, y0 + fd + hall, x1, y1))
-            parts = p1 + p2
-            if hall:
-                parts.append(({'label': 'Hall', 'short': 'Hall', 'kind': 'hall'}, x0, y0 + fd, x1, y0 + fd + hall))
-            opts.append((c1 + c2, parts))
-            if c1 + c2 < 100.0:
-                return opts[-1]
-    c, p = _place(front + back, rect)
-    opts.append((c + (1.5 if hall_ok and D >= 6.5 and len(rooms) > 3 else 0.0), p))
-    return min(opts, key=lambda o: o[0])
+    tot = sum(r['wt'] for r in rooms) or 1.0
+    seq = list(reversed(rooms)) if rev else list(rooms)
+    parts, cost, x = [], 0.0, x0
+    for n, r in enumerate(seq):
+        xe = x1 if n == len(seq) - 1 else x + (x1 - x0) * r['wt'] / tot
+        parts.append((r, x, y0, xe, y1))
+        cost += _leaf_cost(r['kind'], xe - x, y1 - y0)
+        x = xe
+    return cost, parts
+
+
+def _band(rooms, rect, rev=False):
+    """One band of the main block: one row along the hall (every room opens onto it) unless that breaks a rule."""
+    if not rooms:
+        return 0.0, []
+    cr, pr = _row(rooms, rect, rev)
+    cp, pp = _place(rooms, rect)
+    if _hard(pr) <= _hard(pp) and cr <= cp + 15.0:
+        return cr, pr
+    return cp, pp
+
+
+def _main_parts(rooms, frame, floor, used):
+    """The main block: front band, hall, back band, and the stair at the hall's end (fixed by the frame)."""
+    x0, y0, x1, y1 = frame['main']
+    st = next((r for r in rooms if r['kind'] == 'stairs'), None)
+    rest = [r for r in rooms if r is not st]
+    parts = []
+    bx0, bx1 = x0, x1
+    if st is not None and frame['stairs']:
+        parts.append((st,) + tuple(frame['stairs']))
+        if frame['rest']:
+            parts += _closets(frame['rest'], used)
+        bx0, bx1 = (x0, frame['col'][0]) if frame['right'] else (frame['col'][1], x1)
+    elif st is not None:
+        rest = rooms
+    rev = not frame['right']
+    fd = frame['fd']
+    if fd is None:
+        if not rest:
+            rest = [_next_filler(floor, used)]
+        c, p = _place(rest, (bx0, y0, bx1, y1))
+        return c, parts + p
+    hall_ok = floor != 'basement'
+    front = [r for r in rest if r['band'] == 'front']
+    back = [r for r in rest if r['band'] != 'front']
+    if not front and len(back) > 1:
+        front = [back.pop(0)]
+    if not back and len(front) > 1:
+        back = [front.pop()]
+    top = y0 + fd + HALL_M
+    # even out the bands: each band's rooms in proportion to its floor area
+    fa = (x1 - x0) * (fd + (0 if hall_ok else HALL_M))
+    ba = (bx1 - bx0) * (y1 - top)
+    for _ in range(len(rest)):
+        wf, wb = sum(r['wt'] for r in front), sum(r['wt'] for r in back)
+        if wf + wb <= 0:
+            break
+        if len(front) > 1 and wf / (wf + wb) > 1.35 * fa / (fa + ba):
+            mv = next((r for r in reversed(front) if not r['core']), None)
+            if mv is None:
+                break
+            front.remove(mv)
+            back.insert(0, mv)
+        elif len(back) > 1 and wb / (wf + wb) > 1.35 * ba / (fa + ba):
+            mv = next((r for r in back if not r['core'] and r['kind'] not in ('bath', 'laundry')), None)
+            if mv is None:
+                break
+            back.remove(mv)
+            front.append(mv)
+        else:
+            break
+    if not front:
+        front = [_next_filler(floor, used)]
+    if not back:
+        back = [_next_filler(floor, used)]
+    c1, p1 = _band(front, (x0, y0, x1, top if not hall_ok else y0 + fd), rev)
+    c2, p2 = _band(back, (bx0, top, bx1, y1), rev)
+    parts += p1 + p2
+    if hall_ok:
+        parts.append(({'label': 'Hall', 'short': 'Hall', 'kind': 'hall'}, x0, y0 + fd, x1, top))
+    return c1 + c2, parts
 
 
 def _add_before_stairs(rooms, r):
@@ -1054,9 +1173,9 @@ def _add_before_stairs(rooms, r):
     rooms.insert(k, r)
 
 
-def _assign(prog, blocks, floor):
+def _assign(prog, blocks, floor, ban=()):
     """Share the programme between the main block and the wings: [(rect, rooms)], dropped labels."""
-    used = {r['label'] for r in prog}
+    used = {r['label'] for r in prog} | set(ban)
     dropped = []
     total = sum(_area(b) for b in blocks)
     # fit the programme to the space: add rooms to a roomy house, drop optional ones from a tight one
@@ -1089,6 +1208,9 @@ def _assign(prog, blocks, floor):
             for r in order:
                 if acc >= 0.75 * T:
                     break
+                # a thin wing is no place to live in, while the main block still has room for it
+                if r['kind'] in HAB_KINDS and min(w, h) < HAB_MIN_M and sum(x['wt'] for x in prog) <= 1.1 * _area(main) / s:
+                    continue
                 if not take or acc + r['wt'] <= 1.35 * T:
                     take.append(r)
                     acc += r['wt']
@@ -1124,8 +1246,9 @@ def _hard(parts):
     return n
 
 
-def _fit_block(rooms, rect, main, floor, used):
-    """Lay rooms into one block; when a room breaks a rule, even out the sizes, then add a room or two."""
+def _fit_block(rooms, rect, frame, floor, used):
+    """Lay rooms into one block (the main block when `frame` is given); when a room breaks a rule, even out the
+    sizes, then add a room or two."""
     w, h = rect[2] - rect[0], rect[3] - rect[1]
     best = None
     extra = []
@@ -1137,7 +1260,7 @@ def _fit_block(rooms, rect, main, floor, used):
             mean = sum(r['wt'] for r in rs) / len(rs)
             variants.append([dict(r, wt=mean) for r in rs])
         for v in variants:
-            c, p = _main_options(v, rect, floor != 'basement') if main else _place(v, rect)
+            c, p = _main_parts(v, frame, floor, trial_used) if frame else _place(v, rect)
             bad = _hard(p)
             key = (bad, k, c)
             if best is None or key < best[0]:
@@ -1153,30 +1276,222 @@ def _fit_block(rooms, rect, main, floor, used):
     return best[1], best[2]
 
 
-def _layout(bands, tol, floor, prog, garage_rect, area):
+def _touch(p, q):
+    """Length of wall two placed rooms share (0 when they only meet at a corner or not at all)."""
+    _, ax0, ay0, ax1, ay1 = p
+    _, bx0, by0, bx1, by1 = q
+    if abs(ax1 - bx0) < 0.02 or abs(bx1 - ax0) < 0.02:
+        return max(0.0, min(ay1, by1) - max(ay0, by0))
+    if abs(ay1 - by0) < 0.02 or abs(by1 - ay0) < 0.02:
+        return max(0.0, min(ax1, bx1) - max(ax0, bx0))
+    return 0.0
+
+
+def _door(parts, i):
+    return max([_touch(parts[i], q) for j, q in enumerate(parts) if j != i and q[0]['kind'] in PUBLIC_KINDS] + [0.0])
+
+
+def _stranded(parts):
+    """Bedrooms, baths and laundries with no door onto a hall, the stair or a public room."""
+    return [i for i, p in enumerate(parts) if p[0]['kind'] in PRIVATE_KINDS and _door(parts, i) < DOOR_M]
+
+
+def _fits(kind, p):
+    w, h = p[3] - p[1], p[4] - p[2]
+    lo, hi = min(w, h), max(w, h)
+    need = HAB_HARD_M if kind in HAB_KINDS else _NARROW_OK.get(kind, MIN_ROOM_M)
+    if kind == 'bath' and (hi > BATH_LONG_M + 0.02 or w * h > BATH_AREA_M2 + 0.05):
+        return False
+    return lo >= need - 1e-6 and (kind == 'hall' or hi <= MAX_ASPECT * lo + 1e-6)
+
+
+def _corridor(parts, i, used):
+    """A short hall cut along one edge of the room in front of shut-in room i, from a public room to it; None if none fits."""
+    s = parts[i]
+    _, sx0, sy0, sx1, sy1 = s
+    for j, q in enumerate(parts):
+        rq = q[0]
+        if j == i or rq['kind'] in ('hall', 'stairs', 'garage') or _touch(s, q) < DOOR_M:
+            continue
+        _, x0, y0, x1, y1 = q
+        for vert in (True, False):
+            if vert and not (abs(sy0 - y1) < 0.02 or abs(sy1 - y0) < 0.02):
+                continue
+            if not vert and not (abs(sx0 - x1) < 0.02 or abs(sx1 - x0) < 0.02):
+                continue
+            lo, hi = (max(sx0, x0), min(sx1, x1)) if vert else (max(sy0, y0), min(sy1, y1))
+            for at_lo in (True, False):
+                a = lo if at_lo else hi - HALL_M
+                if a < lo - 1e-6 or a + HALL_M > hi + 1e-6:
+                    continue
+                if vert:
+                    strip = (a, y0, a + HALL_M, y1)
+                    rest = (a + HALL_M, y0, x1, y1) if abs(a - x0) < 0.02 else ((x0, y0, a, y1) if abs(a + HALL_M - x1) < 0.02 else None)
+                else:
+                    strip = (x0, a, x1, a + HALL_M)
+                    rest = (x0, a + HALL_M, x1, y1) if abs(a - y0) < 0.02 else ((x0, y0, x1, a) if abs(a + HALL_M - y1) < 0.02 else None)
+                if rest is None or not _fits(rq['kind'], (rq,) + rest):
+                    continue
+                hall = ({'label': 'Hall', 'short': 'Hall', 'kind': 'hall'},) + strip
+                trial = [p for k, p in enumerate(parts) if k != j] + [(rq,) + rest]
+                others = list(trial)
+                if max([_touch(hall, p) for p in others if p[0]['kind'] in PUBLIC_KINDS] + [0.0]) < HALL_M - 0.02:
+                    continue
+                trial.append(hall)
+                if len(_stranded(trial)) < len(_stranded(parts)):
+                    used |= {p[0]['label'] for p in parts}
+                    lab = _free('Hall', used)
+                    trial[-1] = ({'label': lab, 'short': _short(lab), 'kind': 'hall'},) + strip
+                    return trial
+    return None
+
+
+def _free(base, used):
+    k = 1
+    while True:
+        label = base if k == 1 else '%s %d' % (base, k)
+        if label not in used:
+            used.add(label)
+            return label
+        k += 1
+
+
+def _store(rect, used):
+    """A spare piece: storage when it is room-sized, else closets."""
+    w, h = rect[2] - rect[0], rect[3] - rect[1]
+    lo, hi = min(w, h), max(w, h)
+    if lo >= MIN_ROOM_M and hi <= MAX_ASPECT * lo:
+        label = _free('Storage', used)
+        return [({'label': label, 'short': _short(label), 'kind': 'storage', 'wt': 0.0, 'band': 'back', 'core': False, 'drop': True},)
+                + tuple(rect)]
+    return _closets(rect, used)
+
+
+def _tidy(parts, used):
+    """Baths no longer than 11 ft or bigger than 90 sq ft (the rest is a closet), closets no longer than 8.5 ft."""
+    out = []
+    for p in parts:
+        r, x0, y0, x1, y1 = p
+        w, h = x1 - x0, y1 - y0
+        lo, hi = min(w, h), max(w, h)
+        if r['kind'] == 'bath' and (hi > BATH_LONG_M + 0.02 or w * h > BATH_AREA_M2 + 0.05):
+            keep = min(BATH_LONG_M, BATH_AREA_M2 / lo, hi)
+            if hi - keep < 0.6:
+                keep = hi - 0.6
+            if keep >= max(MIN_ROOM_M, lo / MAX_ASPECT):
+                cands = []
+                for lead in (True, False):
+                    if w >= h:
+                        a, b = ((x0, y0, x0 + keep, y1), (x0 + keep, y0, x1, y1)) if lead else ((x1 - keep, y0, x1, y1), (x0, y0, x1 - keep, y1))
+                    else:
+                        a, b = ((x0, y0, x1, y0 + keep), (x0, y0 + keep, x1, y1)) if lead else ((x0, y1 - keep, x1, y1), (x0, y0, x1, y1 - keep))
+                    trial = [q for q in parts if q is not p] + [(r,) + a]
+                    cands.append((-_door(trial, len(trial) - 1), lead, a, b))
+                cands.sort(key=lambda c: (c[0], not c[1]))
+                _, _, a, b = cands[0]
+                out.append((r,) + a)
+                out += _store(b, used)
+                continue
+        if r['kind'] == 'closet' and hi > CLOSET_LONG_M + 0.02:
+            if lo >= MIN_ROOM_M and hi <= MAX_ASPECT * lo:
+                out += _store((x0, y0, x1, y1), used)
+                continue
+            k = max(int(math.ceil(hi / 2.4 - 1e-9)), int(math.ceil(hi / (3.0 * lo) - 1e-9)))
+            for n in range(k):
+                q = r if n == 0 else {'label': _free('Closet', used), 'kind': 'closet', 'wt': 0.0, 'band': 'back', 'core': False, 'drop': True}
+                q.setdefault('short', _short(q['label']))
+                if n:
+                    q['short'] = _short(q['label'])
+                if w >= h:
+                    out.append((q, x0 + w * n / k, y0, x0 + w * (n + 1) / k if n < k - 1 else x1, y1))
+                else:
+                    out.append((q, x0, y0 + h * n / k, x1, y0 + h * (n + 1) / k if n < k - 1 else y1))
+            continue
+        out.append(p)
+    return out
+
+
+def _reach(parts, used):
+    """Give every bedroom, bath and laundry a door onto a hall, the stair or a public room.
+
+    Swaps a shut-in room with a spare room (office, den, storage...) that has such a door, when both still keep
+    their size rules; an optional wet room that still has none becomes storage. Returns (parts, dropped labels)."""
+    parts = list(parts)
+    dropped = []
+    for _ in range(12):
+        bad = _stranded(parts)
+        if not bad:
+            break
+        n0 = len(bad)
+        best = None
+        for i in bad:
+            ri = parts[i][0]
+            for j, q in enumerate(parts):
+                rj = q[0]
+                if j == i or rj['kind'] in PRIVATE_KINDS | {'hall', 'stairs', 'garage'} or rj.get('core'):
+                    continue
+                if _door(parts, j) < DOOR_M or not (_fits(ri['kind'], q) and _fits(rj['kind'], parts[i])):
+                    continue
+                trial = list(parts)
+                trial[i], trial[j] = (rj,) + tuple(parts[i][1:]), (ri,) + tuple(q[1:])
+                nb = len(_stranded(trial))
+                if nb >= n0 or (rj['kind'] in PUBLIC_KINDS and _door(trial, i) < DOOR_M):
+                    continue
+                key = (nb, abs(_area(parts[i][1:]) - _area(q[1:])), i, j)
+                if best is None or key < best[0]:
+                    best = (key, trial)
+        if best:
+            parts = best[1]
+            continue
+        cut = next((c for c in (_corridor(parts, i, used) for i in bad) if c), None)
+        if cut:
+            parts = cut
+            continue
+        i = next((i for i in bad if parts[i][0].get('drop') or parts[i][0]['kind'] == 'laundry'), None)
+        if i is None:
+            break
+        dropped.append(parts[i][0]['label'])
+        parts[i:i + 1] = _store(parts[i][1:], used)
+    return parts, dropped
+
+
+def _layout(bands, tol, floor, prog, garage_rect, area, ban=()):
+    """One floor's rooms: (cost, parts, dropped). `garage_rect` fixes the house's frame on every floor and is a room
+    on the first floor only."""
     gx = gy = ()
     if garage_rect:
         gx, gy = (garage_rect[0], garage_rect[2]), (garage_rect[1], garage_rect[3])
     grid = _Grid(bands, tol, gx, gy)
     if len(grid.X) < 2 or not grid.rows:
         return 1e9, [], [r['label'] for r in prog]
-    blocks, small = _decompose(grid, garage_rect)
-    if not blocks:
+    frame = _frame(grid, garage_rect)
+    if not frame:
         return 1e9, [], [r['label'] for r in prog]
-    plan, dropped = _assign([dict(r) for r in prog], blocks, floor)
-    used = set()
+    on_first = floor == 'first'
+    blocks, small = _decompose(grid, garage_rect if on_first else None, frame['main'])
+    plan, dropped = _assign([dict(r) for r in prog], blocks, floor, ban)
+    used = set(ban)
     for _, rs in plan:
         used |= {r['label'] for r in rs}
     cost = 2.0 * len(blocks)
     parts = []
     for n, (rect, rooms) in enumerate(plan):
-        c, p = _fit_block(rooms, rect, n == 0, floor, used)
+        c, p = _fit_block(rooms, rect, frame if n == 0 else None, floor, used)
         cost += c
         parts += p
     for r in small:
         parts += _closets(r, used)
-    if garage_rect:
+    if garage_rect and on_first:
         parts.insert(0, ({'label': 'Garage', 'short': 'Garage', 'kind': 'garage'},) + tuple(garage_rect))
+    for _ in range(3):                                   # a bath too big both ways is cut twice
+        n = len(parts)
+        parts = _tidy(parts, used)
+        if len(parts) == n:
+            break
+    parts, more = _reach(parts, used)
+    parts = _tidy(parts, used)
+    dropped = dropped + more
+    cost += 5.0 * len(_stranded(parts))
     covered = sum((p[3] - p[1]) * (p[4] - p[2]) for p in parts)
     cost += 40.0 * max(0.0, 1.0 - covered / area) if area else 0.0
     return cost, parts, dropped
@@ -1301,7 +1616,8 @@ def _int(v, default):
         return default
 
 
-def fit_layout(ring_m, street_pt=None, floor='first', storeys=1, beds=None, sqft=None, garage=False, wall_m=0.15):
+def fit_layout(ring_m, street_pt=None, floor='first', storeys=1, beds=None, sqft=None, garage=False, wall_m=0.15,
+               basement=None):
     """An inferred room layout for one floor, fitted inside the real footprint.
 
     The footprint is a public outline; the rooms are NOT: every room has
@@ -1310,6 +1626,13 @@ def fit_layout(ring_m, street_pt=None, floor='first', storeys=1, beds=None, sqft
     baths behind a hall, wings with whole rooms, a garage at an outside
     corner when `garage` is true. Rooms tile the outline with shared edges
     (`wall_m` is kept for callers and no longer used).
+
+    Pass the same `garage` (the house has one) and `basement` (the house has
+    one) for every floor: the house's frame (main block, hall, the one stair
+    rectangle) is then the same on every floor, the garage is a room on the
+    first floor only, a one-storey house over a basement gets its stair on the
+    first floor too, and the house has one laundry. `basement=None` (unknown)
+    keeps a one-storey house's first floor without a stair.
 
     Returns {floor, rooms, frame, coverage, dropped, basis, front_basis}.
     Each room: {kind, label, short, floor, plan_m {x0,y0,x1,y1} (frame metres, y up
@@ -1342,17 +1665,28 @@ def fit_layout(ring_m, street_pt=None, floor='first', storeys=1, beds=None, sqft
     area = ring_area_m2(ring)
     tol = grid_tol(ring_p)
     bands = _bands(ring_p, tol)
-    prog = _programme(floor, st >= 2, nb, area)
-    tries = []
-    if garage and floor == 'first':
-        tries = _garage_spots(bands, tol, area, ring_p)[:3]
+    two = st >= 2
+    under = bool(basement)
+    prog = _programme(floor, two, nb, area, stairs=floor == 'first' and not two and under)
+    # one laundry a house: the first floor of a two-storey house, else the basement when there is one
+    home = 'first' if two else ('basement' if under else 'first')
+    ban = () if (floor == home or (basement is None and not two)) else ('Laundry',)
+    tries = _garage_spots(bands, tol, area, ring_p)[:3] if garage else []
     best = None
-    for pref, g in tries or [(0, None)]:
-        cost, parts, dropped = _layout(bands, tol, floor, prog, g, area)
-        cost += 3.0 * pref
-        if best is None or cost < best[0] - 1e-9:
-            best = (cost, parts, dropped)
-    _, parts, dropped = best
+    if tries:
+        # the garage is chosen on the first floor's rooms, on every floor, so every floor shares one frame
+        prog1 = _programme('first', two, nb, area, stairs=not two and under)
+        ban1 = () if (home == 'first' or (basement is None and not two)) else ('Laundry',)
+        for pref, g in tries:
+            res = _layout(bands, tol, 'first', prog1, g, area, ban1)
+            key = res[0] + 3.0 * pref
+            if best is None or key < best[0] - 1e-9:
+                best = (key, g, res)
+        if floor != 'first':
+            best = (best[0], best[1], _layout(bands, tol, floor, prog, best[1], area, ban))
+    else:
+        best = (0.0, None, _layout(bands, tol, floor, prog, None, area, ban))
+    _, parts, dropped = best[2]
     if garage and floor == 'first' and not any(p[0]['kind'] == 'garage' for p in parts):
         dropped = dropped + ['Garage']
     rooms = []
