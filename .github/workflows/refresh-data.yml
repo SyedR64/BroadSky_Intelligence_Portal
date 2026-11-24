@@ -72,12 +72,22 @@ jobs:
       - name: Regenerate research README
         run: python3 scripts/describe_research.py > /dev/null
 
+      # The prepared signature answers (data/agent/prepared.json) read data/live and the home-sales table, so they are
+      # rebuilt with them (no model call; the server code needs Python 3.12). A failure keeps the committed copy.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild the prepared signature answers
+        continue-on-error: true
+        run: python3 server/views.py || git checkout -- data/agent/prepared.json
+
       - name: Commit if changed
         id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@${NOREPLY_DOMAIN}"   # GitHub's standard bot identity
-          git add data/live data/research/README.md data/research/index.json README.md data/sales/pp_sales_*.json server/knowledge/homes.sqlite
+          git add data/live data/research/README.md data/research/index.json README.md data/sales/pp_sales_*.json server/knowledge/homes.sqlite data/agent/prepared.json
           if git diff --cached --quiet; then
             echo "No data changes."
             exit 0
