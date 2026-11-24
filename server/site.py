@@ -41,6 +41,7 @@ import time
 
 import property as homes
 import site_geo
+import site_plan
 import site_sources as sources
 
 log = logging.getLogger('bsp.site')
@@ -481,8 +482,10 @@ class Numbering:
 
 # ---------------------------------------------------------------- the card
 
-def _rect_room(name, kind, x, y, w, h, floor):
-    return {'x': round(x, 1), 'y': round(y, 1), 'w': round(w, 1), 'h': round(h, 1), 'label': name, 'kind': kind, 'floor': floor, 'basis': 'likely'}
+def _rect_room(name, kind, x, y, w, h, floor, short=None):
+    s = short if isinstance(short, str) and 0 < len(short) <= 7 else site_plan.short_name(name)
+    return {'x': round(x, 1), 'y': round(y, 1), 'w': round(w, 1), 'h': round(h, 1), 'label': name, 'short': s, 'kind': kind, 'floor': floor,
+            'basis': 'likely'}
 
 
 def _room_kind(name):
@@ -597,35 +600,44 @@ def dress(card, live, house, add):
         card['building'] = blk
         card['front_basis'] = blk['front']['basis']
         w_ft, d_ft = max(8, round(fr['w_ft'])), max(8, round(fr['d_ft']))
-        D_m = d_ft * FT
-
-        def snap(x, y):
-            world = site_geo.from_plan(fr, [x * FT, D_m - y * FT])
-            s = site_geo.snap_inside(world, ring_m, 0.3)
-            p = site_geo.to_plan(fr, s)
-            return [round(min(max(p[0] / FT, 0), w_ft), 1), round(min(max((D_m - p[1]) / FT, 0), d_ft), 1)]
-        for fl in floors:
-            sx, sy = w_ft / (fl.get('w') or w_ft), d_ft / (fl.get('h') or d_ft)
-            fl['w'], fl['h'] = w_ft, d_ft
-            for it in fl.get('items') or []:
-                x, y = snap(it['x'] * sx, it['y'] * sy)
-                it['snapped'] = [x, y] != [round(it['x'] * sx, 1), round(it['y'] * sy, 1)]
-                it['x'], it['y'] = x, y
-            for r in fl.get('runs') or []:
-                r['points'] = [snap(px * sx, py * sy) for px, py in r['points']]
-        have = {f['id'] for f in floors}
-        want = ['first'] + (['second'] if stories >= 2 else [])
-        for f in want:
-            if f not in have:
-                floors.append({'id': f, 'name': W.FLOOR_NAMES[f], 'w': w_ft, 'h': d_ft, 'rooms': [], 'items': [], 'runs': []})
-        floors.sort(key=lambda f: ['basement', 'first', 'second'].index(f['id']))
-        for fl in floors:
-            lay = site_geo.fit_layout(full_m, street_m, floor=fl['id'], storeys=stories, beds=hf.get('beds'), sqft=hf.get('sqft'),
-                                      garage=bool(hf.get('garage')) and fl['id'] == 'first')
-            fl['rooms'] = [_rect_room(r['label'], r['kind'], r['rect_ft']['x'], r['rect_ft']['y'], r['rect_ft']['w'], r['rect_ft']['h'], fl['id'])
-                           for r in lay['rooms']]
-            fl['wet_walls'] = _wet_from_rooms(fl['rooms'], fl['id'])
-        card['layout'] = {'from': 'outline', 'basis': 'likely'}
+        kind = site_plan.building_kind(live, blk['footprint'].get('area_m2'))
+        blk['kind'], blk['kind_from'] = kind['kind'], kind['from']
+        if kind['kind'] == 'large':                              # R6: the outline, the street side, no rooms, no interior lines
+            site_plan.large_card(card, w_ft, d_ft, live, kind)
+            floors = card['floors']
+        else:
+            fw0 = next((f.get('w') for f in floors if f.get('w')), w_ft)
+            fh0 = next((f.get('h') for f in floors if f.get('h')), d_ft)
+            for fl in floors:
+                fl['w'], fl['h'] = w_ft, d_ft
+            have = {f['id'] for f in floors}
+            want = ['first'] + (['second'] if stories >= 2 else [])
+            for f in want:
+                if f not in have:
+                    floors.append({'id': f, 'name': W.FLOOR_NAMES[f], 'w': w_ft, 'h': d_ft, 'rooms': [], 'items': [], 'runs': []})
+            floors.sort(key=lambda f: ['basement', 'first', 'second'].index(f['id']))
+            for fl in floors:
+                lay = site_geo.fit_layout(full_m, street_m, floor=fl['id'], storeys=stories, beds=hf.get('beds'), sqft=hf.get('sqft'),
+                                          garage=bool(hf.get('garage')) and fl['id'] == 'first')
+                fl['rooms'] = [_rect_room(r['label'], r['kind'], r['rect_ft']['x'], r['rect_ft']['y'], r['rect_ft']['w'], r['rect_ft']['h'],
+                                          fl['id'], r.get('short')) for r in lay['rooms']]
+            ring_ft = site_plan.plan_ring(blk, w_ft, d_ft)
+            locs = (W._rules().get('locations') or {}).get(house.get('foundation') or 'basement') or {}
+            if ring_ft:                                          # items by room, runs square inside the outline (R3, R5)
+                rep = site_plan.dress_house(floors, ring_ft, locs, card.get('outside'), (w_ft / (fw0 or w_ft), d_ft / (fh0 or d_ft)))
+                if rep['failed']:
+                    log.warning('site: %d run(s) could not be routed inside the outline', len(rep['failed']))
+            else:
+                for fl in floors:
+                    fl['wet_walls'] = _wet_from_rooms(fl['rooms'], fl['id'])
+            card['layout'] = {'from': 'outline', 'basis': 'likely'}
+    elif site_plan.building_kind(live, None)['kind'] == 'large':   # no outline, but the record says it is no house: no house rooms
+        kind = site_plan.building_kind(live, None)
+        w0 = (floors[0].get('w') if floors else None) or 40
+        h0 = (floors[0].get('h') if floors else None) or 30
+        card['building'] = {'kind': 'large', 'kind_from': kind['from']}
+        site_plan.large_card(card, w0, h0, live, kind)
+        floors = card['floors']
     else:
         name, layout, wet = _rule_layout(dict(house, stories=stories))
         have = {f['id'] for f in floors}
@@ -800,6 +812,8 @@ def answer_text(live, card, area=None, record=False):
     hf = house_facts(live)
     b = card.get('building') or {}
     fp = b.get('footprint') or {}
+    if b.get('kind') == 'large':
+        return _large_text(live, card, short, hf, tail)
     parts = []
     pub = []
     if hf.get('year'):
@@ -826,6 +840,33 @@ def answer_text(live, card, area=None, record=False):
     parts += tail
     parts.append('Plan, 3D and map below; dashed is likely.')
     txt = fit_words(parts)
+    return txt
+
+
+def _large_text(live, card, short, hf, tail):
+    """The answer for a large or non-residential building (R6): what the record says, then only what holds for any building."""
+    import workspace as W
+    fp = (card.get('building') or {}).get('footprint') or {}
+    pub = [x for x in (site_plan.facility_name(card),) if x]
+    if hf.get('year'):
+        pub.append(f"built {hf['year']}")
+    if hf.get('sqft'):
+        pub.append(f"{hf['sqft']:,} sq ft")
+    if hf.get('stories'):
+        n = hf['stories']
+        pub.append({1: 'one storey', 2: 'two storeys', 3: 'three storeys'}.get(n, f'{n:g} storeys'))
+    if pub:
+        parts = [f"{short}. " + W._uc(', '.join(pub)) + ' (public record).']
+    else:
+        parts = [f'{short} is on the map.', 'No public building record.',
+                 f"Outline from imagery dated {_mon(fp.get('as_of'))}." if fp.get('as_of') else 'Outline from imagery.']
+    parts.append('Likely: fixture shutoffs under each sink; building shutoff in the mechanical room, ask the site contact.')
+    parts += tail
+    parts.append('?Outline, 3D and map below.')
+    txt = fit_words(parts)
+    head, rest = (short, txt[len(short):]) if txt.startswith(short) else ('', txt)
+    if site_plan.BANNED_LARGE.search(rest):                     # a recorded word that reads as a house never reaches the answer
+        txt = head + re.sub(r'\s{2,}', ' ', site_plan.BANNED_LARGE.sub('', rest))
     return txt
 
 
