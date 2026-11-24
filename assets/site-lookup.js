@@ -168,9 +168,13 @@ function drawAnswer(out, res, text, opts) {
       b.setAttribute('aria-pressed', String(on));
       b.textContent = `Building ${x.n}` + (Number(x.sqft) > 0 ? ` · ${Number(x.sqft).toLocaleString('en-US')} sq ft` : '');
       b.addEventListener('click', async () => {
-        if (b.getAttribute('aria-pressed') === 'true') return;
-        await lookup(text, { ...opts, host: out, building: x.n });
-        out.querySelector(`[data-sl="building"][aria-pressed="true"]`)?.focus({ preventScroll: true });
+        if (b.getAttribute('aria-pressed') === 'true' || g.getAttribute('aria-busy') === 'true') return;
+        // the answer stays on screen while the other building loads (keep), so the page does not jump to what lies below it;
+        // the new answer's pressed button is then kept in view and focused
+        g.setAttribute('aria-busy', 'true');
+        await lookup(text, { ...opts, host: out, building: x.n, keep: true });
+        const now = out.querySelector('[data-sl="building"][aria-pressed="true"]');
+        if (now) { now.scrollIntoView({ block: 'nearest' }); now.focus({ preventScroll: true }); }
       });
       g.appendChild(b);
     }
@@ -204,6 +208,10 @@ function drawAnswer(out, res, text, opts) {
   else if (cmd && !cards.querySelector('[data-ca="map"],[data-ca="map-link"]')) a.appendChild(mapButton(cmd));
   const src = (Array.isArray(res.sources) ? res.sources : []).filter(s => s && (s.title || s.publisher)).slice(0, 8);
   if (src.length) a.insertAdjacentHTML('beforeend', `<div class="sys-src sl-src" data-src>${src.map(s => `<p>${s.n ? `[${esc(s.n)}] ` : ''}${s.url && /^https?:\/\//i.test(s.url) ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title || s.publisher)}</a>` : esc(s.title || s.publisher)}${s.publisher && s.title ? ` · ${esc(s.publisher)}` : ''}${s.date ? ` · ${esc(s.date)}` : ''}</p>`).join('')}</div>`);
+  // the Sources drawer holds one copy of this box's sources: the earlier answer's lines (its own and its cards'), moved
+  // there by the shell, go
+  for (const el of out._slSrc || []) (el.closest('.drawer-item') || el).remove();
+  out._slSrc = [...a.querySelectorAll('[data-src]')];
   out.replaceChildren(a);
   return cmd;
 }
@@ -226,7 +234,12 @@ export async function lookup(text, opts = {}) {
   const my = ++seq, ctrl = new AbortController();
   out._slCtrl?.abort(); out._slCtrl = ctrl;
   out.setAttribute('aria-busy', 'true');
-  const line = drawLine(out, `Looking up ${short(typed)}…`, 'sl-progress');
+  // opts.keep (another building on the same lot): the answer stays and one progress line goes under its row of buttons
+  const kept = opts.keep ? out.querySelector('.sl-ans .sl-choose') : null;
+  out.querySelector('.sl-keep')?.remove();
+  let line;
+  if (kept) { line = document.createElement('p'); line.className = 'sl-line sl-progress sl-keep'; line.textContent = `Looking up ${short(typed)}…`; kept.after(line); }
+  else line = drawLine(out, `Looking up ${short(typed)}…`, 'sl-progress');
   line.setAttribute('role', 'status');
   const role = opts.role || roleId(), connected = opts.connected || connectedFor(role);
   let res, guard;
@@ -239,7 +252,8 @@ export async function lookup(text, opts = {}) {
     if (my !== seq || e?.code === 'aborted') return { status: 'stopped', text: '' };
     out.removeAttribute('aria-busy');
     const msg = e?.message && e.name === 'BackendError' || e?.code === 'timeout' ? e.message : 'The address lookup service cannot be reached.';
-    drawLine(out, msg, 'sl-fail').setAttribute('role', 'status');
+    if (kept && kept.isConnected) { line.className = 'sl-line sl-fail sl-keep'; line.textContent = msg; kept.removeAttribute('aria-busy'); }
+    else drawLine(out, msg, 'sl-fail').setAttribute('role', 'status');
     return { status: 'error', text: msg, code: e?.code || 'error' };
   } finally { clearTimeout(guard); }
   if (my !== seq) return { status: 'stopped', text: '' };

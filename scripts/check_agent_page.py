@@ -990,33 +990,88 @@ def map_checks(browser, site):
 
 
 # ── several buildings on one lot: the address box's chooser ─────────────────────────────────────
-CHOOSER_JS = """async ([fx, notes]) => {
-  // the backend is stubbed in the page: Backend.siteBrief answers from the recorded card, its lot block set to the building asked
-  const src = await (await fetch('./assets/site-lookup.js')).text();
-  const stamp = (src.match(/from '\\.\\/backend\\.js(\\?v=[^']*)'/) || [, ''])[1];
-  const { Backend } = await import('./assets/backend.js' + stamp);
-  const S = await import('./assets/site-lookup.js' + stamp);
-  window.__calls = [];
-  window.MapCmd = { run: c => c, validate: () => ({ ok: true }) };
-  Backend.siteBrief = async (text, role, connected, opts = {}) => {
-    window.__calls.push({ text, building: opts.building ?? null, pick: opts.pick ?? null });
-    const card = JSON.parse(JSON.stringify(fx.card));
-    const k = opts.building || card.building.lot.shown;
-    card.building.lot = { ...card.building.lot, shown: k, why: opts.building ? 'chosen' : card.building.lot.why,
-      buildings: card.building.lot.buildings.map(b => ({ ...b, shown: b.n === k })) };
-    card.house = { ...(card.house || {}), text: notes };
-    return { status: 'found', text: '33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record).', cards: [card, fx.map_command], choices: [], sources: [], degraded: [] };
-  };
-  let box = document.getElementById('sl-t'); if (!box) { box = document.createElement('div'); box.id = 'sl-t'; document.querySelector('.ca-main').prepend(box); }
-  box.replaceChildren();
-  const m = S.mount(box, { role: 'pp-plumber' });
-  await m.lookup(fx.typed);
-  return true;
-}"""
+FAKE_BACKEND = 'http://127.0.0.1:9'      # never reached: the page's calls to it are answered inside the browser context
+LEAFLET_RX = re.compile(r'^https://unpkg\.com/leaflet@\d+\.\d+\.\d+/')   # the home's map library, pinned
+LOT_RECORD = '2 buildings on this lot. Showing the one that best fits the recorded size.'
+LOT_CHOSEN = '2 buildings on this lot. Showing the one you picked.'
+HALL_NOTE = 'Outline: about 22,500 sq ft of ground. Record: 15,226 sq ft. They do not agree.'
+GARAGE_NOTE = 'Outline: about 37,100 sq ft of ground. Record: 15,226 sq ft. They do not agree.'
+REPLAY_ANSWERS = r'''
+import datetime, json, os, sys
+root, out = sys.argv[1], sys.argv[2]
+server = os.path.join(root, 'server'); sys.path.insert(0, server)
+if not os.path.exists(os.path.join(server, 'sandbox', 'roles.json')):
+    os.environ['WORKSPACE_SANDBOX_DIR'] = os.path.join(server, 'tests', 'fixtures', 'sandbox_min')
+import httpx
+import property as homes, site_sources as sources, workspace
+S = workspace.site_module()
+workspace.reset(); S.reset()
+workspace.today = lambda: datetime.date(2026, 11, 17)
+sources._today = lambda: datetime.date(2026, 11, 23)
+homes.LIVE_ON = True
+homes.lookup_record = lambda a: {'status': 'not_found', 'record': None, 'choose': [], 'match': ''}
+fx = json.load(open(os.path.join(server, 'tests', 'fixtures', 'site', 'nj_full.json'), encoding='utf-8'))
+norm = lambda p: json.dumps({k: str(v) for k, v in p.items()}, sort_keys=True)
+def replay(url, params, timeout=None):
+    for c in fx['calls']:
+        if c['url'] == url and norm(c['params']) == norm(params):
+            return json.loads(json.dumps(c['response']))
+    raise httpx.ConnectError('not recorded')
+homes._get_json = replay
+text = fx['typed'] + ' for a sink repair'
+res = {'typed': text}
+for k in (None, 1, 2):
+    res[str(k or 0)] = S.brief(text, 'pp-plumber', [], **({'building': k} if k else {}))
+json.dump(res, open(out, 'w', encoding='utf-8'))
+'''
+
+
+def site_answers(tmp):
+    """The real /site-brief answers for the town hall (default, building 1, building 2): nj_full's recorded calls replayed through
+    server/site.py in a child process (no network, no model). Keys '0', '1', '2' and 'typed'."""
+    import subprocess
+    out = os.path.join(tmp, 'site_answers.json')
+    subprocess.run([sys.executable, '-c', REPLAY_ANSWERS, ROOT, out], check=True, cwd=os.path.join(ROOT, 'server'), timeout=120)
+    return json.load(open(out, encoding='utf-8'))
+
+
+def _home_ctx(browser, site, w, h, dark, answers, delay_ms=0):
+    """The home of a field role with the address box; the backend is answered inside the context from the replayed answers
+    (POST /site-brief by its building), /health says the lookup is on, every other backend call fails, nothing else loads."""
+    ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
+    outside, calls = [], []
+
+    def route(r):
+        u = r.request.url
+        cors = {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*'}
+        if u.startswith(FAKE_BACKEND):
+            path = u[len(FAKE_BACKEND):].split('?')[0]
+            if r.request.method == 'OPTIONS':
+                return r.fulfill(status=204, headers=cors)
+            if path == '/health':
+                return r.fulfill(status=200, content_type='application/json', body='{"ok":true,"llm":false,"site":true}', headers=cors)
+            if path == '/site-brief':
+                body = r.request.post_data_json or {}
+                calls.append(body)
+                if delay_ms:
+                    time.sleep(delay_ms / 1000)
+                k = body.get('building')
+                ans = answers.get(str(k if isinstance(k, int) and str(k) in answers else 0))
+                return r.fulfill(status=200, content_type='application/json', body=json.dumps({'ok': True, **ans}), headers=cors)
+            return r.fulfill(status=404, content_type='application/json', body='{"ok":false}', headers=cors)
+        if u.startswith(site) or 'fonts.googleapis.com' in u or 'fonts.gstatic.com' in u or THREE_RX.match(u) or LEAFLET_RX.match(u):
+            return r.continue_()
+        outside.append(u)
+        return r.abort()
+    ctx.route('**/*', route)
+    return ctx, page, outside, calls
+
+
 CHOOSER_MEASURE = """() => {
-  const g = document.querySelector('#sl-t [role="group"][aria-label="Buildings on this lot, largest first"]');
+  const out = document.getElementById('hm-out');
+  const g = out && out.querySelector('[role="group"][aria-label="Buildings on this lot, largest first"]');
   const bs = g ? [...g.querySelectorAll('button')] : [];
-  const ans = document.querySelector('#sl-t .sl-ans');
+  const ans = out && out.querySelector('.sl-ans');
   const small = [];
   for (const el of ans ? ans.querySelectorAll('*') : []) {
     if (el.closest('svg') || !el.getClientRects().length) continue;
@@ -1024,53 +1079,107 @@ CHOOSER_MEASURE = """() => {
     const fs = parseFloat(getComputedStyle(el).fontSize); if (fs < 11) small.push(el.tagName + ' ' + fs + ' ' + el.textContent.trim().slice(0, 30));
   }
   const after = g && ans ? !!(ans.querySelector('.sl-text').compareDocumentPosition(g) & Node.DOCUMENT_POSITION_FOLLOWING) : false;
+  const top = bs[0] ? bs[0].getBoundingClientRect().top : null, bottom = bs.length ? bs.at(-1).getBoundingClientRect().bottom : null;
   return { n: bs.length, labels: bs.map(b => b.textContent), pressed: bs.map(b => b.getAttribute('aria-pressed')),
-    cls: bs.map(b => b.className), bg: bs.map(b => getComputedStyle(b).backgroundColor), after,
-    house: document.querySelector('#sl-t .ca-house')?.textContent || '', small, calls: window.__calls,
+    cls: bs.map(b => b.className), bg: bs.map(b => getComputedStyle(b).backgroundColor), after, answers: out ? out.querySelectorAll('.sl-ans').length : 0,
+    text: ans?.querySelector('.sl-text')?.textContent || '', house: ans?.querySelector('.ca-house')?.textContent || '', small,
+    top, bottom, vh: innerHeight, scroll: document.getElementById('content')?.scrollTop ?? scrollY,
+    src: document.querySelectorAll('#drawer-hold .drawer-list[data-drawer="src"] > .drawer-item, #inspector .drawer-list[data-drawer="src"] > .drawer-item').length,
+    focus: document.activeElement?.dataset?.sl === 'building' ? document.activeElement.getAttribute('aria-pressed') : null,
     sideways: document.documentElement.scrollWidth > innerWidth, wide: bs.some(b => b.getBoundingClientRect().right > innerWidth + 0.5) };
 }"""
-NOTES = ('2 buildings on this lot. Showing the one that best fits the recorded size. '
-         'Outline: about 22,500 sq ft of ground. Record: 15,226 sq ft. They do not agree.')
 
 
-def chooser_checks(browser, site):
-    """Several sizeable buildings on one lot: under the answer, one button each ("Building 1 · 37,100 sq ft"), largest first, the
-    drawn one pressed and looking pressed; another one runs the lookup again with building set and the answer is replaced in
-    place. The notes on the card read as the server wrote them (no "likely" added). No sideways scroll at 360 and 390 px, no
-    text under 11 px. The backend is a stub in the page (no network)."""
-    fx = json.load(open(SITE_CARD, encoding='utf-8'))
-    lot = fx['card']['building'].get('lot') or {}
-    check('chooser: the recorded town hall card carries a lot block of two buildings, the second shown', lot.get('n') == 2 and lot.get('shown') == 2, json.dumps(lot))
-    for w, h, dark in ((360, 780, False), (390, 844, True), (1440, 900, False)):
+def chooser_checks(browser, site, tmp):
+    """Several sizeable buildings on one lot, on the home's address box, from the real answers the server gives for the town hall
+    (nj_full replayed through server/site.py): under the answer one button each ("Building 1 · 37,100 sq ft"), largest first, the
+    drawn one pressed and looking pressed; the card's notes word for word. Scrolled down to the row, pressing another keeps the
+    old answer on screen while it loads, runs the lookup again with building set, replaces the answer in place, keeps the row in
+    view and focused, and leaves one copy of the sources in the Sources drawer. Pressing the shown one does nothing. No sideways
+    scroll at 360 and 390 px, no text under 11 px. The assistant's card for the same answer carries the notes and no row."""
+    answers = site_answers(tmp)
+    fs0 = next(c for c in answers['0']['cards'] if c.get('kind') == 'floor_sketch')
+    lot = fs0['building'].get('lot') or {}
+    check('chooser: the replayed town hall answer carries a lot block of two buildings, the second shown',
+          lot.get('n') == 2 and lot.get('shown') == 2 and lot.get('why') == 'record', json.dumps(lot))
+    for w, h, dark in ((360, 640, False), (390, 844, True), (1440, 900, False)):
         tag = f"chooser {w} px {'dark' if dark else 'light'}"
-        ctx, page, outside = _offline_ctx(browser, site, w, h, dark)
+        ctx, page, outside, calls = _home_ctx(browser, site, w, h, dark, answers, delay_ms=700)
         con = Console(page, site)
-        page.goto(f'{site}/agent.html?role=pp-plumber&backend=off')
-        wait_ready(page)
-        page.evaluate(CHOOSER_JS, [fx, NOTES])
+        page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview')
+        page.wait_for_selector('#hm-out .sl-in, .sl-in', timeout=15000)
+        page.fill('.sl-in', answers['typed'])
+        page.press('.sl-in', 'Enter')
+        ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out [data-sl=\"building\"]')"), 10)
+        page.wait_for_timeout(300)
         r = page.evaluate(CHOOSER_MEASURE)
         check(f'{tag}: one row of buttons under the answer, largest first, with the ground area',
-              r['n'] == 2 and r['after'] and r['labels'] == ['Building 1 · 37,100 sq ft', 'Building 2 · 22,500 sq ft']
+              ok and r['n'] == 2 and r['after'] and r['labels'] == ['Building 1 · 37,100 sq ft', 'Building 2 · 22,500 sq ft']
               and all('sys-btn' in c and 'sys-btn--secondary' in c and 'sys-btn--sm' in c for c in r['cls']), json.dumps({k: r[k] for k in ('n', 'labels', 'after')}))
         check(f'{tag}: the drawn building is pressed and looks pressed', r['pressed'] == ['false', 'true'] and r['bg'][0] != r['bg'][1], json.dumps({k: r[k] for k in ('pressed', 'bg')}))
-        check(f'{tag}: the card says how many buildings and which one, word for word', r['house'].endswith(NOTES) and 'likely' not in r['house'].lower(), r['house'])
+        check(f'{tag}: the card says how many buildings and which one, word for word, as the server wrote it',
+              f'{LOT_RECORD} {HALL_NOTE}' in r['house'] and r['text'].startswith('33 Washington St, Toms River. Town hall, 15,226 sq ft, two stories (public record).')
+              , r['house'])
         check(f'{tag}: no sideways scroll, the buttons wrap, no text under 11 px', not r['sideways'] and not r['wide'] and not r['small'], json.dumps({k: r[k] for k in ('sideways', 'wide', 'small')})[:300])
         if not r['n']:
             check(f'{tag}: pressing Building 1 runs the lookup again with building 1', False, 'no chooser row')
             ctx.close()
             continue
-        page.locator('#sl-t [data-sl="building"]').first.click()
-        poll(lambda: page.evaluate("() => (window.__calls || []).length >= 2 && !!document.querySelector('#sl-t [data-sl=\"building\"][aria-pressed=\"true\"]')"), 6)
+        # scroll so the row sits near the top of the screen, as after reading the answer on a phone, then press Building 1
+        page.evaluate("() => document.querySelector('#hm-out [data-sl=\"building\"]').scrollIntoView({ block: 'start' })")
+        page.wait_for_timeout(200)
+        before = page.evaluate(CHOOSER_MEASURE)
+        # every change to the answer area while it loads is noted in the page (the stubbed backend holds the answer back)
+        page.evaluate("""() => { const out = document.getElementById('hm-out'); window.__mid = [];
+          const note = () => window.__mid.push({ ans: out.querySelectorAll('.sl-ans').length, keep: out.querySelector('.sl-keep')?.textContent || '',
+            top: out.querySelector('[data-sl="building"]')?.getBoundingClientRect().top ?? null });
+          window.__midObs = new MutationObserver(note); window.__midObs.observe(out, { childList: true, subtree: true }); }""")
+        page.focus('#hm-out [data-sl="building"]')
+        page.keyboard.press('Enter')
+        poll(lambda: page.evaluate("() => document.querySelector('#hm-out [data-sl=\"building\"][aria-pressed=\"true\"]')?.textContent.startsWith('Building 1')"), 8)
+        mid = page.evaluate("() => { window.__midObs.disconnect(); return window.__mid; }")
+        loading = [m for m in mid if m['keep'].startswith('Looking up')]
+        check(f'{tag}: while the other building loads the answer stays on screen with one progress line under the row',
+              loading and all(m['ans'] == 1 for m in mid) and all(m['top'] is not None and abs(m['top'] - before['top']) < 2 for m in loading),
+              json.dumps({'mid': mid[:4], 'before': before['top']}))
+        page.wait_for_timeout(300)
         r2 = page.evaluate(CHOOSER_MEASURE)
-        focus = page.evaluate("() => document.activeElement?.dataset?.sl === 'building' && document.activeElement.getAttribute('aria-pressed') === 'true'")
         check(f'{tag}: pressing Building 1 runs the lookup again with building 1 and replaces the answer in place',
-              [c['building'] for c in r2['calls']] == [None, 1] and r2['calls'][1]['text'] == fx['typed'] and r2['pressed'] == ['true', 'false']
-              and page.locator('#sl-t .sl-ans').count() == 1 and focus, json.dumps({k: r2[k] for k in ('calls', 'pressed')}) + f' focus {focus}')
+              [c.get('building') for c in calls] == [None, 1] and calls[1].get('text') == answers['typed'] and r2['pressed'] == ['true', 'false']
+              and r2['answers'] == 1 and r2['focus'] == 'true' and f'{LOT_CHOSEN} {GARAGE_NOTE}' in r2['house'],
+              json.dumps({'calls': [c.get('building') for c in calls], 'pressed': r2['pressed'], 'focus': r2['focus'], 'house': r2['house'][-160:]}))
+        check(f'{tag}: the row of buttons stays in view where it was, the page does not jump',
+              r2['top'] is not None and r2['top'] >= 0 and r2['bottom'] <= r2['vh'] and abs(r2['top'] - before['top']) < 60,
+              json.dumps({'before': [before['top'], before['scroll']], 'after': [r2['top'], r2['scroll']], 'vh': r2['vh']}))
+        check(f'{tag}: the Sources drawer keeps one copy of the answer\'s sources', before['src'] >= 1 and r2['src'] == before['src'], json.dumps({'before': before['src'], 'after': r2['src']}))
+        n = len(calls)
+        page.locator('#hm-out [data-sl="building"][aria-pressed="true"]').click()
+        page.wait_for_timeout(400)
         r3 = page.evaluate(CHOOSER_MEASURE)
-        check(f'{tag}: pressing the shown building again does nothing', (page.locator('#sl-t [data-sl="building"][aria-pressed="true"]').click() or True)
-              and len(page.evaluate('window.__calls')) == 2 and r3['n'] == 2)
+        check(f'{tag}: pressing the shown building again makes no lookup', len(calls) == n and r3['n'] == 2 and r3['pressed'] == ['true', 'false'], json.dumps({'calls': len(calls) - n}))
+        page.locator('#hm-out [data-sl="building"]').nth(1).click()
+        poll(lambda: page.evaluate("() => document.querySelector('#hm-out [data-sl=\"building\"][aria-pressed=\"true\"]')?.textContent.startsWith('Building 2')"), 8)
+        page.wait_for_timeout(300)
+        r4 = page.evaluate(CHOOSER_MEASURE)
+        check(f'{tag}: back to Building 2: the notes and the one copy of the sources come back', [c.get('building') for c in calls][-1] == 2
+              and r4['pressed'] == ['false', 'true'] and r4['src'] == before['src'], json.dumps({'pressed': r4['pressed'], 'src': r4['src']}))
         check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
+    # the assistant's own card for the same answer (agent.html draws it with renderCard): the notes, never a row of buttons
+    ctx, page, outside = _offline_ctx(browser, site, 390, 844, False)
+    con = Console(page, site)
+    page.goto(f'{site}/agent.html?role=pp-plumber&backend=off')
+    wait_ready(page)
+    got = page.evaluate("""async (card) => {
+      const src = await (await fetch('./assets/agent.js')).text();
+      const stamp = (src.match(/agent-cards\\.js(\\?v=[^']*)'/) || [, ''])[1];
+      const { renderCard } = await import('./assets/agent-cards.js' + stamp);
+      const el = renderCard(card, {}); document.querySelector('.ca-main').prepend(el);
+      return { house: el.querySelector('.ca-house')?.textContent || '', rows: document.querySelectorAll('[data-sl="building"], [aria-label="Buildings on this lot, largest first"]').length };
+    }""", fs0)
+    check('chooser: the assistant\'s card carries the notes word for word and no row of buttons',
+          f'{LOT_RECORD} {HALL_NOTE}' in got['house'] and got['rows'] == 0 and not con.errors and not outside, json.dumps(got)[:300])
+    ctx.close()
 
 
 # ── axe-core ───────────────────────────────────────────────────────────────────────────────────
@@ -1158,7 +1267,7 @@ def main():
                 plan_phone_checks(browser, site)
                 view_card_checks(browser, site)
                 map_checks(browser, site)
-                chooser_checks(browser, site)
+                chooser_checks(browser, site, tmp)
                 if not args.only_wave3:
                     page_checks(browser, site, catalog)
                     replay_checks(browser, site)
