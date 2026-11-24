@@ -180,11 +180,11 @@ const MAX_H = 620;   // the drawing grows to about this height, then the plan sc
 const MONO = 0.6;   // the plan's monospace text: one character is 0.6 em wide
 const OUT_D = 32;   // an outside marker's centre sits this far out from the wall (px)
 const RUN_OFF = 6;   // a drain beside a water line on the same route sits this far off it (px): both strokes and a gap
-const WET_NAME = { kitchen: 'Kit', bath: 'Bath', laundry: 'Lndry' };   // a wet room's last-resort name on a phone
+const WET = new Set(['kitchen', 'bath', 'laundry']);
 const OUT_BAND = OUT_D + RING + 6;   // the band outside markers take beside the plan
 const DIM_BAND = 36, DIM_OFF = 26, STREET_BAND = 46, PAD = 10;   // the sizes sit DIM_OFF out from the wall, clear of a focus ring on it
 /** A room name's short form when the card gives none (seven characters at most). */
-const SHORT_NAME = { 'living room': 'Living', 'family room': 'Family', 'dining room': 'Dining', 'half bath': 'Half ba', 'full bath': 'Bath', 'bathroom': 'Bath',
+const SHORT_NAME = { 'living room': 'Living', 'family room': 'Family', 'dining room': 'Dining', 'half bath': '\u00bd Bath', 'full bath': 'Bath', 'bathroom': 'Bath',
   'laundry room': 'Laundry', 'utility room': 'Utility', 'mechanical room': 'Mech', 'recreation room': 'Rec', 'crawl space': 'Crawl', 'unfinished basement': 'Basemt',
   'primary bedroom': 'Primary', 'bonus room': 'Bonus', 'storage': 'Storage', 'closet': 'Closet', 'garage or utility closet': 'Utility', 'partial basement': 'Basemt' };
 export function shortName(r) {
@@ -193,6 +193,25 @@ export function shortName(r) {
   if (SHORT_NAME[k]) return SHORT_NAME[k];
   const bed = /^bedroom\s*(\d+)$/i.exec(l); if (bed) return `Bed ${bed[1]}`;
   return l.split(/\s+/)[0].slice(0, 7);
+}
+/** Short names a reader knows at a glance; any other short form is not drawn (the room goes unnamed instead). */
+const GOOD_SHORT = /^(Living|Family|Dining|Kitchen|Bed( \d)?|Bath( \d)?|\u00bd Bath|Bonus|Rec|Laundry|Utility|Storage|Closet|Garage|Stairs|Hall|Office|Den|Pantry|Mudroom|Linen|Primary|Basemt|Crawl|Mech)$/;
+const NUMBERED = /\s+\d+$/;
+/** Each room's drawn name: {full, short, group}. A number stays only on a bedroom or bath that has a partner of its kind on the
+ *  floor ("Bed 2" beside "Bed 1"); a hall, closet or storage room is never numbered. `group` keeps one form per kind. */
+function nameForms(rooms) {
+  const groupOf = r => String(r.label).trim().replace(NUMBERED, '').toLowerCase();
+  const n = {}; for (const r of rooms) if (r.label) n[groupOf(r)] = (n[groupOf(r)] || 0) + 1;
+  const out = new Map();
+  for (const r of rooms) {
+    if (!r.label) continue;
+    const label = String(r.label).trim(), g = groupOf(r);
+    const keep = /^(bedroom|bath)$/.test(g) && n[g] > 1;
+    const full = keep ? label : label.replace(NUMBERED, '');
+    let short = shortName(r); if (!keep) short = short.replace(NUMBERED, '');
+    out.set(r, { full, short: short && short !== full && GOOD_SHORT.test(short) ? short : '', group: g });
+  }
+  return out;
 }
 const r1 = v => Math.round(v * 10) / 10;
 const hits = (a, b, pad = 0) => a.x0 < b.x1 + pad && b.x0 < a.x1 + pad && a.y0 < b.y1 + pad && b.y0 < a.y1 + pad;
@@ -357,6 +376,30 @@ function roundPath(pts, rad = 6) {
   }
   return d;
 }
+/** The parts of a square run not already drawn by a line of its kind (`trunk`: drawn segments): two branches that share a route
+ *  draw it once, so their dashes never overlap into what looks like a solid (recorded) line. Returns polylines. */
+function untraced(pts, trunk) {
+  const out = []; let cur = null;
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1], b = pts[i], vert = Math.abs(a[0] - b[0]) < 0.5, c = vert ? 1 : 0, o = vert ? 0 : 1;
+    const lo = Math.min(a[c], b[c]), hi = Math.max(a[c], b[c]), dir = b[c] >= a[c] ? 1 : -1;
+    let free = [[lo, hi]];
+    for (const [p, q] of trunk) {
+      if (Math.abs(p[o] - q[o]) > 0.5 || Math.abs(p[o] - a[o]) > 1) continue;
+      const c0 = Math.min(p[c], q[c]), c1 = Math.max(p[c], q[c]);
+      free = free.flatMap(([f0, f1]) => (c1 <= f0 || c0 >= f1 ? [[f0, f1]] : [[f0, Math.max(f0, c0)], [Math.min(f1, c1), f1]].filter(([x, y]) => y - x > 0.5)));
+    }
+    free.sort((u, v) => dir * (u[0] - v[0]));
+    const at = t => (vert ? [a[0], t] : [t, a[1]]);
+    for (const [f0, f1] of free) {
+      const st = at(dir > 0 ? f0 : f1), en = at(dir > 0 ? f1 : f0);
+      if (cur && Math.hypot(cur.at(-1)[0] - st[0], cur.at(-1)[1] - st[1]) < 0.5) cur.push(en);
+      else { if (cur) out.push(cur); cur = [st, en]; }
+    }
+  }
+  if (cur) out.push(cur);
+  return out;
+}
 /** Where a run's label reads: beside a segment (above or below a level one, left or right of an upright one), clear of every
  *  marker, every name and label already placed, and inside the building. Null when no such place exists (the key names the line). */
 function runLabelAt(pts, all, text, boxes, fs, area, P, lines = [], avoid = () => false) {
@@ -420,7 +463,7 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const fx0 = Math.min(0, ...rx), fy0 = Math.min(0, ...ry), fx1 = Math.max(Wf, ...rx), fy1 = Math.max(Hf, ...ry);
   // a narrow drawing (a phone) keeps its gutters slim: smaller markers under 420 px, outside markers close to the wall, less
   // padding, and the depth figure on a side with no outside marker (or folded into the width figure) so the plan fills the frame
-  const narrow = width < 480, mr = width < 420 ? 12 : MR, rg = width < 420 ? 16 : RING;
+  const narrow = width < 480, mr = width < 420 ? 13 : MR, rg = width < 420 ? 17 : RING;   // 26 px markers at the least (R1)
   const pad = narrow ? 4 : PAD, dimOff = narrow ? rg + 5 : DIM_OFF, dimBand = narrow ? dimOff + 9 : DIM_BAND;
   const rrOf = m => (isFocus(m, focus) ? rg + 2 : mr + 2);
   const outD = m => (narrow ? rrOf(m) + 3 : OUT_D);   // the ring about 4 px off the wall on a phone
@@ -496,40 +539,90 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const hasWater = runList.some(r => r.kind === 'water');
   // a run whose points are all one spot (a line passing straight through to another floor) draws no line, only its riser ring
   const still = r => { const q = r.points.filter(p => Array.isArray(p)); return q.every(p => Math.abs(num(p[0]) - num(q[0][0])) < 0.05 && Math.abs(num(p[1]) - num(q[0][1])) < 0.05); };
+  // a drain is drawn where it reads best: on its route, or RUN_OFF px off it on a diagonal, whichever keeps it farthest (up to
+  // 9 px) from the water lines and the wall along its middle; its ends stay under their marker or riser
+  const pxOf = r => r.points.filter(p => Array.isArray(p)).map(p => [X(p[0]), Y(p[1])]);
+  const waterPx = runList.filter(r => r.kind === 'water' && !still(r)).map(pxOf);
+  const wallPx = P ? P.map((p, i) => [p, P[(i + 1) % P.length]]) : [];
+  const sample = q => { const o = []; for (let i = 1; i < q.length; i++) { const [ax, ay] = q[i - 1], [bx, by] = q[i], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / 3)); for (let k = 0; k <= n; k++) o.push([ax + (bx - ax) * k / n, ay + (by - ay) * k / n]); } return o; };
+  const minD = (pts, lines) => { let m = 99; for (const [x, y] of pts) for (const l of lines) for (let i = 1; i < l.length; i++) m = Math.min(m, nearOnSeg(x, y, l[i - 1], l[i]).d); return m; };
+  // one offset for every drain on the floor, so drains that merge on one route draw as one line
+  const drainOff = qs => {
+    if (!qs.length || (!waterPx.length && !P)) return [0, 0];
+    const use = qs.flatMap(q => { const ends = [q[0], q.at(-1)], all3 = sample(q), mid = all3.filter(p => ends.every(e => Math.hypot(p[0] - e[0], p[1] - e[1]) > 14)); return mid.length >= 3 ? mid : all3; });
+    let best = null;
+    for (const [dx, dy] of [[0, 0], [RUN_OFF, RUN_OFF], [-RUN_OFF, -RUN_OFF], [RUN_OFF, -RUN_OFF], [-RUN_OFF, RUN_OFF]]) {
+      const m = use.map(([x, y]) => [x + dx, y + dy]);
+      if (P && m.some(([x, y]) => !inPoly(x, y, P))) continue;
+      const sc = Math.min(9, minD(m, waterPx), wallPx.length ? minD(m, wallPx) : 99);
+      if (!best || sc > best.sc + 0.5) best = { sc, d: [dx, dy] };
+    }
+    return best ? best.d : [0, 0];
+  };
+  const dOff = hasWater ? drainOff(runList.filter(r => r.kind === 'drain' && !still(r)).map(pxOf)) : [0, 0];
   const drawn = new Map(runList.filter(r => !still(r)).map(r => {
-    const d = r.kind === 'drain' && hasWater ? RUN_OFF : 0;
-    return [r, r.points.filter(p => Array.isArray(p)).map(p => [r1(X(p[0]) + d), r1(Y(p[1]) + d)])];
+    const q = pxOf(r), d = r.kind === 'drain' ? dOff : [0, 0];
+    return [r, q.map(p => [r1(p[0] + d[0]), r1(p[1] + d[1])])];
   }));
   const segBoxes = pad => [...drawn.values()].flatMap(q => q.slice(1).map((p, i) => ({ x0: Math.min(q[i][0], p[0]) - pad, y0: Math.min(q[i][1], p[1]) - pad, x1: Math.max(q[i][0], p[0]) + pad, y1: Math.max(q[i][1], p[1]) + pad })));
   const segs = segBoxes(3), segsTight = segBoxes(1.5);
-  // room names: the full name, else the short one, else none; centred when clear, else a corner; never on a marker or another name
+  // room names (R4): each name sits wholly inside its own room and inside the outline, never across a line, a marker or another
+  // name. The full name, else the short one (one form for every room of a kind on the floor), else none. Rooms that hold a
+  // marker are named first, then wet rooms; a room that holds a marker may have its name over a run when nothing else fits.
   const th = fs + 2, namedRooms = new Set();
-  // rooms that hold a marker, and wet rooms, are named first: the job is there
-  const holds = r => inside.some(m => num(m.x) >= num(r.x) && num(m.x) <= num(r.x) + num(r.w) && num(m.y) >= num(r.y) && num(m.y) <= num(r.y) + num(r.h));
-  const rank = r => (holds(r) || WET_NAME[r.kind] ? 0 : 1);
-  for (const r of [...roomList].sort((a, b) => rank(a) - rank(b) || num(a.w) * num(a.h) - num(b.w) * num(b.h))) {
-    if (!r.label) continue;
-    const x = X(r.x), y = Y(r.y), w = num(r.w) * s, h = num(r.h) * s;
-    const rbox = { x0: Math.max(x, box.x0), y0: Math.max(y, box.y0), x1: Math.min(x + w, box.x1), y1: Math.min(y + h, box.y1) };
-    let placed = null;
-    const texts = [...new Set([String(r.label), shortName(r), ...(WET_NAME[r.kind] && width < 480 ? [/half/i.test(r.label) ? 'WC' : WET_NAME[r.kind]] : [])])];
-    for (const strict of [true, false]) for (const text of texts) {
-      if (placed) break;
-      const tw = text.length * fs * MONO;
-      if (tw + 8 > rbox.x1 - rbox.x0 || th + 6 > rbox.y1 - rbox.y0) continue;
-      const cx = (rbox.x0 + rbox.x1) / 2 - tw / 2, cy = (rbox.y0 + rbox.y1) / 2 - th / 2;
-      const spots = [[cx, cy], [rbox.x0 + 5, rbox.y0 + 4], [rbox.x1 - 5 - tw, rbox.y0 + 4], [rbox.x0 + 5, rbox.y1 - 4 - th], [rbox.x1 - 5 - tw, rbox.y1 - 4 - th],
-        [cx, rbox.y0 + 4], [cx, rbox.y1 - 4 - th], [rbox.x0 + 5, cy], [rbox.x1 - 5 - tw, cy]];
-      for (const [bx, by] of spots) {
-        const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
-        // never across a line: the strict pass keeps a little air, the second only stays off the stroke
-        if (!clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || (strict ? segs.some(o => hits(b, o, 1)) : segsTight.some(o => hits(b, o, 0))) || onLeader(b)) continue;
-        placed = { text, b }; break;
-      }
+  const riserBoxes = runList.flatMap(r => (Array.isArray(r.risers) ? r.risers : []).filter(Array.isArray).map(q => ({ x0: X(q[0]) - 6, y0: Y(q[1]) - 6, x1: X(q[0]) + 6, y1: Y(q[1]) + 6 })));
+  const holds = r => all.some(p => !p.edge && p.r === r);
+  const rank = r => (holds(r) ? 0 : WET.has(r.kind) ? 1 : 2);
+  const forms = nameForms(roomList);
+  const nameOrder = [...roomList].filter(r => r.label).sort((a, b) => rank(a) - rank(b) || num(a.w) * num(a.h) - num(b.w) * num(b.h));
+  const spotIn = (r, text, used, pass) => {
+    const tw = text.length * fs * MONO;
+    const ib = { x0: Math.max(X(r.x), box.x0) + 3, y0: Math.max(Y(r.y), box.y0) + 3, x1: Math.min(X(num(r.x) + num(r.w)), box.x1) - 3, y1: Math.min(Y(num(r.y) + num(r.h)), box.y1) - 3 };
+    const fw = ib.x1 - ib.x0 - tw, fh = ib.y1 - ib.y0 - th;
+    if (fw < 0 || fh < 0) return null;
+    const nx = Math.min(24, Math.ceil(fw / 4)), ny = Math.min(24, Math.ceil(fh / 4)), cx = ib.x0 + fw / 2, cy = ib.y0 + fh / 2;
+    const spots = [];
+    for (let i = 0; i <= nx; i++) for (let j = 0; j <= ny; j++) spots.push([ib.x0 + (nx ? fw * i / nx : fw / 2), ib.y0 + (ny ? fh * j / ny : fh / 2)]);
+    spots.sort((a, b) => Math.hypot(a[0] - cx, a[1] - cy) - Math.hypot(b[0] - cx, b[1] - cy) || a[0] - b[0] || a[1] - b[1]);
+    let loose = null;   // the last pass: the spot over the fewest lines
+    for (const [bx, by] of spots) {
+      const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
+      if (!clearOfMarks(b, all) || used.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || onLeader(b)) continue;
+      if (pass === 'strict' && (segs.some(o => hits(b, o, 1)) || riserBoxes.some(o => hits(b, o, 1)))) continue;
+      if (pass === 'tight' && (segsTight.some(o => hits(b, o, 0)) || riserBoxes.some(o => hits(b, o, 0)))) continue;
+      if (pass !== 'loose') return b;
+      const n = segsTight.filter(o => hits(b, o, 0)).length + riserBoxes.filter(o => hits(b, o, 0)).length;
+      if (!loose || n < loose.n) loose = { n, b };
+      if (n === 0) break;
     }
-    if (!placed) continue;
-    boxes.push(placed.b); namedRooms.add(r);
-    names += `<text class="ca-fs-room-t" x="${r1((placed.b.x0 + placed.b.x1) / 2)}" y="${r1(placed.b.y1 - 3)}">${esc(placed.text)}</text>`;
+    return loose ? loose.b : null;
+  };
+  const placeNames = shortOnly => {
+    const used = [], got = [];
+    for (const r of nameOrder) {
+      const fm = forms.get(r); if (!fm) continue;
+      const texts = shortOnly.has(fm.group) ? (fm.short ? [fm.short] : []) : [fm.full, ...(fm.short ? [fm.short] : [])];
+      let placed = null;
+      for (const pass of holds(r) ? ['strict', 'tight', 'loose'] : ['strict', 'tight']) {
+        for (const text of texts) { const b = spotIn(r, text, used, pass); if (b) { placed = { r, text, b, short: text !== fm.full, group: fm.group }; break; } }
+        if (placed) break;
+      }
+      if (placed) { used.push(placed.b); got.push(placed); }
+    }
+    return got;
+  };
+  // one form per kind on a floor: when one bedroom needs its short name, every bedroom there uses its short name
+  const shortOnly = new Set();
+  let got = placeNames(shortOnly);
+  for (let k = 0; k < 3; k++) {
+    const mixed = [...new Set(got.map(g => g.group))].filter(g => !shortOnly.has(g) && got.some(x => x.group === g && x.short) && got.some(x => x.group === g && !x.short));
+    if (!mixed.length) break;
+    mixed.forEach(g => shortOnly.add(g));
+    got = placeNames(shortOnly);
+  }
+  for (const g of got) {
+    boxes.push(g.b); namedRooms.add(g.r);
+    names += `<text class="ca-fs-room-t" x="${r1((g.b.x0 + g.b.x1) / 2)}" y="${r1(g.b.y1 - 3)}">${esc(g.text)}</text>`;
   }
   // the note a large building carries, inside the outline when it fits
   if (note) {
@@ -600,39 +693,18 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const nv = Array.isArray(opts.north) ? opts.north : ring && Array.isArray(opts.outline?.north) ? opts.outline.north : null;
   if (P && nv && isFinite(num(nv[0])) && (num(nv[0]) || num(nv[1]))) {
     const L = Math.hypot(num(nv[0]), num(nv[1])), nx = num(nv[0]) / L, ny = num(nv[1]) / L;
-    const sb = boxes.at(-1), cy = front === 'bottom' ? r1(sb.y1 - 8) : r1(sb.y0 + 6);
-    const at = [rb.x1 - 24, rb.x0 + 24, sb.x1 + 34, sb.x0 - 34, width - 26].map(x => ({ x0: x - 22, y0: cy - 22, x1: x + 22, y1: cy + 22, cx: x }))
-      .find(b => b.x0 >= 2 && b.x1 <= width - 2 && !hits(b, sb, 4) && clearOfMarks(b, all, 2) && !boxes.some(o => hits(b, o, 2)));
+    const sb = boxes.at(-1), cy0 = front === 'bottom' ? r1(sb.y1 - 8) : r1(sb.y0 + 6);
+    // the arrow and its letter wholly inside the drawing (the letter sits 17 px out along north)
+    const inDrawing = (x, y) => x - 6 >= 2 && x + 6 <= width - 2 && y - 7 >= 2 && y + 7 <= H - 2;
+    const at = [0, -10, -20, 10].flatMap(dy => [rb.x1 - 24, rb.x0 + 24, sb.x1 + 34, sb.x0 - 34, width - 26].map(x => ({ x0: x - 22, y0: cy0 + dy - 22, x1: x + 22, y1: cy0 + dy + 22, cx: x, cy: r1(cy0 + dy) })))
+      .find(b => b.x0 >= 2 && b.x1 <= width - 2 && inDrawing(b.cx + nx * 17, b.cy + ny * 17) && inDrawing(b.cx - nx * 9, b.cy - ny * 9) && !hits(b, sb, 4) && clearOfMarks(b, all, 2) && !boxes.some(o => hits(b, o, 2)));
     if (at) {
-      const cx = r1(at.cx), t = (k) => [r1(cx + nx * k), r1(cy + ny * k)], [hx, hy] = t(9), [bx, by] = t(-9), [lx, ly] = t(17);
+      const cx = r1(at.cx), cy = at.cy, t = (k) => [r1(cx + nx * k), r1(cy + ny * k)], [hx, hy] = t(9), [bx, by] = t(-9), [lx, ly] = t(17);
       const side = [r1(-ny * 4), r1(nx * 4)];
       north = `<g class="ca-fs-north" data-north="${r1(nx * 100) / 100},${r1(ny * 100) / 100}"><path d="M${bx} ${by}L${hx} ${hy}M${r1(hx - nx * 6 + side[0])} ${r1(hy - ny * 6 + side[1])}L${hx} ${hy}L${r1(hx - nx * 6 - side[0])} ${r1(hy - ny * 6 - side[1])}"/>`
         + `<text class="ca-fs-north-t" x="${lx}" y="${ly}">N</text></g>`;
       boxes.push(at);
     }
-  }
-  // a fixture marker whose room got no name: the room's short name beside the marker, outside its ring, off every line, marker
-  // and name (it may cross a dashed room line, never the wall); one caption per room
-  let caps = '';
-  const capped = new Set(), wallHit = b => P && P.some((p, i) => segHitsBox(p, P[(i + 1) % P.length], b));
-  for (const p of all) {
-    if (p.edge || !p.r || !p.r.label || namedRooms.has(p.r) || capped.has(p.r)) continue;
-    const text = shortName(p.r), tw = text.length * fsSmall * MONO, ch = fsSmall + 2, g = reach(p) + 2;
-    const spots = [[p.x + g, p.y - ch / 2], [p.x - g - tw, p.y - ch / 2], [p.x - tw / 2, p.y - g - ch], [p.x - tw / 2, p.y + g],
-      [p.x + g * 0.7, p.y - g * 0.7 - ch], [p.x - g * 0.7 - tw, p.y - g * 0.7 - ch], [p.x + g * 0.7, p.y + g * 0.7], [p.x - g * 0.7 - tw, p.y + g * 0.7]];
-    let placed = null;
-    for (const [inner, strict] of [[true, true], [true, false], [false, true], [false, false]]) {   // inside the outline first
-      for (const [bx, by] of spots) {
-        const b = { x0: bx, y0: by, x1: bx + tw, y1: by + ch };
-        if (b.x0 < 2 || b.y0 < 2 || b.x1 > width - 2 || b.y1 > H - 2 || wallHit(b) || (inner && P && !boxInPoly(b, P)) || (arrowBox && hits(b, arrowBox, 2)) || !clearOfMarks(b, all, 1) || boxes.some(o => hits(b, o, 2))
-          || (strict ? segs.some(o => hits(b, o, 0)) : segsTight.some(o => hits(b, o, 0))) || onLeader(b)) continue;
-        placed = b; break;
-      }
-      if (placed) break;
-    }
-    if (!placed) continue;
-    capped.add(p.r); boxes.push(placed);
-    caps += `<text class="ca-fs-cap" x="${r1((placed.x0 + placed.x1) / 2)}" y="${r1(placed.y1 - 3)}">${esc(text)}</text>`;
   }
   // runs under the markers: solid from records, dashed when likely; square, corners rounded a little; risers as small rings
   // one name per line kind per floor (the server sends one run per branch), placed on the longest run of that kind first;
@@ -640,7 +712,8 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   // its riser ring stays on the true spot, so the water and drain rings at one stack draw as one
   let runs = '', runText = '', risers = '';
   const runLen = r => r.points.filter(p => Array.isArray(p)).reduce((a, p, i, q) => i ? a + Math.abs(p[0] - q[i - 1][0]) + Math.abs(p[1] - q[i - 1][1]) : 0, 0);
-  const named = new Set(), hotPower = focus.includes('panel');
+  const named = new Set(), stacks = new Set(), traced = {}, hotPower = focus.includes('panel');
+  const wallHit = b => P && P.some((p, i) => segHitsBox(p, P[(i + 1) % P.length], b));
   const order = runList.map((r, i) => [r, i, runLen(r)]).sort((a, b) => b[2] - a[2] || a[1] - b[1]).map(e => e[0]);
   for (const r of order) {
     const k = KINDS.has(r.kind) ? r.kind : 'water', cls = isSolid(r.basis) ? 'is-record' : 'is-likely';
@@ -649,18 +722,35 @@ export function sketchSVG(floor, outside = [], opts = {}) {
       const dir = q[2] === 'up' ? 'up' : 'down';
       risers += `<circle class="ca-fs-riser k-${k}" data-dir="${dir}" cx="${X(q[0])}" cy="${Y(q[1])}" r="4.5"><title>${RUN_NAMES[k]} ${dir === 'up' ? 'goes to the floor above' : 'goes to the floor below'}</title></circle>`;
     }
+    if (still(r)) {   // a line that only passes through this floor: its ring, named "Stack" once beside it when there is room
+      const q = r.points.find(p => Array.isArray(p)), cx = X(q[0]), cy = Y(q[1]), key = `${r1(cx)},${r1(cy)}`;
+      if (stacks.has(key)) continue;
+      stacks.add(key);
+      const tw = 5 * fsSmall * MONO, ch = fsSmall + 2;
+      const b = [[cx + 8, cy - ch / 2], [cx - 8 - tw, cy - ch / 2], [cx - tw / 2, cy - 8 - ch], [cx - tw / 2, cy + 8]].map(([x, y]) => ({ x0: x, y0: y, x1: x + tw, y1: y + ch }))
+        .find(o => (!P || boxInPoly(o, P)) && clearOfMarks(o, all, 2) && !boxes.some(x => hits(o, x, 2)) && !segsTight.some(x => hits(o, x, 0)) && !onLeader(o));
+      if (b) { boxes.push(b); runText += `<text class="ca-fs-run-t ca-fs-stack" x="${r1((b.x0 + b.x1) / 2)}" y="${r1(b.y1 - 3)}">Stack</text>`; }
+      continue;
+    }
     const pts = drawn.get(r); if (!pts || pts.length < 2) continue;
     const hot = k === 'power' && hotPower ? ' is-hot' : '';   // an electrical question: the service line is the line to see
-    runs += `<path class="ca-fs-run ${cls} k-${k}${hot}" d="${roundPath(pts)}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+    const trunk = traced[k] || (traced[k] = []), parts = untraced(pts, trunk);
+    for (let i = 1; i < pts.length; i++) trunk.push([pts[i - 1], pts[i]]);
+    if (parts.length) {
+      const main = parts.reduce((m, q) => (q.length > m.length ? q : m), parts[0]);
+      runs += `<path class="ca-fs-run ${cls} k-${k}${hot}" d="${parts.map(q => roundPath(q)).join('')}" points="${main.map(p => p.join(',')).join(' ')}"/>`;
+    }
     const link = toMeter(pts, k, all, box, s);
     if (link) { const meter = all.find(p => p.edge && String(p.m.kind) === METER_OF[k]); runs += `<path class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}${hot}" d="${roundPath(link)}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
     const txt = r.label || RUN_NAMES[k]; if (named.has(k + '|' + txt)) continue;
-    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P, segs, onLeader);
+    // the service line's name may sit outside beside its link to the meter when the line inside is too short for it
+    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P, segs, onLeader)
+      || (link ? runLabelAt(link, all, txt, boxes, fsSmall, { x0: 0, y0: 0, x1: width, y1: H }, null, segs, b => onLeader(b) || wallHit(b)) : null);
     if (at) { named.add(k + '|' + txt); boxes.push(at.b); runText += `<text class="ca-fs-run-t" x="${at.x}" y="${at.y}">${esc(txt)}</text>`; }
   }
   // leaders: a thin line from a marker eased off its spot back to the spot, with a small dot there
   const lead = leaders.map(([p, q]) => `<path class="ca-fs-lead" d="M${p[0]} ${p[1]}L${q[0]} ${q[1]}"/><circle class="ca-fs-lead-dot" cx="${p[0]}" cy="${p[1]}" r="2"/>`).join('');
-  s1 += runs + risers + lead + dims + st + north + names + caps + runText;
+  s1 += runs + risers + lead + dims + st + north + names + runText;
   // markers last, non-focus first so focus rings sit on top
   all.sort((a, b) => Number(isFocus(a.m, focus)) - Number(isFocus(b.m, focus)));
   for (const { m, x, y } of all) s1 += markerSVG(m, x, y, focus, mr, rg);
@@ -758,7 +848,7 @@ function factsHTML(ev) {
     rows.push(`<div data-basis="public"><dt>Permits on record</dt><dd><span class="ca-fact-v">${permits.length}, latest ${esc(String(p.type || 'permit').toLowerCase())} ${esc(fmtDate(p.date, true))}</span><span class="ca-fact-src">${esc(where(p.src, '', ''))}</span></dd></div>`);
   }
   const links = srcs.filter(s => s.title).map(s => `<li>${s.url && /^https:\/\//.test(String(s.url)) ? `<a class="sys-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.publisher ? ` · ${esc(s.publisher)}` : ''}${s.date ? ` · ${esc(fmtDate(s.date, true))}` : ''}</li>`).join('');
-  return `<details class="ca-facts"><summary>Facts and sources</summary><dl class="ca-fields ca-fact-list">${rows.join('')}</dl>${links ? `<ol class="ca-fact-srcs">${links}</ol>` : ''}</details>`;
+  return `<details class="ca-facts"><summary>Public facts</summary><dl class="ca-fields ca-fact-list">${rows.join('')}</dl>${links ? `<ol class="ca-fact-srcs" data-src>${links}</ol>` : ''}</details>`;
 }
 /** The 3D control: opens assets/house3d.js under the plan (loaded on first use, with this file's ?v= stamp); a second press, or
  *  the view's own Close, removes it and frees what it drew. */
@@ -857,7 +947,7 @@ export function renderSketch(ev, ctx = {}) {
     + (list.length || unplaced.length ? `<ul class="ca-equip">${unplaced.map(m => unplacedRow(m, focus)).join('')}${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
     + factsHTML(ev)
     + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length && !(large && !fp) ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
-    + (ev.source_line ? `<p class="sys-src">${esc(ev.source_line)}</p>` : '');
+    + (ev.source_line ? `<p class="sys-src" data-src>${esc(ev.source_line)}</p>` : '');   // the shell moves it to the Sources drawer (copy rule 4)
   /** A map command that came as its own card in the same answer: this card's "Show on map" sends it. */
   a._setMap = cmd => { if (!cmd || typeof cmd !== 'object') return; a._cmd = cmd; const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(cmd); };
   for (const m of [...(ctx.turn?.querySelectorAll?.('article.ca-map') || [])]) { if (m._cmd) a._cmd = m._cmd; m.remove(); }   // one control per answer

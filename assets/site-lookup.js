@@ -179,7 +179,10 @@ function drawAnswer(out, res, text, opts) {
   a.appendChild(cards);
   const cmd = renderCards(cards, res.cards || [], { said: body });
   if (!cards.childElementCount) cards.remove();
-  if (cmd) a.appendChild(mapButton(cmd));
+  // one "Show on map" per answer: a plan card carries its own, and takes the answer's command
+  const sketch = [...cards.querySelectorAll('article.ca-sketch')].find(x => typeof x._setMap === 'function');
+  if (cmd && sketch) sketch._setMap(cmd);
+  else if (cmd && !cards.querySelector('[data-ca="map"],[data-ca="map-link"]')) a.appendChild(mapButton(cmd));
   const src = (Array.isArray(res.sources) ? res.sources : []).filter(s => s && (s.title || s.publisher)).slice(0, 8);
   if (src.length) a.insertAdjacentHTML('beforeend', `<div class="sys-src sl-src" data-src>${src.map(s => `<p>${s.n ? `[${esc(s.n)}] ` : ''}${s.url && /^https?:\/\//i.test(s.url) ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title || s.publisher)}</a>` : esc(s.title || s.publisher)}${s.publisher && s.title ? ` · ${esc(s.publisher)}` : ''}${s.date ? ` · ${esc(s.date)}` : ''}</p>`).join('')}</div>`);
   out.replaceChildren(a);

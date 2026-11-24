@@ -823,7 +823,7 @@ def plan_phone_checks(browser, site):
                 need = 0.72 if r['width'] < 480 else floor_share.get(w, 0.72)
                 check(f'{tag}: N1 the plan fills the frame (outline {need:.0%} of the drawing or more), text 11 px or more, no sideways scroll',
                       r['share'] >= need and r['fonts'] >= 10.9 and not r['sideways'] and _dims_ok(r), json.dumps({k: r[k] for k in ('width', 'share', 'fonts', 'dims', 'sideways')}))
-                check(f'{tag}: N3 a run that only passes through draws no line or dot, only its riser ring', r['still'] == 0 and r['risers'] == 2,
+                check(f'{tag}: N3 a run that only passes through draws no line or dot, only its riser ring (named Stack where there is room)', r['still'] == 0 and r['risers'] == 2,
                       json.dumps({k: r[k] for k in ('still', 'risers')}))
             check(f'{tag}: N2 markers never on each other (focus rings counted, 2 px apart), inside rings cross the wall by under 2 px',
                   r['marks'] >= 2 and not r['close'] and not r['crossing'], json.dumps({k: r[k] for k in ('marks', 'close', 'crossing', 'sizes')}))
@@ -847,7 +847,7 @@ def plan_rules_checks(browser, site):
             page.evaluate(PLAN_JS, _plan_card(scale))
             r = page.evaluate(PLAN_MEASURE)
             tag = f'plan {w} px, building x{scale}'
-            lo, hi = (23.9, 32.1) if r['width'] < 420 else (25.9, 36.1)   # a drawing under 420 px: 24 px markers, focus ring 32 px
+            lo, hi = (25.9, 34.1) if r['width'] < 420 else (25.9, 36.1)   # a drawing under 420 px: 26 px markers, focus ring 34 px
             check(f'{tag}: R1 drawn at the card width, text 11-13 px, markers {lo:.0f}-{hi:.0f} px', abs(r['width'] - r['inner']) <= 1 and 10.9 <= r['fonts'][0] and r['fonts'][1] <= 13.1
                   and lo <= r['marks'][0] and r['marks'][1] <= hi, json.dumps({k: r[k] for k in ('width', 'inner', 'fonts', 'marks')}))
             if scale != 1.0:
@@ -857,7 +857,7 @@ def plan_rules_checks(browser, site):
                   json.dumps({k: r[k] for k in ('rect', 'outline', 'roomDash', 'runDash')}))
             check(f'{tag}: R3 runs square with rounded corners, risers drawn and in the key', r['diag'] == 0 and r['rounded'] and r['risers'] == 2 and r['riserKey'],
                   json.dumps({k: r[k] for k in ('diag', 'rounded', 'risers', 'riserKey')}))
-            check(f'{tag}: R4 names fit their rooms (full or short), never overlap each other or a marker',
+            check(f'{tag}: R4 names fit their rooms (full or short), wholly inside one room (never across a room line), never overlap each other or a marker',
                   r['names'] and set(r['names']) <= labels and not r['nameOverlaps'] and not r['nameOnMarker'] and not r['nameOutside'],
                   json.dumps({k: r[k] for k in ('names', 'nameOverlaps', 'nameOnMarker', 'nameOutside')}))
             check(f'{tag}: R7 overall feet on two sides, a north arrow, the street side', _dims_ok(r) and r['north'] == 1 and r['street'] == 'Street side',
@@ -880,7 +880,7 @@ def plan_rules_checks(browser, site):
     again = page.evaluate("() => document.querySelector('#ca-plan svg.ca-fs').viewBox.baseVal.width")
     check('plan: R1 redrawn when the card narrows, text and markers keep their size, no redraw loop',
           before['width'] > after['width'] and abs(after['width'] - after['inner']) <= 1 and again == after['width'] and 10.9 <= after['fonts'][0] and after['fonts'][1] <= 13.1
-          and 23.9 <= after['marks'][0], json.dumps({'before': before['width'], 'after': after['width'], 'inner': after['inner'], 'again': again, 'fonts': after['fonts']}))
+          and 25.9 <= after['marks'][0], json.dumps({'before': before['width'], 'after': after['width'], 'inner': after['inner'], 'again': again, 'fonts': after['fonts']}))
     # string output without a DOM: the module's sketchSVG takes a width and returns an SVG at that width
     sv = page.evaluate("""async (card) => { const m = await import('./assets/agent-cards.js'); const f = card.floors[0];
       const o = m.outlinePoints(card, f.w, f.h, 1); const s = m.sketchSVG(f, [], { width: 500, outline: o });

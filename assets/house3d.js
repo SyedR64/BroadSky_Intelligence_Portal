@@ -995,10 +995,11 @@ export function renderHouse3D(container, card, opts = {}) {
         if (v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) vis = false;
       }
       if (!vis) { d.hidden = true; continue; }
+      d.hidden = false;   // measured shown: a label hidden on the last frame reads 0 px wide, and its real box would overlap
       const w = d.offsetWidth || 80, h = d.offsetHeight || 18;
       const x = Math.min(r.width - w / 2 - 4, Math.max(w / 2 + 4, (v.x + 1) / 2 * r.width)), y = Math.max(h + 6, (1 - v.y) / 2 * r.height);
       const box = [x - w / 2, y - h - 4, x + w / 2, y - 4];
-      const hit = placed.some(b => !(box[2] < b[0] || box[0] > b[2] || box[3] < b[1] || box[1] > b[3]));
+      const hit = placed.some(b => !(box[2] + 3 < b[0] || box[0] > b[2] + 3 || box[3] + 3 < b[1] || box[1] > b[3] + 3));
       const keep = !hit || o === state.picked;
       d.hidden = !keep;
       if (keep) { d.style.transform = `translate(${Math.round(box[0])}px,${Math.round(box[1])}px)`; placed.push(box); }
