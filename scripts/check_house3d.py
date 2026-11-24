@@ -243,7 +243,9 @@ def large_checks(check, page, card, st, tag):
           and all(not in_ring(o['at'], ring) for o in st['items']))
     check(f'large: no floor chips, no "Behind this wall" [{tag}]', page.locator('[data-h3="floor"]').count() == 0 and page.locator('[data-h3="wallmode"]').count() == 0
           and page.evaluate("() => (window.h.selectWall(0), document.querySelector('.h3-info').hidden)") is True)
-    check(f'large: the note says the interior is not on record [{tag}]', page.inner_text('.h3-note').strip() == card['layout']['note'] and st['note'] == card['layout']['note'])
+    check(f'large: the note is the plan\'s, not repeated on the 3D panel [{tag}]', page.locator('.h3-note').count() == 0 and st['note'] == card['layout']['note'])
+    check(f'large: no layer chips or cutaway for a shell [{tag}]', page.locator('[data-h3="layer"]').count() == 0
+          and page.locator('[data-v="cutaway"]').count() == 0)
     seen = page.evaluate("""() => { const el = document.querySelector('.h3'); const out = [el.innerText];
         el.querySelectorAll('[aria-label],[title]').forEach(e => out.push(e.getAttribute('aria-label') || '', e.getAttribute('title') || '')); return out.join(' | ').toLowerCase(); }""")
     check(f'large: no house word on screen or in a label [{tag}]', not any(w in seen for w in HOUSE_WORDS), seen[:200])

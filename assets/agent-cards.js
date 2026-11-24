@@ -179,6 +179,8 @@ const MR = 14, RING = 18;   // marker radius and focus ring radius (px): 28 and 
 const MAX_H = 620;   // the drawing grows to about this height, then the plan scales by height and is centred
 const MONO = 0.6;   // the plan's monospace text: one character is 0.6 em wide
 const OUT_D = 32;   // an outside marker's centre sits this far out from the wall (px)
+const RUN_OFF = 6;   // a drain beside a water line on the same route sits this far off it (px): both strokes and a gap
+const WET_NAME = { kitchen: 'Kit', bath: 'Bath', laundry: 'Lndry' };   // a wet room's last-resort name on a phone
 const OUT_BAND = OUT_D + RING + 6;   // the band outside markers take beside the plan
 const DIM_BAND = 36, DIM_OFF = 26, STREET_BAND = 46, PAD = 10;   // the sizes sit DIM_OFF out from the wall, clear of a focus ring on it
 /** A room name's short form when the card gives none (seven characters at most). */
@@ -311,7 +313,7 @@ function roundPath(pts, rad = 6) {
 }
 /** Where a run's label reads: beside a segment (above or below a level one, left or right of an upright one), clear of every
  *  marker, every name and label already placed, and inside the building. Null when no such place exists (the key names the line). */
-function runLabelAt(pts, all, text, boxes, fs, area, P) {
+function runLabelAt(pts, all, text, boxes, fs, area, P, lines = []) {
   const tw = String(text).length * fs * MONO, th = fs + 2;
   const segs = [];
   for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; segs.push({ x0, y0, x1, y1, len: Math.hypot(x1 - x0, y1 - y0) }); }
@@ -322,17 +324,19 @@ function runLabelAt(pts, all, text, boxes, fs, area, P) {
     for (const [bx, by] of spots) {
       const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
       if (b.x0 < area.x0 + 2 || b.y0 < area.y0 + 2 || b.x1 > area.x1 - 2 || b.y1 > area.y1 - 2 || (P && !boxInPoly(b, P))) continue;
-      if (!clearOfMarks(b, all, 3) || boxes.some(o => hits(b, o, 3))) continue;
+      if (!clearOfMarks(b, all, 3) || boxes.some(o => hits(b, o, 3)) || lines.some(o => hits(b, o, 0))) continue;   // never across a line
       return { b, x: r1(bx + tw / 2), y: r1(by + th - 3) };
     }
   }
   return null;
 }
-/** A gas line that stops at the wall the gas meter sits outside continues out to it: the short link from the line's end (within
- *  five feet of that wall) to the meter, or null. A line ending at any other wall is never joined across the house. */
+/** A gas line (or the electric service line) that stops at the wall its meter sits outside continues out to it: the short link
+ *  from the line's end (within five feet of that wall) to the meter, or null. A line ending at any other wall is never joined
+ *  across the house. */
+const METER_OF = { gas: 'gas_meter', power: 'electric_meter' };
 function toMeter(pts, kind, all, box, s) {
-  if (kind !== 'gas' || pts.length < 2) return null;
-  const meter = all.find(p => p.edge && String(p.m.kind) === 'gas_meter'); if (!meter) return null;
+  if (!METER_OF[kind] || pts.length < 2) return null;
+  const meter = all.find(p => p.edge && String(p.m.kind) === METER_OF[kind]); if (!meter) return null;
   const near = 5 * s;
   const atWall = { left: ([x]) => x <= box.x0 + near, right: ([x]) => x >= box.x1 - near, top: ([, y]) => y <= box.y0 + near, bottom: ([, y]) => y >= box.y1 - near }[meter.edge];
   const d = q => Math.hypot(q[0] - meter.x, q[1] - meter.y);
@@ -390,7 +394,7 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   const clip = ring ? `ca-fs-clip-${++CLIPS}` : '';
   if (P) s1 += `<defs><clipPath id="${clip}"><polygon points="${P.map(p => p.join(',')).join(' ')}"/></clipPath></defs>`
     + `<polygon class="ca-fs-floor" points="${P.map(p => p.join(',')).join(' ')}"/>`;   // the floor; the wall (the outline itself) is drawn over the rooms
-  else s1 += `<rect class="ca-fs-wall" x="${X(0)}" y="${Y(0)}" width="${r1(Wf * s)}" height="${r1(Hf * s)}" rx="3"/>`;
+  else if (!note) s1 += `<rect class="ca-fs-wall" x="${X(0)}" y="${Y(0)}" width="${r1(Wf * s)}" height="${r1(Hf * s)}" rx="3"/>`;   // a large building with no outline: no wall is drawn
   // markers: inside ones at their place, outside ones OUT_D past the wall at `at` along their side; then eased apart
   const all = [
     ...inside.map(m => ({ m, x: X(m.x), y: Y(m.y), edge: '', ring: isFocus(m, focus) })),
@@ -410,20 +414,27 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   }
   if (rooms) s1 += P ? `<g clip-path="url(#${clip})">${rooms}</g>` : rooms;
   if (P) s1 += `<polygon class="ca-fs-outline" data-outline points="${P.map(p => p.join(',')).join(' ')}"/>`;   // the wall is the real outline (public record), solid; the address box uses it too
-  // the runs' segments: names keep off them when they can
-  const segs = [];
-  for (const r of Array.isArray(f.runs) ? f.runs : []) {
-    const q = (Array.isArray(r?.points) ? r.points : []).filter(p => Array.isArray(p)).map(p => [X(p[0]), Y(p[1])]);
-    for (let i = 1; i < q.length; i++) segs.push({ x0: Math.min(q[i - 1][0], q[i][0]) - 3, y0: Math.min(q[i - 1][1], q[i][1]) - 3, x1: Math.max(q[i - 1][0], q[i][0]) + 3, y1: Math.max(q[i - 1][1], q[i][1]) + 3 });
-  }
+  // the runs as drawn (a drain beside a water line sits RUN_OFF px off it): names and run labels keep off them
+  const runList = (Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points));
+  const hasWater = runList.some(r => r.kind === 'water');
+  const drawn = new Map(runList.map(r => {
+    const d = r.kind === 'drain' && hasWater ? RUN_OFF : 0;
+    return [r, r.points.filter(p => Array.isArray(p)).map(p => [r1(X(p[0]) + d), r1(Y(p[1]) + d)])];
+  }));
+  const segBoxes = pad => [...drawn.values()].flatMap(q => q.slice(1).map((p, i) => ({ x0: Math.min(q[i][0], p[0]) - pad, y0: Math.min(q[i][1], p[1]) - pad, x1: Math.max(q[i][0], p[0]) + pad, y1: Math.max(q[i][1], p[1]) + pad })));
+  const segs = segBoxes(3), segsTight = segBoxes(1.5);
   // room names: the full name, else the short one, else none; centred when clear, else a corner; never on a marker or another name
   const th = fs + 2;
-  for (const r of [...roomList].sort((a, b) => num(a.w) * num(a.h) - num(b.w) * num(b.h))) {
+  // rooms that hold a marker, and wet rooms, are named first: the job is there
+  const holds = r => inside.some(m => num(m.x) >= num(r.x) && num(m.x) <= num(r.x) + num(r.w) && num(m.y) >= num(r.y) && num(m.y) <= num(r.y) + num(r.h));
+  const rank = r => (holds(r) || WET_NAME[r.kind] ? 0 : 1);
+  for (const r of [...roomList].sort((a, b) => rank(a) - rank(b) || num(a.w) * num(a.h) - num(b.w) * num(b.h))) {
     if (!r.label) continue;
     const x = X(r.x), y = Y(r.y), w = num(r.w) * s, h = num(r.h) * s;
     const rbox = { x0: Math.max(x, box.x0), y0: Math.max(y, box.y0), x1: Math.min(x + w, box.x1), y1: Math.min(y + h, box.y1) };
     let placed = null;
-    for (const strict of [true, false]) for (const text of [...new Set([String(r.label), shortName(r)])]) {
+    const texts = [...new Set([String(r.label), shortName(r), ...(WET_NAME[r.kind] && width < 480 ? [/half/i.test(r.label) ? 'WC' : WET_NAME[r.kind]] : [])])];
+    for (const strict of [true, false]) for (const text of texts) {
       if (placed) break;
       const tw = text.length * fs * MONO;
       if (tw + 8 > rbox.x1 - rbox.x0 || th + 6 > rbox.y1 - rbox.y0) continue;
@@ -432,7 +443,8 @@ export function sketchSVG(floor, outside = [], opts = {}) {
         [cx, rbox.y0 + 4], [cx, rbox.y1 - 4 - th], [rbox.x0 + 5, cy], [rbox.x1 - 5 - tw, cy]];
       for (const [bx, by] of spots) {
         const b = { x0: bx, y0: by, x1: bx + tw, y1: by + th };
-        if (!clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || (strict && segs.some(o => hits(b, o, 1)))) continue;
+        // never across a line: the strict pass keeps a little air, the second only stays off the stroke
+        if (!clearOfMarks(b, all) || boxes.some(o => hits(b, o, 2)) || (P && !boxInPoly(b, P)) || (strict ? segs.some(o => hits(b, o, 1)) : segsTight.some(o => hits(b, o, 0)))) continue;
         placed = { text, b }; break;
       }
     }
@@ -519,24 +531,23 @@ export function sketchSVG(floor, outside = [], opts = {}) {
   // a drain that shares its route with a water line is drawn a few px off it so both stay visible (still square);
   // its riser ring stays on the true spot, so the water and drain rings at one stack draw as one
   let runs = '', runText = '';
-  const runList = (Array.isArray(f.runs) ? f.runs : []).filter(r => r && typeof r === 'object' && Array.isArray(r.points));
   const runLen = r => r.points.filter(p => Array.isArray(p)).reduce((a, p, i, q) => i ? a + Math.abs(p[0] - q[i - 1][0]) + Math.abs(p[1] - q[i - 1][1]) : 0, 0);
-  const named = new Set(), hasWater = runList.some(r => r.kind === 'water'), off = 3;
+  const named = new Set(), hotPower = focus.includes('panel');
   const order = runList.map((r, i) => [r, i, runLen(r)]).sort((a, b) => b[2] - a[2] || a[1] - b[1]).map(e => e[0]);
   for (const r of order) {
     const k = KINDS.has(r.kind) ? r.kind : 'water', cls = isSolid(r.basis) ? 'is-record' : 'is-likely';
-    const d = k === 'drain' && hasWater ? off : 0;
-    const pts = r.points.filter(p => Array.isArray(p)).map(p => [r1(X(p[0]) + d), r1(Y(p[1]) + d)]); if (pts.length < 2) continue;
-    runs += `<path class="ca-fs-run ${cls} k-${k}" d="${roundPath(pts)}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+    const pts = drawn.get(r); if (!pts || pts.length < 2) continue;
+    const hot = k === 'power' && hotPower ? ' is-hot' : '';   // an electrical question: the service line is the line to see
+    runs += `<path class="ca-fs-run ${cls} k-${k}${hot}" d="${roundPath(pts)}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
     const link = toMeter(pts, k, all, box, s);
-    if (link) { const meter = all.find(p => p.edge && String(p.m.kind) === 'gas_meter'); runs += `<path class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}" d="${roundPath(link)}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
+    if (link) { const meter = all.find(p => p.edge && String(p.m.kind) === METER_OF[k]); runs += `<path class="ca-fs-run ca-fs-link ${isSolid(r.basis) && isSolid(meter?.m.basis) ? 'is-record' : 'is-likely'} k-${k}${hot}" d="${roundPath(link)}" points="${link.map(p => p.join(',')).join(' ')}"/>`; }
     for (const q of Array.isArray(r.risers) ? r.risers : []) {
       if (!Array.isArray(q)) continue;
       const dir = q[2] === 'up' ? 'up' : 'down';
       runs += `<circle class="ca-fs-riser k-${k}" data-dir="${dir}" cx="${X(q[0])}" cy="${Y(q[1])}" r="4.5"><title>${RUN_NAMES[k]} ${dir === 'up' ? 'goes to the floor above' : 'goes to the floor below'}</title></circle>`;
     }
     const txt = r.label || RUN_NAMES[k]; if (named.has(k + '|' + txt)) continue;
-    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P);
+    const at = runLabelAt(pts, all, txt, boxes, fsSmall, box, P, segs);
     if (at) { named.add(k + '|' + txt); boxes.push(at.b); runText += `<text class="ca-fs-run-t" x="${at.x}" y="${at.y}">${esc(txt)}</text>`; }
   }
   s1 += runs + dims + st + north + names + runText;
@@ -572,7 +583,7 @@ function unplacedRow(m, focus) {
   return `<li><div class="ca-eq ca-eq--off" data-k="${esc(String(m.kind || ''))}">`
     + `<span class="ca-eq-m ${markClass(m.basis)}" aria-hidden="true">${esc(String(m.short || '?').slice(0, 2))}</span>`
     + `<span class="ca-eq-t"><span class="ca-eq-h"><b>${esc(m.label || 'Item')}</b>${f ? '<span class="sys-chip sys-chip--soft">Start here</span>' : ''}${solid ? '' : '<span class="sys-chip sys-chip--warn">Likely</span>'}</span>`
-    + (m.note ? `<span class="ca-eq-n">${esc(String(m.note))}</span>` : '')
+    + `<span class="ca-eq-n">${esc([m.note, 'Not on the plan'].filter(Boolean).join(' · '))}</span>`
     + `</span></div></li>`;
 }
 
@@ -735,7 +746,7 @@ export function renderSketch(ev, ctx = {}) {
     + legendHTML(ev, markers, floors, outlines.some(Boolean))
     + (list.length || unplaced.length ? `<ul class="ca-equip">${unplaced.map(m => unplacedRow(m, focus)).join('')}${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
     + factsHTML(ev)
-    + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
+    + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length && !(large && !fp) ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
     + (ev.source_line ? `<p class="sys-src">${esc(ev.source_line)}</p>` : '');
   /** A map command that came as its own card in the same answer: this card's "Show on map" sends it. */
   a._setMap = cmd => { if (!cmd || typeof cmd !== 'object') return; a._cmd = cmd; const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(cmd); };

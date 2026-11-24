@@ -126,3 +126,4 @@
 .ca-sig{font-weight:600;border-color:var(--co,var(--sys-brand));max-width:100%;white-space:normal;text-align:left}
 .ca-sig-turn{display:flex;flex-direction:column;gap:var(--sys-sp-3);margin-bottom:var(--sys-sp-4)}
 @media (pointer:coarse){.ca-sigbox .sys-chip{min-height:44px}}
+.ca-fs-run.k-power.is-hot{stroke-width:4.5}

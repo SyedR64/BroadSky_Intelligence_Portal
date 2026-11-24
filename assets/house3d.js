@@ -919,14 +919,13 @@ export function renderHouse3D(container, card, opts = {}) {
     + '<span class="h3-key-i"><span class="h3-key-dash"></span>Likely</span>';
   el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || (plan.large ? 'Building' : 'House'))}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
     + (opts.onClose ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm h3-close" data-h3="close">Close</button>` : '') + `</div>`
-    + (plan.note ? `<p class="h3-note">${esc(plan.note)}</p>` : '')
     + `<div class="h3-stage"><canvas class="h3-canvas" role="img" aria-label="${plan.large ? '3D building model' : '3D house model'}"></canvas><div class="h3-labels" aria-hidden="true"></div>`
     + `<p class="h3-key">${key}</p>`
     + `<div class="h3-info" aria-live="polite" hidden></div></div>`
     + `<div class="h3-bar">`
-    + `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`
+    + `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${plan.large ? '' : chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`
     + (plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Floor">${chip('data-h3="floor" data-floor="all"', 'All floors', true)}${levelChips}</div>`)
-    + `<div class="sys-chips h3-row" role="group" aria-label="Layers">${LAYERS.map(([k, n]) => chip(`data-h3="layer" data-layer="${k}"`, n, true)).join('')}</div>`
+    + (plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Layers">${LAYERS.map(([k, n]) => chip(`data-h3="layer" data-layer="${k}"`, n, true)).join('')}</div>`)   // a shell has no lines to show
     + `<div class="h3-row h3-acts">${plan.large ? '' : chip('data-h3="wallmode"', 'Behind this wall', false)}<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-h3="download">Download model</button></div>`
     + `</div>`;
   container.appendChild(el);
