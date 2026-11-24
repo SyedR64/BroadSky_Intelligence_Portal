@@ -212,6 +212,11 @@ function drawAnswer(out, res, text, opts) {
   // there by the shell, go
   for (const el of out._slSrc || []) (el.closest('.drawer-item') || el).remove();
   out._slSrc = [...a.querySelectorAll('[data-src]')];
+  // an answer with no sources leaves no Sources control over an empty list (the shell repaints it only when sources land)
+  if (!out._slSrc.length) {
+    const list = document.querySelector('.drawer-list[data-drawer="src"]'), btn = document.querySelector('#topbar [data-drawer-btn="src"]');
+    if (list && btn && !list.childElementCount) btn.hidden = true;
+  }
   out.replaceChildren(a);
   return cmd;
 }
