@@ -48,6 +48,8 @@ import property as homes
 CALL_TIMEOUT = float(os.environ.get('SITE_CALL_TIMEOUT', '2.5'))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ZIPS_PATH = os.path.join(ROOT, 'data', 'pp_zips.json')
+if not os.path.exists(ZIPS_PATH):   # the hosted backend deploys server/ only: use the copy kept beside the knowledge base
+    ZIPS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'knowledge', 'zip_points.json')
 
 CENSUS_URL = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress'
 CENSUS_BENCHMARK = 'Public_AR_Current'

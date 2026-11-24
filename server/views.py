@@ -32,6 +32,24 @@ ROOT = os.path.dirname(HERE)
 RESEARCH = os.path.join(ROOT, 'data', 'research')
 CATALOG = os.path.join(ROOT, 'data', 'agent', 'catalog.json')
 PREPARED = os.path.join(ROOT, 'data', 'agent', 'prepared.json')
+BUNDLED = os.path.join(HERE, 'knowledge', 'prepared.json')   # the same answers inside server/: the hosted backend has no data/ folder
+_bundled = None
+
+
+def hosted():
+    """True where only server/ is deployed (no catalogue, no research files): prepared answers come from the bundled copy."""
+    return not os.path.exists(CATALOG)
+
+
+def bundled(role_id):
+    global _bundled
+    if _bundled is None:
+        try:
+            with open(BUNDLED, encoding='utf-8') as f:
+                _bundled = (json.load(f).get('roles') or {})
+        except (OSError, ValueError):
+            _bundled = {}
+    return _bundled.get(role_id)
 PRESETS = os.path.join(HERE, 'knowledge', 'deal_presets.json')
 
 KINDS = ('scorecard', 'bridge', 'heatmap', 'pipeline_board', 'ranked_bars')
@@ -2338,6 +2356,8 @@ def prepared(role_id, connected=None):
 
     `connected`: the apps the person connected (None means all). If a company system the answer reads is not connected, the
     answer is the same "not connected" line the agent gives, with no cards."""
+    if hosted():   # built where the data is (write_prepared), served as built
+        return bundled(role_id)
     R = _role(role_id)
     sig = signature(role_id)
     if not R or not sig:
@@ -2403,7 +2423,7 @@ def build_prepared():
 
 
 def write_prepared(path=None):
-    """Write data/agent/prepared.json (one role per line). Returns the path."""
+    """Write data/agent/prepared.json (one role per line) and the backend's copy, server/knowledge/prepared.json. Returns the path."""
     path = path or PREPARED
     doc = build_prepared()
     head = {k: v for k, v in doc.items() if k != 'roles'}
@@ -2415,6 +2435,10 @@ def write_prepared(path=None):
     with open(tmp, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
     os.replace(tmp, path)
+    if path == PREPARED:   # keep the backend's own copy in step
+        with open(path, encoding='utf-8') as f, open(BUNDLED + '.tmp', 'w', encoding='utf-8') as g:
+            g.write(f.read())
+        os.replace(BUNDLED + '.tmp', BUNDLED)
     return path
 
 
