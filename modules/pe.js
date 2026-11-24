@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261124014806';
+import * as Copy from './copy.js?v=20261124123408';
 /* PE landscape — history, trajectory, deal flow and buy-and-build benchmarks for the sponsors competing with BSP.
    Data: Private-equity landscape (35 firms), BSP firm profile (BSP reference), Competitor filings (financials of rival companies),
    sales/* (home-sale turnover in the counties each platform serves: PP PA/NJ, CET MA/CT/RI, BPI DC, Fair Harbor NYC). */
@@ -100,7 +100,7 @@ async function load(ctx) {
   return _bundle;
 }
 
-function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261124014806'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-pe')) { const l = document.createElement('link'); l.id = 'css-pe'; l.rel = 'stylesheet'; l.href = 'modules/pe.css?v=20261124123408'; document.head.appendChild(l); } }
 function missing(ctx, title) { ctx.el.innerHTML = ctx.ui.pageHead({ title }) + ctx.ui.note('Private-equity landscape data is not available yet.', 'warn'); }
 /* Source, method and as-of text is marked for the Sources and Method drawers; srcFoot collects the method text a panel used to carry in its footer, marks() writes it all once per screen. */
 let _marks = { method: [] };

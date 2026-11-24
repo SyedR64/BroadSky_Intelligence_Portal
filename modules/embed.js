@@ -3,7 +3,7 @@
    The page is asked for its embedded form (?embed=1: no top bar, footer, page sub-bar or floating Ask button;
    assets/frame.js) and is given the role in view, so it follows the "Viewing as" switch (assets/session.js).
    The frame takes the whole content area and the page scrolls inside it: one scroll. Same origin only. */
-import { Session } from '../assets/session.js?v=20261124014806';
+import { Session } from '../assets/session.js?v=20261124123408';
 
 /** Draw `src` (a path from the site root, for example 'agent.html' or 'redesigns/cet/gridos.html') into ctx.el.
     opts.title is the frame's accessible name; opts.params are extra query parameters. Returns the unmount function. */

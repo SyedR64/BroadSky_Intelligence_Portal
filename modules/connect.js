@@ -6,9 +6,9 @@
    connected until the visitor disconnects it (ruling R1). The state is read with Session.conn(co, app, 'sandbox') and
    written with Session.setConn: a disconnect stores 'available', a connect 'sandbox'; Session.connectedApps, which the
    company agent reads, counts the same thing. Every other tool keeps the state the data gives it and has no control. */
-import { Session } from '../assets/session.js?v=20261124014806';
+import { Session } from '../assets/session.js?v=20261124123408';
 
-const injectCss = () => { if (!document.getElementById('css-connect')) { const l = document.createElement('link'); l.id = 'css-connect'; l.rel = 'stylesheet'; l.href = 'modules/connect.css?v=20261124014806'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-connect')) { const l = document.createElement('link'); l.id = 'css-connect'; l.rel = 'stylesheet'; l.href = 'modules/connect.css?v=20261124123408'; document.head.appendChild(l); } };
 
 const STATES = ['live', 'sandbox', 'available', 'planned'];
 const CHIP = { live: 'sys-chip sys-chip--good', sandbox: 'sys-chip sys-chip--info', available: 'sys-chip', planned: 'sys-chip cx-planned' };
