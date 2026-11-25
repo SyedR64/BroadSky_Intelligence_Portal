@@ -212,7 +212,7 @@ export function scoreTargets(b) {
     let tot = 0, wsum = 0, ftot = 0, fsum = 0;
     for (const c of crit) { const w = W[c.id] || 0; fsum += w; ftot += w * (s[c.id] ?? 3); if (isTargetTest(c.id)) { wsum += w; tot += w * (s[c.id] ?? 3); } }
     r._crit = s; r._why = why; r._score = wsum ? Math.round(tot / 5 * (100 / wsum)) : null; r._tested = wsum; r._full = fsum ? Math.round(ftot / 5 * (100 / fsum)) : null;
-    r._gate = r._score == null ? '—' : r._score >= 70 ? 'Priority' : r._score >= 55 ? 'Watch list' : 'Pass';
+    r._gate = r._score == null ? '—' : r._score >= 70 ? 'High fit' : r._score >= 55 ? 'Mid fit' : 'Low fit';
     r._explain = explain(r, crit, W); r._brief = briefWhy(r, crit, W);
   }
   const ranked = rows.filter(r => !r._affil).sort((a, b) => (b._score - a._score) || ((b.fit_score || 0) - (a.fit_score || 0)));
@@ -373,7 +373,7 @@ export function introFor(b, t) {
   const pc = PLATFORMS[t._p]?.node; if (!pc || !g.byId.has(pc)) return null;
   const leader = (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo');
   const ids = ['org-bsp', pc, leader?.id].filter(Boolean);
-  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default path: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, likely how most named BSP add-ons were sourced.` };
+  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default path: owner to owner through ${leader ? `the ${g.byId.get(pc).name} CEO` : g.byId.get(pc).name}, likely how most named BSP add-ons were sourced.` };
 }
 
 /* ── Chronological strip (inline SVG) ─────────────────────────────────────── */
@@ -410,33 +410,14 @@ export function firstCallScript(b, r) {
   const via = intro?.sourced ? (intro.path_node_ids || []).filter(id => !skip.has(id)).map(id => g.byId.get(id)?.name).filter(Boolean).slice(-1)[0] : null;
   const what = r._p === 'pp' ? 'a home-services group in the Mid-Atlantic' : r._p === 'cet' ? 'an electrical and energy services group across New England' : r._p === 'fl' ? 'a managed-IT group for law firms' : 'an independent lab-supply distributor';
   const lines = [
-    { k: 'Possible caller', t: `${leader ? `${leader.name} of ${P.short}` : `${P.short} leadership`}${via ? `; a possible introduction through ${via}` : '; no warm introduction is on file'}.` },
-    { k: 'Open', t: `“I lead ${P.short}. We are backed by BSP and growing ${what}. I’d like to understand your plans; this is not an offer.”` },
+    { k: 'Possible caller', t: `${leader ? `The ${P.short} CEO` : `${P.short} leadership`}${via ? `; a possible introduction through ${via}` : '; no warm introduction is on file'}.` },
+    { k: 'Open', t: `“${P.short} is backed by BSP and growing ${what}. We’d like to understand your plans; this is not an offer.”` },
     { k: 'Why them', t: clip(r.strategic_rationale || '', 240) },
-    { k: 'Ownership', t: `“Where are you on succession? In BSP’s disclosed deals, founders have usually stayed on.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
+    { k: 'Ownership', t: `“Where are you on succession? Founders in BSP’s past deals have usually stayed on.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
     { k: 'Revenue quality', t: '“What share of revenue is repeat, maintenance or contracted?” Recurring revenue is 12% of the rubric and is not in the screen yet.' },
     { k: 'Bench and tools', t: '“Who runs the business day to day besides you, and what software runs dispatch, billing and the customer record?” Bench and tech upside are 14% of the rubric, untested so far.' },
     r._serious?.length ? { k: 'Risk flags', t: `From the screen: ${r._serious.map(s => s.replace(/\.$/, '')).join('; ')}.` } : null,
-    { k: 'Close', t: `“Could we meet with ${P.short}’s leadership in the next two weeks? We can walk you through how the last owner joined and what changed for their team.”` },
+    { k: 'Close', t: '“Could we meet with our leadership in the next two weeks?”' },
   ].filter(Boolean);
   return lines;
-}
-
-/* ── FAQ for the chat widget (built from the datasets) ────────────────────── */
-export function buildFaq(b, base = '') {
-  const c = b.cadence; const nar = b.meth?.meta?.methodology_narrative || [];
-  const top = b.scored.ranked.slice(0, 5);
-  const topPP = b.scored.ranked.find(r => r._p === 'pp'); const ip = topPP ? introFor(b, topPP) : null;
-  const n1 = v => v == null ? '—' : v.toFixed(1);
-  const faq = [
-    { q: 'What is BSP’s acquisition pattern?', href: base + '#narrative', a: `<p>${esc(nar[0] || '')}</p><ul>${nar.slice(1, 6).map(s => `<li>${esc(s)}</li>`).join('')}</ul><p>Anchor acquisitions come every ${n1(c.medianGap)} months (median) and the first add-on lands ${n1(c.medianFirst)} months after the anchor deal.</p>` },
-    topPP ? { q: 'Who in the network can introduce us to the top Punctual Pros target?', href: base + '#next', a: `<p>The top Punctual Pros target on the BSP rubric is <b>${esc(topPP.company)}</b> (score ${topPP._score} of 100).</p><p>${ip ? `${ip.sourced ? 'Sourced path' : 'Default path'}: ${esc(ip.names.filter(Boolean).join(' → '))}. ${esc(ip.path)}${ip.sourced ? ` Confidence: ${esc(ip.confidence)}.` : ''}` : 'No intro path in the network data.'}</p>` } : null,
-    { q: 'Score the pipeline with the BSP rubric', href: base + '#rubric', a: `<p>Every add-on target in the four company screens was scored on the five BSP criteria the screens can test (owner readiness, size band, adjacency, company-thesis fit and downside), each at its inferred rubric weight. Top five:</p><ol>${top.map(r => `<li><b>${esc(r.company)}</b> · ${esc(r._plat)} · ${r._score} (${esc(r._gate)})</li>`).join('')}</ol><p>Gates: 70+ priority, 55–69 watch list, under 55 pass.</p>` },
-    { q: 'How long until the first add-on after an anchor deal?', href: base + '#cadence', a: `<p>Median ${n1(c.medianFirst)} months: ${c.firstAddon.filter(f => f.months != null).map(f => `${esc(PLATFORMS[f.p]?.short)} ${n1(f.months)}`).join(', ')}. Frontline and Fair Harbor have no add-on yet.</p>` },
-    { q: 'Which banks and lawyers does BSP use?', href: base + '#patterns', a: `<p>${b.channels.filter(s => /buy_side|legal|accounting_ma/.test(s.channel_type)).map(s => `<b>${esc(s.channel)}</b> (${s.deal_count} deal${s.deal_count === 1 ? '' : 's'})`).join(', ')}.</p><p>${esc(b.channels.find(s => s.id === 'src-berenson')?.implication || '')}</p>` },
-    { q: 'How does BSP finance its companies?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-private-credit')?.pattern || '')}</p><p>${esc(b.patterns.find(p => p.id === 'pat-spv-coinvest')?.pattern || '')}</p>` },
-    { q: 'Do founder CEOs stay after BSP buys?', href: base + '#patterns', a: `<p>${esc(b.patterns.find(p => p.id === 'pat-ceo-retention')?.pattern || '')}</p>` },
-    { q: 'How big are the deals BSP does?', href: base + '#rubric', a: `<p>${esc(b.meth?.meta?.rubric_summary?.size_band_finding || '')}</p>` },
-  ];
-  return faq.filter(Boolean);
 }

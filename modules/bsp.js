@@ -18,7 +18,7 @@ const COLOR = 'var(--sys-brand)';
 const PCOL = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)', sh: 'var(--sys-mute-2)' };
 /* evidence strength and the fit gate are statuses: .sys-chip--good | --warn | --bad, neutral otherwise */
 const STR_ST = { strong: 'good', moderate: 'warn', weak: '' };
-const GATE_ST = { Priority: 'good', 'Watch list': 'warn', Pass: '', 'Held out': 'bad' };
+const GATE_ST = { 'High fit': 'good', 'Mid fit': 'warn', 'Low fit': '', 'Held out': 'bad' };
 const CO_IDS = new Set(['pp', 'cet', 'fl', 'ts', 'bpi', 'fh']);
 const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 /** data-co for a portfolio company (system.css derives --co / --co-ink / --co-soft); Smith + Howard passes its token. */
@@ -53,6 +53,7 @@ function indexOnce(app, b) {
   ]);
 }
 /* Shorter text for a table cell (10 words at most; the full text is in the side panel a row opens). */
+const themeName = (s, short) => { const t = String(s || '').replace(/^Next company:\s*/i, '').replace(/ \/ /g, ' or '); const u = short ? brief(t, 9, false) : t; return u.charAt(0).toUpperCase() + u.slice(1); };
 const brief = (s, n = 10, clause = true) => {
   let t = String(s ?? '').replace(/\s*\([^)]*\)/g, '').replace(/\s+([.,;:])/g, '$1').replace(/\s+/g, ' ').trim();
   if (clause) t = t.split(/;\s|(?<=[a-z0-9'’]\.)\s+(?=[A-Z])/)[0];
@@ -275,7 +276,7 @@ async function viewRubric(ctx) {
   if (!b.meth) { el.innerHTML = ui.note('Research dataset not yet available: BSP deal record.', 'warn'); return; }
   indexOnce(app, b);
   const S = b.scored; const all = S.rows; const ranked = S.ranked;
-  const pri = ranked.filter(r => r._gate === 'Priority').length, watch = ranked.filter(r => r._gate === 'Watch list').length;
+  const pri = ranked.filter(r => r._gate === 'High fit').length, watch = ranked.filter(r => r._gate === 'Mid fit').length;
   const tested = b.criteria.filter(c => isTargetTest(c.id)).reduce((a, c) => a + c.weight_pct, 0);
   const platW = b.criteria.filter(c => TESTS[c.id]?.tested === 'platform').reduce((a, c) => a + c.weight_pct, 0);
   const pools = PORDER.filter(p => all.some(r => r._p === p));
@@ -285,8 +286,8 @@ async function viewRubric(ctx) {
     ${missingNote(ui, b)}
     ${ui.kpis([
       { label: 'Targets scored', value: fmt.num(ranked.length), sub: `${pools.length} companies` },
-      { label: 'Clear the 70 gate', value: `${fmt.num(pri)} of ${fmt.num(ranked.length)}`, color: 'var(--sys-good)' },
-      { label: 'Watch list (55–69)', value: fmt.num(watch), color: 'var(--sys-warn)' },
+      { label: 'High fit (70+)', value: `${fmt.num(pri)} of ${fmt.num(ranked.length)}`, color: 'var(--sys-good)' },
+      { label: 'Mid fit (55–69)', value: fmt.num(watch), color: 'var(--sys-warn)' },
       { label: 'Rubric weight tested per target', value: `${tested}%`, sub: `${platW}% company level` },
       ...pools.map(p => ({ label: `Independents · ${PLATFORMS[p].short}`, value: fmt.num(S.indep[p] || 0), color: PCOL[p] })).slice(0, 2),
     ])}
@@ -321,7 +322,7 @@ async function viewRubric(ctx) {
     { key: '_plat', label: 'Company', fmt: (v, r) => pChip(fmt, r._p) },
     { key: '_loc', label: 'Location', fmt: v => esc(v || '—') },
     { key: '_score', label: 'Fit', num: true, fmt: (v, r) => fmt.score(v, PCOL[r._p]) },
-    { key: '_gate', label: 'Gate', fmt: v => stChip(v, GATE_ST[v]) },
+    { key: '_gate', label: 'Band', fmt: v => stChip(v, GATE_ST[v]) },
     { key: 'fit_score', label: 'Screen fit', num: true, fmt: v => fmt.num(v) },
     { key: '_path', label: 'Intro path', fmt: v => v === 'high' || v === 'medium' || v === 'low' ? `${esc(v.charAt(0).toUpperCase() + v.slice(1))} confidence` : esc(v) },
     { key: '_brief', label: 'Why', fmt: (v, r) => `<span title="${esc(r._explain)}">${esc(v)}</span>`, wrap: true },
@@ -332,7 +333,7 @@ async function viewRubric(ctx) {
   const f = ui.filters(root.querySelector('[data-f]'), [
     { key: 'q', label: 'Search target or town', type: 'search' },
     { key: 'p', label: 'Company', type: 'select', options: pools.map(p => ({ value: p, label: PLATFORMS[p].short })) },
-    { key: 'g', label: 'Gate', type: 'select', options: ['Priority', 'Watch list', 'Pass', 'Held out'] },
+    { key: 'g', label: 'Band', type: 'select', options: ['High fit', 'Mid fit', 'Low fit', 'Held out'] },
   ], st => draw(st));
   // Top 15 switch: ranks 1–15 by fit or every scored target
   let top15 = params.top === '15' || params.top === '1';
@@ -377,7 +378,7 @@ async function viewNetwork(ctx) {
     <div class="mt-12"></div>
     <div class="grid grid-main">
       ${ui.panel({ title: 'Network map', body: `<div class="sys-filters mb-12"><input type="search" class="sys-input bsp-search" placeholder="Search people, firms, sectors" aria-label="Search the network"><span class="sys-src bsp-hits" aria-live="polite"></span></div><div class="bsp-graph">${graphSVG(g)}</div>` })}
-      ${ui.panel({ title: 'Intro paths for top targets', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b title="${esc(x.r ? x.r.company : x.ip.target)}">${esc(x.r ? x.r.company : brief(String(x.ip.target).replace(/^Next company:\s*/i, ''), 9, false))}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)}, ` : 'Theme, '}${x.ip?.sourced ? `${esc(x.ip.confidence)} confidence, ${x.ip.hops} hops` : 'unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div></button>`).join('')}</div>` })}
+      ${ui.panel({ title: 'Intro paths for top targets', scroll: true, body: `<div class="bsp-paths">${pathsFor.map((x, i) => `<button type="button" class="bsp-pathc" data-i="${i}" ${x.r ? coAttr(x.r._p) : 'data-co=""'}><div class="bsp-pathc-h"><b title="${esc(x.r ? x.r.company : x.ip.target)}">${esc(x.r ? x.r.company : themeName(x.ip.target, true))}</b>${x.r ? `<span class="sys-num">${x.r._score}</span>` : ''}</div><div class="bsp-pathc-m">${x.r ? `${esc(x.r._plat)}, ` : 'Possible theme, '}${x.ip?.sourced ? `${x.r ? `${esc(x.ip.confidence)} confidence, ` : ''}${x.ip.hops} hops` : 'unsourced'}</div><div class="bsp-path">${(x.ip?.names || []).filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div></button>`).join('')}</div>` })}
     </div>
     ${srcMark(ui, SRC_NET, 'Oct 2026')}
     <span data-asof="Oct 2026"></span>
@@ -389,7 +390,7 @@ async function viewNetwork(ctx) {
   ctl = bindGraph(root.querySelector('.bsp-graph'), g, { onSelect: n => openNode(ctx, b, n, ctl) });
   const hits = root.querySelector('.bsp-hits'); let t;
   root.querySelector('.bsp-search').oninput = e => { clearTimeout(t); t = setTimeout(() => { const k = ctl.search(e.target.value); hits.textContent = e.target.value ? `${k} match${k === 1 ? '' : 'es'}` : ''; }, 160); };
-  root.querySelectorAll('.bsp-pathc').forEach(btn => btn.onclick = () => { const x = pathsFor[Number(btn.dataset.i)]; root.querySelectorAll('.bsp-pathc').forEach(y => y.classList.toggle('sel', y === btn)); if (x.ip?.path_node_ids) ctl.path(x.ip.path_node_ids); if (x.r) openTarget(ctx, b, x.r); else openInsp(ctx, { title: esc(x.ip.target), color: COLOR, sub: `${esc(x.ip.confidence)} confidence · ${x.ip.hops} hops`, sections: [{ label: 'Path', html: `<div class="bsp-path">${x.ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div><div class="small text-2 mt-8">${esc(x.ip.path)}</div>` }, { label: 'Source', html: fmt.link(x.ip.source_url, host(x.ip.source_url)) }] }); });
+  root.querySelectorAll('.bsp-pathc').forEach(btn => btn.onclick = () => { const x = pathsFor[Number(btn.dataset.i)]; root.querySelectorAll('.bsp-pathc').forEach(y => y.classList.toggle('sel', y === btn)); if (x.ip?.path_node_ids) ctl.path(x.ip.path_node_ids); if (x.r) openTarget(ctx, b, x.r); else openInsp(ctx, { title: esc(themeName(x.ip.target)), color: COLOR, sub: `Possible theme · ${x.ip.hops} hops`, sections: [{ label: 'Path', html: `<div class="bsp-path">${x.ip.names.filter(Boolean).map(n => `<span>${esc(n)}</span>`).join('<i></i>')}</div><div class="small text-2 mt-8">${esc(x.ip.path)}</div>` }, { label: 'Source', html: fmt.link(x.ip.source_url, host(x.ip.source_url)) }] }); });
   if (params.node && g.byId.has(params.node)) { ctl.select(params.node); openNode(ctx, b, g.byId.get(params.node), ctl); }
   if (params.t) { const i = pathsFor.findIndex(x => x.r?.id === params.t); const r = b.scored.rows.find(x => x.id === params.t); const ip = r ? introFor(b, r) : null; if (ip) ctl.path(ip.path_node_ids); if (i >= 0) root.querySelectorAll('.bsp-pathc')[i]?.classList.add('sel'); }
 }
@@ -404,8 +405,8 @@ export default {
     { id: 'network', name: 'Network', icon: '⬡', render: viewNetwork },
   ],
   tour: [
-    { order: 925, hash: '#/bsp/deals', caption: '<b>How BSP buys.</b> Seven companies bought, twenty-one named add-ons and one exit, each with seller, advisers and lenders.', narration: 'Every disclosed deal: seven companies bought, twenty-one named add-ons and one exit, each with seller and lenders.' },
+    { order: 925, hash: '#/bsp/deals', caption: '<b>Deal record.</b> Seven companies bought, twenty-one named add-ons and one exit, each with seller, advisers and lenders.', narration: 'Every disclosed deal: seven companies bought, twenty-one named add-ons and one exit, each with seller and lenders.' },
     { order: 926, hash: '#/bsp/patterns', caption: '<b>Deal patterns.</b> Thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.', narration: 'The patterns: thesis first, founder CEOs stay, first add-on near month eight, a new lender each time.' },
-    { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric.</b> Ten inferred criteria scored across every target, with the top fifteen and an intro path.', narration: 'The rubric scores every add-on target on ten inferred criteria. Start with the top fifteen.' },
+    { order: 927, hash: '#/bsp/rubric', caption: '<b>The rubric.</b> Ten inferred criteria scored across every target, with the top fifteen and an intro path.', narration: 'The rubric orders every add-on target on ten inferred criteria; the top fifteen come first.' },
   ],
 };

@@ -194,7 +194,9 @@ def system_prompt(persona):
             "- House style: call the firm BSP; never write a 'So what' label; headings of six words or fewer. Say 'growth plan' (never 'playbook') and 'portfolio company' for a sponsor's company ('platform' only for software). "
             "Write dates in words (Oct 6, 2026). Never print file names or identifiers with underscores. No greetings and no addressing anyone by name. "
             "Do not cite brands as design inspiration.\n"
-            "- End with 2-4 next actions for the operating team.")
+            "- What drives a BSP company's results, what BSP intends and how it decides are readings of public data: mark them once per sentence "
+            "('likely', 'in the disclosed deals'). State counted public facts plainly. Never give BSP or its companies instructions.\n"
+            "- End with 2-4 open questions the data cannot answer yet.")
 
 
 def md_inline(s):

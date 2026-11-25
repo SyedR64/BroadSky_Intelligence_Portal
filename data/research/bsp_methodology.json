@@ -29,7 +29,7 @@
   },
   "methodology_narrative": [
    "The releases point to theme-first buying: each one frames the company as the output of a sector thesis studied in advance, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's watch on accounting before Smith + Howard.",
-   "Since 2024 the filter has narrowed to essential services. Punctual Pros, Frontline and CET are all non-discretionary, and Fair Harbor remains the only discretionary consumer bet and the only portfolio company besides Frontline with no add-ons.",
+   "Since 2024 every anchor deal has been in essential services: Punctual Pros, Frontline and CET. Fair Harbor is the only discretionary consumer company and, with Frontline, the only one with no add-ons.",
    "Anchor acquisitions come from two kinds of seller: sponsor secondaries for the larger checks (Thomas from Carlyle, BPI from Svoboda, Frontline from BV) and founder or partner owners taking first institutional capital for the smaller ones (Fair Harbor, Smith + Howard, Punctual Pros, CET).",
    "In secondaries the outgoing sponsor often rolls a minority (Svoboda at BPI, BV at Frontline), and the inherited CEO is replaced at about 13-15 months (Simmons to Haas at Thomas, Naidoo to Britt at Frontline) while founder CEOs such as Sean Taylor, Matt Buckwalter and John Duquette Jr. stay.",
    "Anchor acquisitions are bought in banked processes (6 of 7 had a named sell-side adviser, and Punctual Pros went to 'eight finalists'). Berenson advised BSP on Thomas, BPI, Frontline and CET, Harris Williams on Punctual Pros and Frontline, and Morrison Cohen or Greenberg Traurig was counsel on every deal.",
@@ -38,8 +38,8 @@
    "Add-ons alternate between filling in geography (Market Street, Smith Kesler, Horton Lee & Burnett, Horvath, Horton) and adding new capabilities that create cross-sell (VIP, Fahrenheit, Geels Norton, Message House, Agado, NuWave).",
    "Each company is financed with a private-credit unitranche from a different direct lender (Apollo/MidCap at Thomas, PineBridge at BPI, PGIM at Punctual Pros, NXT and Audax at Frontline), with delayed-draw or amendment capacity sized for the add-on program.",
    "Larger companies get a deal-named co-invest SPV (BSP-TS, BSP-BPI Holdings, BSP-FL, BSP-CET). Against a $335M Fund I, a company needing more than about $40M of equity depends on co-investors such as Carlyle AlpInvest.",
-   "Smith + Howard is the template so far: about 100 professionals grew to about 800 through 9 add-ons and a tech, AI and offshore build-out, and the firm was sold to TPG Growth after 3.7 years with William Blair and Baird running the process.",
-   "Thomas Scientific shows the value of leaving room in the debt for add-ons and a refinancing. For the next deals the implied rubric favors $3-20M EBITDA essential-services leaders in fragmented regional markets with a founder CEO who will stay and run M&A, a warm first add-on, and a credible tech-enablement story."
+   "Smith + Howard is the one exit so far: about 100 professionals grew to about 800 through 9 add-ons and a tech, AI and offshore build-out, and the firm was sold to TPG Growth after 3.7 years with William Blair and Baird running the process.",
+   "Thomas Scientific's debt left room for add-ons and a refinancing. The inferred rubric favors $3-20M EBITDA essential-services companies in fragmented regional markets, with founder CEOs who stay."
   ],
   "cadence_stats": {
    "platform_dates_used": {
@@ -128,7 +128,7 @@
     "Founder or management transition readiness, with a CEO who will stay": 10,
     "Size band (entry and add-on)": 8,
     "Geographic adjacency, with a regional champion that can go national": 8,
-    "Thematic tailwind that BSP research has already identified": 10,
+    "Thematic tailwind BSP has publicly named": 10,
     "Tech-enablement / AI upside": 7,
     "Management depth and culture fit ('people-first')": 7,
     "Downside protection: earnings quality, cyclicality and leverage": 8
@@ -1334,7 +1334,7 @@
   {
    "id": "pat-rollover-culture",
    "kind": "pattern",
-   "pattern": "'People-first' and culture language is used as a screening filter and as a closing tool, alongside seller equity rollover. BSP's own quotes cite 'people-first culture' at BPI and Punctual Pros. Founders roll into the company (365 Sherpas sellers become BPI shareholders; Svoboda and BV roll). S+H and add-on sellers repeatedly say culture fit decided the deal.",
+   "pattern": "'People-first' and culture language recurs in the releases, alongside seller equity rollover. BSP's own quotes cite 'people-first culture' at BPI and Punctual Pros. Founders roll into the company (365 Sherpas sellers become BPI shareholders; Svoboda and BV roll). S+H and add-on sellers repeatedly say culture fit decided the deal.",
    "evidence_deal_ids": [
     "deal-bpi",
     "deal-pp",
@@ -1413,7 +1413,7 @@
    "kind": "criterion",
    "criterion": "Fragmentation and add-on runway",
    "weight_pct": 15,
-   "test": "Count of owner-operated firms in the sub-sector within 150 miles of the company (ZoomInfo/Census CBP establishments; add-on target lists). BSP pace is 1-2.4 add-ons per company-year, so the target is 10+ actionable candidates.",
+   "test": "Count of owner-operated firms in the sub-sector within 150 miles of the company (ZoomInfo/Census CBP establishments; add-on target lists). At 1-2.4 add-ons per company-year in the record, about 10+ candidates are likely needed.",
    "scoring_bands": {
     "5": ">=25 independent targets in footprint",
     "3": "10-24",
@@ -1520,7 +1520,7 @@
   {
    "id": "crit-thematic-tailwind",
    "kind": "criterion",
-   "criterion": "Thematic tailwind that BSP research has already identified",
+   "criterion": "Thematic tailwind BSP has publicly named",
    "weight_pct": 10,
    "test": "The target sits inside a theme BSP has publicly named (outsourcing and workforce virtualization; energy capacity and critical infrastructure; legal-IT outsourcing and cyber; housing-stock and weather-driven home services; transatlantic policy complexity). Evidence: a public BSP quote or strategy-page sector list plus a measurable driver (permits, deeds, regulation, rate cases).",
    "scoring_bands": {
@@ -1828,7 +1828,7 @@
     }
    ],
    "deal_count": 1,
-   "implication": "Baird and Guggenheim appear on both sides of BSP deals (buy and sell). William Blair is the reference exit bank for professional services.",
+   "implication": "Baird and Guggenheim appear on both sides of BSP deals (buy and sell). William Blair led the one professional-services exit.",
    "source_urls": [
     "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/",
     "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/"
@@ -1889,7 +1889,7 @@
     }
    ],
    "deal_count": 9,
-   "implication": "Counsel is not a sourcing channel, but which firm is engaged shows which deal team is running the deal.",
+   "implication": "Counsel is not a sourcing channel, but which firm is engaged likely shows which deal team runs the deal.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",

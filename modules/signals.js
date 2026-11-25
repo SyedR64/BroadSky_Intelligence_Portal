@@ -78,7 +78,7 @@ const chg = s => s?.chg == null ? '' : s.chg_kind === 'pts' ? `${s.chg >= 0 ? '+
 const sgn = (x, tol) => x == null || !isFinite(x) || Math.abs(x) < tol ? 0 : Math.sign(x);
 /** helps (+1) / hurts (−1) / steady (0) from a series' change in a year and how the series relates to the company */
 const dirOf = (s, rel, tol) => !s || s.chg == null ? 0 : sgn(s.chg, tol ?? (s.chg_kind === 'pts' ? 0.15 : 0.02)) * rel;
-const DIR = { 1: { t: 'Helps', st: 'good' }, '-1': { t: 'Hurts', st: 'bad' }, 0: { t: 'Steady', st: '' } };
+const DIR = { 1: { t: 'Tailwind', st: 'good' }, '-1': { t: 'Headwind', st: 'bad' }, 0: { t: 'Steady', st: '' } };
 const dirChip = d => `<span class="sys-chip${DIR[d].st ? ` sys-chip--${DIR[d].st}` : ''}">${DIR[d].t}</span>`;
 const coChip = id => `<span class="sys-chip sys-chip--soft" data-co="${id}">${h(CO_NAME[id] || id)}</span>`;
 
@@ -166,7 +166,7 @@ function buildFactors(D) {
   const ppH = D.hz.pp;
   add({ id: 'pp-homes', co: 'pp', cat: 'housing', w: 3, name: 'Home sales in the footprint', why: 'New owners fix, replace and sign up for service plans in their first year.',
     read: ppH ? { v: `${num(ppH.pend.cur)} homes under contract`, d: `${pctS(ppH.pend.chg)} vs a year ago · new listings ${pctS(ppH.newL.chg)}`, date: hz, src: 'Realtor.com county data', url: URL_.realtor, dir: sgn(ppH.pend.chg, 0.03) } : null,
-    lever: 'Mailing buyers within 60 days of closing; New movers holds the list.', link: ['#/pp/movers', 'New movers'],
+    lever: 'Mailings to buyers within 60 days of closing, from the New movers list.', link: ['#/pp/movers', 'New movers'],
     sens: pp?.sales12 ? sens(`Each 10% more home sales ≈ ${num(pp.sales12 * 0.1 * 0.03)} more jobs, ${smoney(pp.sales12 * 0.1 * 0.03 * 400)} sales a year`, pp.sales12 * 0.1 * 0.03 * 400,
       ppH?.pend.chg != null ? `Today's ${pctS(ppH.pend.chg)} ≈ ${smoney(pp.sales12 * ppH.pend.chg * 0.03 * 400)} sales a year` : null, ppH?.pend.chg != null ? pp.sales12 * ppH.pend.chg * 0.03 * 400 : null, 'sales',
       `${num(pp.sales12)} home sales a year in the ${pp.n} counties (Redfin, Jun 2025 to May 2026); 3% of buyers book a first job (mail response runs 2 to 4%); $400 average repair ticket. Service plans sold to new owners would add more.`) : null });
@@ -211,7 +211,7 @@ function buildFactors(D) {
   const peList = D.maPp?.meta?.pe_backed_competitors || [];
   add({ id: 'pp-rivals', co: 'pp', cat: 'rivals', w: 2, name: 'Sponsor-backed rivals', why: 'Rivals backed by other sponsors buy local shops and hire away technicians.',
     read: pp ? { v: `${num(peList.length)} sponsor-backed rivals on the watch list`, d: `${num(pp.estab)} heating, plumbing and electrical shops in the ${pp.n} counties`, date: 'Sep 2026', src: 'Add-on target research · Census business counts (2022)', url: URL_.cbp, dir: peList.length >= 3 ? -1 : 0 } : null,
-    lever: 'Earlier tuck-ins and retention plans for key technicians.', link: ['#/pp/market', 'Market'] });
+    lever: 'Faster tuck-ins and retention plans for key technicians.', link: ['#/pp/market', 'Market'] });
   add({ id: 'pp-people', co: 'pp', cat: 'people', w: 1, name: 'Population and income', why: 'Growing, higher-income counties add customers and bigger tickets.',
     read: pp ? { v: `${pctS(pp.growth)} population since 2020`, d: `typical household income $${big(pp.income)}`, date: '2020 to 2024', src: 'Census population estimates and ACS', url: URL_.pep, dir: sgn(pp.growth, 0.01) } : null,
     lever: 'Routes extended toward the fastest-growing counties.', link: ['#/pp/territory', 'Territory'] });
@@ -276,9 +276,9 @@ function buildFactors(D) {
   add({ id: 'fl-rates', co: 'fl', cat: 'demand', w: 3, name: 'Law-firm billing rates', why: 'When firms raise rates, they have room for IT and billing upgrades.',
     read: fr('PCU541110541110', 1, 0.03), lever: 'Renewals and upsells timed to the January rate rises.' });
   const lf = D.lawfirms, lfRev = lf.reduce((a, x) => a + (x.revenue_m || 0), 0), rpl = lf.map(x => x.revenue_per_lawyer_k).filter(Number.isFinite).sort((a, b) => a - b);
-  add({ id: 'fl-amlaw', co: 'fl', cat: 'demand', w: 2, name: 'Large-firm economics', why: 'Firms with high revenue per lawyer buy the most security and billing help.',
+  add({ id: 'fl-amlaw', co: 'fl', cat: 'demand', w: 2, name: 'Large-firm economics', why: 'Firms with high revenue per lawyer likely buy the most security and billing help.',
     read: lf.length ? { v: `$${big(lfRev * 1e6)} revenue across ${num(lf.length)} large firms`, d: rpl.length ? `median ${money(rpl[Math.floor(rpl.length / 2)] * 1e3)} per lawyer` : '', date: '2025 rankings', src: 'AM Law 200 public rankings', url: URL_.amlaw, dir: 1 } : null,
-    lever: 'The account map, from the firms with the highest revenue per lawyer.', link: ['#/fl/amlaw', 'AM Law account map'] });
+    lever: 'Account work starting with the firms with the highest revenue per lawyer.', link: ['#/fl/amlaw', 'AM Law account map'] });
   const cyb = lf.filter(x => (x.cyber_urgency_score || 0) >= 4).length;
   add({ id: 'fl-cyber', co: 'fl', cat: 'policy', w: 2, name: 'Cyber and insurer demands', why: 'Insurers and clients now require security controls that firms buy from IT providers.',
     read: lf.length ? { v: `${num(cyb)} of ${num(lf.length)} large firms score high on cyber urgency`, d: 'Analyst score of 4 or 5 out of 5', date: 'Sep 2026', src: 'Analyst scoring of AM Law firms', url: URL_.amlaw, dir: 1 } : null,
@@ -288,19 +288,19 @@ function buildFactors(D) {
     read: lf.length ? { v: `${num(ai1)} large firms rolling out AI, ${num(ai2)} planning`, d: 'From firm announcements and analyst review', date: 'Sep 2026', src: 'Analyst review of AM Law firms', url: URL_.amlaw, dir: 1 } : null,
     lever: 'An AI readiness package for the top 50 accounts.' });
   const pay = S('CES6000000003');
-  add({ id: 'fl-talent', co: 'fl', cat: 'labor', w: 2, name: 'Engineer pay', why: 'Engineer pay drives the cost of every help-desk ticket.',
+  add({ id: 'fl-talent', co: 'fl', cat: 'labor', w: 2, name: 'Engineer pay', why: 'Engineer pay likely drives the cost of every help-desk ticket.',
     read: pay ? { v: `${val(pay)} professional services pay`, d: `${chg(pay)} vs a year ago · computer services jobs ${chg(S('CES6054150001'))} · Missouri unemployment ${val(S('MOUR'))}`, date: asOf(pay), src: pub('CES6000000003'), url: pay.url, dir: pay.chg > 0.035 ? -1 : pay.chg < 0.025 ? 1 : 0, series: [pay, S('CES6054150001'), S('MOUR')].filter(Boolean) } : null,
     lever: 'Routine tickets moved to automation, and hiring in lower-cost markets.',
     sens: sens(`Each 1% rise in staff pay ≈ ${smoney(-R.fl * 0.45 * 0.01)} margin a year`, -R.fl * 0.45 * 0.01, pay?.chg != null ? `Today's ${chg(pay)} ≈ ${smoney(-R.fl * 0.45 * pay.chg)} margin a year` : null, pay?.chg != null ? -R.fl * 0.45 * pay.chg : null, 'margin',
       `Revenue ${D.revTxt.fl}; staff about 45% of revenue (assumption).`) });
   add({ id: 'fl-credit', co: 'fl', cat: 'money', w: 2, name: 'Cost of add-on debt', why: 'Add-on deals are often debt-funded, so credit spreads likely affect what a buyer can pay.',
-    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Add-on timing while spreads are tight.', link: ['#/ma/pipeline', 'Add-on pipeline'] });
+    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Add-ons closed while spreads are tight.', link: ['#/ma/pipeline', 'Add-on pipeline'] });
 
   /* Thomas Scientific: lab supply distribution, national */
   const nihCur = (D.nih?.items || []).reduce((a, s) => a + (s.current_amount || 0), 0), nihPrv = (D.nih?.items || []).reduce((a, s) => a + (s.prior_amount || 0), 0), nihChg = nihPrv ? nihCur / nihPrv - 1 : null;
   add({ id: 'ts-nih', co: 'ts', cat: 'public', w: 3, name: 'NIH research funding', why: 'University and institute labs buy supplies with grant money.',
     read: D.nih ? { v: `${money(nihCur)} in NIH awards so far this year`, d: `${pctS(nihChg)} vs the same days last year · ${D.nih.states.length} research states`, date: `Jan 1 to ${dayWords(D.nih.windows.current[1])}`, src: 'NIH RePORTER', url: URL_.nih, dir: sgn(nihChg, 0.02) } : null,
-    lever: 'Rep time toward institutions whose awards are growing, and check-ins where they shrank.', link: ['#/signals/readings', 'Live readings'],
+    lever: 'More rep time where awards grow, check-ins where they shrank.', link: ['#/signals/readings', 'Live readings'],
     sens: sens(`Each 5% change in grant dollars ≈ ${smoney(R.ts * 0.3 * 0.05)} sales a year`, R.ts * 0.3 * 0.05, nihChg != null ? `Today's ${pctS(nihChg)} ≈ ${smoney(R.ts * 0.3 * nihChg)} sales a year` : null, nihChg != null ? R.ts * 0.3 * nihChg : null, 'sales',
       `Revenue ${D.revTxt.ts} (public filings); about 30% of sales to research labs (assumption).`) });
   const hosp = S('CES6562200001');
@@ -337,7 +337,7 @@ function buildFactors(D) {
 
   /* BPI: public affairs and communications, DC, NYC, SF, Chicago, Europe */
   const ed = nextElection(D.today), edDays = Math.ceil((ed.d - startOfDay(D.today)) / 864e5);
-  add({ id: 'bpi-vote', co: 'bpi', cat: 'calendar', w: 3, name: 'Election calendar', why: 'Election years lift issue campaigns, and a new Congress brings new policy fights.',
+  add({ id: 'bpi-vote', co: 'bpi', cat: 'calendar', w: 3, name: 'Election calendar', why: 'Election years likely lift issue campaigns, and a new Congress brings new policy fights.',
     read: { v: `${num(edDays)} days to Election Day`, d: `${ed.label} · the new Congress sits in January`, date: today, src: 'Federal election calendar', url: URL_.fec, dir: 1 },
     lever: 'Issue campaigns through Election Day, then new-Congress briefings in January.' });
   const allR = (D.policy?.items || []).find(i => i.id === 'all'), rChg = allR && rp(allR.prior) ? rp(allR.current) / rp(allR.prior) - 1 : null;
@@ -361,7 +361,7 @@ function buildFactors(D) {
     sens: sens(`Each 1% rise in staff pay ≈ ${smoney(-R.bpi * 0.55 * 0.01)} margin a year`, -R.bpi * 0.55 * 0.01, pay?.chg != null ? `Today's ${chg(pay)} ≈ ${smoney(-R.bpi * 0.55 * pay.chg)} margin a year` : null, pay?.chg != null ? -R.bpi * 0.55 * pay.chg : null, 'margin',
       `Fee revenue ${D.revTxt.bpi}; staff about 55% of fee revenue (assumption).`) });
   add({ id: 'bpi-credit', co: 'bpi', cat: 'money', w: 1, name: 'Buyer financing', why: 'Buyers can pay more when they can borrow cheaply.',
-    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Sale timing, since cheaper credit likely lifts what buyers pay.' });
+    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Cheaper credit likely lifts what any buyer of BPI could pay.' });
 
   /* Fair Harbor: sustainable swim and beachwear, online and wholesale */
   const sz = season(D.today);
@@ -385,7 +385,7 @@ function buildFactors(D) {
     sens: sens(`Each 10% rise in diesel ≈ ${smoney(-R.fh * 0.08 * 0.3 * 0.1)} margin a year`, -R.fh * 0.08 * 0.3 * 0.1, dsl?.chg != null ? `Today's ${chg(dsl)} ≈ ${smoney(-R.fh * 0.08 * 0.3 * dsl.chg)} margin a year` : null, dsl?.chg != null ? -R.fh * 0.08 * 0.3 * dsl.chg : null, 'margin',
       `Revenue ${D.revTxt.fh}; shipping about 8% of sales; fuel about 30% of shipping (assumptions).`) });
   add({ id: 'fh-weather', co: 'fh', cat: 'weather', w: 2, name: 'Spring weather', why: 'A warm spring pulls swim sales forward; a cold one pushes them back.',
-    read: { v: sz.inSeason ? 'In season' : 'Off season', d: 'Watch April to June forecasts in the top coastal markets', date: today, src: 'Retail calendar', url: null, dir: 0 },
+    read: { v: sz.inSeason ? 'In season' : 'Off season', d: 'April to June forecasts in the top coastal markets matter most', date: today, src: 'Retail calendar', url: null, dir: 0 },
     lever: 'Spring email and ad spend shifted week by week to the warmest markets.' });
   const nyc = D.hz.fh;
   add({ id: 'fh-nyc', co: 'fh', cat: 'housing', w: 1, name: 'Manhattan market', why: 'Manhattan foot traffic and home buying likely feed the SoHo store.',
@@ -477,7 +477,7 @@ async function overview(ctx) {
   const cell = (co, cat) => {
     const fs = F.filter(f => f.co === co && f.cat === cat); if (!fs.length) return '<td class="sg-none" aria-label="Not a main force"></td>';
     const net = fs.reduce((a, f) => a + f.read.dir * f.w, 0), mixed = fs.some(f => f.read.dir > 0) && fs.some(f => f.read.dir < 0);
-    const st = mixed && Math.abs(net) < 2 ? ['Mixed', 'warn'] : net > 0 ? ['Helps', 'good'] : net < 0 ? ['Hurts', 'bad'] : ['Steady', ''];
+    const st = mixed && Math.abs(net) < 2 ? ['Mixed', 'warn'] : net > 0 ? ['Tailwind', 'good'] : net < 0 ? ['Headwind', 'bad'] : ['Steady', ''];
     const w = Math.max(...fs.map(f => f.w));
     return `<td><button type="button" class="sys-chip${st[1] ? ` sys-chip--${st[1]}` : ''} sg-cell${w === 3 ? ' hi' : ''}" data-co="${co}" data-cat="${cat}" title="${h(fs.map(f => `${f.name}: ${f.read.v}`).join(' · '))}" aria-label="${h(`${CO_NAME[co]}, ${CAT_NAME[cat]}: ${st[0]}, ${W_TXT[w].toLowerCase()} importance`)}">${st[0]}</button></td>`;
   };
@@ -531,7 +531,7 @@ async function overview(ctx) {
     const rows = F.filter(f => f.co === co).map(f => ({ ...f, reading: `${f.read.v}${f.read.d ? ` (${f.read.d})` : ''}${f.read.src ? ` · ${f.read.src}${f.read.date ? `, ${f.read.date}` : ''}` : ''}`, effect_now: DIR[f.read.dir].t, size: f.sens ? `${f.sens.now || ''}${f.sens.now ? '. ' : ''}${f.sens.unit}` : '', _w: f.w * 10 + (f.read.dir < 0 ? 2 : f.read.dir > 0 ? 1 : 0) }));
     const hu = rows.filter(r => r.read.dir < 0).length, he = rows.filter(r => r.read.dir > 0).length;
     root.querySelector('#sg-co-lead').dataset.co = co;
-    root.querySelector('#sg-co-lead').innerHTML = `${rows.length} forces, ${hu} likely hurting, ${he} helping. Revenue ${h(D.revTxt[co])}`;
+    root.querySelector('#sg-co-lead').innerHTML = `${rows.length} forces; public data shows ${hu} hurting, ${he} helping. Revenue ${h(D.revTxt[co])}`;
     const host = root.querySelector('#sg-tbl');
     if (phone()) {   // phone: one card per force instead of a five-column table
       tbl = null;
@@ -648,7 +648,7 @@ export default {
     { id: 'readings', name: 'Live readings', icon: '∿', render: readings },
   ],
   tour: [
-    { order: 125, hash: '#/signals/overview', caption: '<b>What moves sales.</b> Weather is one force. Home sales, pay, prices, rates, grants and elections move sales too.', narration: 'Weather is one force. Home sales, pay, prices, rates, grants and elections move sales too.', duration: 8000 },
+    { order: 125, hash: '#/signals/overview', caption: '<b>What moves sales.</b> Weather is one force. Home sales, pay, prices, rates, grants and elections likely move sales too.', narration: 'Weather is one force. Home sales, pay, prices, rates, grants and elections likely move sales too.', duration: 8000 },
     { order: 126, hash: '#/signals/overview?co=all', caption: '<b>All six, ranked.</b> Each force sized in dollars, with its assumption shown.', narration: 'Each lever is sized in dollars from public data, with the assumption shown.', duration: 7000 },
     { order: 127, hash: '#/signals/readings', caption: '<b>Live readings.</b> Rates, costs, labor, housing, grants and federal buying, refreshed every night.', narration: 'Every reading is public and refreshed nightly: rates, costs, labor, housing, grants and federal buying.', duration: 7500 },
   ],

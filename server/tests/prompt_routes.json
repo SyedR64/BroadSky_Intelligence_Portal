@@ -3,7 +3,7 @@
  "routes": {
   "Estimate Punctual Pros revenue from public filings": "grounded:fin",
   "How do the portfolio's valuations compare with public peers?": "grounded:comps",
-  "How does BSP actually buy companies?": "grounded:buys",
+  "What do BSP's disclosed deals show?": "grounded:buys",
   "How does BSP scale CET across the Northeast?": "grounded:playbook",
   "How does tech enablement raise Punctual Pros' value?": "grounded:os",
   "How many new-mover leads are in Lancaster County?": "grounded:movers",
@@ -36,7 +36,7 @@
   "Estimate Punctual Pros revenue from filings": "grounded:fin",
   "Estimate Thomas Scientific revenue from public filings": "grounded:fin",
   "How big is the Comfort Club opportunity?": "grounded:membership",
-  "How does BSP actually buy companies?": "grounded:buys",
+  "What do BSP's disclosed deals show?": "grounded:buys",
   "How does BSP scale CET across the Northeast?": "grounded:playbook",
   "How does Broad Sky buy companies?": "grounded:buys",
   "How does Smith + Howard compare?": "grounded:nationwide_sub",

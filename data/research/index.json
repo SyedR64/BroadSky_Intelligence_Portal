@@ -43,7 +43,7 @@
    "folder": "research",
    "title": "Broad Sky's disclosed deals: patterns read from public announcements",
    "item_count": 68,
-   "bytes": 115824,
+   "bytes": 115585,
    "generated": "2026-10-06"
   },
   {
@@ -437,7 +437,7 @@
   "research_items": 4863,
   "sales_files": 10,
   "sales_rows": 182351,
-  "bytes": 45245066,
+  "bytes": 45244827,
   "data_from": "2026-09-24",
   "data_to": "2026-11-23"
  }
