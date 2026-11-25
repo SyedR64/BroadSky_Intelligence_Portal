@@ -1,5 +1,5 @@
-import * as Copy from './copy.js?v=20261124183445';
-import * as L from './deal-lib.js?v=20261124183445';
+import * as Copy from './copy.js?v=20261124223132';
+import * as L from './deal-lib.js?v=20261124223132';
 /* ═══════════════════════════════════════════════════════════════════════════
    Acquisition model: a live buyout, DCF, roll-up and sensitivity model with
    spreadsheet-style input cells, presets from the portfolio's own estimates and
@@ -13,7 +13,7 @@ const COLOR = 'color-mix(in srgb,var(--sys-good) 72%,var(--sys-ink))';
 const CO_COLOR = { pp: 'var(--co-pp)', cet: 'var(--co-cet)', fl: 'var(--co-fl)', ts: 'var(--co-ts)', bpi: 'var(--co-bpi)', fh: 'var(--co-fh)' };
 const CO_ROUTE = { pp: 'pp', cet: 'cet', fl: 'fl', ts: 'ts' };
 const CO_NAME = { pp: 'Punctual Pros', cet: 'CET', fl: 'Frontline', ts: 'Thomas Scientific', bpi: 'BPI', fh: 'Fair Harbor' };
-const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261124183445'; document.head.appendChild(l); } };
+const injectCss = () => { if (!document.getElementById('css-deal')) { const l = document.createElement('link'); l.id = 'css-deal'; l.rel = 'stylesheet'; l.href = 'modules/deal.css?v=20261124223132'; document.head.appendChild(l); } };
 
 /* ── formatting ──────────────────────────────────────────────────────────── */
 const MINUS = '−';

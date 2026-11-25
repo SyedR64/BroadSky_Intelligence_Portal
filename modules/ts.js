@@ -1,13 +1,13 @@
-import * as Copy from './copy.js?v=20261124183445';
+import * as Copy from './copy.js?v=20261124223132';
 /* Thomas Scientific — target-account intelligence and financial picture (the add-on list is on the Acquisition engine).
    Data: Thomas Scientific lab sites (27.5K scored sites, columnar) is the single source for every site and account number:
    parent accounts are rolled up from it, so the overview and the account list always agree.
    Thomas Scientific parent accounts (legacy top-500 account plan) only flags plan membership. Frontline and Thomas Scientific add-on targets,
    Thomas Scientific public filings, Public comparables. Lender marks and sponsor equity marks sit behind the
    BSP-only deal-team toggle on the Financials view (#/ts/filings?deal=1), never on company-facing views. */
-import { renderFilings } from '../assets/components.js?v=20261124183445';
-import { companyLinks } from './company-links.js?v=20261124183445';
-import { embedView } from './embed.js?v=20261124183445';
+import { renderFilings } from '../assets/components.js?v=20261124223132';
+import { companyLinks } from './company-links.js?v=20261124223132';
+import { embedView } from './embed.js?v=20261124223132';
 
 /* Colours are system tokens (system.css); tok() resolves one for the Leaflet canvas renderer. */
 const C = 'var(--co-ts)', HEX = 'var(--co-ts)';
@@ -86,7 +86,7 @@ const SHORT = {
 const shortPlay = a => SHORT[a] || 'Qualify buying centre and current distributor first.';
 const playFor = a => PLAYS[a] || { motion: 'Qualify', play: 'Qualify buying centre and current distributor before assigning a motion.', owner: 'Inside sales' };
 
-function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261124183445'; document.head.appendChild(l); } }
+function injectCss() { if (!document.getElementById('css-ts')) { const l = document.createElement('link'); l.id = 'css-ts'; l.rel = 'stylesheet'; l.href = 'modules/ts.css?v=20261124223132'; document.head.appendChild(l); } }
 
 /* ── Aggregation (computed once per session, reused by every view) ───────────── */
 let AGG = null;

@@ -7,7 +7,7 @@
 
    Usage (any depth; links are computed from this file's own URL):
      <script type="module">
-       import { Frame } from '../../assets/frame.js?v=20261124183445';
+       import { Frame } from '../../assets/frame.js?v=20261124223132';
        Frame.mount({ co: 'pp', persona: 'pp' });          // concept page
      </script>
      Frame.mount({ variant: 'app' });                      // app.html
@@ -50,7 +50,7 @@
      setAskState(open)   aria-expanded="true|false" on the Ask button (for a page whose handler opens its own panel).
    ═══════════════════════════════════════════════════════════════════════════ */
 
-import { Session } from './session.js?v=20261124183445';
+import { Session } from './session.js?v=20261124223132';
 
 /* The site lives at broadsky-agent.vercel.app. Older addresses (GitHub Pages and the project's earlier Vercel names) forward there, keeping the page, query and portal view. */
 export const HOME = 'https://broadsky-agent.vercel.app/';

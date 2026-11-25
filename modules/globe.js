@@ -7,8 +7,8 @@
    Prepared tours come from data/research/globe_tours.json (built from the add-on screens and the firm records).
    The firm levels see the portfolio tours; a company role sees its own company's. The field level is shown the
    globe only for an address: a typed address ('site' steps) or a job's example address; no tours, no other places. */
-import { Session } from '../assets/session.js?v=20261124183445';
-import { MapCmd } from '../assets/mapcmd.js?v=20261124183445';
+import { Session } from '../assets/session.js?v=20261124223132';
+import { MapCmd } from '../assets/mapcmd.js?v=20261124223132';
 
 const V = new URL(import.meta.url).search;   // the registry's ?v= stamp, reused for the engine and the stylesheet
 
@@ -24,7 +24,7 @@ export async function mapsKey() {
 
 /** The CesiumJS renderer behind the same small interface as assets/godseye.js mount(). */
 async function mountCesium(host, key, opts) {
-  const CX = await import(`../assets/godseye-cesium.js${V || '?v=20261124183445'}`);
+  const CX = await import(`../assets/godseye-cesium.js${V || '?v=20261124223132'}`);
   const api = CX.createGlobe(host, { maps: { google3dTilesKey: key }, controls: false, onStop: opts.onStop, onEnd: opts.onEnd });
   const r = await api.ready;
   return {
@@ -56,7 +56,7 @@ function toursFor(all, role) {
 
 async function view(ctx) {
   const { el, params, data, esc, app } = ctx;
-  if (!document.getElementById('css-globe')) { const l = document.createElement('link'); l.id = 'css-globe'; l.rel = 'stylesheet'; l.href = `modules/globe.css${V || '?v=20261124183445'}`; document.head.appendChild(l); }
+  if (!document.getElementById('css-globe')) { const l = document.createElement('link'); l.id = 'css-globe'; l.rel = 'stylesheet'; l.href = `modules/globe.css${V || '?v=20261124223132'}`; document.head.appendChild(l); }
   const role = Session.role();
   const field = role.level === 'co_field';
   el.innerHTML = `<div class="gx-screen">
@@ -91,7 +91,7 @@ async function view(ctx) {
     onEnd: () => {},
   };
   let g;
-  try { g = key ? await mountCesium(host, key, engineOpts) : await (await import(`../assets/godseye.js${V || '?v=20261124183445'}`)).mount(host, engineOpts); }
+  try { g = key ? await mountCesium(host, key, engineOpts) : await (await import(`../assets/godseye.js${V || '?v=20261124223132'}`)).mount(host, engineOpts); }
   catch (e) { console.warn('[globe]', e); host.innerHTML = `<div class="gx-msg">${ctx.ui.note('The globe could not load.', 'warn')}</div>`; return; }
   if (!host.isConnected) { g.destroy(); return; }
   if (!g.renderer) g.renderer = 'open';
