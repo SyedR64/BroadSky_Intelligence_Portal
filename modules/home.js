@@ -210,7 +210,7 @@ const noteOf = r => r.flag?.k === 0 ? `Loan matures ${r.matLabel || 'within two 
   : NOTE[r.id] ? NOTE[r.id](r)
   : r.addOns ? `${r.addOns} add-on${r.addOns === 1 ? '' : 's'} in ${yrs(r)}` : `No add-ons in ${yrs(r)}`;
 /** The status chip: the exit-window flag fin.js sets, cut to its first words ("Build", "In exit window", "Loan due in 13 mo"). */
-const status = r => String(r.flag?.t || '').replace(/\s*\(.*\)$/, '').replace(/:.*$/, '').replace(/^Refinancing due in/, 'Loan due in');
+const status = r => String(r.flag?.t || '').replace(/\s*\(.*\)$/, '').replace(/:.*$/, '').replace(/^Refinancing due in/, 'Loan due in').replace(/^Exit prep$/, 'Near exit window');
 /** The dollar figure an estimate gives for `kind` ('revenue' picks the revenue half of "$65–100M revenue; $6–11M EBITDA"). */
 function dollars(e, kind) {
   if (!e) return '';
@@ -240,8 +240,8 @@ function flaggedItems(rows, firm, esc) {
     const base = { id: r.id, r, sub: esc([held, adds].filter(Boolean).join(' · ')), chip: stChip(status(r), r.flag.st) };
     let fact = '', kind = '', when = '', st = r.flag.st;
     if (r.flag.k === 0) { kind = 'loan'; fact = `${name} loan matures ${r.matLabel || 'within two years'}`; when = r.mo != null ? `${Math.max(0, Math.round(r.mo))}<small>mo</small>` : 'Due'; }
-    else if (r.flag.k === 1) { kind = 'window'; fact = `${name} is in the exit window`; when = 'Now'; }
-    else if (r.flag.k === 2) { const w = windowOpens(r); if (!w || w.mo > 12) continue; kind = 'soon'; fact = `${name} reaches the exit window in ${w.label}`; when = `${w.mo}<small>mo</small>`; }
+    else if (r.flag.k === 1) { kind = 'window'; fact = `${name} is in the typical exit window`; when = 'Now'; }
+    else if (r.flag.k === 2) { const w = windowOpens(r); if (!w || w.mo > 12) continue; kind = 'soon'; fact = `${name} reaches the typical exit window in ${w.label}`; when = `${w.mo}<small>mo</small>`; }
     else continue;
     out.push({ ...base, kind, st, when, fact,
       open: `<button type="button" class="sys-attn-open" data-hm="row" data-id="${esc(r.id)}"><span class="sys-dot" ${coAttr(r.id)} aria-hidden="true"></span>${esc(fact)}</button>`,
@@ -258,7 +258,7 @@ function headline(items, drafts) {
 /** The six companies as status tiles, in the fixed order. */
 function tilesHTML(rows, firm, esc, tpl) {
   const m = Math.min(tpl.hold / HOLD_SCALE, 1) * 100;
-  const key = `<p class="sys-hold-key" aria-hidden="true"><span><i></i>Years held, 0 to ${HOLD_SCALE}</span><span><i class="is-zone"></i>Exit window, 4 and up</span><span><i class="is-mark"></i>Smith + Howard sold at ${esc(tpl.hold.toFixed(1))}</span></p>`;
+  const key = `<p class="sys-hold-key" aria-hidden="true"><span><i></i>Years held, 0 to ${HOLD_SCALE}</span><span><i class="is-zone"></i>Typical exit window, 4 and up</span><span><i class="is-mark"></i>Smith + Howard sold at ${esc(tpl.hold.toFixed(1))}</span></p>`;
   return `<div class="sys-tiles-box"><div class="sys-tiles">${TILE_ORDER.map(id => rows.find(r => r.id === id)).filter(Boolean).map(r => {
     const name = LONG[r.id] || r.short, rev = dollars(r.rev, 'revenue'), pf = isPF(r.rev), st = status(r);
     const v = r.held != null ? Math.min(r.held / HOLD_SCALE, 1) * 100 : 0, adds = addTxt(r.addOns, reportedOf(firm, r.id));
@@ -312,7 +312,7 @@ async function firmHome(ctx, role, live) {
     title: esc(headline(items, drafts.length)),
     lead: asOf ? `From public filings, as of ${esc(asOf)}.` : '',
     body: askBoxHTML(role, esc) + gridHTML(figsHTML(figs, 'Fund and portfolio, estimated'),
-      attnHTML(`Needs attention · ${items.length + drafts.length}`, [...items, ...drafts], [approvalLine(role, drafts.length), reported ? `${esc(reported.replace(/\.$/, ''))} ${SAMPLE}` : ''])),
+      attnHTML(`Flagged · ${items.length + drafts.length}`, [...items, ...drafts], [approvalLine(role, drafts.length), reported ? `${esc(reported.replace(/\.$/, ''))} ${SAMPLE}` : ''])),
   });
   let view = 'tiles'; try { if (localStorage.getItem(COS_KEY) === 'table') view = 'table'; } catch { /* tiles */ }
   const sort = { key: 'status', dir: 1 };
@@ -322,7 +322,7 @@ async function firmHome(ctx, role, live) {
       <div class="hm-cos-body"></div>
       ${firm?.meta?.generated ? `<span data-asof>${esc(fmt.date(firm.meta.generated))}</span>` : ''}
       <p class="sys-src hm-src" data-src>Company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures) and the BSP firm profile, as of ${esc(firm?.meta?.generated || 'Sept 2026')}. <a href="#/fin/portfolio">Value and exit table</a></p>
-      <p class="sys-src hm-src" data-method>Revenue and EBITDA are the current or pro forma estimates, summed from midpoints as on the value and exit table; Fund I's mark is its gross asset value on Form ADV over the amount sold on Form D. Entry value is the enterprise value at BSP's entry. Status: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 or more, exit prep. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years. Reported add-ons were named in the trade press, not announced by the company. The reporting line is sample data.</p>
+      <p class="sys-src hm-src" data-method>Revenue and EBITDA are the current or pro forma estimates, summed from midpoints as on the value and exit table; Fund I's mark is its gross asset value on Form ADV over the amount sold on Form D. Entry value is the enterprise value at BSP's entry. Status: a loan due within 24 months; held 4 years or more, the typical exit window; 3 or more, near it. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years. Reported add-ons were named in the trade press, not announced by the company. The reporting line is sample data.</p>
     </section>
     ${dayHTML(role, esc)}
     ${pillHTML(role, esc)}</div>`;
@@ -377,7 +377,7 @@ async function companyHome(ctx, role, live) {
     title: esc(firstSentence(lead) || name),
     lead: esc(afterFirst(lead)),
     body: askBoxHTML(role, esc) + gridHTML(figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), `${esc(name)} figures`),
-      attnHTML(n ? `Needs attention · ${n}` : '', [...items, ...drafts], [n ? '' : `Nothing flagged for ${esc(name)}.`, approvalLine(role, drafts.length), held])),
+      attnHTML(n ? `Flagged · ${n}` : '', [...items, ...drafts], [n ? '' : `Nothing flagged for ${esc(name)}.`, approvalLine(role, drafts.length), held])),
   });
   el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${band}${outHTML()}
     ${dayHTML(role, esc)}
@@ -728,7 +728,7 @@ export default {
   tour: [
     { order: 100, hash: '#/home/overview', caption: '<b>Broad Sky OS.</b> Six companies. Every number is tied to a decision.', narration: 'This is Broad Sky OS. Six companies, and every number is tied to a decision.', duration: 7000 },
     { order: 105, hash: '#/home/overview', caption: '<b>Six companies.</b> Revenue, years held and status, one tile each.', narration: 'One tile per company: revenue, years held and its status.', duration: 9000 },
-    { order: 110, hash: '#/home/overview', caption: '<b>Needs attention.</b> Loans due, exit windows and drafts waiting for approval, in one list.', narration: 'Loans due, exit windows and drafts waiting for approval, in one list.', duration: 9000 },
+    { order: 110, hash: '#/home/overview', caption: '<b>Flagged.</b> Loans due, exit windows and drafts waiting for approval, in one list.', narration: 'Loans due, exit windows and drafts waiting for approval, in one list.', duration: 9000 },
     { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, six companies today, 23 add-ons, one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, six companies today, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };
