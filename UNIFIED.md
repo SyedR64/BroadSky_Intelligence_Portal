@@ -88,6 +88,8 @@ and at the end of `<body>`:
 </script>
 ```
 
+`app.html` alone adds `&family=Instrument+Serif` to the same font link: the display face of the home's command band (§3d). No other page loads it.
+
 Use the same `?v=` stamp on `system.css`, `frame.js` and `chat.js` (`scripts/bump_version.sh`). The frame reuses its own `?v=` when it lazy-loads the chat, so the chat module is never loaded twice.
 
 ## 3 · DOM skeleton
@@ -124,12 +126,25 @@ Section content uses only: `.sys-grid--2|3|4`, `.sys-card` (`-label`, `-title`, 
 - **Markup.** `<details class="sys-fold"><summary>Label</summary>…</details>`. It lives in `assets/system.css` so standalone pages and the shell share it; the older module names that carry the same look (`ma-how`, `bsp-drawer`, `cs-drawer`, `pe-more`) keep working and add only spacing.
 - **Use.** Explanation, method and design notes (copy rule 12) sit in a closed `.sys-fold` or behind the Method control, never in a tab.
 
+### 3d · Command band and the home's parts (system.css §6q)
+
+The first block of every home in the shell (`modules/home.js`), and the only place the display face appears.
+
+- **Band.** `section.sys-command[data-sys-theme="dark"]`: a dark island in both themes (`--sys-cmd-bg`, deep navy; one step lighter than the page in dark), radius `--sys-r-xl` (32px; 24px at ≤560px). Inside, depth comes from washes (`--sys-cmd-panel`, `--sys-cmd-panel-2` on hover, `--sys-cmd-line`), never borders. Order: `.sys-command-kicker` (mono 12px, a green dot, greeting by time of day and role, or company · role, plus a `sample` badge on sandbox homes), one `h1.sys-display` (`--sys-font-display`, `--sys-fs-command` 36→68px, `--sys-tr-command`; one per screen, never under 28px), one `.sys-command-lead` line, then its body. Decoration is CSS or an inline `aria-hidden` SVG (`.sys-command-mark`, one star per company in its accent).
+- **Headline.** A reading of data the home already has, never an instruction: the firm home counts its list ("One loan due. Two exit windows."); a company or role home uses the first sentence of its catalogue line ("4 jobs today.").
+- **Ask box.** `form.sys-askbox` (pill, one text field, `button.sys-send` round ink button) and `.sys-prompts` of `.sys-chip` buttons: the role's own question first as `.sys-chip--sig`, then its prompts. One ask entry on a screen at a time: the band's box, or the dock's composer while the dock is open, or `button.sys-askbox.sys-askbar` (the sticky pill), which shows (`[data-show]`) only while no other ask box is in view and sits in the flow at the end of the column, so it never covers the last line.
+- **Figures.** `.sys-figs > .sys-fig` (`-label` mono 12px, `-value` Inter 600 tabular at `--sys-fs-fig`, `-sub`); at most three; estimates carry `.sys-est`. `.sys-figs--card` puts them on cards below the band (one row each at ≤560px).
+- **Attention rows.** `.sys-attn` with `h2.sys-attn-title` and `ol.sys-attn-list > li.sys-attn-row`: one shape for every row, `.sys-attn-when` (a short time or count, a status edge from `data-st`), `.sys-attn-main` (a `.sys-attn-open` button that covers the row, then `.sys-attn-meta` with the grey `.sys-attn-sub` and `.sys-attn-acts` links that sit above the cover), and the status chip. Read-only lines go in one quiet `.sys-attn-quiet` line under the list.
+- **Below the band.** `.sys-sec-head` (h2 20px, a quiet count or a pressed-chip toggle); `.sys-tiles > a.sys-tile[data-co]` (accent top bar, one figure, one `.sys-hold` bar, one status chip; always in the order PP, CET, Frontline, Thomas Scientific, BPI, Fair Harbor); `.sys-hold-bar` (years held on a shared 0–6 scale: `--sys-hold-track`, the exit window hatched in `--sys-hold-zone` from 4 years, the one exit to date as a `--sys-hold-mark` tick) with its `.sys-hold-key`; `ul.sys-day` of `.sys-day-item` buttons (columns on wide screens, `--list` or ≤560px a list), each asking the agent its own question; `.sys-next` (a field role's next job inside the band, `.sys-next-acts` 48px buttons); `th[aria-sort] .sys-sort` for a column you can sort.
+- **Type floor.** Nothing in these parts is under 12px except the shared 11px `.sys-est` elsewhere.
+
 Alternate band: `.sys-section--alt` (warm grey). Dark band: `data-sys-theme="dark"` on the section. Never more than one dark band in a row, never two `.sys-section--alt` in a row.
 
 ## 4 · Type, spacing, radii
 
 | Role | Class / token | Size | Weight · tracking |
 |---|---|---|---|
+| Command headline (the home's band only, §3d) | `.sys-display` / `--sys-fs-command`, `--sys-font-display` (Instrument Serif, fallback ui-serif, Georgia) | `clamp(36px, 4.6vw, 68px)` | 400 · −.03em |
 | Display hero only (a gallery or section hero) | `.sys-h1.sys-h1--display` | `clamp(48px, 9vw, 112px)` | 800 · −.05em |
 | Page title (one per page) | `.sys-h1` / `--sys-fs-3xl` | `clamp(36px, 6.2vw, 72px)` | 800 · −.04em |
 | Section title | `.sys-h2` / `--sys-fs-2xl` | `clamp(28px, 4.2vw, 48px)` | 800 · −.04em |
@@ -142,11 +157,11 @@ Alternate band: `.sys-section--alt` (warm grey). Dark band: `data-sys-theme="dar
 | Numbers | `.sys-num`, `.sys-kpi-value` | mono, tabular | 600 |
 | Provenance (in the Sources drawer) | `.sys-src` | mono 12px, mute | 500 |
 
-Fonts: Inter for everything; JetBrains Mono only for numbers, labels, kickers and provenance. No other families.
+Fonts: Inter for everything; JetBrains Mono only for numbers, labels, kickers and provenance; Instrument Serif (`--sys-font-display`) only for the one headline of the home's command band (§3d), never under 28px. No other families.
 
 Spacing scale `--sys-sp-1…10` = 4, 8, 12, 16, 24, 32, 48, 64, 96, 128. Rhythm: section padding `--sys-section-y` (56→112px); section head → content `--sys-head-gap` (28→48px); grid gap 16px (24px with `.sys-grid--gap-lg`); inside cards 10px between parts. Content width `--sys-wrap` 1200px with `--sys-gut` 16→40px; the frame uses the same width so edges line up.
 
-Radii: 6 (kbd, code), 10 (notes, small controls), 16 (cards, tables, KPI strips), 24 (feature cards, CTA), pill (buttons, chips, nav). Tokens `--sys-r-xs|sm|r|lg|pill`; `--sys-r-md` is an alias of `--sys-r` (16) for pages that think in sm/md/lg, so never redefine it locally. Shadows: `--sys-sh-1` resting, `--sys-sh-2` hover/raised, `--sys-sh-3` floating media only.
+Radii: 6 (kbd, code), 10 (notes, small controls), 16 (cards, tables, KPI strips), 24 (feature cards, CTA), 32 (the command band), pill (buttons, chips, nav). Tokens `--sys-r-xs|sm|r|lg|xl|pill`; `--sys-r-md` is an alias of `--sys-r` (16) for pages that think in sm/md/lg, so never redefine it locally. Shadows: `--sys-sh-1` resting, `--sys-sh-2` hover/raised, `--sys-sh-3` floating media only.
 
 Buttons: one `.sys-btn--primary` per view region; `--secondary` beside it; `--ghost` for tertiary; `--accent` (gradient) at most once per page, usually in the hero or CTA; `--co` only on company pages. Sizes `--sm` (36px, top bars, card feet), default (44px), `--lg` (52px, hero and CTA).
 

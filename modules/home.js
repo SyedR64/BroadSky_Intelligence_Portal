@@ -3,7 +3,6 @@ import { dataset, srcLabel } from './copy.js?v=20261124223132';
 import { loadScoreboard, templateExit } from './fin.js?v=20261124223132';
 import { Session } from '../assets/session.js?v=20261124223132';
 import { embedView } from './embed.js?v=20261124223132';
-import { Counter } from '../assets/counter.js?v=20261124223132';
 import { BSPSite } from '../assets/site-lookup.js?v=20261124223132';
 const COS = [
   { id: 'cet', name: 'Commonwealth Electrical Technologies (CET)', short: 'CET', color: 'var(--co-cet)', hex: '#4c8dff', sector: 'Commercial electrical · solar · energy', entry: '2025-02' },
@@ -47,59 +46,118 @@ const addOnsOf = (firm, id) => (firmItem(firm, id)?.add_ons || []).map(a => { co
 /** Add-ons reported in the trade press but not announced (OS spec 8: CET's four October 2026 deals carry "reported"). */
 const reportedOf = (firm, id) => (firmItem(firm, id)?.add_ons || []).filter(a => a.status === 'reported').length;
 /** "2 add-ons, 4 reported" when some are reported only, else "6 add-ons". */
-const addTxt = (n, rep) => { n = n || 0; const k = n - rep; return rep ? `${k} add-on${k === 1 ? '' : 's'}, ${rep} reported` : `${n} add-on${n === 1 ? '' : 's'}`; };
+const addTxt = (n, rep) => { n = n || 0; const k = n - rep; return rep ? `${k} add-on${k === 1 ? '' : 's'}, ${rep} reported` : n ? `${n} add-on${n === 1 ? '' : 's'}` : 'No add-ons'; };
 /** One add-on in a side-panel timeline: name, headquarters, a "reported" chip where it applies, the source link. */
 const addOnHTML = (a, esc) => `${esc(a.name)}${a.hq ? ` <span class="dim">· ${esc(String(a.hq).replace(/\s*\(reported\)/i, ''))}</span>` : ''}${a.rep ? ` ${stChip('reported', 'info')}` : ''}${a.src ? ` <a class="dim" href="${esc(a.src)}" target="_blank" rel="noopener" aria-label="Source">↗</a>` : ''}`;
 
 
 /* ── Home by level (OS spec 5). One screen, three homes, chosen by the role in view ("Viewing as", assets/session.js):
    the firm home for the firm levels, the company home for company leadership (and the fund home for investor relations),
-   the role home for office and field. It redraws when the role changes. Each draws into the home column; the role's agent
-   is docked at the right (mountDock below) and an address answer opens under the head (#hm-out). Sources and method text
-   carry data-src and data-method: the shell moves them into its Sources and Method drawers. ── */
+   the role home for office and field. It redraws when the role changes. Every home opens with the command band
+   (assets/system.css §6q): a kicker, one headline read from data the home already has, the ask box with the role's own
+   question and prompts, up to three figures and one ranked list. The agent is docked at the right (mountDock below),
+   closed until the first question; an address answer opens under the band (#hm-out). Sources and method text carry
+   data-src and data-method: the shell moves them into its Sources and Method drawers. ── */
 const injectCss = () => { if (!document.getElementById('css-home')) { const l = document.createElement('link'); l.id = 'css-home'; l.rel = 'stylesheet'; l.href = 'modules/home.css?v=20261124223132'; document.head.appendChild(l); } };
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts the agent made that wait for the person's OK (assets/agent.js writes it)
 const AGENT = '#/home/agent';                // never with a question in the address (OS spec 9.4)
+const COS_KEY = 'bsp-home-cos';              // this visitor's choice of tiles or table for the six companies
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 /** {month:-1} in the catalogue becomes last month's short name (the agent page fills it the same way). */
 const fill = t => String(t ?? '').replace(/\{month:(-?\d+)\}/g, (_, n) => MONTHS[((new Date().getMonth() + Number(n)) % 12 + 12) % 12]);
 const FUND_ONLY = new Set(['bsp-investor-relations']);   // firm team, but the fund and documents only (OS spec 3)
 const homeKind = r => FUND_ONLY.has(r.id) ? 'company' : r.level === 'firm_leadership' || r.level === 'firm_team' ? 'firm' : r.level === 'co_leadership' ? 'company' : 'role';
+/* the six companies always in the system order (UNIFIED.md), so each sits in the same place every day */
+const TILE_ORDER = ['pp', 'cet', 'fl', 'ts', 'bpi', 'fh'];
+const HOLD_SCALE = 6;   // the hold bar's scale in years; the exit window starts at 4 (fin.js exitFlag)
 
 /** Drafts waiting for this role's OK, newest first. */
 function waiting(role) {
   try { const v = JSON.parse(localStorage.getItem(APPROVALS_KEY) || '[]'); return (Array.isArray(v) ? v : []).filter(x => x && x.role === role.id && (!x.status || x.status === 'draft')).sort((a, b) => String(b.at || '').localeCompare(String(a.at || ''))); } catch { return []; }
 }
-const itemChip = (t, esc) => `<span class="sys-chip ${/urgent|late|past due/i.test(t) ? 'sys-chip--warn' : 'sys-chip--info'}">${esc(t)}</span>`;
-function todayHTML(role, esc, max = 6) {
-  const h = role.home || {}, list = Array.isArray(h.list) ? h.list : [];
-  const rows = list.map((x, i) => `<li${i >= max ? ' class="hm-hide"' : ''}><a class="hm-item" href="${AGENT}"><span class="hm-time sys-num">${esc(fill(x.time))}</span><span class="hm-main"><b>${esc(fill(x.title))}</b><span>${esc(fill(x.where))}</span></span>${x.chip ? itemChip(x.chip, esc) : ''}</a></li>`).join('');
-  return `<section class="sys-card hm-card" aria-labelledby="hm-today-h"><h2 class="sys-card-title" id="hm-today-h">${esc(fill(h.list_title || 'Today'))}</h2>${list.length
-    ? `<ul class="hm-list" id="hm-today">${rows}</ul>${list.length > max ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm hm-show" data-hm="all">All ${list.length}</button>` : ''}`
-    : '<p class="hm-empty">Nothing today.</p>'}</section>`;
+const itemChip = (t, esc) => `<span class="sys-chip ${/urgent|late|past due|at risk/i.test(t) ? 'sys-chip--warn' : 'sys-chip--info'}">${esc(t)}</span>`;
+const EST = '<span class="sys-est">est.</span>';
+const SAMPLE = '<span class="sys-est sys-est--illus">sample</span>';
+const greeting = () => { const hr = new Date().getHours(); return hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening'; };
+const firstSentence = t => { const s = String(t ?? '').trim(); const m = /^.*?[.!?](?=\s|$)/.exec(s); return m ? m[0] : s; };
+const afterFirst = t => { const s = String(t ?? '').trim(); return s.slice(firstSentence(s).length).trim(); };
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+const numWord = n => WORDS[n] || String(n);
+const plural = (n, one, many = `${one}s`) => (n === 1 ? one : many);
+/** Roles whose ask box takes a site address too (the dock's test, assets/agent.js addressRole). */
+const addressRole = r => r.level === 'firm_leadership' || r.level === 'firm_team' || (r.co === 'pp' && (r.level === 'co_office' || r.level === 'co_field'));
+/** The ask box's placeholder: the role's own, naming the address for the roles that take one (as the dock words it). */
+function placeholderOf(r) {
+  let p = r.placeholder || 'Ask the agent';
+  if (!addressRole(r)) return p;
+  if (/[?.]$/.test(p)) return `${p} Or type an address.`;
+  const i = p.lastIndexOf(' or ');
+  if (i > -1) p = `${p.slice(0, i)}, ${p.slice(i + 4)}`;
+  return `${p} or an address`;
 }
-function waitingHTML(role, esc) {
-  const xs = waiting(role);
-  return `<section class="sys-card hm-card" aria-labelledby="hm-wait-h" id="hm-wait"><h2 class="sys-card-title" id="hm-wait-h">Waiting for approval${xs.length ? ` <span class="sys-chip sys-chip--warn">${xs.length}</span>` : ''}</h2>${xs.length
-    ? `<ul class="hm-list">${xs.slice(0, 5).map(x => `<li><a class="hm-item" href="${AGENT}"><span class="hm-time">${esc(x.app || 'Draft')}</span><span class="hm-main"><b>${esc(x.title || 'Draft')}</b></span><span class="sys-chip">Not sent</span></a></li>`).join('')}</ul>`
-    : '<p class="hm-empty">Nothing waiting.</p>'}</section>`;
+const SEND = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>';
+const ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+/* the constellation: one star per company in its accent (CSS only, decoration) */
+const MARK = `<svg class="sys-command-mark" viewBox="0 0 120 84" aria-hidden="true" focusable="false"><g fill="none" stroke="rgba(255,255,255,.22)" stroke-width=".8" stroke-linecap="round"><path d="M14 58 34 20l26 18 22-24 24 30-30 30-28-6z"/></g>
+  <g><circle cx="34" cy="20" r="3.4" fill="var(--co-pp)"/><circle cx="60" cy="38" r="2.6" fill="var(--co-cet)"/><circle cx="82" cy="14" r="2.8" fill="var(--co-fl)"/><circle cx="106" cy="44" r="3.8" fill="var(--co-ts)"/><circle cx="76" cy="74" r="3" fill="var(--co-bpi)"/><circle cx="48" cy="68" r="2.4" fill="var(--co-fh)"/></g>
+  <g fill="rgba(255,255,255,.55)"><circle cx="14" cy="58" r="1.2"/><circle cx="98" cy="70" r=".9"/><circle cx="20" cy="30" r=".8"/><circle cx="112" cy="20" r=".8"/></g></svg>`;
+
+/** The band: kicker, headline, one quiet line, then its body (ask box, figures, list, or the next job). */
+const bandHTML = ({ kicker, title, lead, body }) => `<section class="sys-command" data-sys-theme="dark" aria-labelledby="hm-cmd-h">${MARK}
+  <div class="sys-command-head"><p class="sys-command-kicker"><span class="sys-dot" aria-hidden="true"></span>${kicker}</p>
+  <h1 class="sys-display" id="hm-cmd-h">${title}</h1>${lead ? `<p class="sys-command-lead">${lead}</p>` : ''}</div>${body}</section>`;
+/** The ask box: the role's placeholder, a round send button, then the role's own question and its prompts. */
+function askBoxHTML(role, esc) {
+  const sig = role.signature?.question, chips = (role.chips || []).slice(0, 4);
+  return `<div class="sys-command-ask"><form class="sys-askbox" data-hm="askbox" aria-label="Ask the agent">
+      <label class="sys-sr" for="hm-q">Ask the agent</label><input id="hm-q" name="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="send" maxlength="500" placeholder="${esc(placeholderOf(role))}">
+      <button type="submit" class="sys-send" data-hm="ask" aria-label="Ask the agent">${SEND}</button></form>
+    ${sig || chips.length ? `<div class="sys-prompts" role="group" aria-label="Questions to ask">${sig ? `<button type="button" class="sys-chip sys-chip--sig" data-hm="sig">${esc(fill(sig))}${ARROW}</button>` : ''}${chips.map(c => `<button type="button" class="sys-chip" data-ask="${esc(fill(c))}">${esc(fill(c))}</button>`).join('')}</div>` : ''}</div>`;
 }
-const askHTML = () => `<a class="sys-btn sys-btn--primary hm-ask" href="${AGENT}" data-hm="ask">Ask the agent</a>`;
-const kpi = (esc, t) => ({ label: fill(t.label), value: `${esc(fill(t.value))}${t.modeled ? '<span class="sys-est">est.</span>' : ''}`, sub: esc(fill(t.sub)) });
-const headHTML = (esc, title, lead, org, id) => `<header class="hm-head">${org ? `<p class="sys-card-label hm-org">${esc(org)}</p>` : ''}<h1 class="sys-h1"${id ? ` id="${id}"` : ''}>${esc(title)}</h1>${lead ? `<p class="sys-lead">${esc(lead)}</p>` : ''}</header>`;
+/** The sticky pill at the bottom of the home column: it shows only while no other ask box is in view (overview watches it). */
+const pillHTML = (role, esc) => `<button type="button" class="sys-askbox sys-askbar" data-hm="ask"><span><span class="sys-sr">Ask the agent: </span>${esc(placeholderOf(role))}</span><span class="sys-send" aria-hidden="true">${SEND}</span></button>`;
+const figsHTML = (figs, label, card) => figs.length ? `<div class="sys-figs${card ? ' sys-figs--card' : ''}" role="list" aria-label="${label}">${figs.map(f => `<div class="sys-fig" role="listitem"><span class="sys-fig-label">${f.label}</span><span class="sys-fig-value">${f.value}</span>${f.sub ? `<span class="sys-fig-sub">${f.sub}</span>` : ''}</div>`).join('')}</div>` : '';
+const kpiFig = (esc, t) => ({ label: esc(fill(t.label)), value: `${esc(fill(t.value))}${t.modeled ? EST : ''}`, sub: esc(fill(t.sub)) });
+/** One attention row: when | what (the button that opens it covers the row) and its actions | status. */
+const attnRow = (x, i, max) => `<li class="sys-attn-row${i >= max ? ' is-more' : ''}"${x.id ? ` data-id="${x.id}"` : ''}><span class="sys-attn-when${x.whenText ? ' sys-attn-when--text' : ''}"${x.st ? ` data-st="${x.st}"` : ''}>${x.when}</span>
+  <div class="sys-attn-main">${x.open}${x.sub || x.acts ? `<span class="sys-attn-meta">${x.sub ? `<span class="sys-attn-sub">${x.sub}</span>` : ''}${x.acts ? `<span class="sys-attn-acts">${x.acts}</span>` : ''}</span>` : ''}</div>${x.chip || ''}</li>`;
+function attnHTML(title, items, quiet, max = 6) {
+  return `<div class="sys-attn">${title ? `<h2 class="sys-attn-title" id="hm-attn-h">${title}</h2>` : ''}${items.length ? `<ol class="sys-attn-list"${title ? ' aria-labelledby="hm-attn-h"' : ''}>${items.map((x, i) => attnRow(x, i, max)).join('')}</ol>${items.length > max ? `<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-hm="all">All ${items.length}</button>` : ''}` : ''}
+    ${quiet.filter(Boolean).length ? `<p class="sys-attn-quiet">${quiet.filter(Boolean).map(q => `<span>${q}</span>`).join('')}</p>` : ''}</div>`;
+}
+/** Drafts waiting for the role's OK as attention rows (they open the agent screen, where they are approved). */
+const draftRows = (role, esc) => waiting(role).slice(0, 5).map(x => ({ when: 'Draft', whenText: true, st: 'warn', open: `<a class="sys-attn-open" href="${AGENT}">${esc(x.title || 'Draft')}</a>`, sub: esc(x.app || ''), chip: '<span class="sys-chip">Not sent</span>' }));
+/** "Nothing waiting for your approval." or a link to the drafts, for the quiet line. */
+const approvalLine = (role, n) => n ? '' : 'Nothing waiting for your approval.';
+/** A time from the catalogue as the "when" block: "8:30 am" → 8:30 with "am" under it; anything else as short text. */
+function whenOf(t, esc) {
+  const m = /^(\d{1,2}:\d{2})\s*(am|pm)$/i.exec(String(t || '').trim());
+  return m ? { when: `${esc(m[1])}<small>${esc(m[2])}</small>` } : { when: esc(t || '—'), whenText: true };
+}
+/** Today's items as the day strip: each asks the agent its own question. */
+function dayHTML(role, esc, { list = role.home?.list || [], title = fill(role.home?.list_title || 'Today'), asList = false, id = 'hm-day-h' } = {}) {
+  if (!list.length) return '';
+  const noun = role.home?.list_needs === 'calendar' ? 'meeting' : /servicetitan|procore/.test(role.home?.list_needs || '') ? 'job' : 'item';
+  return `<section class="hm-sec" aria-labelledby="${id}"><div class="sys-sec-head"><h2 id="${id}">${esc(title)}</h2><p>${list.length} ${plural(list.length, noun)}</p></div>
+    <ul class="sys-day${asList ? ' sys-day--list' : ''}">${list.map(x => `<li><button type="button" class="sys-day-item" data-ask="${esc(fill(x.prompt || x.title))}" aria-label="Ask about ${esc(fill(x.title))}, ${esc(fill(x.time))}"><time>${esc(fill(x.time))}</time><b>${esc(fill(x.title))}</b><span>${esc(fill(x.where))}</span>${x.chip ? itemChip(fill(x.chip), esc) : ''}<span class="sys-day-ask" aria-hidden="true">Ask →</span></button></li>`).join('')}</ul></section>`;
+}
 function wire(el, role) {
-  el.querySelectorAll('[data-hm="all"]').forEach(b => { b.onclick = () => { b.previousElementSibling?.classList.add('is-all'); b.hidden = true; }; });
-  // "Ask the agent" opens the docked agent; a modified click still opens the agent screen
-  el.querySelectorAll('[data-hm="ask"]').forEach(a => { a.onclick = e => { if (!dockCtl || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); dockCtl.open(); }; });
+  el.querySelectorAll('[data-hm="all"]').forEach(b => { b.onclick = () => { b.previousElementSibling?.classList.add('is-all'); b.hidden = true; b.previousElementSibling?.querySelector('.is-more .sys-attn-open')?.focus(); }; });
+  // the ask box: a question opens the dock and is asked there (an address in it comes back to the home); empty, it opens the dock
+  el.querySelectorAll('form[data-hm="askbox"]').forEach(f => { f.onsubmit = e => { e.preventDefault(); const q = f.q.value.trim(); f.q.value = ''; if (dockCtl) dockCtl.ask(q ? { text: q } : null); else location.hash = AGENT; }; });
+  el.querySelectorAll('[data-hm="sig"]').forEach(b => { b.onclick = () => dockCtl ? dockCtl.ask({ sig: true }) : (location.hash = AGENT); });
+  el.querySelectorAll('[data-ask]').forEach(b => { b.onclick = () => dockCtl ? dockCtl.ask({ text: b.dataset.ask }) : (location.hash = AGENT); });
+  // the sticky pill opens the dock with the keyboard in its composer
+  el.querySelectorAll('button[data-hm="ask"]:not([type="submit"])').forEach(b => { b.onclick = () => dockCtl ? dockCtl.open() : (location.hash = AGENT); });
   if (firstAddr) runAddress(el, role, firstAddr);
 }
 
 /* ── The answer area (direction C): no first row any more. The signature question and the chips live in the agent docked at the
    right (agent.html?embed=1&dock=1); an address lookup (assets/site-lookup.js: buildings, sources, 3D, globe) needs the width,
-   so it lands here, under the head, and takes no space until used. Two ways in: #/home/overview?address=<text> (the Ask panel
-   hands a typed address over this way) and an address typed in the dock, for every role, which the dock posts as 'bsp:address'
-   (the home then writes it into the address too, so a reload or Back keeps the answer). The region is not live: one short
-   status line (#hm-say) reads out the answer's first sentence or the reason there is none. ── */
+   so it lands here, under the band, and takes no space until used. Two ways in: #/home/overview?address=<text> (the Ask panel
+   hands a typed address over this way) and an address typed in the ask box or the dock, for every role, which the dock posts
+   as 'bsp:address' (the home then writes it into the address too, so a reload or Back keeps the answer). The region is not
+   live: one short status line (#hm-say) reads out the answer's first sentence or the reason there is none. ── */
 let firstAddr = '';      // an address waiting for the answer area (the hash, or the dock before the home has drawn), run once
 const outHTML = () => '<div class="hm-out" id="hm-out" tabindex="-1" role="region" aria-label="Address answer"></div><p class="sys-sr" id="hm-say" role="status"></p>';
 /** Runs the address lookup into the answer area of the home on screen, or keeps it until the home has drawn. Resolves the
@@ -134,8 +192,8 @@ function setAddressHash(text, app) {
   try { history.replaceState(history.state, '', want); if (app) { app._at = location.hash; app.params = text ? { address: text } : {}; } } catch { /* the hash stays as it was */ }
 }
 
-/* What moves each company's value, in ten words or fewer. The full sentence is the next action fin.js prints for both
-   value tables; it opens in the side panel. */
+/* What moves each company's value, in ten words or fewer (the table's column). The full sentence is the next action fin.js
+   prints for both value tables; it opens in the side panel. */
 const MOVES = {
   cet: r => `Integrate the ${r.addOns ?? 6} add-ons`,
   pp: r => 'Tuck-in on the undrawn loan',
@@ -153,17 +211,63 @@ function dollars(e, kind) {
   const m = part.match(/~?\$\s*[\d.,]+(?:\s*[–-]\s*\$?\s*[\d.,]+)?\s*[KMB]/i);
   return m ? m[0].replace(/\s+/g, '').replace(/-/g, '–') : '';
 }
-
-async function firmHome(ctx, role, live) {
-  const { el, ui, fmt, data, esc, app, inspector } = ctx;
-  const [firm, sb] = await Promise.all([data.research('bsp_firm'), loadScoreboard(ctx).catch(e => { console.error(e); return null; })]);
-  if (!live()) return;
-  const rows = (sb?.rows || []).slice().sort((a, b) => a._k - b._k);
-  const tpl = sb?.tpl || templateExit(firm);
-  // the lead names the same thing the status chips say: refinancing due first, then the exit window
-  const refi = rows.filter(r => r.flag?.k === 0), win = rows.filter(r => r.flag?.k === 1);
-  const lead = [refi.length ? `${refi.map(r => r.short).join(' and ')} refinance due` : '', win.length ? `${win.map(r => r.short).join(' and ')} in exit window` : ''].filter(Boolean).join(' · ') || 'No company in the exit window';
-
+const isPF = e => /pro forma|incl\.? NJ|CET\+/i.test(e?.metric || '');   // as fin.js marks a pro forma revenue
+/** Fund I's gross asset value from Form ADV, where the value and exit screen reads it (a Punctual Pros filing record). */
+function fundGav(rows) {
+  const find = (o, d = 0) => { if (!o || typeof o !== 'object' || d > 4) return null; for (const [k, v] of Object.entries(o)) { if (/Broad_Sky_Partners_LP_GAV/i.test(k) && typeof v === 'number') return v; const x = typeof v === 'object' ? find(v, d + 1) : null; if (x) return x; } return null; };
+  for (const r of rows) for (const i of r.d?.items || []) if (i.category === 'form_adv') { const v = find(i.key_figures); if (v) return v; }
+  return null;
+}
+/** The months to a company's exit window (4 years held) and the month it opens. */
+function windowOpens(r) {
+  const d = toDate(r.entry); if (!d || r.held == null) return null;
+  const at = new Date(d.getFullYear() + 4, d.getMonth(), d.getDate());
+  return { mo: Math.max(0, Math.round((4 - r.held) * 12)), label: `${MON[at.getMonth()]} ${at.getFullYear()}` };
+}
+/** The firm's attention items, in the scoreboard's order (debt due first, then the exit window), with a company whose exit
+ *  window opens within 12 months after them. Each is a fact from the value and exit table. */
+function flaggedItems(rows, firm, esc) {
+  const out = [];
+  for (const r of rows) {
+    const name = LONG[r.id] || r.short, held = r.held != null ? `${r.held.toFixed(1)} yrs held` : '', adds = addTxt(r.addOns, reportedOf(firm, r.id));
+    const base = { id: r.id, r, sub: esc([held, adds].filter(Boolean).join(' · ')), chip: stChip(status(r), r.flag.st) };
+    let fact = '', kind = '', when = '', st = r.flag.st;
+    if (r.flag.k === 0) { kind = 'loan'; fact = `${name} loan matures ${r.matLabel || 'within two years'}`; when = r.mo != null ? `${Math.max(0, Math.round(r.mo))}<small>mo</small>` : 'Due'; }
+    else if (r.flag.k === 1) { kind = 'window'; fact = `${name} is in the exit window`; when = 'Now'; }
+    else if (r.flag.k === 2) { const w = windowOpens(r); if (!w || w.mo > 12) continue; kind = 'soon'; fact = `${name} reaches the exit window in ${w.label}`; when = `${w.mo}<small>mo</small>`; }
+    else continue;
+    out.push({ ...base, kind, st, when, fact,
+      open: `<button type="button" class="sys-attn-open" data-hm="row" data-id="${esc(r.id)}"><span class="sys-dot" ${coAttr(r.id)} aria-hidden="true"></span>${esc(fact)}</button>`,
+      acts: `<a href="#/${esc(r.id)}">Open ${esc(name)}</a><button type="button" data-ask="${esc(`Brief me on this: ${fact}.`)}">Ask about it</button>` });
+  }
+  return out;
+}
+/** The headline: a count of what the list holds, read as facts ("One loan due. Two exit windows."). */
+function headline(items, drafts) {
+  const n = k => items.filter(x => k.includes(x.kind)).length, loans = n(['loan']), wins = n(['window', 'soon']);
+  const parts = [loans && `${numWord(loans)} ${plural(loans, 'loan')} due`, wins && `${numWord(wins)} exit ${plural(wins, 'window')}`, drafts && `${numWord(drafts)} ${plural(drafts, 'draft')} waiting`].filter(Boolean);
+  return parts.length ? `${parts.join('. ')}.` : 'No loan due and no exit window this year.';
+}
+/** The six companies as status tiles, in the fixed order. */
+function tilesHTML(rows, firm, esc, tpl) {
+  const m = Math.min(tpl.hold / HOLD_SCALE, 1) * 100;
+  return `<p class="sys-hold-key" aria-hidden="true"><span><i></i>Years held, 0 to ${HOLD_SCALE}</span><span><i class="is-zone"></i>Exit window, 4 and up</span><span><i class="is-mark"></i>Smith + Howard sold at ${esc(tpl.hold.toFixed(1))}</span></p>
+  <div class="sys-tiles">${TILE_ORDER.map(id => rows.find(r => r.id === id)).filter(Boolean).map(r => {
+    const name = LONG[r.id] || r.short, rev = dollars(r.rev, 'revenue'), pf = isPF(r.rev), st = status(r);
+    const v = r.held != null ? Math.min(r.held / HOLD_SCALE, 1) * 100 : 0, adds = addTxt(r.addOns, reportedOf(firm, r.id));
+    return `<a class="sys-tile" ${coAttr(r.id)} href="#/${esc(r.id)}" aria-label="${esc(`${name}: revenue${pf ? ', pro forma,' : ''} ${rev || 'not known'}, estimated. Held ${r.held != null ? r.held.toFixed(1) : '—'} of ${HOLD_SCALE} years, ${adds}. ${st}. Open ${name}`)}">
+      <span class="sys-tile-name"><span class="sys-dot" aria-hidden="true"></span><span>${esc(name)}</span></span>
+      <span class="sys-tile-fig"><span class="sys-fig-label">Revenue${pf ? ', pro forma' : ''} ${EST}</span><span class="sys-fig-value">${esc(rev || '—')}</span></span>
+      <span class="sys-hold"><span class="sys-hold-bar"><i style="--v:${v.toFixed(1)}%"></i><b style="--m:${m.toFixed(2)}%"></b></span><span class="sys-hold-meta"><span><b>${r.held != null ? r.held.toFixed(1) : '—'} yrs</b> held</span><span>${esc(adds)}</span></span></span>
+      ${stChip(st, r.flag.st)}</a>`;
+  }).join('')}</div>`;
+}
+/* the table's sortable columns: the company order, years held, revenue, entry value and status (most urgent first) */
+const SORTS = { company: r => TILE_ORDER.indexOf(r.id), held: r => r.held ?? -1, rev: r => r.rev_sort ?? -1, ev: r => r.ev_sort ?? -1, status: r => r._k };
+function tableHTML(rows, firm, esc, sort) {
+  const by = SORTS[sort.key] || SORTS.status, dir = sort.dir;
+  const list = rows.slice().sort((a, b) => (by(a) - by(b)) * dir || a._k - b._k);
+  const th = (key, label, cls = '') => `<th scope="col"${cls ? ` class="${cls}"` : ''} aria-sort="${sort.key === key ? (dir > 0 ? 'ascending' : 'descending') : 'none'}"><button type="button" class="sys-sort" data-sort="${key}">${label}</button></th>`;
   const coRow = r => {
     const rev = dollars(r.rev, 'revenue'), ev = dollars(r.ev);
     return `<tr tabindex="0" data-id="${esc(r.id)}" aria-label="${esc(r.name)}: open the details">
@@ -174,17 +278,47 @@ async function firmHome(ctx, role, live) {
       <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
       <td class="hm-st">${stChip(status(r), r.flag.st)}</td></tr>`;
   };
-  el.innerHTML = `<div class="hm hm-firm">${headHTML(esc, 'Six companies', lead, '', 'hm-cos-h')}${askHTML()}${outHTML()}
-    <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h">${rows.length ? `<div class="sys-table-wrap"><table class="sys-table">
-      <thead><tr><th scope="col">Company</th><th scope="col" class="sys-n">Held</th><th scope="col" class="sys-n">Revenue <span class="sys-est">est.</span></th><th scope="col" class="sys-n hm-ev">Entry value <span class="sys-est">est.</span></th><th scope="col" class="hm-wrap">What moves it</th><th scope="col">Status</th></tr></thead>
-      <tbody>${rows.map(coRow).join('')}</tbody></table></div>` : ui.note('The company table did not load.', 'warn')}
+  return `<div class="sys-table-wrap"><table class="sys-table"><caption class="sys-sr">Six companies. Press a column head to sort.</caption>
+    <thead><tr>${th('company', 'Company')}${th('held', 'Held', 'sys-n')}${th('rev', `Revenue ${EST}`, 'sys-n')}${th('ev', `Entry value ${EST}`, 'sys-n hm-ev')}<th scope="col" class="hm-wrap">What moves it</th>${th('status', 'Status')}</tr></thead>
+    <tbody>${list.map(coRow).join('')}</tbody></table></div>`;
+}
+
+async function firmHome(ctx, role, live) {
+  const { el, ui, fmt, data, esc, app, inspector } = ctx;
+  const [firm, sb] = await Promise.all([data.research('bsp_firm'), loadScoreboard(ctx).catch(e => { console.error(e); return null; })]);
+  if (!live()) return;
+  const rows = (sb?.rows || []).slice().sort((a, b) => a._k - b._k);
+  const tpl = sb?.tpl || templateExit(firm);
+  const items = flaggedItems(rows, firm, esc), drafts = draftRows(role, esc);
+  const asOf = firm?.meta?.generated ? fmt.date(firm.meta.generated) : '';
+  // the three figures, from the same sums and records as the value and exit screen (fin.js portfolioView)
+  const rev = rows.reduce((a, r) => a + (r.rev_sort || 0), 0), ebitda = rows.reduce((a, r) => a + (r.ebitda_sort || 0), 0);
+  const gav = fundGav(rows), sold = sb?.capital?.broad_sky_partners_lp_total_sold_usd;
+  const figs = [
+    gav && sold ? { label: 'Fund I mark', value: `${fmt.num(gav / sold, 2)}x${EST}`, sub: `Gross, ${esc(fmt.money(gav))} on ${esc(fmt.money(sold))} raised` } : null,
+    rev ? { label: 'Revenue', value: `${esc(fmt.money(rev))}${EST}`, sub: `Six companies, ${rows.filter(r => r.rev && isPF(r.rev)).length} pro forma` } : null,
+    ebitda ? { label: 'EBITDA', value: `${esc(fmt.money(ebitda))}${EST}`, sub: rev ? `About ${Math.round(ebitda / rev * 100)}% margin` : '' } : null,
+  ].filter(Boolean);
+  const reported = firstSentence(fill(role.home?.lead));
+  const band = bandHTML({
+    kicker: `${esc(greeting())} · ${esc(role.title)}`,
+    title: esc(headline(items, drafts.length)),
+    lead: asOf ? `From public filings, as of ${esc(asOf)}.` : '',
+    body: askBoxHTML(role, esc) + figsHTML(figs, 'Fund and portfolio, estimated')
+      + attnHTML(`Needs attention · ${items.length + drafts.length}`, [...items, ...drafts], [approvalLine(role, drafts.length), reported ? `${esc(reported.replace(/\.$/, ''))} ${SAMPLE}` : '']),
+  });
+  let view = 'tiles'; try { if (localStorage.getItem(COS_KEY) === 'table') view = 'table'; } catch { /* tiles */ }
+  const sort = { key: 'status', dir: 1 };
+  el.innerHTML = `<div class="hm hm-firm">${band}${outHTML()}
+    <section class="hm-sec hm-cos" aria-labelledby="hm-cos-h"><div class="sys-sec-head"><h2 id="hm-cos-h">Six companies</h2>
+      <div class="sys-chips" role="group" aria-label="Show the six companies as"><button type="button" class="sys-chip" data-cos="tiles">Tiles</button><button type="button" class="sys-chip" data-cos="table">Table</button></div></div>
+      <div class="hm-cos-body"></div>
       ${firm?.meta?.generated ? `<span data-asof>${esc(fmt.date(firm.meta.generated))}</span>` : ''}
       <p class="sys-src hm-src" data-src>Company filings estimate tables (SEC Form D and ADV, BDC schedules, PPP loans, franchise disclosures) and the BSP firm profile, as of ${esc(firm?.meta?.generated || 'Sept 2026')}. <a href="#/fin/portfolio">Value and exit table</a></p>
-      <p class="sys-src hm-src" data-method>Revenue is the current or pro forma estimate; entry value is the enterprise value at BSP's entry. Status: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 or more, exit prep. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years. Reported add-ons were named in the trade press, not announced by the company.</p>
+      <p class="sys-src hm-src" data-method>Revenue and EBITDA are the current or pro forma estimates, summed from midpoints as on the value and exit table; Fund I's mark is its gross asset value on Form ADV over the amount sold on Form D. Entry value is the enterprise value at BSP's entry. Status: debt due within 24 months, refinance or sell; held 4 years or more, exit window; 3 or more, exit prep. Smith + Howard sold at ${esc(tpl.hold.toFixed(1))} years. Reported add-ons were named in the trade press, not announced by the company. The reporting line is sample data.</p>
     </section>
-    <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
-    <section class="hm-sec hm-figs" aria-labelledby="hm-figs-h"><h2 class="sys-card-title" id="hm-figs-h">Figures</h2>
-      ${ui.kpis([{ label: 'Strategy and operations', value: '<span class="hm-run sys-num" aria-live="off">—</span>', sub: 'Open value today, est.' }])}</section></div>`;
+    ${dayHTML(role, esc)}
+    ${pillHTML(role, esc)}</div>`;
   wire(el, role);
 
   // a row opens the side panel: the full next action, the add-ons under BSP and the estimates behind the figures
@@ -197,62 +331,93 @@ async function firmHome(ctx, role, live) {
       !r.d ? { label: 'Estimates', html: ui.note(`<b>${esc(dataset(r.co.ds))}</b> is not available yet`, 'warn') } : null,
     ].filter(Boolean), actions: [{ label: 'Value and exit table', href: '#/fin/portfolio' }, { label: `Open ${esc(r.short)}`, href: `#/${r.id}` }] });
   };
-  el.querySelectorAll('.hm-cos tbody tr').forEach(tr => {
-    const r = rows.find(x => x.id === tr.dataset.id);
-    tr.onclick = () => r && openRow(r);
-    tr.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === tr) { e.preventDefault(); openRow(r); } };
-  });
+  el.querySelectorAll('[data-hm="row"]').forEach(b => { const r = rows.find(x => x.id === b.dataset.id); b.onclick = () => r && openRow(r); });
+  // the six companies: tiles (the default) or the sortable table, this visitor's choice kept
+  const body = el.querySelector('.hm-cos-body');
+  const paint = (focusSort) => {
+    el.querySelectorAll('[data-cos]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cos === view)));
+    if (!rows.length) { body.innerHTML = ui.note('The company figures did not load.', 'warn'); return; }
+    body.innerHTML = view === 'table' ? tableHTML(rows, firm, esc, sort) : tilesHTML(rows, firm, esc, tpl);
+    body.querySelectorAll('tbody tr').forEach(tr => {
+      const r = rows.find(x => x.id === tr.dataset.id);
+      tr.onclick = () => r && openRow(r);
+      tr.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === tr) { e.preventDefault(); openRow(r); } };
+    });
+    body.querySelectorAll('[data-sort]').forEach(b => { b.onclick = () => { const k = b.dataset.sort; sort.dir = sort.key === k ? -sort.dir : (k === 'company' || k === 'status' ? 1 : -1); sort.key = k; paint(k); }; });
+    if (focusSort) body.querySelector(`[data-sort="${focusSort}"]`)?.focus();
+  };
+  el.querySelectorAll('[data-cos]').forEach(b => { b.onclick = () => { view = b.dataset.cos; try { localStorage.setItem(COS_KEY, view); } catch { /* this visit only */ } paint(); }; });
+  paint();
   // search: the six companies and their add-ons
   app.index([...COS.map(c => ({ label: c.name, sub: c.sector, href: `#/${c.id}`, kind: 'Company', color: c.hex })), ...COS.flatMap(c => addOnsOf(firm, c.id).filter(a => !a.unid).map(a => ({ label: a.name, sub: `${c.short} add-on${a.year ? ` · ${a.year}` : ''}`, href: `#/${c.id}`, kind: 'Add-on', color: c.hex })))]);
-  // the running estimate (assets/counter.js, from the portal's sourced rates); its levers and notes go to the Method drawer
-  const run = el.querySelector('.hm-run');
-  const clock = await Counter.live(run, { baseline: 'today' }).catch(e => { console.error(e); return null; });
-  if (!clock) { if (run.isConnected) run.textContent = '—'; return; }
-  if (!live() || !run.isConnected) { clock.destroy(); return; }
-  if (clock.method) { const m = document.createElement('div'); m.className = 'hm-src'; m.dataset.method = ''; m.innerHTML = `<p class="sys-card-label">Strategy and operations</p>${clock.method}`; el.querySelector('.hm-figs').appendChild(m); }
-  return clock.destroy;
 }
 
-/* Company leadership (and investor relations, for the fund): four figures, today, waiting for approval. The menu already
-   lists the company's screens, so the home does not repeat them (ruling R5). */
+/* Company leadership (and investor relations, for the fund): the band reads the company. Its headline is the role's own
+   first line, its figures the role's three figures, its list that company's own items from the firm's list and the drafts
+   waiting for this role. Today follows. The menu already lists the company's screens, so the home does not repeat them. */
 async function companyHome(ctx, role, live) {
-  const { el, ui, fmt, esc, data } = ctx;
+  const { el, esc, data } = ctx;
   const co = role.co, org = (Session.orgs() || []).find(o => o.id === role.org);
   const [sb, firm] = co ? await Promise.all([loadScoreboard(ctx).catch(() => null), data.research('bsp_firm').catch(() => null)]) : [null, null];
   if (!live()) return;
   const row = sb?.rows?.find(r => r.id === co);
-  const tiles = (role.home?.kpis || []).slice(0, 3).map(t => kpi(esc, t));
-  if (row) { const rep = reportedOf(firm, co); tiles.push({ label: 'Held by BSP', value: row.held != null ? `${row.held.toFixed(1)} yrs` : '—', sub: esc(rep ? addTxt(row.addOns, rep) : `${addTxt(row.addOns, 0)} · ${status(row)}`) }); }
-  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${headHTML(esc, co ? (org?.name || LONG[co] || co) : 'Fund', fill(role.home?.lead), `${role.title}${co ? '' : ' · BSP'}`)}${askHTML()}${outHTML()}
-    ${tiles.length ? ui.kpis(tiles) : ''}
-    <div class="hm-pair">${todayHTML(role, esc)}${waitingHTML(role, esc)}</div>
-    <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
-  </div>`;
+  const name = co ? (LONG[co] || org?.name || co) : 'Broad Sky';
+  const items = row ? flaggedItems([row], firm, esc) : [], drafts = draftRows(role, esc);
+  const lead = fill(role.home?.lead), n = items.length + drafts.length;
+  const held = row && row.held != null ? `Held ${row.held.toFixed(1)} yrs · ${esc(addTxt(row.addOns, reportedOf(firm, co)))}` : '';
+  const band = bandHTML({
+    kicker: `${esc(name)} · ${esc(role.title)} ${SAMPLE}`,
+    title: esc(firstSentence(lead) || name),
+    lead: esc(afterFirst(lead)),
+    body: askBoxHTML(role, esc) + figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), `${esc(name)} figures`)
+      + attnHTML(n ? `Needs attention · ${n}` : '', [...items, ...drafts], [n ? '' : `Nothing flagged for ${esc(name)}.`, approvalLine(role, drafts.length), held]),
+  });
+  el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${band}${outHTML()}
+    ${dayHTML(role, esc)}
+    <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates, and the band's first line is sample data; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
+    ${pillHTML(role, esc)}</div>`;
   wire(el, role);
+  el.querySelectorAll('[data-hm="row"]').forEach(b => { b.onclick = () => { location.hash = `#/${b.dataset.id}`; }; });
 }
 
-/* Office and field: today's items first, then the button that opens the docked agent (a link to the agent screen without the
-   dock), then the role's figures. */
+/* Office and field. Office: the band holds the role's figures and the day's list as its attention rows. Field: the band
+   holds the next job and its actions; the rest of the day, the role's figures and the sticky ask pill follow. */
 async function roleHome(ctx, role) {
-  const { el, ui, esc } = ctx;
+  const { el, esc } = ctx;
   const org = (Session.orgs() || []).find(o => o.id === role.org);
-  const field = role.level === 'co_field';
-  const tiles = (role.home?.kpis || []).map(t => kpi(esc, t));
-  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${headHTML(esc, role.title, fill(role.home?.lead), org ? `${org.name} · ${role.dept}` : role.dept)}${outHTML()}
-    ${todayHTML(role, esc, field ? 4 : 6)}
-    ${askHTML()}
-    ${tiles.length ? ui.kpis(tiles) : ''}
+  const list = Array.isArray(role.home?.list) ? role.home.list : [];
+  const field = role.level === 'co_field' && /servicetitan|procore/.test(role.home?.list_needs || '') && list.length;
+  const lead = fill(role.home?.lead);
+  const kicker = `${esc(org?.name || role.dept || '')} · ${esc(role.title)} ${SAMPLE}`;
+  const drafts = draftRows(role, esc);
+  let html;
+  if (field) {
+    const [next, ...later] = list, acts = (role.action_chips || []).filter(a => /10 minutes|log what/i.test(a.label)).sort((a, b) => /10 minutes/i.test(b.label) - /10 minutes/i.test(a.label)).slice(0, 2);
+    const nextHTML = `<div class="sys-next" role="group" aria-labelledby="hm-next-h"><p class="sys-next-when">Next · ${esc(fill(next.time))}</p><h2 id="hm-next-h">${esc(fill(next.title))}</h2><p>${esc(fill(next.where))}</p>${next.chip ? itemChip(fill(next.chip), esc) : ''}
+      <div class="sys-next-acts"><button type="button" class="sys-btn sys-btn--primary" data-ask="${esc(fill(next.prompt || next.title))}">Ask about this job</button>${acts.map(a => `<button type="button" class="sys-btn sys-btn--secondary" data-ask="${esc(a.prompt)}">${esc(a.label)}</button>`).join('')}</div></div>`;
+    html = `${bandHTML({ kicker, title: esc(firstSentence(lead) || role.title), lead: esc(afterFirst(lead)), body: nextHTML + (drafts.length ? attnHTML(`Waiting for approval · ${drafts.length}`, drafts, []) : '') })}${outHTML()}
+      ${dayHTML(role, esc, { list: later, title: 'Later today', asList: true })}
+      ${(role.home?.kpis || []).length ? `<section class="hm-sec" aria-label="Today in numbers">${figsHTML(role.home.kpis.map(t => kpiFig(esc, t)), 'Today in numbers', true)}</section>` : ''}`;
+  } else {
+    const rows = list.map(x => ({ ...whenOf(fill(x.time), esc), st: x.chip && /urgent|late|risk/i.test(x.chip) ? 'warn' : '', open: `<button type="button" class="sys-attn-open" data-ask="${esc(fill(x.prompt || x.title))}">${esc(fill(x.title))}</button>`, sub: esc(fill(x.where)), chip: x.chip ? itemChip(fill(x.chip), esc) : '' }));
+    html = bandHTML({ kicker, title: esc(firstSentence(lead) || role.title), lead: esc(afterFirst(lead)),
+      body: askBoxHTML(role, esc) + figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), 'Today in numbers')
+        + attnHTML(`${esc(fill(role.home?.list_title || 'Today'))} · ${list.length + drafts.length}`, [...drafts, ...rows], [approvalLine(role, drafts.length)], 5) }) + outHTML();
+  }
+  el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${html}
     <p class="sys-src hm-src" data-method>Sandbox records: fictional people and modeled numbers.</p>
-  </div>`;
+    ${pillHTML(role, esc)}</div>`;
   wire(el, role);
 }
 
 /* ── The agent docked at the right of the home (direction C). The chrome is the shell's: "Agent", one quiet line naming the role
    in view (it opens the "Viewing as" switch), Clear while the thread has a message, Close. The body is the role agent page
-   itself in its dock form (agent.html?embed=1&dock=1), following the role in view like the agent screen. At 1200px and wider it
-   is a column, open unless the visitor closed it there (localStorage 'bsp-os-dock'); narrower it starts closed and opens over
-   the home from the right (a full-width sheet on phones). While the home is on screen the top bar's Ask and its hotkey toggle
-   it (Frame.mount().setAsk, reached as App.frame) and the floating launcher steps aside (html[data-home-dock], app.css). ── */
+   itself in its dock form (agent.html?embed=1&dock=1), following the role in view like the agent screen. It starts closed:
+   the band's ask box is the first way in, and a question asked there, a prompt or a row's "Ask about it" opens the dock and
+   is asked in it ('bsp:dock-ask'). At 1200px and wider it opens as a column (kept open across visits once the visitor opens
+   it with Ask, localStorage 'bsp-os-dock'); narrower it opens over the home from the right (a full-width sheet on phones).
+   While the home is on screen the top bar's Ask and its hotkey toggle it (Frame.mount().setAsk, reached as App.frame) and
+   the floating launcher steps aside (html[data-home-dock], app.css). ── */
 const DOCK_KEY = 'bsp-os-dock';
 const X_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg>';
 const dockHTML = () => `<aside class="hm-dock" id="hm-dock" aria-labelledby="hm-dock-h" hidden>
@@ -260,7 +425,7 @@ const dockHTML = () => `<aside class="hm-dock" id="hm-dock" aria-labelledby="hm-
     <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm" data-hm="clear" hidden>Clear</button>
     <button type="button" class="sys-btn sys-btn--ghost sys-btn--sm sys-btn--icon" data-hm="close" aria-label="Close">${X_ICON}</button></div>
   <div class="hm-dock-body"></div></aside>`;
-let dockCtl = null;      // the dock of the home on screen (the role home's "Ask the agent" opens it)
+let dockCtl = null;      // the dock of the home on screen (the ask box, the prompts and the pill open it)
 
 /** onAddress(text) runs a typed address in the home and resolves the lookup's { status }; onClear() empties the answer area. */
 function mountDock(ctx, split, onAddress, onClear) {
@@ -269,7 +434,7 @@ function mountDock(ctx, split, onAddress, onClear) {
   const who = dock.querySelector('[data-hm="who"]'), clear = dock.querySelector('[data-hm="clear"]');
   const frame = ctx.app?.frame, askBtn = () => document.querySelector('[data-sys-ask]');
   const saved = () => { try { return localStorage.getItem(DOCK_KEY); } catch { return null; } };
-  let open = false, unembed = null, iframe = null, thread = false, answer = false;
+  let open = false, unembed = null, iframe = null, thread = false, answer = false, sendGen = 0;
   // Clear shows while the thread has a message or the home shows an address answer, and empties both
   const syncClear = () => { clear.hidden = !(thread || answer); };
   // the agent page loads the first time the dock opens, then follows the role in view (modules/embed.js)
@@ -288,6 +453,18 @@ function mountDock(ctx, split, onAddress, onClear) {
   };
   const composer = () => { try { return iframe?.contentDocument?.querySelector('#ca-chat textarea') || null; } catch { return null; } };
   const focusIn = (n = 0) => { if (!open) return; const ta = composer(); if (ta) ta.focus({ preventScroll: true }); else if (n < 50) setTimeout(() => focusIn(n + 1), 100); };
+  /** A question for the agent page once it is ready ({ text } or { sig: true }); a newer one replaces one still waiting. */
+  const send = msg => {
+    const my = ++sendGen;
+    const go = (n = 0) => {
+      if (my !== sendGen || !open) return;
+      let ready = false;
+      try { ready = !!(iframe?.contentWindow?.__agent && composer()); } catch { /* not yet */ }
+      if (ready) { try { iframe.contentWindow.postMessage({ type: 'bsp:dock-ask', ...msg }, location.origin); } catch { /* gone */ } }
+      else if (n < 150) setTimeout(() => go(n + 1), 100);
+    };
+    go();
+  };
   /** opts.focus: into the composer on open, back to Ask on close; opts.keep: remember the choice (wide screens only);
    *  opts.quiet: close without moving focus (an address went to the answer area, which takes it). */
   function set(on, { focus = false, keep = false, quiet = false } = {}) {
@@ -316,7 +493,8 @@ function mountDock(ctx, split, onAddress, onClear) {
   // the overlay closes on a press anywhere else on the page (not on Ask, which toggles it, nor on the "Viewing as" switch)
   const onDown = e => { const t = e.target; if (open && !wide.matches && t instanceof Element && !dock.contains(t) && !askBtn()?.contains(t) && !t.closest('[data-sys-viewas]')) set(false); };
   document.addEventListener('pointerdown', onDown, true);
-  const onWide = () => set(wide.matches && saved() !== 'closed');
+  // closed until the first question; at 1200px and wider it stays open across visits once the visitor opened it with Ask
+  const onWide = () => set(wide.matches && saved() === 'open');
   wide.addEventListener('change', onWide);
   // the agent page in the frame: whether its thread has a message (Clear), the Ask hotkey pressed inside it, and a site address
   // typed into it, whose outcome goes back to the frame so its reply line says where the answer is (or why there is none)
@@ -339,15 +517,18 @@ function mountDock(ctx, split, onAddress, onClear) {
   onWide();
   return {
     update, open: () => set(true, { focus: true, keep: true }),
+    /** Opens the dock with the keyboard in its composer and asks `msg` there ({ text } or { sig: true }); null only opens it. */
+    ask(msg) { set(true, { focus: true }); if (msg) send(msg); },
+    isOpen: () => open,
     setAnswer(on) { answer = !!on; syncClear(); },
-    destroy() { removeEventListener('message', onMsg); document.removeEventListener('pointerdown', onDown, true); wide.removeEventListener('change', onWide); frame?.setAskState?.(false); frame?.setAsk?.(null); unembed?.(); },
+    destroy() { sendGen++; removeEventListener('message', onMsg); document.removeEventListener('pointerdown', onDown, true); wide.removeEventListener('change', onWide); frame?.setAskState?.(false); frame?.setAsk?.(null); unembed?.(); },
   };
 }
 
 async function overview(ctx) {
   injectCss();
   await Session.ready();
-  let alive = true, gen = 0, undo = null;
+  let alive = true, gen = 0, undo = null, io = null;
   firstAddr = String(ctx.params?.address || '').trim().slice(0, 300);
   // two columns: the home (scrolls on its own) and the dock; the content area itself no longer scrolls or pads
   const host = ctx.el;
@@ -361,28 +542,44 @@ async function overview(ctx) {
     const run = runAddress(main, Session.role(), text);
     const out = main.querySelector('#hm-out');
     if (out) { out.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' }); out.focus({ preventScroll: true }); }
-    return run;
+    // the answer keeps the focus when it arrives, unless the visitor has started typing in the dock again (a dock that has just
+    // loaded can still put the keyboard back in its composer while the lookup runs)
+    return Promise.resolve(run).then(res => {
+      const o = main.querySelector('#hm-out'), a = document.activeElement;
+      if (o && a && a.tagName === 'IFRAME' && split.contains(a)) { try { if (!a.contentDocument?.querySelector('#ca-chat textarea')?.value) o.focus({ preventScroll: true }); } catch { /* not ours */ } }
+      return res;
+    });
   }, () => clearAddress(main, ctx.app));
-  const draw = async () => {
+  // the sticky pill shows only while the band's ask box is out of view (always, on a home without one)
+  const watchPill = () => {
+    io?.disconnect(); io = null;
+    const pill = main.querySelector('.sys-askbar'); if (!pill) return;
+    const box = main.querySelector('form[data-hm="askbox"]');
+    if (!box || typeof IntersectionObserver === 'undefined') { pill.toggleAttribute('data-show', true); return; }
+    io = new IntersectionObserver(es => { for (const e of es) pill.toggleAttribute('data-show', !e.isIntersecting); }, { root: main, threshold: 0 });
+    io.observe(box);
+  };
+  const draw = async ({ keepScroll = false } = {}) => {
     const my = ++gen, live = () => alive && my === gen && main.isConnected;
     if (undo) { try { undo(); } catch { /* already gone */ } undo = null; }
-    ctx.inspector.close();
+    const top = main.scrollTop;
+    if (!keepScroll) ctx.inspector.close();
     const role = Session.role(), kind = homeKind(role);
     host.dataset.home = kind;
     dock.update(role);
     dock.setAnswer(!!firstAddr);
-    if (!firstAddr) setAddressHash('', ctx.app);   // a new role's home opens without the last role's answer
-    main.scrollTop = 0;
+    if (!firstAddr && !keepScroll) setAddressHash('', ctx.app);   // a new role's home opens without the last role's answer
+    if (!keepScroll) main.scrollTop = 0;
     const un = await (kind === 'firm' ? firmHome : kind === 'company' ? companyHome : roleHome)(mctx, role, live);
-    if (live()) undo = typeof un === 'function' ? un : null; else if (typeof un === 'function') un();
+    if (live()) { undo = typeof un === 'function' ? un : null; watchPill(); if (keepScroll) main.scrollTop = top; } else if (typeof un === 'function') un();
   };
   const stop = Session.onChange((r, what) => { if (alive && what === 'role') draw(); });
-  // a draft approved or made on the agent screen (same browser) changes the "Waiting for approval" list
-  const onStore = e => { if (alive && e.key === APPROVALS_KEY) { const w = main.querySelector('#hm-wait'); if (w) w.outerHTML = waitingHTML(Session.role(), ctx.esc); } };
+  // a draft approved or made on the agent screen (same browser) changes the attention list: the home draws again in place
+  const onStore = e => { if (alive && e.key === APPROVALS_KEY && !main.querySelector('#hm-out')?.childElementCount) draw({ keepScroll: true }); };
   addEventListener('storage', onStore);
   await draw();
   return () => {
-    alive = false; stop(); removeEventListener('storage', onStore); firstAddr = '';
+    alive = false; stop(); removeEventListener('storage', onStore); firstAddr = ''; io?.disconnect();
     main.querySelector('#hm-out')?._slCtrl?.abort();
     dock.destroy(); if (dockCtl === dock) dockCtl = null;
     delete host.dataset.home; host.classList.remove('hm-docked'); delete document.documentElement.dataset.homeDock;
@@ -520,8 +717,8 @@ export default {
   ],
   tour: [
     { order: 100, hash: '#/home/overview', caption: '<b>Broad Sky OS.</b> Six companies. Every number is tied to a decision.', narration: 'This is Broad Sky OS. Six companies, and every number is tied to a decision.', duration: 7000 },
-    { order: 105, hash: '#/home/overview', caption: '<b>Six companies.</b> Hold, revenue, entry value, what moves it and status, one row each.', narration: 'One row per company: hold, revenue, entry value, what moves it and its status.', duration: 9000 },
-    { order: 110, hash: '#/home/overview', caption: '<b>Today.</b> The day\'s items and the drafts waiting for approval.', narration: 'Today\'s items, and the drafts waiting for approval.', duration: 9000 },
+    { order: 105, hash: '#/home/overview', caption: '<b>Six companies.</b> Revenue, years held and status, one tile each.', narration: 'One tile per company: revenue, years held and its status.', duration: 9000 },
+    { order: 110, hash: '#/home/overview', caption: '<b>Needs attention.</b> Loans due, exit windows and drafts waiting for approval, in one list.', narration: 'Loans due, exit windows and drafts waiting for approval, in one list.', duration: 9000 },
     { order: 120, hash: '#/home/firm', caption: '<b>BSP.</b> A $335M Fund I, six companies today, 23 add-ons, one exit: Smith + Howard, sold August 2026.', narration: 'The firm: a three hundred thirty-five million dollar fund, six companies today, twenty-three add-ons, one exit.', duration: 7000 },
   ],
 };

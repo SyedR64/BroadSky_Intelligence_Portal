@@ -1,62 +1,38 @@
-/* Home screens (modules/home.js): the firm home, the company home and the role home. Layout only: tokens and the system
-   classes do the rest (UNIFIED.md). Class prefix hm-. */
-.hm{display:flex;flex-direction:column;gap:var(--sys-sp-4);min-width:0}
-.hm-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sys-sp-1) var(--sys-sp-4)}
-.hm .hm-head .sys-h1{margin:0}
-.hm-head .sys-lead{margin:0;font-size:var(--sys-fs-base);max-width:none}
-.hm-org{flex-basis:100%;margin:0}
+/* Home screens (modules/home.js): the firm home, the company home and the role home. Layout only: the command band, the
+   ask box, figures, attention rows, tiles, the hold bar and the day strip are system classes (assets/system.css §6q,
+   UNIFIED.md). Class prefix hm-. */
+.hm{display:flex;flex-direction:column;gap:var(--sys-sp-6);min-width:0;max-width:1120px}
 .hm-sec{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
-.hm-sec>h2{margin:0}
-.hm-pair{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sys-sp-4);align-items:start}
-@media (min-width:900px){.hm-pair{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}}
-.hm-card{display:flex;flex-direction:column;gap:var(--sys-sp-2);min-width:0;padding:var(--sys-sp-4)}
-.hm-card>h2{margin:0}
-.hm-card .sys-card-label{margin:0}
 .hm-src{margin:0}
 
-/* the company table: one line per cell where the width allows */
+/* the six companies as a table (the "Table" toggle on the section head): one line per cell where the width allows */
 .hm-cos .sys-table th,.hm-cos .sys-table td{padding:9px 12px}
 .hm-cos .sys-table td{vertical-align:middle;white-space:nowrap}
 .hm-cos .sys-table td.hm-wrap{white-space:normal;min-width:18ch;max-width:34ch;font-size:var(--sys-fs-xs)}
 .hm-cos .sys-table td.hm-st{padding-right:var(--sys-sp-3)}
 .hm-cos tbody tr{cursor:pointer}
-/* narrower laptops: entry value (also in the side panel and Fundamentals) gives way so status keeps its room */
-@media (max-width:1399px){.hm-cos .hm-ev{display:none}}
 .hm-co{display:flex;align-items:center;gap:var(--sys-sp-2);min-width:0}
 .hm-co b{font-weight:600;color:var(--sys-ink)}
 .hm-cell{font-size:var(--sys-fs-sm);color:var(--sys-ink-2)}
 .hm-sub{font-size:var(--sys-fs-xs);color:var(--sys-mute);margin-left:var(--sys-sp-2)}
+.hm-nw{white-space:nowrap}
+/* narrower laptops: entry value (also in the side panel and Fundamentals) gives way so status keeps its room */
+@media (max-width:1399px){.hm-cos .hm-ev{display:none}}
 
-/* today's items and waiting for approval */
-.hm-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.hm-list>li+li{border-top:1px solid var(--sys-line)}
-.hm-item{display:grid;grid-template-columns:9ch minmax(0,1fr) auto;align-items:center;gap:var(--sys-sp-3);min-height:40px;padding:var(--sys-sp-1) var(--sys-sp-1);color:var(--sys-ink-2);text-decoration:none;font-size:var(--sys-fs-sm);border-radius:var(--sys-r-sm)}
-a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
-.hm-item b{font-weight:600;color:var(--sys-ink)}
-.hm-time{font-size:var(--sys-fs-xs);color:var(--sys-mute);white-space:nowrap}
-@media (min-width:641px){.hm-field .hm-item{grid-template-columns:17ch minmax(0,1fr) auto}}
-.hm-main{display:flex;flex-wrap:wrap;column-gap:var(--sys-sp-2);min-width:0}
-.hm-main span{color:var(--sys-mute)}
-.hm-list .hm-hide{display:none}
-.hm-list.is-all .hm-hide{display:block}
-.hm-empty{margin:0;font-size:var(--sys-fs-sm);color:var(--sys-mute)}
-.hm-show{align-self:flex-start}
-
-/* Figures: one quiet tile (the running estimate), not a banner */
-.hm-figs .sys-kpis{margin-top:0;align-self:flex-start;grid-template-columns:minmax(220px,300px)}
-.hm-figs .sys-kpi-value{font-size:var(--sys-fs-xl)}
-
-/* the answer area under the head: an address lookup lands here (the dock hands it over); empty, it takes no space */
+/* the answer area under the band: an address lookup lands here (the ask box or the dock hands it over); empty, it takes no space */
 .hm-out{min-width:0;scroll-margin-top:var(--sys-sp-4)}
 .hm-out:empty{display:none}
 .hm-out:focus,.hm-out:focus-visible{outline:none}   /* focus lands here only from script, to announce the answer: no ring on a region */
 .hm-out .sl-cards{max-width:960px}
 
 /* ── the home overview with the agent docked at the right (modules/home.js mountDock). The content area stops scrolling and
-   padding; the home column scrolls on its own; the dock is a column at 1200px and wider, an overlay from the right below ── */
+   padding; the home column scrolls on its own; the dock is a column at 1200px and wider, an overlay from the right below.
+   It starts closed and opens on the first question. ── */
 #content.hm-docked{display:flex;flex-direction:column;padding:0;overflow:hidden}
 .hm-split{position:relative;flex:1 1 0;display:grid;grid-template-columns:minmax(0,1fr);min-height:0}
-.hm-mainc{min-width:0;min-height:0;overflow:auto;padding:var(--sys-sp-6) var(--sys-gut) var(--sys-sp-7)}
+.hm-mainc{min-width:0;min-height:0;overflow:auto;padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-5)}
+.hm-mainc>.hm{min-height:100%}
+.hm>.sys-askbar{margin-top:auto}   /* on a short home the pill still sits at the bottom of the column */
 .hm-dock{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--sys-bg-2);border-left:1px solid var(--sys-line)}
 .hm-dock[hidden]{display:none}
 @media (min-width:1200px){.hm-split.is-docked{grid-template-columns:minmax(0,1fr) 360px}}
@@ -75,10 +51,14 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 .hm-dock-head .sys-btn[hidden]{display:none}
 .hm-dock-body{position:relative;flex:1 1 auto;min-height:0}
 
-/* the six-company table in the narrower column: entry value gives way, the add-on count sits under the years, tighter cells */
-.hm-nw{white-space:nowrap}
+/* one ask entry on screen at a time: while the dock is open its composer is the ask box, so the band's box and the
+   sticky pill step aside (the prompts stay: they ask in the dock) */
+@media (min-width:1200px){.hm-split.is-docked .sys-command-ask>.sys-askbox{display:none}}
+@media (max-width:1199px){.hm-split.is-docked .sys-command-ask>.sys-askbox{visibility:hidden}}
+.hm-split.is-docked .sys-askbar{visibility:hidden;opacity:0;pointer-events:none}
+
+/* the six-company table beside the docked column: entry value gives way, the add-on count sits under the years */
 .hm-split.is-docked .hm-cos .hm-ev{display:none}
-.hm-split.is-docked .hm-ask{display:none}   /* the open dock is the agent: the button would only repeat it */
 @media (min-width:1200px){
   .hm-split.is-docked .hm-cos .hm-sub{display:block;margin:2px 0 0;white-space:normal}
   .hm-split.is-docked .hm-cos td.sys-n{white-space:normal}
@@ -97,17 +77,6 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-mainc .hm-cos .sys-table :is(th,td){padding-left:10px;padding-right:10px}
   .hm-mainc .hm-cos td.hm-wrap{min-width:14ch}
 }
-/* today's list: the time column takes its longest entry ("due in 13 days"), so no time runs into its title */
-@media (min-width:641px){
-  .hm-mainc .hm-list{display:grid;grid-template-columns:max-content minmax(0,1fr) auto;column-gap:var(--sys-sp-3)}
-  .hm-mainc .hm-list>li{display:grid;grid-column:1/-1;grid-template-columns:subgrid}
-  .hm-mainc .hm-list>li.hm-hide{display:none}
-  .hm-mainc .hm-list.is-all>li.hm-hide{display:grid}
-  .hm-mainc .hm-item{grid-column:1/-1;grid-template-columns:subgrid}
-}
-
-/* the button into the agent screen */
-.hm-ask{align-self:flex-start}
 
 /* firm profile: older timeline events in the shared closed section */
 .hm-tl>.sys-fold{padding:var(--sys-sp-2) var(--sys-sp-3)}
@@ -120,15 +89,9 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
 /* the agent screen: the page fills the content area */
 #content.flush .embed-host,.embed-host{padding:0}
 
-/* phones: one column, the next job and the button into the agent on the first screen */
+/* phones: one column; the band and the first attention row on the first screen */
 @media (max-width:640px){
-  .hm{gap:var(--sys-sp-3)}
-  .hm-item{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"time chip" "main chip";row-gap:0;padding:var(--sys-sp-2) var(--sys-sp-1)}
-  .hm-item .hm-time{grid-area:time}
-  .hm-item .hm-main{grid-area:main}
-  .hm-item>.sys-chip{grid-area:chip}
-  .hm-ask{align-self:stretch}
-  .hm-figs .sys-kpis{align-self:stretch;grid-template-columns:minmax(0,1fr)}
+  .hm{gap:var(--sys-sp-5)}
   /* the company table becomes one block per company: name and status, then the three figures, then what moves it */
   .hm-cos .sys-table-wrap{overflow:visible}
   .hm-cos .sys-table,.hm-cos tbody{display:block}
@@ -145,6 +108,5 @@ a.hm-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
   .hm-cos td.hm-ev{display:none}
   .hm-cos .hm-cell{font-size:var(--sys-fs-xs)}
 }
-@media (pointer:coarse){.hm-item,.hm-ask{min-height:48px}}
-@media (max-width:900px){.hm-mainc{padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-6)}}
+@media (max-width:900px){.hm-mainc{padding:var(--sys-sp-4) var(--sys-gut) var(--sys-sp-4)}}
 @media (prefers-reduced-motion:reduce){.hm-dock{animation:none}}

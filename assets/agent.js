@@ -572,7 +572,7 @@ function mountActions() {
   }
   const sig = sigOf();
   // in the dock it is one card-button, the question in full and an arrow at the right
-  sb.innerHTML = !sig ? '' : DOCK ? `<button type="button" class="ca-sig ca-sig--card" data-ca="sig"><span>${esc(sig.question)}</span>${ARROW}</button>`
+  sb.innerHTML = !sig ? '' : DOCK ? `<button type="button" class="ca-sig ca-sig--card" data-ca="sig" data-sys-theme="dark"><span>${esc(sig.question)}</span>${ARROW}</button>`
     : `<button type="button" class="sys-chip ca-sig" data-ca="sig">${esc(sig.question)}</button>`;
   sb.hidden = !sig;
 }
@@ -705,6 +705,12 @@ export async function boot() {
       if (e.origin !== location.origin || e.source !== window.parent || !e.data || typeof e.data !== 'object') return;
       if (e.data.type === 'bsp:dock-clear') { pendingAddr.clear(); state.inst.newChat({ focus: true }); }
       else if (e.data.type === 'bsp:address-done') addressDone(e.data);
+      // a question from the home's ask box, a prompt or a row: the role's own question gets its prepared answer, anything
+      // else is asked as if typed here (a site address goes back to the home, handAddress)
+      else if (e.data.type === 'bsp:dock-ask') {
+        if (e.data.sig) askSignature();
+        else if (typeof e.data.text === 'string' && e.data.text.trim()) ask(e.data.text.trim().slice(0, 500));
+      }
     });
     // the shell's Ask hotkey (Command or Control J) pressed with the keyboard in here: the home opens or closes the dock
     document.addEventListener('keydown', e => {

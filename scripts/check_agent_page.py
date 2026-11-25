@@ -1128,9 +1128,10 @@ def chooser_checks(browser, site, tmp):
         ctx, page, outside, calls = _home_ctx(browser, site, w, h, dark, answers, delay_ms=700)
         con = Console(page, site)
         if w >= 1200:
-            # the dock is open at this width: type the address into the agent's composer inside its frame
+            # the dock docks as a column at this width: open it (the field home's pill) and type the address into its composer
             page.goto(f'{site}/app.html?role=pp-plumber&backend={FAKE_BACKEND}#/home/overview')
             page.wait_for_selector('#hm-out', state='attached', timeout=15000)
+            page.locator('.hm-mainc [data-hm="ask"]').first.click()
             dock = page.frame_locator('.hm-dock iframe')
             dock.locator('#ca-chat textarea').wait_for(timeout=15000)
             fq = urllib.parse.parse_qs(urllib.parse.urlparse(page.eval_on_selector('.hm-dock iframe', 'f => f.src')).query)
@@ -1228,7 +1229,9 @@ def chooser_checks(browser, site, tmp):
 
 # ── the home's dock ─────────────────────────────────────────────────────────────────────────────
 DOCK_STATE = """() => { const d = document.querySelector('.hm-dock'), l = document.querySelector('.ch-floating .ch-launch');
-  const ask = [...document.querySelectorAll('.hm-mainc [data-hm="ask"]')].filter(a => a.getClientRects().length);
+  // the ask entries on screen in the home column: the band's send button or the sticky pill, named "Ask the agent"
+  const ask = [...document.querySelectorAll('.hm-mainc [data-hm="ask"]')].filter(a => a.getClientRects().length && getComputedStyle(a).visibility !== 'hidden')
+    .map(a => ({ textContent: (a.getAttribute('aria-label') || a.querySelector('.sys-sr')?.textContent || a.textContent).replace(/:\\s*$/, '') }));
   return { open: !!d && !d.hidden, ls: localStorage.getItem('bsp-os-dock'), exp: document.querySelector('[data-sys-ask]')?.getAttribute('aria-expanded'),
     launcher: !!l && getComputedStyle(l).display !== 'none' && getComputedStyle(l).visibility !== 'hidden', flag: 'homeDock' in document.documentElement.dataset,
     askBtn: ask.map(a => a.textContent.trim()), clear: !!d && !d.querySelector('[data-hm="clear"]').hidden, hash: location.hash,
@@ -1249,8 +1252,22 @@ def _drawn(u, site):
 
 def _dock_open(page, site, role, w, extra=''):
     page.goto(f'{site}/app.html?role={role}&backend={FAKE_BACKEND}{extra}#/home/overview')
-    page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+    page.wait_for_selector('.hm-mainc .sys-command', timeout=15000)
     page.wait_for_timeout(300)
+
+
+def _band_type(page, text):
+    """Types `text` into the band's ask box and presses Enter: the dock opens and the question is asked in it. A field home has no
+    ask box in its band (the next job holds its place): there the sticky pill opens the dock and the text goes into its composer."""
+    if not page.locator('.hm-mainc #hm-q').count():
+        page.locator('.hm-mainc [data-hm="ask"]').first.click()
+        return _dock_type(page, text)
+    page.locator('.hm-mainc #hm-q').fill(text)
+    page.locator('.hm-mainc #hm-q').press('Enter')
+    dock = page.frame_locator('.hm-dock iframe')
+    dock.locator('#ca-chat textarea').wait_for(timeout=15000)
+    page.wait_for_function("() => !!document.querySelector('.hm-dock iframe')?.contentWindow?.__agent", timeout=15000)
+    return dock
 
 
 def _press(page, sel):
@@ -1276,9 +1293,10 @@ def dock_checks(browser, site, tmp):
     the context (nj_full's town hall replayed through server/site.py; /chat counted and refused). A site address typed in the dock
     goes to the home for every role, as in the floating Ask panel (no /chat, one /site-brief), the reply line then says where the
     answer is or why there is none, the address goes into the hash (a reload keeps the answer), Clear empties the thread and the
-    answer. The Ask hotkey opens and closes the dock with the keyboard inside it too. Open by default at 1440 px, the choice
-    remembered; closed at 1024 and 390 px, where every home shows "Ask the agent". The six-company table keeps Status in view
-    beside the docked column. No request leaves the site."""
+    answer. The Ask hotkey opens and closes the dock with the keyboard inside it too. Closed by default at every width: the band's
+    ask box ("Ask the agent") is the one ask entry, and a question typed there opens the dock and is asked in it. At 1440 px the
+    choice made with Ask or Close is remembered. The six-company table (the Table toggle) keeps Status in view beside the docked
+    column. No request leaves the site."""
     answers = site_answers(tmp)
     typed = answers['typed']
     done = f'The answer for {TOWN_HALL} is on the left.'
@@ -1290,12 +1308,14 @@ def dock_checks(browser, site, tmp):
         con = Console(page, site)
         _dock_open(page, site, role, 1440)
         st0 = page.evaluate(DOCK_STATE)
-        dock = _dock_type(page, typed)
+        dock = _band_type(page, typed)
         ok = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out .sl-ans')"), 10)
         th = poll(lambda: (lambda t: t if t['a'] and t['a'][-1] == done else None)(dock.locator('#ca-chat').evaluate(THREAD_JS)), 5) or dock.locator('#ca-chat').evaluate(THREAD_JS)
         st = page.evaluate(DOCK_STATE)
-        check(f'{tag}: the dock is open by default, Ask says so, the floating launcher steps aside',
-              st0['open'] and st0['exp'] == 'true' and not st0['launcher'] and st0['flag'] and not st0['askBtn'], json.dumps(st0)[:300])
+        check(f'{tag}: the dock starts closed, Ask says so, one ask entry shows (the band\'s box, or the pill on a field home), the floating launcher steps aside',
+              not st0['open'] and st0['exp'] == 'false' and not st0['launcher'] and st0['flag'] and st0['askBtn'] == ['Ask the agent'], json.dumps(st0)[:300])
+        check(f'{tag}: the question opened the dock as a column, Ask says so, and no other ask box shows beside its composer',
+              st['open'] and st['exp'] == 'true' and not st['askBtn'], json.dumps({k: st[k] for k in ('open', 'exp', 'askBtn')}))
         check(f'{tag}: a typed address goes to the home, not to the model: no /chat, one /site-brief, the answer in the home',
               ok and not chats and len(calls) == 1 and calls[0].get('role') == role and st['out'].startswith(TOWN_HALL), json.dumps({'chat': len(chats), 'site': len(calls), 'out': st['out']}))
         check(f'{tag}: the reply line says where the answer is once it is there', th['q'] == [typed] and th['a'] == [done], json.dumps(th)[:240])
@@ -1306,15 +1326,18 @@ def dock_checks(browser, site, tmp):
               json.dumps({k: st[k] for k in ('hash', 'clear')}))
         if role == 'cet-field-electrician':
             page.reload()
-            page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+            page.wait_for_selector('.hm-mainc .sys-command', timeout=15000)
             back = poll(lambda: page.evaluate("() => !!document.querySelector('#hm-out .sl-ans')"), 10)
             check(f'{tag}: a reload keeps the answer (the hash runs it again)', back and len(calls) == 2 and not chats, json.dumps({'site': len(calls)}))
+            if not page.evaluate(DOCK_STATE)['open']:
+                page.locator('[data-sys-ask]').click()   # the dock opens with Ask (a question opens it for this visit only)
+                page.wait_for_timeout(500)
             _press(page, '.hm-dock [data-hm="clear"]')
             gone = poll(lambda: (lambda s: s if not s['out'] and not s['clear'] else None)(page.evaluate(DOCK_STATE)), 5) or page.evaluate(DOCK_STATE)
             check(f'{tag}: Clear empties the answer, takes the address out of the hash and hides itself',
                   not gone['out'] and gone['hash'] == '#/home/overview' and not gone['clear'] and not gone['say'], json.dumps(gone)[:300])
             # the hotkey: from the page, then with the keyboard in the dock's composer, then again
-            page.locator('.hm-mainc .hm-head').click()
+            page.locator('.hm-mainc .sys-display').click()
             seq = []
             for _ in range(3):
                 page.keyboard.press('Control+J')
@@ -1327,7 +1350,7 @@ def dock_checks(browser, site, tmp):
             page.wait_for_timeout(500)
             _press(page, '.hm-dock [data-hm="close"]')
             page.reload()
-            page.wait_for_selector('.hm-mainc .hm-head', timeout=15000)
+            page.wait_for_selector('.hm-mainc .sys-command', timeout=15000)
             page.wait_for_timeout(500)
             st2 = page.evaluate(DOCK_STATE)
             check(f'{tag}: Close is remembered across a reload, and the home then shows "Ask the agent"',
@@ -1335,6 +1358,16 @@ def dock_checks(browser, site, tmp):
             pressed = _press(page, '.hm-mainc [data-hm="ask"]')
             page.wait_for_timeout(500)
             check(f'{tag}: "Ask the agent" opens the dock', pressed and page.evaluate(DOCK_STATE)['open'])
+            page.locator('[data-sys-ask]').click()   # closes it
+            page.wait_for_timeout(300)
+            page.locator('[data-sys-ask]').click()   # and opens it with Ask, which is remembered
+            page.wait_for_timeout(300)
+            page.reload()
+            page.wait_for_selector('.hm-mainc .sys-command', timeout=15000)
+            page.wait_for_timeout(500)
+            st3 = page.evaluate(DOCK_STATE)
+            check(f'{tag}: opened with Ask, the dock is open again after a reload and the band\'s ask box steps aside',
+                  st3['open'] and st3['ls'] == 'open' and st3['exp'] == 'true' and not st3['askBtn'], json.dumps(st3)[:300])
             who = page.evaluate("() => { const b = document.querySelector('.hm-dock [data-hm=\"who\"]'); return { pop: b.getAttribute('aria-haspopup'), label: b.getAttribute('aria-label') }; }")
             check(f'{tag}: the dock\'s role line says it opens the "Viewing as" sheet', who['pop'] == 'dialog' and who['label'].startswith('Viewing as ') and who['label'].endswith('. Change'), json.dumps(who))
         check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
@@ -1343,7 +1376,7 @@ def dock_checks(browser, site, tmp):
     ctx, page, outside, calls = _home_ctx(browser, site, 1440, 900, False, answers, site_status=500)
     con = Console(page, site)
     _dock_open(page, site, 'pp-plumber', 1440)
-    dock = _dock_type(page, typed)
+    dock = _band_type(page, typed)
     msg = 'The address lookup did not answer. Try again shortly.'
     th = poll(lambda: (lambda t: t if t['a'] and t['a'][-1] == msg else None)(dock.locator('#ca-chat').evaluate(THREAD_JS)), 8) or dock.locator('#ca-chat').evaluate(THREAD_JS)
     st = page.evaluate(DOCK_STATE)
@@ -1387,15 +1420,160 @@ def dock_checks(browser, site, tmp):
             check(f'{tag}: off the home the floating launcher is back', away['launcher'] and not away['flag'], json.dumps({k: away[k] for k in ('launcher', 'flag')}))
         check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
-    # the six-company table beside the docked column: Status in view, no sideways scroll
+    # the six-company table (the Table toggle) beside the docked column: Status in view, no sideways scroll
     for w in (1200, 1280, 1366, 1440):
         ctx, page = new_page(browser, w, 900, reduced=True)
         ctx.route('**/*', lambda r: r.continue_() if _drawn(r.request.url, site) else r.abort())
         page.goto(f'{site}/app.html?backend=off#/home/overview')
-        page.wait_for_selector('.hm-cos tbody tr', timeout=15000)
-        page.wait_for_timeout(300)
+        page.wait_for_selector('.hm-cos [data-cos="table"]', timeout=15000)
+        page.locator('.hm-cos [data-cos="table"]').click()
+        page.wait_for_selector('.hm-cos tbody tr', timeout=5000)
+        page.locator('[data-sys-ask]').click()
+        page.wait_for_timeout(500)
         t = page.evaluate(TABLE_JS)
-        check(f'dock {w} px firm home: beside the docked column the company table fits and every Status shows', t['docked'] and t['sw'] <= t['cw'] + 1 and t['status'], json.dumps(t))
+        check(f'dock {w} px firm home: with Table on and the dock open beside it, the company table fits and every Status shows', t['docked'] and t['sw'] <= t['cw'] + 1 and t['status'], json.dumps(t))
+        ctx.close()
+
+
+# ── the command band on every home ────────────────────────────────────────────────────────────────
+HOME_MEASURE = """() => {
+  const main = document.querySelector('.hm-mainc');
+  const rgb = c => { let m = /color\\(srgb ([\\d.e-]+) ([\\d.e-]+) ([\\d.e-]+)(?: \\/ ([\\d.e-]+))?\\)/.exec(c);
+    if (m) return [m[1] * 255, m[2] * 255, m[3] * 255, m[4] == null ? 1 : +m[4]];
+    m = /rgba?\\(([^)]+)\\)/.exec(c); if (!m) return null; const p = m[1].split(/[\\s,\\/]+/).filter(Boolean).map(Number); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; };
+  const lum = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const bgOf = el => { const chain = []; for (let n = el; n && n.nodeType === 1; n = n.parentElement) chain.push(n);
+    let c = [255, 255, 255]; for (const n of chain.reverse()) { const b = rgb(getComputedStyle(n).backgroundColor); if (b && b[3] > 0) c = c.map((v, i) => v * (1 - b[3]) + b[i] * b[3]); } return c; };
+  const over = (fg, bg) => fg[3] >= 1 ? fg : bg.map((v, i) => v * (1 - fg[3]) + fg[i] * fg[3]);
+  const shown = el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden' && !el.closest('.sys-sr,.sys-vh,[hidden]');
+  const small = [], small12 = [], low = [], tiny = [];
+  for (const e of main.querySelectorAll('*')) {
+    if (!shown(e) || e.closest('svg')) continue;
+    if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+    const cs = getComputedStyle(e), fs = parseFloat(cs.fontSize), txt = e.textContent.trim().slice(0, 30);
+    if (fs < 11) small.push(fs + ' ' + txt);
+    if (fs < 12 && e.closest('.sys-command,.sys-tiles,.sys-day,.sys-askbar,.sys-hold-key,.sys-sec-head')) small12.push(fs + ' ' + txt);
+    const bg = bgOf(e), fg = over(rgb(cs.color), bg), r = ratio(fg, bg), big = fs >= 24 || (fs >= 18.66 && +cs.fontWeight >= 700);
+    if (r < (big ? 3 : 4.5)) low.push(r.toFixed(2) + ' ' + txt);
+  }
+  const q = document.getElementById('hm-q');
+  if (q && shown(q)) { const bg = bgOf(q), ph = over(rgb(getComputedStyle(q, '::placeholder').color), bg), r = ratio(ph, bg); if (r < 4.5) low.push('placeholder ' + r.toFixed(2)); }
+  for (const e of main.querySelectorAll('a[href], button, input')) { if (!shown(e) || e.closest('.sys-sr')) continue; const b = e.getBoundingClientRect(); if (b.width < 24 || b.height < 24) tiny.push(Math.round(b.width) + 'x' + Math.round(b.height) + ' ' + (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 24)); }
+  const h1s = [...main.querySelectorAll('h1')], d = main.querySelector('.sys-display'), serif = [...main.querySelectorAll('*')].filter(e => shown(e) && /Instrument Serif/.test(getComputedStyle(e).fontFamily));
+  const ask = [...main.querySelectorAll('[data-hm="ask"]')].filter(shown);
+  const band = main.querySelector('.sys-command'), pill = main.querySelector('.sys-askbar');
+  return { h1: h1s.length, display: d ? { t: d.textContent.trim(), fs: parseFloat(getComputedStyle(d).fontSize), ff: getComputedStyle(d).fontFamily, isH1: d.tagName === 'H1' } : null,
+    serif: serif.length, font: document.fonts.check('400 40px "Instrument Serif"'), small, small12, low: low.slice(0, 6), tiny: tiny.slice(0, 6),
+    sideways: document.documentElement.scrollWidth > document.documentElement.clientWidth || main.scrollWidth > main.clientWidth,
+    ask: ask.length, band: band ? { bg: getComputedStyle(band).backgroundColor, theme: band.dataset.sysTheme, r: parseFloat(getComputedStyle(band).borderTopLeftRadius) } : null,
+    pill: pill ? { show: pill.hasAttribute('data-show'), top: pill.getBoundingClientRect().top } : null, vh: innerHeight,
+    tiles: [...main.querySelectorAll('a.sys-tile')].map(a => a.getAttribute('href')),
+    attn: [...main.querySelectorAll('.sys-attn-row')].slice(0, 2).map(r => { const c = r.querySelector('.sys-chip') || r; return Math.round(Math.max(r.querySelector('.sys-attn-open').getBoundingClientRect().bottom, c.getBoundingClientRect().bottom)); }),
+    next: main.querySelector('.sys-next') ? Math.round(main.querySelector('.sys-next').getBoundingClientRect().bottom) : null };
+}"""
+
+
+def _home_page(browser, site, role, w, h, dark):
+    ctx, page = new_page(browser, w, h, dark=dark, reduced=True)
+    outside = []
+    ctx.route('**/*', lambda r: r.continue_() if _drawn(r.request.url, site) else (outside.append(r.request.url), r.abort())[1])
+    con = Console(page, site)
+    page.goto(f'{site}/app.html?backend=off&role={role}#/home/overview')
+    page.wait_for_selector('.hm-mainc .sys-command', timeout=15000)
+    page.wait_for_function("() => document.fonts.status === 'loaded'", timeout=10000)
+    page.wait_for_timeout(400)
+    return ctx, page, outside, con
+
+
+def command_checks(browser, site):
+    """The command band on every kind of home (firm, company leadership, the fund, office, field), offline, in both themes from
+    360 to 1440 px: one h1, the band headline in the display face at 28 px or more and no other text in it, the band a dark island
+    (its navy token in either theme, radius 32 or 24), no text under 11 px anywhere in the home and none under 12 px in the band,
+    tiles, day strip and pill, text contrast 4.5:1 (3:1 for large type) on the real composited backgrounds, the ask box's
+    placeholder too, every control at least 24 px, no sideways scroll, exactly one ask entry on screen. Then: the band's ask box
+    from the keyboard (Tab order reaches it after the menu; a question typed there opens the dock and is asked in it), the role's
+    own question, an attention row opening the side panel, the six tiles in the fixed order, the pill shown only once the band's
+    ask box has scrolled away and never while the dock is open, the first attention row (and its chip) and a field role's next
+    job above the fold on a phone, and the band's revenue the same figure as the value and exit screen's."""
+    combos = [('bsp-managing-partner', w, h, dark) for w, h, dark in ((1440, 900, False), (1440, 900, True), (1200, 860, False), (1024, 768, True), (768, 1024, False), (390, 844, False), (390, 844, True), (360, 640, False))]
+    combos += [(r, w, h, dark) for r in ('bsp-partner', 'cet-ceo', 'bsp-investor-relations', 'pp-dispatcher', 'pp-plumber', 'ts-warehouse-lead')
+               for w, h, dark in ((1440, 900, r in ('cet-ceo', 'pp-plumber')), (1024, 768, r == 'pp-dispatcher'), (360, 640, r in ('bsp-partner', 'ts-warehouse-lead')))]
+    combos += [('pp-plumber', 390, 844, False), ('pp-plumber', 390, 844, True), ('cet-ceo', 390, 844, False)]
+    for role, w, h, dark in combos:
+        tag = f"home {role} {w} px {'dark' if dark else 'light'}"
+        ctx, page, outside, con = _home_page(browser, site, role, w, h, dark)
+        m = page.evaluate(HOME_MEASURE)
+        d = m['display'] or {}
+        check(f'{tag}: one h1, the band headline in the display face at 28 px or more, the face used nowhere else',
+              m['h1'] == 1 and d.get('isH1') and d.get('t') and d.get('fs', 0) >= 28 and d.get('ff', '').startswith('"Instrument Serif"') and m['serif'] == 1 and m['font'],
+              json.dumps({k: m[k] for k in ('h1', 'display', 'serif', 'font')})[:300])
+        navy = 'rgb(17, 27, 42)' if dark else 'rgb(11, 19, 34)'
+        check(f'{tag}: the band is a dark island on its navy token, radius {24 if w <= 560 else 32}',
+              m['band'] and m['band']['theme'] == 'dark' and m['band']['bg'] == navy and m['band']['r'] == (24 if w <= 560 else 32), json.dumps(m['band']))
+        check(f'{tag}: no text under 11 px, none under 12 px in the band and the parts below it', not m['small'] and not m['small12'], json.dumps({'small': m['small'][:4], 'small12': m['small12'][:4]}))
+        check(f'{tag}: text contrast 4.5:1 (3:1 large) on the composited background, the placeholder too', not m['low'], json.dumps(m['low']))
+        check(f'{tag}: every link and button is at least 24 px', not m['tiny'], json.dumps(m['tiny']))
+        check(f'{tag}: no sideways scroll; exactly one ask entry on screen', not m['sideways'] and m['ask'] == 1, json.dumps({'sideways': m['sideways'], 'ask': m['ask']}))
+        if role == 'bsp-managing-partner':
+            check(f'{tag}: six tiles, one link each, in the fixed order', m['tiles'] == ['#/pp', '#/cet', '#/fl', '#/ts', '#/bpi', '#/fh'], json.dumps(m['tiles']))
+            check(f'{tag}: the pill is hidden while the band\'s ask box is in view', m['pill'] and not m['pill']['show'], json.dumps(m['pill']))
+            if w <= 400 and h >= 800:   # a 390 x 844 phone
+                check(f'{tag}: the first attention row and its chip are on the first screen', m['attn'] and m['attn'][0] <= m['vh'], json.dumps({'attn': m['attn'], 'vh': m['vh']}))
+        if role == 'pp-plumber' and w <= 400 and h >= 800:
+            check(f'{tag}: the next job is fully above the fold and above the ask pill, which shows', m['next'] and m['pill']['show'] and m['next'] <= m['pill']['top'] <= m['vh'], json.dumps({'next': m['next'], 'pill': m['pill'], 'vh': m['vh']}))
+        if role == 'bsp-managing-partner' and not dark and w in (1440, 390):
+            # the keyboard: Tab from the top reaches the ask box after the top bar and the menu; a question typed there is asked in the dock
+            page.evaluate("() => { document.activeElement?.blur(); window.scrollTo(0, 0); }")
+            seq = []
+            for _ in range(60):
+                page.keyboard.press('Tab')
+                a = page.evaluate("() => { const e = document.activeElement; return e.id || e.dataset.k || e.className.split(' ')[0] || e.tagName; }")
+                seq.append(a)
+                if a == 'hm-q':
+                    break
+            menu = next((i for i, a in enumerate(seq) if a in ('home', 'rail-pick')), None)
+            check(f'{tag}: Tab reaches the ask box after the top bar and the menu', seq and seq[-1] == 'hm-q' and menu is not None and menu < len(seq) - 1, ' > '.join(seq[-8:]))
+            page.keyboard.type('Who is off plan?')
+            page.keyboard.press('Enter')
+            fr = page.frame_locator('.hm-dock iframe')
+            got = poll(lambda: (lambda t: t if t['q'] else None)(fr.locator('#ca-chat').evaluate(THREAD_JS)) if page.evaluate("() => !!document.querySelector('.hm-dock iframe')?.contentWindow?.__agent") else None, 15)
+            st = page.evaluate("() => ({ open: !document.querySelector('.hm-dock').hidden, pill: getComputedStyle(document.querySelector('.sys-askbar')).visibility })")
+            check(f'{tag}: a question typed in the ask box opens the dock and is asked there; the pill stays hidden',
+                  got and got['q'] == ['Who is off plan?'] and st['open'] and st['pill'] == 'hidden', json.dumps({'got': got, **st})[:300])
+            page.locator('.hm-dock [data-hm="clear"]').click()
+            page.wait_for_timeout(300)
+            page.locator('.hm-dock [data-hm="close"]').click()
+            page.wait_for_timeout(300)
+            page.locator('.hm-mainc .sys-attn-open').first.click()
+            page.wait_for_timeout(500)
+            insp = page.evaluate("() => ({ open: document.getElementById('inspector').classList.contains('open'), t: document.querySelector('#inspector .sys-card-title, #inspector h2, #inspector h3')?.textContent || '' })")
+            check(f'{tag}: an attention row opens the company in the side panel', insp['open'] and 'Thomas Scientific' in insp['t'], json.dumps(insp))
+            page.keyboard.press('Escape')
+            page.evaluate("() => { const m = document.querySelector('.hm-mainc'); m.scrollTop = m.scrollHeight; }")
+            page.wait_for_timeout(500)
+            pill = page.evaluate("() => { const p = document.querySelector('.sys-askbar'), b = p.getBoundingClientRect(); return { show: p.hasAttribute('data-show'), vis: getComputedStyle(p).visibility, bottom: b.bottom, vh: innerHeight }; }")
+            check(f'{tag}: scrolled past the band, the pill shows at the bottom of the screen', pill['show'] and pill['vis'] == 'visible' and pill['bottom'] <= pill['vh'], json.dumps(pill))
+            rev = page.evaluate("() => [...document.querySelectorAll('.sys-command .sys-fig')].find(f => /Revenue/.test(f.querySelector('.sys-fig-label').textContent))?.querySelector('.sys-fig-value').firstChild.textContent.trim()")
+            if w == 1440:
+                page.evaluate("location.hash = '#/fin/portfolio'")
+                page.wait_for_function("() => [...document.querySelectorAll('.sys-kpi-label')].some(l => /Portfolio revenue/.test(l.textContent))", timeout=20000)
+                fin = page.evaluate("() => [...document.querySelectorAll('.sys-kpi')].find(k => /Portfolio revenue/.test(k.querySelector('.sys-kpi-label').textContent)).querySelector('.sys-kpi-value').textContent.trim()")
+                check(f'{tag}: the band\'s revenue is the value and exit screen\'s figure', rev and fin == rev, json.dumps({'band': rev, 'fin': fin}))
+        if role == 'cet-ceo' and w == 1440:
+            # the role's own question, first among the prompts: asked in the dock, where it gets its prepared answer (no model)
+            q = page.locator('.hm-mainc [data-hm="sig"]').text_content().strip()
+            page.locator('.hm-mainc [data-hm="sig"]').click()
+            fr = page.frame_locator('.hm-dock iframe')
+            sig = poll(lambda: (lambda t: t if t['q'] and t['a'] and t['a'][0] else None)(fr.locator('#ca-chat').evaluate(THREAD_JS)) if page.evaluate("() => !!document.querySelector('.hm-dock iframe')?.contentWindow?.__agent") else None, 15)
+            check(f'{tag}: the role\'s own question opens the dock with its prepared answer', sig and sig['q'] == [q] and q == 'Which numbers are off plan this month?' and 'offline' not in sig['a'][0], json.dumps(sig)[:240])
+        if role == 'bsp-managing-partner' and w == 1024 and dark:
+            # the six companies as a table: a press on a column head sorts, and the choice of table is kept
+            page.locator('.hm-cos [data-cos="table"]').click()
+            page.locator('.hm-cos [data-sort="held"]').click()
+            o = page.evaluate("() => ({ ids: [...document.querySelectorAll('.hm-cos tbody tr')].map(t => t.dataset.id), sort: document.querySelector('.hm-cos th[aria-sort=\"descending\"] [data-sort]')?.dataset.sort, kept: localStorage.getItem('bsp-home-cos') })")
+            check(f'{tag}: Table shows the sortable table: Held sorts longest first and the choice is kept', o['ids'][:2] == ['ts', 'fh'] and o['sort'] == 'held' and o['kept'] == 'table', json.dumps(o))
+        check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
 
 
@@ -1565,6 +1743,7 @@ def main():
                 map_checks(browser, site)
                 chooser_checks(browser, site, tmp)
                 dock_checks(browser, site, tmp)
+                command_checks(browser, site)
                 sheet_checks(browser, site)
                 if not args.only_wave3:
                     page_checks(browser, site, catalog)
