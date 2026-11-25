@@ -51,10 +51,11 @@
 .hm-dock-head .sys-btn[hidden]{display:none}
 .hm-dock-body{position:relative;flex:1 1 auto;min-height:0}
 
-/* one ask entry on screen at a time: while the dock is open its composer is the ask box, so the band's box and the
-   sticky pill step aside (the prompts stay: they ask in the dock) */
-@media (min-width:1200px){.hm-split.is-docked .sys-command-ask>.sys-askbox{display:none}}
-@media (max-width:1199px){.hm-split.is-docked .sys-command-ask>.sys-askbox{visibility:hidden}}
+/* one ask entry on screen at a time: while the dock is open its composer is the ask box and it shows the role's question
+   and prompts, so the band's box, its prompts and the sticky pill step aside (beside the column they leave the layout; under
+   the overlay they keep their place, so nothing moves) */
+@media (min-width:1200px){.hm-split.is-docked .sys-command-ask{display:none}}
+@media (max-width:1199px){.hm-split.is-docked .sys-command-ask{visibility:hidden}}
 .hm-split.is-docked .sys-askbar{visibility:hidden;opacity:0;pointer-events:none}
 
 /* the six-company table beside the docked column: entry value gives way, the add-on count sits under the years */

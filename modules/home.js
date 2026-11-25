@@ -86,9 +86,13 @@ const numWord = n => WORDS[n] || String(n);
 const plural = (n, one, many = `${one}s`) => (n === 1 ? one : many);
 /** Roles whose ask box takes a site address too (the dock's test, assets/agent.js addressRole). */
 const addressRole = r => r.level === 'firm_leadership' || r.level === 'firm_team' || (r.co === 'pp' && (r.level === 'co_office' || r.level === 'co_field'));
-/** The ask box's placeholder: the role's own, naming the address for the roles that take one (as the dock words it). */
-function placeholderOf(r) {
+const PHONE = '(max-width:560px)';
+const phone = () => { try { return matchMedia(PHONE).matches; } catch { return false; } };
+/** The ask box's placeholder: the role's own, naming the address for the roles that take one (as the dock words it). On a
+ *  phone, its first clause only, so it is never cut mid-word ("Ask about the portfolio", "Where are you headed?"). */
+function placeholderOf(r, short = phone()) {
   let p = r.placeholder || 'Ask the agent';
+  if (short) { const i = p.indexOf(', '); return i > 0 ? `${p.slice(0, i)}${/\?$/.test(p) ? '?' : ''}` : p; }
   if (!addressRole(r)) return p;
   if (/[?.]$/.test(p)) return `${p} Or type an address.`;
   const i = p.lastIndexOf(' or ');
@@ -98,29 +102,33 @@ function placeholderOf(r) {
 const SEND = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>';
 const ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
 /* the constellation: one star per company in its accent (CSS only, decoration) */
-const MARK = `<svg class="sys-command-mark" viewBox="0 0 120 84" aria-hidden="true" focusable="false"><g fill="none" stroke="rgba(255,255,255,.22)" stroke-width=".8" stroke-linecap="round"><path d="M14 58 34 20l26 18 22-24 24 30-30 30-28-6z"/></g>
+const MARK = `<svg class="sys-command-mark" viewBox="0 0 120 84" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width=".8" stroke-linecap="round"><path d="M14 58 34 20l26 18 22-24 24 30-30 30-28-6z"/></g>
   <g><circle cx="34" cy="20" r="3.4" fill="var(--co-pp)"/><circle cx="60" cy="38" r="2.6" fill="var(--co-cet)"/><circle cx="82" cy="14" r="2.8" fill="var(--co-fl)"/><circle cx="106" cy="44" r="3.8" fill="var(--co-ts)"/><circle cx="76" cy="74" r="3" fill="var(--co-bpi)"/><circle cx="48" cy="68" r="2.4" fill="var(--co-fh)"/></g>
-  <g fill="rgba(255,255,255,.55)"><circle cx="14" cy="58" r="1.2"/><circle cx="98" cy="70" r=".9"/><circle cx="20" cy="30" r=".8"/><circle cx="112" cy="20" r=".8"/></g></svg>`;
+  <g fill="currentColor" fill-opacity=".55"><circle cx="14" cy="58" r="1.2"/><circle cx="98" cy="70" r=".9"/><circle cx="20" cy="30" r=".8"/><circle cx="112" cy="20" r=".8"/></g></svg>`;
 
+/** Numerals in an escaped headline set in the sans (.sys-display-num); entities such as &#39; are left alone. */
+const displayNums = t => String(t).replace(/(&#?\w+;)|(\d(?:[\d.,:]*\d)?)/g, (m, ent) => ent ? m : `<span class="sys-display-num">${m}</span>`);
 /** The band: kicker, headline, one quiet line, then its body (ask box, figures, list, or the next job). */
 const bandHTML = ({ kicker, title, lead, body }) => `<section class="sys-command" data-sys-theme="dark" aria-labelledby="hm-cmd-h">${MARK}
   <div class="sys-command-head"><p class="sys-command-kicker"><span class="sys-dot" aria-hidden="true"></span>${kicker}</p>
-  <h1 class="sys-display" id="hm-cmd-h">${title}</h1>${lead ? `<p class="sys-command-lead">${lead}</p>` : ''}</div>${body}</section>`;
+  <h1 class="sys-display" id="hm-cmd-h">${displayNums(title)}</h1>${lead ? `<p class="sys-command-lead">${lead}</p>` : ''}</div>${body}</section>`;
 /** The ask box: the role's placeholder, a round send button, then the role's own question and its prompts. */
 function askBoxHTML(role, esc) {
-  const sig = role.signature?.question, chips = (role.chips || []).slice(0, 4);
+  const sig = role.signature?.question, chips = (role.chips || []).slice(0, 2);   // the dock holds the rest
   return `<div class="sys-command-ask"><form class="sys-askbox" data-hm="askbox" aria-label="Ask the agent">
-      <label class="sys-sr" for="hm-q">Ask the agent</label><input id="hm-q" name="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="send" maxlength="500" placeholder="${esc(placeholderOf(role))}">
+      <label class="sys-sr" for="hm-q">Ask the agent</label><input id="hm-q" name="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="send" maxlength="500" placeholder="${esc(placeholderOf(role))}" data-ph="${esc(placeholderOf(role, false))}" data-ph-short="${esc(placeholderOf(role, true))}">
       <button type="submit" class="sys-send" data-hm="ask" aria-label="Ask the agent">${SEND}</button></form>
     ${sig || chips.length ? `<div class="sys-prompts" role="group" aria-label="Questions to ask">${sig ? `<button type="button" class="sys-chip sys-chip--sig" data-hm="sig">${esc(fill(sig))}${ARROW}</button>` : ''}${chips.map(c => `<button type="button" class="sys-chip" data-ask="${esc(fill(c))}">${esc(fill(c))}</button>`).join('')}</div>` : ''}</div>`;
 }
 /** The sticky pill at the bottom of the home column: it shows only while no other ask box is in view (overview watches it). */
-const pillHTML = (role, esc) => `<button type="button" class="sys-askbox sys-askbar" data-hm="ask"><span><span class="sys-sr">Ask the agent: </span>${esc(placeholderOf(role))}</span><span class="sys-send" aria-hidden="true">${SEND}</span></button>`;
+const pillHTML = (role, esc) => `<button type="button" class="sys-askbox sys-askbar" data-hm="ask"><span><span class="sys-sr">Ask the agent: </span><span data-ph="${esc(placeholderOf(role, false))}" data-ph-short="${esc(placeholderOf(role, true))}">${esc(placeholderOf(role))}</span></span><span class="sys-send" aria-hidden="true">${SEND}</span></button>`;
+/** The band's figures and its list in one block: stacked, or side by side on a wide band (system.css §6q). */
+const gridHTML = (...parts) => `<div class="sys-command-grid">${parts.join('')}</div>`;
 const figsHTML = (figs, label, card) => figs.length ? `<div class="sys-figs${card ? ' sys-figs--card' : ''}" role="list" aria-label="${label}">${figs.map(f => `<div class="sys-fig" role="listitem"><span class="sys-fig-label">${f.label}</span><span class="sys-fig-value">${f.value}</span>${f.sub ? `<span class="sys-fig-sub">${f.sub}</span>` : ''}</div>`).join('')}</div>` : '';
 const kpiFig = (esc, t) => ({ label: esc(fill(t.label)), value: `${esc(fill(t.value))}${t.modeled ? EST : ''}`, sub: esc(fill(t.sub)) });
 /** One attention row: when | what (the button that opens it covers the row) and its actions | status. */
 const attnRow = (x, i, max) => `<li class="sys-attn-row${i >= max ? ' is-more' : ''}"${x.id ? ` data-id="${x.id}"` : ''}><span class="sys-attn-when${x.whenText ? ' sys-attn-when--text' : ''}"${x.st ? ` data-st="${x.st}"` : ''}>${x.when}</span>
-  <div class="sys-attn-main">${x.open}${x.sub || x.acts ? `<span class="sys-attn-meta">${x.sub ? `<span class="sys-attn-sub">${x.sub}</span>` : ''}${x.acts ? `<span class="sys-attn-acts">${x.acts}</span>` : ''}</span>` : ''}</div>${x.chip || ''}</li>`;
+  <div class="sys-attn-main">${x.open}${x.sub || x.acts || x.ask ? `<span class="sys-attn-meta">${x.sub ? `<span class="sys-attn-sub">${x.sub}</span>` : ''}${x.acts ? `<span class="sys-attn-acts">${x.acts}</span>` : ''}${x.ask ? '<span class="sys-attn-ask" aria-hidden="true">Ask →</span>' : ''}</span>` : ''}</div>${x.chip || ''}</li>`;
 function attnHTML(title, items, quiet, max = 6) {
   return `<div class="sys-attn">${title ? `<h2 class="sys-attn-title" id="hm-attn-h">${title}</h2>` : ''}${items.length ? `<ol class="sys-attn-list"${title ? ' aria-labelledby="hm-attn-h"' : ''}>${items.map((x, i) => attnRow(x, i, max)).join('')}</ol>${items.length > max ? `<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-hm="all">All ${items.length}</button>` : ''}` : ''}
     ${quiet.filter(Boolean).length ? `<p class="sys-attn-quiet">${quiet.filter(Boolean).map(q => `<span>${q}</span>`).join('')}</p>` : ''}</div>`;
@@ -192,18 +200,17 @@ function setAddressHash(text, app) {
   try { history.replaceState(history.state, '', want); if (app) { app._at = location.hash; app.params = text ? { address: text } : {}; } } catch { /* the hash stays as it was */ }
 }
 
-/* What moves each company's value, in ten words or fewer (the table's column). The full sentence is the next action fin.js
-   prints for both value tables; it opens in the side panel. */
-const MOVES = {
-  cet: r => `Integrate the ${r.addOns ?? 6} add-ons`,
-  pp: r => 'Tuck-in on the undrawn loan',
-  fl: r => 'Close a first add-on',
-  ts: r => `Refinance or sell by ${r.matLabel || 'Dec 2027'}`,
-  bpi: r => 'One reporting line',
-  fh: r => 'Choose sponsor or strategic sale',
+/* One reading per company for the table's "Of note" column, from the same record (fin.js): what the filings show, never
+   what to do. A loan due within two years first, then the add-on count over the years held. */
+const yrs = r => (r.held != null ? `${r.held.toFixed(1)} yrs` : '');
+const NOTE = {
+  pp: () => '$1.4M undrawn in one lender\u2019s slice',   // pp_filings: the delayed-draw loan in a BDC schedule
 };
-/** The status chip: the exit-window flag fin.js sets, cut to its first words ("Build", "In exit window", "Refinance in 13 mo"). */
-const status = r => String(r.flag?.t || '').replace(/\s*\(.*\)$/, '').replace(/:.*$/, '').replace(/^Refinancing due in/, 'Refinance in');
+const noteOf = r => r.flag?.k === 0 ? `Loan matures ${r.matLabel || 'within two years'}`
+  : NOTE[r.id] ? NOTE[r.id](r)
+  : r.addOns ? `${r.addOns} add-on${r.addOns === 1 ? '' : 's'} in ${yrs(r)}` : `No add-ons in ${yrs(r)}`;
+/** The status chip: the exit-window flag fin.js sets, cut to its first words ("Build", "In exit window", "Loan due in 13 mo"). */
+const status = r => String(r.flag?.t || '').replace(/\s*\(.*\)$/, '').replace(/:.*$/, '').replace(/^Refinancing due in/, 'Loan due in');
 /** The dollar figure an estimate gives for `kind` ('revenue' picks the revenue half of "$65–100M revenue; $6–11M EBITDA"). */
 function dollars(e, kind) {
   if (!e) return '';
@@ -251,8 +258,8 @@ function headline(items, drafts) {
 /** The six companies as status tiles, in the fixed order. */
 function tilesHTML(rows, firm, esc, tpl) {
   const m = Math.min(tpl.hold / HOLD_SCALE, 1) * 100;
-  return `<p class="sys-hold-key" aria-hidden="true"><span><i></i>Years held, 0 to ${HOLD_SCALE}</span><span><i class="is-zone"></i>Exit window, 4 and up</span><span><i class="is-mark"></i>Smith + Howard sold at ${esc(tpl.hold.toFixed(1))}</span></p>
-  <div class="sys-tiles">${TILE_ORDER.map(id => rows.find(r => r.id === id)).filter(Boolean).map(r => {
+  const key = `<p class="sys-hold-key" aria-hidden="true"><span><i></i>Years held, 0 to ${HOLD_SCALE}</span><span><i class="is-zone"></i>Exit window, 4 and up</span><span><i class="is-mark"></i>Smith + Howard sold at ${esc(tpl.hold.toFixed(1))}</span></p>`;
+  return `<div class="sys-tiles-box"><div class="sys-tiles">${TILE_ORDER.map(id => rows.find(r => r.id === id)).filter(Boolean).map(r => {
     const name = LONG[r.id] || r.short, rev = dollars(r.rev, 'revenue'), pf = isPF(r.rev), st = status(r);
     const v = r.held != null ? Math.min(r.held / HOLD_SCALE, 1) * 100 : 0, adds = addTxt(r.addOns, reportedOf(firm, r.id));
     return `<a class="sys-tile" ${coAttr(r.id)} href="#/${esc(r.id)}" aria-label="${esc(`${name}: revenue${pf ? ', pro forma,' : ''} ${rev || 'not known'}, estimated. Held ${r.held != null ? r.held.toFixed(1) : '—'} of ${HOLD_SCALE} years, ${adds}. ${st}. Open ${name}`)}">
@@ -260,7 +267,7 @@ function tilesHTML(rows, firm, esc, tpl) {
       <span class="sys-tile-fig"><span class="sys-fig-label">Revenue${pf ? ', pro forma' : ''} ${EST}</span><span class="sys-fig-value">${esc(rev || '—')}</span></span>
       <span class="sys-hold"><span class="sys-hold-bar"><i style="--v:${v.toFixed(1)}%"></i><b style="--m:${m.toFixed(2)}%"></b></span><span class="sys-hold-meta"><span><b>${r.held != null ? r.held.toFixed(1) : '—'} yrs</b> held</span><span>${esc(adds)}</span></span></span>
       ${stChip(st, r.flag.st)}</a>`;
-  }).join('')}</div>`;
+  }).join('')}</div>${key}</div>`;
 }
 /* the table's sortable columns: the company order, years held, revenue, entry value and status (most urgent first) */
 const SORTS = { company: r => TILE_ORDER.indexOf(r.id), held: r => r.held ?? -1, rev: r => r.rev_sort ?? -1, ev: r => r.ev_sort ?? -1, status: r => r._k };
@@ -275,11 +282,11 @@ function tableHTML(rows, firm, esc, sort) {
       <td class="sys-n hm-cell" data-label="Held">${r.held != null ? `${r.held.toFixed(1)} yrs` : '—'}<span class="hm-sub">${addTxt(r.addOns, reportedOf(firm, r.id)).split(', ').map(p => `<span class="hm-nw">${esc(p)}</span>`).join(', ')}</span></td>
       <td class="sys-n hm-cell" data-label="Revenue, est.">${rev ? esc(rev) : '—'}</td>
       <td class="sys-n hm-cell hm-ev" data-label="Entry value, est.">${ev ? esc(ev) : '—'}</td>
-      <td class="hm-cell hm-wrap">${esc((MOVES[r.id] || (() => ''))(r))}</td>
+      <td class="hm-cell hm-wrap">${esc(noteOf(r))}</td>
       <td class="hm-st">${stChip(status(r), r.flag.st)}</td></tr>`;
   };
   return `<div class="sys-table-wrap"><table class="sys-table"><caption class="sys-sr">Six companies. Press a column head to sort.</caption>
-    <thead><tr>${th('company', 'Company')}${th('held', 'Held', 'sys-n')}${th('rev', `Revenue ${EST}`, 'sys-n')}${th('ev', `Entry value ${EST}`, 'sys-n hm-ev')}<th scope="col" class="hm-wrap">What moves it</th>${th('status', 'Status')}</tr></thead>
+    <thead><tr>${th('company', 'Company')}${th('held', 'Held', 'sys-n')}${th('rev', `Revenue ${EST}`, 'sys-n')}${th('ev', `Entry value ${EST}`, 'sys-n hm-ev')}<th scope="col" class="hm-wrap">Of note</th>${th('status', 'Status')}</tr></thead>
     <tbody>${list.map(coRow).join('')}</tbody></table></div>`;
 }
 
@@ -304,8 +311,8 @@ async function firmHome(ctx, role, live) {
     kicker: `${esc(greeting())} · ${esc(role.title)}`,
     title: esc(headline(items, drafts.length)),
     lead: asOf ? `From public filings, as of ${esc(asOf)}.` : '',
-    body: askBoxHTML(role, esc) + figsHTML(figs, 'Fund and portfolio, estimated')
-      + attnHTML(`Needs attention · ${items.length + drafts.length}`, [...items, ...drafts], [approvalLine(role, drafts.length), reported ? `${esc(reported.replace(/\.$/, ''))} ${SAMPLE}` : '']),
+    body: askBoxHTML(role, esc) + gridHTML(figsHTML(figs, 'Fund and portfolio, estimated'),
+      attnHTML(`Needs attention · ${items.length + drafts.length}`, [...items, ...drafts], [approvalLine(role, drafts.length), reported ? `${esc(reported.replace(/\.$/, ''))} ${SAMPLE}` : ''])),
   });
   let view = 'tiles'; try { if (localStorage.getItem(COS_KEY) === 'table') view = 'table'; } catch { /* tiles */ }
   const sort = { key: 'status', dir: 1 };
@@ -369,8 +376,8 @@ async function companyHome(ctx, role, live) {
     kicker: `${esc(name)} · ${esc(role.title)} ${SAMPLE}`,
     title: esc(firstSentence(lead) || name),
     lead: esc(afterFirst(lead)),
-    body: askBoxHTML(role, esc) + figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), `${esc(name)} figures`)
-      + attnHTML(n ? `Needs attention · ${n}` : '', [...items, ...drafts], [n ? '' : `Nothing flagged for ${esc(name)}.`, approvalLine(role, drafts.length), held]),
+    body: askBoxHTML(role, esc) + gridHTML(figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), `${esc(name)} figures`),
+      attnHTML(n ? `Needs attention · ${n}` : '', [...items, ...drafts], [n ? '' : `Nothing flagged for ${esc(name)}.`, approvalLine(role, drafts.length), held])),
   });
   el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${band}${outHTML()}
     ${dayHTML(role, esc)}
@@ -399,10 +406,10 @@ async function roleHome(ctx, role) {
       ${dayHTML(role, esc, { list: later, title: 'Later today', asList: true })}
       ${(role.home?.kpis || []).length ? `<section class="hm-sec" aria-label="Today in numbers">${figsHTML(role.home.kpis.map(t => kpiFig(esc, t)), 'Today in numbers', true)}</section>` : ''}`;
   } else {
-    const rows = list.map(x => ({ ...whenOf(fill(x.time), esc), st: x.chip && /urgent|late|risk/i.test(x.chip) ? 'warn' : '', open: `<button type="button" class="sys-attn-open" data-ask="${esc(fill(x.prompt || x.title))}">${esc(fill(x.title))}</button>`, sub: esc(fill(x.where)), chip: x.chip ? itemChip(fill(x.chip), esc) : '' }));
+    const rows = list.map(x => ({ ...whenOf(fill(x.time), esc), st: x.chip && /urgent|late|risk/i.test(x.chip) ? 'warn' : '', open: `<button type="button" class="sys-attn-open" data-ask="${esc(fill(x.prompt || x.title))}">${esc(fill(x.title))}</button>`, sub: esc(fill(x.where)), ask: true, chip: x.chip ? itemChip(fill(x.chip), esc) : '' }));
     html = bandHTML({ kicker, title: esc(firstSentence(lead) || role.title), lead: esc(afterFirst(lead)),
-      body: askBoxHTML(role, esc) + figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), 'Today in numbers')
-        + attnHTML(`${esc(fill(role.home?.list_title || 'Today'))} · ${list.length + drafts.length}`, [...drafts, ...rows], [approvalLine(role, drafts.length)], 5) }) + outHTML();
+      body: askBoxHTML(role, esc) + gridHTML(figsHTML((role.home?.kpis || []).slice(0, 3).map(t => kpiFig(esc, t)), 'Today in numbers'),
+        attnHTML(`${esc(fill(role.home?.list_title || 'Today'))} · ${list.length + drafts.length}`, [...drafts, ...rows], [approvalLine(role, drafts.length)], 5)) }) + outHTML();
   }
   el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${html}
     <p class="sys-src hm-src" data-method>Sandbox records: fictional people and modeled numbers.</p>
@@ -574,12 +581,15 @@ async function overview(ctx) {
     if (live()) { undo = typeof un === 'function' ? un : null; watchPill(); if (keepScroll) main.scrollTop = top; } else if (typeof un === 'function') un();
   };
   const stop = Session.onChange((r, what) => { if (alive && what === 'role') draw(); });
+  // the ask box and the pill: the short placeholder on a phone, the full one wider (no redraw)
+  const narrow = matchMedia(PHONE), onNarrow = () => { for (const e of main.querySelectorAll('[data-ph-short]')) { const t = narrow.matches ? e.dataset.phShort : e.dataset.ph; if (e.tagName === 'INPUT') e.placeholder = t; else e.textContent = t; } };
+  narrow.addEventListener('change', onNarrow);
   // a draft approved or made on the agent screen (same browser) changes the attention list: the home draws again in place
   const onStore = e => { if (alive && e.key === APPROVALS_KEY && !main.querySelector('#hm-out')?.childElementCount) draw({ keepScroll: true }); };
   addEventListener('storage', onStore);
   await draw();
   return () => {
-    alive = false; stop(); removeEventListener('storage', onStore); firstAddr = ''; io?.disconnect();
+    alive = false; stop(); removeEventListener('storage', onStore); narrow.removeEventListener('change', onNarrow); firstAddr = ''; io?.disconnect();
     main.querySelector('#hm-out')?._slCtrl?.abort();
     dock.destroy(); if (dockCtl === dock) dockCtl = null;
     delete host.dataset.home; host.classList.remove('hm-docked'); delete document.documentElement.dataset.homeDock;

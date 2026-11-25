@@ -328,6 +328,8 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 @media (max-height:820px){.rail-nav{padding-bottom:var(--sys-sp-3)}.rail-group+.rail-group{margin-top:var(--sys-sp-3)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-2)}}
 @media (max-height:780px){.rail-nav{padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}.rail-group+.rail-group{margin-top:var(--sys-sp-2)}.rail-section{padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}.rail-item{min-height:34px}.rail-group+.rail-group--open{margin-top:var(--sys-sp-1);padding-top:var(--sys-sp-1)}}
 @media (max-width:1280px){.search-btn{width:36px;min-width:36px;padding:0;justify-content:center}.search-btn .search-label,.search-btn .sys-kbd{display:none}}
+/* the narrowest phones: the controls wrap onto a second line, right-aligned, instead of running past the edge */
+@media (max-width:400px){.top-right{flex-wrap:wrap;justify-content:flex-end;flex-shrink:1;min-width:0;row-gap:var(--sys-sp-2)}}
 /* tablet and phone: the rail becomes one native picker, the view bar is one row of tabs, the inspector slides over */
 @media (max-width:900px){
   #app{display:flex;flex-direction:column;min-height:0}

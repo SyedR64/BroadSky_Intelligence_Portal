@@ -1239,6 +1239,13 @@ DOCK_STATE = """() => { const d = document.querySelector('.hm-dock'), l = docume
     outRole: document.getElementById('hm-out')?.getAttribute('role'), outLive: document.getElementById('hm-out')?.getAttribute('aria-live'),
     say: document.getElementById('hm-say')?.textContent || '', slText: document.querySelector('#hm-out .sl-text, #hm-out .sl-fail')?.textContent || '' };
 }"""
+TILES_JS = """() => { const m = document.querySelector('.hm-mainc'), tiles = [...m.querySelectorAll('a.sys-tile')], over = [];
+  for (const t of tiles) { const r = t.getBoundingClientRect(); if (t.scrollWidth > t.clientWidth + 1) over.push(t.getAttribute('href') + ' sw' + (t.scrollWidth - t.clientWidth));
+    for (const e of t.querySelectorAll('*')) { if (!e.getClientRects().length) continue; const b = e.getBoundingClientRect(); if (b.right > r.right + 0.5 || b.left < r.left - 0.5) { over.push(t.getAttribute('href') + ' ' + (e.className || e.tagName) + ' ' + Math.round(b.right - r.right)); break; } } }
+  const d = m.querySelector('.sys-display'), lh = parseFloat(getComputedStyle(d).lineHeight);
+  const prompts = [...m.querySelectorAll('.sys-prompts')].filter(p => p.getClientRects().length && getComputedStyle(p).visibility !== 'hidden').length;
+  return { docked: document.querySelector('.hm-split').classList.contains('is-docked'), n: tiles.length, over: over.slice(0, 6), lines: Math.round(d.getBoundingClientRect().height / lh), prompts,
+    sideways: m.scrollWidth > m.clientWidth || document.documentElement.scrollWidth > document.documentElement.clientWidth }; }"""
 TABLE_JS = """() => { const w = document.querySelector('.hm-cos .sys-table-wrap'), st = [...document.querySelectorAll('.hm-cos td.hm-st')];
   const wr = w.getBoundingClientRect();
   return { sw: w.scrollWidth, cw: w.clientWidth, docked: document.querySelector('.hm-split').classList.contains('is-docked'),
@@ -1420,12 +1427,22 @@ def dock_checks(browser, site, tmp):
             check(f'{tag}: off the home the floating launcher is back', away['launcher'] and not away['flag'], json.dumps({k: away[k] for k in ('launcher', 'flag')}))
         check(f'{tag}: nothing outside the site, no console errors', not outside and not con.errors, json.dumps({'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
-    # the six-company table (the Table toggle) beside the docked column: Status in view, no sideways scroll
+    # the six companies beside the docked column, as tiles (the default) and as the table (the Table toggle): nothing in a tile
+    # runs past its edge, the headline stays on one line and the band's prompts step aside (the dock shows them); in the table
+    # Status stays in view; no sideways scroll
     for w in (1200, 1280, 1366, 1440):
         ctx, page = new_page(browser, w, 900, reduced=True)
         ctx.route('**/*', lambda r: r.continue_() if _drawn(r.request.url, site) else r.abort())
         page.goto(f'{site}/app.html?backend=off#/home/overview')
-        page.wait_for_selector('.hm-cos [data-cos="table"]', timeout=15000)
+        page.wait_for_selector('.hm-cos a.sys-tile', timeout=15000)
+        page.wait_for_function("() => document.fonts.status === 'loaded'", timeout=10000)
+        page.locator('[data-sys-ask]').click()
+        page.wait_for_timeout(500)
+        t = page.evaluate(TILES_JS)
+        check(f'dock {w} px firm home: with the dock open beside the tiles, all six fit inside their edges, the headline is one line and the band\'s prompts step aside',
+              t['docked'] and t['n'] == 6 and not t['over'] and t['lines'] == 1 and t['prompts'] == 0 and not t['sideways'], json.dumps(t))
+        page.locator('[data-sys-ask]').click()   # closed again, so the Table toggle below opens it as before
+        page.wait_for_timeout(300)
         page.locator('.hm-cos [data-cos="table"]').click()
         page.wait_for_selector('.hm-cos tbody tr', timeout=5000)
         page.locator('[data-sys-ask]').click()
@@ -1469,6 +1486,7 @@ HOME_MEASURE = """() => {
     ask: ask.length, band: band ? { bg: getComputedStyle(band).backgroundColor, theme: band.dataset.sysTheme, r: parseFloat(getComputedStyle(band).borderTopLeftRadius) } : null,
     pill: pill ? { show: pill.hasAttribute('data-show'), top: pill.getBoundingClientRect().top } : null, vh: innerHeight,
     tiles: [...main.querySelectorAll('a.sys-tile')].map(a => a.getAttribute('href')),
+    tileTop: main.querySelector('a.sys-tile') ? Math.round(main.querySelector('a.sys-tile').getBoundingClientRect().top) : null,
     attn: [...main.querySelectorAll('.sys-attn-row')].slice(0, 2).map(r => { const c = r.querySelector('.sys-chip') || r; return Math.round(Math.max(r.querySelector('.sys-attn-open').getBoundingClientRect().bottom, c.getBoundingClientRect().bottom)); }),
     next: main.querySelector('.sys-next') ? Math.round(main.querySelector('.sys-next').getBoundingClientRect().bottom) : null };
 }"""
@@ -1517,6 +1535,10 @@ def command_checks(browser, site):
         check(f'{tag}: no sideways scroll; exactly one ask entry on screen', not m['sideways'] and m['ask'] == 1, json.dumps({'sideways': m['sideways'], 'ask': m['ask']}))
         if role == 'bsp-managing-partner':
             check(f'{tag}: six tiles, one link each, in the fixed order', m['tiles'] == ['#/pp', '#/cet', '#/fl', '#/ts', '#/bpi', '#/fh'], json.dumps(m['tiles']))
+            t = page.evaluate(TILES_JS)
+            check(f'{tag}: nothing in a tile runs past its edge', not t['over'], json.dumps(t['over']))
+            if w >= 1366:
+                check(f'{tag}: the band leaves the tops of the tiles on the first screen', m['tileTop'] is not None and m['tileTop'] + 24 <= m['vh'], json.dumps({'tileTop': m['tileTop'], 'vh': m['vh']}))
             check(f'{tag}: the pill is hidden while the band\'s ask box is in view', m['pill'] and not m['pill']['show'], json.dumps(m['pill']))
             if w <= 400 and h >= 800:   # a 390 x 844 phone
                 check(f'{tag}: the first attention row and its chip are on the first screen', m['attn'] and m['attn'][0] <= m['vh'], json.dumps({'attn': m['attn'], 'vh': m['vh']}))
