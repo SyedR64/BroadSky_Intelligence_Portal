@@ -166,231 +166,231 @@ function buildFactors(D) {
   const ppH = D.hz.pp;
   add({ id: 'pp-homes', co: 'pp', cat: 'housing', w: 3, name: 'Home sales in the footprint', why: 'New owners fix, replace and sign up for service plans in their first year.',
     read: ppH ? { v: `${num(ppH.pend.cur)} homes under contract`, d: `${pctS(ppH.pend.chg)} vs a year ago · new listings ${pctS(ppH.newL.chg)}`, date: hz, src: 'Realtor.com county data', url: URL_.realtor, dir: sgn(ppH.pend.chg, 0.03) } : null,
-    lever: 'Mail every buyer within 60 days of closing. The new-mover list is ready.', link: ['#/pp/movers', 'New movers'],
+    lever: 'Mailing buyers within 60 days of closing; New movers holds the list.', link: ['#/pp/movers', 'New movers'],
     sens: pp?.sales12 ? sens(`Each 10% more home sales ≈ ${num(pp.sales12 * 0.1 * 0.03)} more jobs, ${smoney(pp.sales12 * 0.1 * 0.03 * 400)} sales a year`, pp.sales12 * 0.1 * 0.03 * 400,
       ppH?.pend.chg != null ? `Today's ${pctS(ppH.pend.chg)} ≈ ${smoney(pp.sales12 * ppH.pend.chg * 0.03 * 400)} sales a year` : null, ppH?.pend.chg != null ? pp.sales12 * ppH.pend.chg * 0.03 * 400 : null, 'sales',
       `${num(pp.sales12)} home sales a year in the ${pp.n} counties (Redfin, Jun 2025 to May 2026); 3% of buyers book a first job (mail response runs 2 to 4%); $400 average repair ticket. Service plans sold to new owners would add more.`) : null });
   add({ id: 'pp-rates', co: 'pp', cat: 'money', w: 3, name: 'Mortgage rates', why: 'High mortgage rates keep owners in place, so fewer homes change hands.',
-    read: fr('MORTGAGE30US', -1), lever: 'Lean on repair-first offers and monthly financing. Owners who stay put fix what they have.', link: ['#/pp/movers', 'New movers'] });
+    read: fr('MORTGAGE30US', -1), lever: 'Repair-first offers and monthly financing, since owners who stay put likely fix what they have.', link: ['#/pp/movers', 'New movers'] });
   add({ id: 'pp-age', co: 'pp', cat: 'housing', w: 3, name: 'Age of homes', why: 'Older homes break down more and need whole-system replacements.',
     read: pp ? { v: `${pct0(pp.pre1980)} of homes built before 1980`, d: `typical home built around ${Math.round(pp.yearBuilt)} · ${pct0(pp.owner)} owner-occupied`, date: 'ACS 2019 to 2023', src: 'Census American Community Survey', url: URL_.acs, dir: 1 } : null,
-    lever: 'Aim replacement offers and service plans at the zips with the oldest homes.', link: ['#/pp/territory', 'Territory'],
+    lever: 'Replacement offers and service plans aimed at the zips with the oldest homes.', link: ['#/pp/territory', 'Territory'],
     sens: pp ? sens(`Each 1 in 10,000 older homes that replaces a system with Punctual Pros ≈ ${smoney(pp.hu * pp.pre1980 * 0.0001 * 10000)} sales a year`, pp.hu * pp.pre1980 * 0.0001 * 10000, null, null, 'sales',
       `${big(pp.hu * pp.pre1980)} homes built before 1980 in the ${pp.n} counties (ACS); $10,000 average installed system (assumption).`) : null });
   const cw = S('CES2000000003');
-  add({ id: 'pp-labor', co: 'pp', cat: 'labor', w: 3, name: 'Technician supply and pay', why: 'Calls without a free technician are lost sales, and pay is the largest cost.',
+  add({ id: 'pp-labor', co: 'pp', cat: 'labor', w: 3, name: 'Technician supply and pay', why: 'Calls without a free technician are lost sales, and pay is likely the largest cost.',
     read: cw ? { v: `${val(cw)} construction pay`, d: `${chg(cw)} vs a year ago · unemployment PA ${val(S('PAUR'))}, NJ ${val(S('NJUR'))}`, date: asOf(cw), src: pub('CES2000000003'), url: cw.url, dir: cw.chg > 0.035 ? -1 : cw.chg < 0.025 ? 1 : 0, series: [cw, S('PAUR'), S('NJUR')].filter(Boolean) } : null,
-    lever: 'Run an apprentice program, set pay bands by market, let the voice agent book calls.',
+    lever: 'An apprentice program, pay bands by market and a voice agent that books calls.',
     sens: sens(`Each 1% rise in technician pay ≈ ${smoney(-R.pp * 0.35 * 0.01)} margin a year`, -R.pp * 0.35 * 0.01, cw?.chg != null ? `Today's ${chg(cw)} ≈ ${smoney(-R.pp * 0.35 * cw.chg)} margin a year` : null, cw?.chg != null ? -R.pp * 0.35 * cw.chg : null, 'margin',
       `Revenue ${D.revTxt.pp} (public filings); field labor about 35% of revenue (assumption).`) });
   const eq = S('PCU333415333415');
   add({ id: 'pp-equip', co: 'pp', cat: 'costs', w: 2, name: 'Equipment prices', why: 'Equipment prices set the replacement ticket; when they jump, some owners repair instead.',
-    read: fr('PCU333415333415', -1), lever: 'Update the price book every quarter and buy ahead of announced price rises.',
+    read: fr('PCU333415333415', -1), lever: 'A quarterly price-book update and buying ahead of announced price rises.',
     sens: sens(`Each 5% rise in equipment cost ≈ ${smoney(-R.pp * 0.4 * 0.45 * 0.05)} margin a year if not passed on`, -R.pp * 0.4 * 0.45 * 0.05, eq?.chg != null ? `Today's ${chg(eq)} ≈ ${smoney(-R.pp * 0.4 * 0.45 * eq.chg)} margin a year if not passed on` : null, eq?.chg != null ? -R.pp * 0.4 * 0.45 * eq.chg : null, 'margin',
       `Revenue ${D.revTxt.pp}; replacements about 40% of revenue; equipment about 45% of a replacement ticket (assumptions).`) });
   add({ id: 'pp-refrig', co: 'pp', cat: 'policy', w: 2, name: 'Refrigerant rules', why: 'New systems must use newer refrigerants, which raises prices and pushes old units out.',
     read: { v: 'New systems use the newer refrigerants', d: 'Units built before 2025 with the old refrigerant can still be installed (rule eased May 26, 2026) · old refrigerant supply cut 40% now, 70% from 2029', date: 'Oct 2026', src: 'EPA rule, Federal Register', url: URL_.epaTT, dir: 1 },
-    lever: 'Quote replacements to owners of old R-22 and R-410A systems before repair refrigerant costs more.' });
+    lever: 'Replacement quotes to owners of old R-22 and R-410A systems before repair refrigerant costs more.' });
   add({ id: 'pp-credit', co: 'pp', cat: 'policy', w: 2, name: 'Heat-pump incentives', why: 'Rebates make heat pumps cheaper for owners, and the federal credit has ended.',
     read: { v: 'Federal heat-pump tax credit ended', d: 'Not available for systems installed after Dec 31, 2025 · utility rebates in PA and NJ continue', date: 'Oct 2026', src: 'IRS energy credit page', url: URL_.irs25c, dir: -1 },
-    lever: 'Lead every heat-pump quote with the utility rebate and a monthly payment.' });
+    lever: 'Heat-pump quotes that lead with the utility rebate and a monthly payment.' });
   const gas = S('GASREGW'), vans = R.pp / 250000, gal = 20000 / 15;
   add({ id: 'pp-fuel', co: 'pp', cat: 'costs', w: 2, name: 'Fuel for the vans', why: 'Gas prices hit every van on every route.',
-    read: fr('GASREGW', -1), lever: 'Tighten routes with dispatch software and add a trip charge when fuel spikes.',
+    read: fr('GASREGW', -1), lever: 'Tighter routes through dispatch software, and a trip charge when fuel spikes.',
     sens: gas ? sens(`Each 25¢ a gallon ≈ ${smoney(-vans * gal * 0.25)} margin a year`, -vans * gal * 0.25, gas.year_ago != null ? `Today's ${cents(gas.last - gas.year_ago)} a gallon ≈ ${smoney(-vans * gal * (gas.last - gas.year_ago))} margin a year` : null, gas.year_ago != null ? -vans * gal * (gas.last - gas.year_ago) : null, 'margin',
       `About ${num(vans)} vans (one per technician at about $250,000 revenue each), 20,000 miles a year at 15 miles a gallon (assumptions).`) : null });
   const oil = S('APU000072511');
   add({ id: 'pp-oil', co: 'pp', cat: 'demand', w: 2, name: 'Heating-oil prices', why: 'Costly heating oil pushes owners to switch to heat pumps.',
     read: oil ? { ...fr('APU000072511', 1, 0.05), d: `${chg(oil)} vs a year ago · ${pct0(pp?.oil)} of footprint homes heat with oil or propane` } : null,
-    lever: 'Market heat-pump conversions to oil and propane homes before the first cold snap.',
+    lever: 'Heat-pump conversion offers to oil and propane homes before the first cold snap.',
     sens: pp ? sens(`Each 1 in 10,000 oil or propane homes that converts ≈ ${smoney(pp.hu * pp.oil * 0.0001 * 12000)} sales a year`, pp.hu * pp.oil * 0.0001 * 12000, null, null, 'sales',
       `${big(pp.hu * pp.oil)} oil or propane homes in the ${pp.n} counties (ACS); $12,000 average conversion (assumption).`) : null });
   add({ id: 'pp-weather', co: 'pp', cat: 'weather', w: 2, name: 'Weather', why: 'Heat waves, freezes and storms lift calls for a few days at a time.',
     read: { v: D.alerts.pp.length ? `${D.alerts.pp.length} weather alert${D.alerts.pp.length > 1 ? 's' : ''} in the footprint` : 'No weather alerts in the footprint', d: 'Checked when this page opened', date: today, src: 'National Weather Service', url: URL_.nws, dir: D.alerts.pp.length ? 1 : 0 },
-    lever: 'Plan surge technicians from Weather and demand on alert days.', link: ['#/pp/weather', 'Weather and demand'] });
+    lever: 'Surge technicians on alert days, planned from Weather and demand.', link: ['#/pp/weather', 'Weather and demand'] });
   const peList = D.maPp?.meta?.pe_backed_competitors || [];
   add({ id: 'pp-rivals', co: 'pp', cat: 'rivals', w: 2, name: 'Sponsor-backed rivals', why: 'Rivals backed by other sponsors buy local shops and hire away technicians.',
     read: pp ? { v: `${num(peList.length)} sponsor-backed rivals on the watch list`, d: `${num(pp.estab)} heating, plumbing and electrical shops in the ${pp.n} counties`, date: 'Sep 2026', src: 'Add-on target research · Census business counts (2022)', url: URL_.cbp, dir: peList.length >= 3 ? -1 : 0 } : null,
-    lever: 'Close the top tuck-ins first and put key technicians on retention plans.', link: ['#/pp/market', 'Market'] });
+    lever: 'Earlier tuck-ins and retention plans for key technicians.', link: ['#/pp/market', 'Market'] });
   add({ id: 'pp-people', co: 'pp', cat: 'people', w: 1, name: 'Population and income', why: 'Growing, higher-income counties add customers and bigger tickets.',
     read: pp ? { v: `${pctS(pp.growth)} population since 2020`, d: `typical household income $${big(pp.income)}`, date: '2020 to 2024', src: 'Census population estimates and ACS', url: URL_.pep, dir: sgn(pp.growth, 0.01) } : null,
-    lever: 'Extend routes toward the fastest-growing counties first.', link: ['#/pp/territory', 'Territory'] });
+    lever: 'Routes extended toward the fastest-growing counties.', link: ['#/pp/territory', 'Territory'] });
   const permitsPP = (D.permits?.items || []).filter(r => PP_FIPS.includes(r.fips));
   add({ id: 'pp-build', co: 'pp', cat: 'housing', w: 1, name: 'New home building', why: 'New homes need installers now and service within a few years.',
     read: D.permits ? { v: `${num(permitsPP.reduce((a, r) => a + r.units_total, 0))} homes permitted in ${monthWords(D.permits.period)}`, d: pp ? `${num(pp.permits25)} in all of 2025` : '', date: monthWords(D.permits.period), src: 'Census building permits', url: (D.permits.source_urls || [])[0], dir: 0 } : null,
-    lever: 'Offer builders a first-year service agreement in the counties issuing the most permits.' });
+    lever: 'First-year service agreements for builders in the counties issuing the most permits.' });
 
   /* CET: commercial electrical, solar, EV charging, wastewater and efficiency across New England */
   const nr = S('TLNRESCONS');
   add({ id: 'cet-build', co: 'cet', cat: 'housing', w: 3, name: 'Commercial and public building', why: 'New buildings and upgrades set how much electrical work there is to bid.',
-    read: fr('TLNRESCONS', 1), lever: 'Keep the bid calendar full in the sectors still building: water, schools and health care.', link: ['#/cet/opportunities', 'Opportunity radar'],
+    read: fr('TLNRESCONS', 1), lever: 'A full bid calendar in the sectors still building: water, schools and health care.', link: ['#/cet/opportunities', 'Opportunity radar'],
     sens: sens(`Each 5% change in building spending ≈ ${smoney(R.cet * 0.6 * 0.05)} sales a year`, R.cet * 0.6 * 0.05, nr?.chg != null ? `Today's ${chg(nr)} ≈ ${smoney(R.cet * 0.6 * nr.chg)} sales a year` : null, nr?.chg != null ? R.cet * 0.6 * nr.chg : null, 'sales',
       `Revenue ${D.revTxt.cet} (CET with NuWave and Horton, public filings); about 60% of work follows building starts (assumption).`) });
   const trades = (D.fedbuy?.items || []).find(i => i.id === 'trades_northeast');
   const openBids = (D.cetOpp?.items || []).filter(o => o.stage !== 'awarded' && o.due_date && o.due_date >= isoDay(D.today)).length;
   add({ id: 'cet-public', co: 'cet', cat: 'public', w: 3, name: 'Public project money', why: 'State and federal money pays for wastewater, school and energy upgrades.',
     read: trades ? { v: `${money(trades.fy_totals?.[String(trades.last_full_fy)])} federal electrical and HVAC contracts`, d: `fiscal ${trades.last_full_fy}, ${pctS(trades.chg)} vs the year before · ${num(openBids)} open bids on the radar`, date: `Oct ${trades.last_full_fy - 1} to Sep ${trades.last_full_fy}`, src: 'USASpending', url: URL_.usa, dir: sgn(trades.chg, 0.05) } : null,
-    lever: 'Work funded projects on the bid radar; state water and school money now beats federal awards.', link: ['#/cet/opportunities', 'Opportunity radar'] });
+    lever: 'Funded projects on the bid radar; state water and school money likely outweighs federal awards now.', link: ['#/cet/opportunities', 'Opportunity radar'] });
   const viol = (D.echo?.items || []).filter(i => i.violation_status && !/^Resolved/i.test(i.violation_status));
   add({ id: 'cet-water', co: 'cet', cat: 'policy', w: 3, name: 'Wastewater compliance', why: 'Treatment plants with open violations must fix pumps, power and controls.',
     read: D.echo ? { v: `${num(viol.length)} large treatment plants with open violations`, d: `of ${num(D.echo.items.length)} large plants in CT, MA and RI`, date: dayWords(String(D.echo.fetched_at).slice(0, 10)), src: 'EPA ECHO', url: URL_.echo, dir: viol.length ? 1 : 0 } : null,
-    lever: 'Pitch Horton pump-station, power and controls work to the plants with open violations.', link: ['#/cet/wastewater', 'Wastewater accounts'] });
+    lever: 'Horton pump-station, power and controls work for the plants with open violations.', link: ['#/cet/wastewater', 'Wastewater accounts'] });
   const cu = S('PCOPPUSDM');
   add({ id: 'cet-copper', co: 'cet', cat: 'costs', w: 3, name: 'Copper and electrical gear', why: 'Copper, transformers and switchgear are a large share of each job’s material cost.',
     read: cu ? { ...fr('PCOPPUSDM', -1), d: `${chg(cu)} vs a year ago · transformers ${chg(S('PCU335311335311'))}, switchgear ${chg(S('PCU3353133531'))}`, series: [cu, S('PCU335311335311'), S('PCU3353133531')].filter(Boolean) } : null,
-    lever: 'Add price-escalation clauses to bids and order long-lead gear at award.',
+    lever: 'Price-escalation clauses in bids and long-lead gear ordered at award.',
     sens: sens(`Each 10% rise in copper ≈ ${smoney(-R.cet * 0.5 * 0.08 * 0.1)} margin a year on fixed-price work`, -R.cet * 0.5 * 0.08 * 0.1, cu?.chg != null ? `Today's ${chg(cu)} ≈ ${smoney(-R.cet * 0.5 * 0.08 * cu.chg)} margin a year` : null, cu?.chg != null ? -R.cet * 0.5 * 0.08 * cu.chg : null, 'margin',
       `Revenue ${D.revTxt.cet}; half of work at fixed prices; copper wire and parts about 8% of contract value (assumptions).`) });
   const jo = S('JTS2300JOL');
-  add({ id: 'cet-labor', co: 'cet', cat: 'labor', w: 3, name: 'Electrician supply and pay', why: 'Licensed electricians are scarce, and crews cap how much work CET can take.',
+  add({ id: 'cet-labor', co: 'cet', cat: 'labor', w: 3, name: 'Electrician supply and pay', why: 'Licensed electricians are scarce, and crews likely cap how much work CET can take.',
     read: jo ? { v: `${val(jo)} in construction`, d: `${chg(jo)} vs a year ago · unemployment MA ${val(S('MAUR'))}, CT ${val(S('CTUR'))} · pay ${chg(cw)}`, date: asOf(jo), src: pub('JTS2300JOL'), url: jo.url, dir: jo.chg > 0.05 ? -1 : jo.chg < -0.05 ? 1 : 0, series: [jo, S('MAUR'), S('CTUR'), cw].filter(Boolean) } : null,
-    lever: 'Grow the apprentice pipeline and share crews across Horton and CET.',
+    lever: 'A larger apprentice pipeline and crews shared across Horton and CET.',
     sens: sens(`Each 1% rise in electrician pay ≈ ${smoney(-R.cet * 0.4 * 0.01)} margin a year`, -R.cet * 0.4 * 0.01, cw?.chg != null ? `Today's ${chg(cw)} ≈ ${smoney(-R.cet * 0.4 * cw.chg)} margin a year` : null, cw?.chg != null ? -R.cet * 0.4 * cw.chg : null, 'margin',
       `Revenue ${D.revTxt.cet}; field labor about 40% of revenue (assumption); pay change is US construction pay.`) });
   add({ id: 'cet-solar', co: 'cet', cat: 'policy', w: 2, name: 'Solar and charger credits', why: 'Federal solar and EV-charger credits are ending, which pulls work forward and then leaves a gap.',
     read: { v: 'Charger credit has ended; solar credit closes after 2027', d: 'Solar projects not started by Jul 4, 2026 must be running by Dec 31, 2027 · charger credit ended Jun 30, 2026', date: 'Oct 2026', src: 'Federal tax law of July 2025', url: URL_.obbba, dir: -1 },
-    lever: 'Finish projects that still qualify; steer new sales to storage, efficiency and wastewater work.' });
+    lever: 'Finishing projects that still qualify; new sales toward storage, efficiency and wastewater work.' });
   add({ id: 'cet-utility', co: 'cet', cat: 'public', w: 2, name: 'Utility efficiency programs', why: 'Utility programs pay for the lighting, controls and heat-pump work NuWave sells.',
     read: { v: 'Mass Save and Energize CT plans run through 2027', d: 'Rebates for lighting, controls and heat pumps', date: 'Oct 2026', src: 'Mass Save', url: URL_.masssave, dir: 1 },
-    lever: 'Keep NuWave a top program vendor and fold rebates into every quote.' });
+    lever: 'NuWave as a top program vendor, with rebates folded into quotes.' });
   add({ id: 'cet-power', co: 'cet', cat: 'demand', w: 2, name: 'Power prices', why: 'Higher power prices shorten the payback on solar, lighting and controls.',
-    read: fr('APU000072610', 1), lever: 'Open each proposal with the payback at today’s power price.' });
+    read: fr('APU000072610', 1), lever: 'Proposals that open with the payback at today’s power price.' });
   const prime = S('DPRIME'), hy = S('BAMLH0A0HYM2');
   add({ id: 'cet-rates', co: 'cet', cat: 'money', w: 2, name: 'Borrowing costs', why: 'Owners borrow for big projects, so higher rates delay starts.',
     read: prime ? { ...fr('DPRIME', -1), d: `${chg(prime)} vs a year ago · junk-bond spread ${val(hy)}` } : null,
-    lever: 'Bring lease and pay-from-savings partners into large proposals.' });
+    lever: 'Lease and pay-from-savings partners in large proposals.' });
   const cetH = D.hz.cet;
   add({ id: 'cet-owners', co: 'cet', cat: 'housing', w: 1, name: 'Property changing hands', why: 'New owners of buildings and homes often upgrade in their first year.',
     read: cetH ? { v: `${num(cetH.newL.cur)} new home listings`, d: `${pctS(cetH.newL.chg)} vs a year ago${cetH.pend.breaks ? ' · Massachusetts under-contract counts changed method, so they are left out' : ''}`, date: hz, src: 'Realtor.com county data', url: URL_.realtor, dir: sgn(cetH.newL.chg, 0.03) } : null,
-    lever: 'Reach new owners through the Property transfers list.', link: ['#/cet/transfers', 'Property transfers'] });
+    lever: 'Offers to new owners on the Property transfers list.', link: ['#/cet/transfers', 'Property transfers'] });
   add({ id: 'cet-weather', co: 'cet', cat: 'weather', w: 1, name: 'Weather', why: 'Storms drive emergency work on pump stations and generators.',
     read: { v: D.alerts.cet.length ? `${D.alerts.cet.length} weather alert${D.alerts.cet.length > 1 ? 's' : ''} in operating counties` : 'No weather alerts in operating counties', d: 'Checked when this page opened', date: today, src: 'National Weather Service', url: URL_.nws, dir: D.alerts.cet.length ? 1 : 0 },
-    lever: 'Keep an on-call crew for pump-station and generator outages.' });
+    lever: 'An on-call crew for pump-station and generator outages.' });
 
   /* Frontline: managed IT and billing services for law firms, national */
   const lj = S('CES6054110001');
-  add({ id: 'fl-heads', co: 'fl', cat: 'demand', w: 3, name: 'Law-firm headcount', why: 'Frontline bills by user, so law-firm hiring adds seats.',
-    read: fr('CES6054110001', 1, 0.01), lever: 'Price new seats into each renewal and flag clients that are hiring.',
+  add({ id: 'fl-heads', co: 'fl', cat: 'demand', w: 3, name: 'Law-firm headcount', why: 'Frontline likely bills by user, so law-firm hiring adds seats.',
+    read: fr('CES6054110001', 1, 0.01), lever: 'Seat growth priced into renewals, with hiring clients flagged.',
     sens: sens(`Each 1% rise in law-firm headcount ≈ ${smoney(R.fl * 0.7 * 0.01)} sales a year`, R.fl * 0.7 * 0.01, lj?.chg != null ? `Today's ${chg(lj)} ≈ ${smoney(R.fl * 0.7 * lj.chg)} sales a year` : null, lj?.chg != null ? R.fl * 0.7 * lj.chg : null, 'sales',
       `Revenue ${D.revTxt.fl} (public filings); about 70% billed per user or seat (assumption).`) });
   add({ id: 'fl-rates', co: 'fl', cat: 'demand', w: 3, name: 'Law-firm billing rates', why: 'When firms raise rates, they have room for IT and billing upgrades.',
-    read: fr('PCU541110541110', 1, 0.03), lever: 'Time renewals and upsells to the January rate rises.' });
+    read: fr('PCU541110541110', 1, 0.03), lever: 'Renewals and upsells timed to the January rate rises.' });
   const lf = D.lawfirms, lfRev = lf.reduce((a, x) => a + (x.revenue_m || 0), 0), rpl = lf.map(x => x.revenue_per_lawyer_k).filter(Number.isFinite).sort((a, b) => a - b);
   add({ id: 'fl-amlaw', co: 'fl', cat: 'demand', w: 2, name: 'Large-firm economics', why: 'Firms with high revenue per lawyer buy the most security and billing help.',
     read: lf.length ? { v: `$${big(lfRev * 1e6)} revenue across ${num(lf.length)} large firms`, d: rpl.length ? `median ${money(rpl[Math.floor(rpl.length / 2)] * 1e3)} per lawyer` : '', date: '2025 rankings', src: 'AM Law 200 public rankings', url: URL_.amlaw, dir: 1 } : null,
-    lever: 'Work the account map from the firms with the highest revenue per lawyer.', link: ['#/fl/amlaw', 'AM Law account map'] });
+    lever: 'The account map, from the firms with the highest revenue per lawyer.', link: ['#/fl/amlaw', 'AM Law account map'] });
   const cyb = lf.filter(x => (x.cyber_urgency_score || 0) >= 4).length;
   add({ id: 'fl-cyber', co: 'fl', cat: 'policy', w: 2, name: 'Cyber and insurer demands', why: 'Insurers and clients now require security controls that firms buy from IT providers.',
     read: lf.length ? { v: `${num(cyb)} of ${num(lf.length)} large firms score high on cyber urgency`, d: 'Analyst score of 4 or 5 out of 5', date: 'Sep 2026', src: 'Analyst scoring of AM Law firms', url: URL_.amlaw, dir: 1 } : null,
-    lever: 'Bundle security monitoring into every renewal.' });
+    lever: 'Security monitoring bundled into renewals.' });
   const ai1 = lf.filter(x => x.ai_opportunity_signal === 'partial').length, ai2 = lf.filter(x => x.ai_opportunity_signal === 'planning').length;
   add({ id: 'fl-ai', co: 'fl', cat: 'demand', w: 2, name: 'AI rollouts at firms', why: 'Firms rolling out AI tools need data clean-up, security and training.',
     read: lf.length ? { v: `${num(ai1)} large firms rolling out AI, ${num(ai2)} planning`, d: 'From firm announcements and analyst review', date: 'Sep 2026', src: 'Analyst review of AM Law firms', url: URL_.amlaw, dir: 1 } : null,
-    lever: 'Offer an AI readiness package to the top 50 accounts.' });
+    lever: 'An AI readiness package for the top 50 accounts.' });
   const pay = S('CES6000000003');
   add({ id: 'fl-talent', co: 'fl', cat: 'labor', w: 2, name: 'Engineer pay', why: 'Engineer pay drives the cost of every help-desk ticket.',
     read: pay ? { v: `${val(pay)} professional services pay`, d: `${chg(pay)} vs a year ago · computer services jobs ${chg(S('CES6054150001'))} · Missouri unemployment ${val(S('MOUR'))}`, date: asOf(pay), src: pub('CES6000000003'), url: pay.url, dir: pay.chg > 0.035 ? -1 : pay.chg < 0.025 ? 1 : 0, series: [pay, S('CES6054150001'), S('MOUR')].filter(Boolean) } : null,
-    lever: 'Move routine tickets to automation and hire in lower-cost markets.',
+    lever: 'Routine tickets moved to automation, and hiring in lower-cost markets.',
     sens: sens(`Each 1% rise in staff pay ≈ ${smoney(-R.fl * 0.45 * 0.01)} margin a year`, -R.fl * 0.45 * 0.01, pay?.chg != null ? `Today's ${chg(pay)} ≈ ${smoney(-R.fl * 0.45 * pay.chg)} margin a year` : null, pay?.chg != null ? -R.fl * 0.45 * pay.chg : null, 'margin',
       `Revenue ${D.revTxt.fl}; staff about 45% of revenue (assumption).`) });
-  add({ id: 'fl-credit', co: 'fl', cat: 'money', w: 2, name: 'Cost of add-on debt', why: 'Add-on deals run on borrowed money, so credit spreads set what BSP can pay.',
-    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Line up the first add-on while spreads are tight.', link: ['#/ma/pipeline', 'Add-on pipeline'] });
+  add({ id: 'fl-credit', co: 'fl', cat: 'money', w: 2, name: 'Cost of add-on debt', why: 'Add-on deals are often debt-funded, so credit spreads likely affect what a buyer can pay.',
+    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Add-on timing while spreads are tight.', link: ['#/ma/pipeline', 'Add-on pipeline'] });
 
   /* Thomas Scientific: lab supply distribution, national */
   const nihCur = (D.nih?.items || []).reduce((a, s) => a + (s.current_amount || 0), 0), nihPrv = (D.nih?.items || []).reduce((a, s) => a + (s.prior_amount || 0), 0), nihChg = nihPrv ? nihCur / nihPrv - 1 : null;
   add({ id: 'ts-nih', co: 'ts', cat: 'public', w: 3, name: 'NIH research funding', why: 'University and institute labs buy supplies with grant money.',
     read: D.nih ? { v: `${money(nihCur)} in NIH awards so far this year`, d: `${pctS(nihChg)} vs the same days last year · ${D.nih.states.length} research states`, date: `Jan 1 to ${dayWords(D.nih.windows.current[1])}`, src: 'NIH RePORTER', url: URL_.nih, dir: sgn(nihChg, 0.02) } : null,
-    lever: 'Move reps toward institutions whose awards are growing; check in with the ones that shrank.', link: ['#/signals/readings', 'Live readings'],
+    lever: 'Rep time toward institutions whose awards are growing, and check-ins where they shrank.', link: ['#/signals/readings', 'Live readings'],
     sens: sens(`Each 5% change in grant dollars ≈ ${smoney(R.ts * 0.3 * 0.05)} sales a year`, R.ts * 0.3 * 0.05, nihChg != null ? `Today's ${pctS(nihChg)} ≈ ${smoney(R.ts * 0.3 * nihChg)} sales a year` : null, nihChg != null ? R.ts * 0.3 * nihChg : null, 'sales',
       `Revenue ${D.revTxt.ts} (public filings); about 30% of sales to research labs (assumption).`) });
   const hosp = S('CES6562200001');
   add({ id: 'ts-hosp', co: 'ts', cat: 'demand', w: 3, name: 'Hospital and clinical labs', why: 'Hospital and clinical labs are most of the 27,000 scored sites.',
-    read: fr('CES6562200001', 1, 0.01), lever: 'Sell standing orders to the top parent accounts.', link: ['#/ts/accounts', 'Accounts'],
+    read: fr('CES6562200001', 1, 0.01), lever: 'Standing orders with the top parent accounts.', link: ['#/ts/accounts', 'Accounts'],
     sens: sens(`Each 1% rise in hospital activity ≈ ${smoney(R.ts * 0.5 * 0.01)} sales a year`, R.ts * 0.5 * 0.01, hosp?.chg != null ? `Today's ${chg(hosp)} ≈ ${smoney(R.ts * 0.5 * hosp.chg)} sales a year` : null, hosp?.chg != null ? R.ts * 0.5 * hosp.chg : null, 'sales',
       `Revenue ${D.revTxt.ts}; about half of sales to hospital and clinical labs; hospital jobs stand in for lab volume (assumptions).`) });
   const lab = (D.fedbuy?.items || []).find(i => i.id === 'lab_supplies');
   add({ id: 'ts-federal', co: 'ts', cat: 'public', w: 2, name: 'Federal lab buying', why: 'Federal labs buy supplies through contracts Thomas Scientific can win.',
     read: lab ? { v: `${money(lab.fy_totals?.[String(lab.last_full_fy)])} federal lab supply contracts`, d: `fiscal ${lab.last_full_fy}, ${pctS(lab.chg)} vs the year before`, date: `Oct ${lab.last_full_fy - 1} to Sep ${lab.last_full_fy}`, src: 'USASpending', url: URL_.usa, dir: sgn(lab.chg, 0.05) } : null,
-    lever: 'Protect the federal run-rate and bid where agencies still buy.',
+    lever: 'Bids where agencies still buy, to hold the federal run-rate.',
     sens: sens(`Each 10% change in federal lab buying ≈ ${smoney(D.tsFed * 0.1)} sales a year`, D.tsFed * 0.1, lab?.chg != null ? `Today's ${pctS(lab.chg)} ≈ ${smoney(D.tsFed * lab.chg)} sales a year` : null, lab?.chg != null ? D.tsFed * lab.chg : null, 'sales',
       `Federal sales ${money(D.tsFed)} a year est. (public filings); they move with federal lab buying (assumption).`) });
   const duty = S('CUSTOMS'), d12 = roll12(duty);
   const dutyRead = extra => duty ? { v: d12 ? `${money(d12.cur * 1e6)} in tariffs over 12 months` : val(duty), d: `${d12 ? `${pctS(d12.chg)} vs the 12 months before · ` : ''}${monthWords(duty.date)} ${chg(duty)} vs a year ago${extra}`, date: asOf(duty), src: pub('CUSTOMS'), url: duty.url, dir: d12 ? -sgn(d12.chg, 0.05) : dirOf(duty, -1), series: [duty] } : null;
   add({ id: 'ts-tariff', co: 'ts', cat: 'costs', w: 3, name: 'Tariffs and product costs', why: 'Many lab products are imported, so tariffs raise costs before list prices catch up.',
     read: dutyRead(` · lab instrument prices ${chg(S('PCU334516334516'))}`),
-    lever: 'Add tariff clauses to contracts and qualify second sources.',
+    lever: 'Tariff clauses in contracts and qualified second sources.',
     sens: sens(`Each 1 point of added duty ≈ ${smoney(-R.ts * 0.7 * 0.4 * 0.01)} margin a year until prices catch up`, -R.ts * 0.7 * 0.4 * 0.01, null, null, 'margin',
       `Revenue ${D.revTxt.ts}; cost of goods about 70% of sales; 40% of it imported (assumptions).`) });
   const dsl = S('GASDESW');
   add({ id: 'ts-freight', co: 'ts', cat: 'costs', w: 2, name: 'Diesel and freight', why: 'Diesel drives the freight cost on every delivery.',
-    read: fr('GASDESW', -1), lever: 'Add fuel surcharges and consolidate shipments from Swedesboro.',
+    read: fr('GASDESW', -1), lever: 'Fuel surcharges and consolidated shipments from Swedesboro.',
     sens: sens(`Each 10% rise in diesel ≈ ${smoney(-R.ts * 0.03 * 0.3 * 0.1)} margin a year`, -R.ts * 0.03 * 0.3 * 0.1, dsl?.chg != null ? `Today's ${chg(dsl)} ≈ ${smoney(-R.ts * 0.03 * 0.3 * dsl.chg)} margin a year` : null, dsl?.chg != null ? -R.ts * 0.03 * 0.3 * dsl.chg : null, 'margin',
       `Revenue ${D.revTxt.ts}; freight about 3% of sales; fuel about 30% of freight (assumptions).`) });
   add({ id: 'ts-debt', co: 'ts', cat: 'money', w: 3, name: 'Refinancing cost', why: 'The main loan comes due in December 2027, so credit spreads set the refinancing cost.',
-    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Refinance early while spreads are tight.', link: ['#/ts/filings', 'Public filings'],
+    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'An early refinancing while spreads are tight.', link: ['#/ts/filings', 'Public filings'],
     sens: sens(`Each 1 point on the loan rate ≈ ${smoney(-D.tsDebt * 0.01)} a year of interest`, -D.tsDebt * 0.01, null, null, 'margin',
       `First-lien loans ${money(D.tsDebt)} est. (midpoint of the public filings range).`) });
   const hhs = (D.policy?.items || []).find(i => i.id === 'hhs'), rp = x => x ? (x.RULE || 0) + (x.PRORULE || 0) : 0;
   add({ id: 'ts-rules', co: 'ts', cat: 'policy', w: 1, name: 'Health agency rules', why: 'Health agency rules and budgets shift what labs buy.',
     read: hhs ? { v: `${num(rp(hhs.current))} health agency rules and proposals this year`, d: `${pctS(rp(hhs.prior) ? rp(hhs.current) / rp(hhs.prior) - 1 : null)} vs the same days last year`, date: `Jan 1 to ${dayWords(D.policy.windows.current[1])}`, src: 'Federal Register', url: URL_.fr, dir: 0 } : null,
-    lever: 'Review new lab and research rules each quarter with the top accounts.' });
+    lever: 'A quarterly review of new lab and research rules with the top accounts.' });
 
   /* BPI: public affairs and communications, DC, NYC, SF, Chicago, Europe */
   const ed = nextElection(D.today), edDays = Math.ceil((ed.d - startOfDay(D.today)) / 864e5);
   add({ id: 'bpi-vote', co: 'bpi', cat: 'calendar', w: 3, name: 'Election calendar', why: 'Election years lift issue campaigns, and a new Congress brings new policy fights.',
     read: { v: `${num(edDays)} days to Election Day`, d: `${ed.label} · the new Congress sits in January`, date: today, src: 'Federal election calendar', url: URL_.fec, dir: 1 },
-    lever: 'Staff issue campaigns through Election Day, then sell new-Congress briefings for January.' });
+    lever: 'Issue campaigns through Election Day, then new-Congress briefings in January.' });
   const allR = (D.policy?.items || []).find(i => i.id === 'all'), rChg = allR && rp(allR.prior) ? rp(allR.current) / rp(allR.prior) - 1 : null;
   add({ id: 'bpi-rules', co: 'bpi', cat: 'policy', w: 3, name: 'Federal rule-making', why: 'More federal rules mean more clients who need to be heard in Washington.',
     read: allR ? { v: `${num(rp(allR.current))} federal rules and proposals this year`, d: `${pctS(rChg)} vs the same days last year · presidential documents ${pctS(allR.prior.PRESDOCU ? allR.current.PRESDOCU / allR.prior.PRESDOCU - 1 : null)}`, date: `Jan 1 to ${dayWords(D.policy.windows.current[1])}`, src: 'Federal Register', url: URL_.fr, dir: sgn(rChg, 0.05) } : null,
-    lever: 'Pitch rule-response campaigns to the industries facing the most new rules.' });
+    lever: 'Rule-response campaigns for the industries facing the most new rules.' });
   const cp = S('CP');
-  add({ id: 'bpi-profits', co: 'bpi', cat: 'demand', w: 2, name: 'Corporate profits', why: 'Company communication budgets follow profits.',
-    read: fr('CP', 1, 0.03), lever: 'Push corporate reputation work while profits are high.',
+  add({ id: 'bpi-profits', co: 'bpi', cat: 'demand', w: 2, name: 'Corporate profits', why: 'Company communication budgets likely follow profits.',
+    read: fr('CP', 1, 0.03), lever: 'Corporate reputation work while profits are high.',
     sens: sens(`Each 5% change in profits ≈ ${smoney(R.bpi * 0.6 * 0.3 * 0.05)} fees a year`, R.bpi * 0.6 * 0.3 * 0.05, cp?.chg != null ? `Today's ${chg(cp)} ≈ ${smoney(R.bpi * 0.6 * 0.3 * cp.chg)} fees a year` : null, cp?.chg != null ? R.bpi * 0.6 * 0.3 * cp.chg : null, 'sales',
       `Fee revenue ${D.revTxt.bpi} (public filings); about 60% from companies; budgets move about a third as much as profits (assumptions).`) });
   const comms = (D.fedbuy?.items || []).find(i => i.id === 'communications');
   add({ id: 'bpi-federal', co: 'bpi', cat: 'public', w: 2, name: 'Federal campaign contracts', why: 'Agencies hire PR and ad firms for public campaigns.',
     read: comms ? { v: `${money(comms.fy_totals?.[String(comms.last_full_fy)])} federal PR and ad contracts`, d: `fiscal ${comms.last_full_fy}, ${pctS(comms.chg)} vs the year before`, date: `Oct ${comms.last_full_fy - 1} to Sep ${comms.last_full_fy}`, src: 'USASpending', url: URL_.usa, dir: sgn(comms.chg, 0.05) } : null,
-    lever: 'Bid agency campaigns where federal spending holds up.' });
+    lever: 'Agency campaign bids where federal spending holds up.' });
   add({ id: 'bpi-price', co: 'bpi', cat: 'demand', w: 2, name: 'Agency pricing', why: 'Agency prices show whether clients accept higher fees.',
-    read: fr('PCU541810541810', 1, 0.02), lever: 'Raise retainer rates where agency prices are rising.' });
-  add({ id: 'bpi-talent', co: 'bpi', cat: 'labor', w: 2, name: 'Senior staff pay', why: 'Senior staff in Washington and New York are the main cost.',
+    read: fr('PCU541810541810', 1, 0.02), lever: 'Higher retainer rates where agency prices are rising.' });
+  add({ id: 'bpi-talent', co: 'bpi', cat: 'labor', w: 2, name: 'Senior staff pay', why: 'Senior staff in Washington and New York are likely the main cost.',
     read: pay ? { v: `${val(pay)} professional services pay`, d: `${chg(pay)} vs a year ago · DC unemployment ${val(S('DCUR'))}`, date: asOf(pay), src: pub('CES6000000003'), url: pay.url, dir: pay.chg > 0.035 ? -1 : pay.chg < 0.025 ? 1 : 0, series: [pay, S('DCUR')].filter(Boolean) } : null,
-    lever: 'Keep senior time on billable work and staff campaigns from lower-cost offices.',
+    lever: 'Senior time kept on billable work, and campaigns staffed from lower-cost offices.',
     sens: sens(`Each 1% rise in staff pay ≈ ${smoney(-R.bpi * 0.55 * 0.01)} margin a year`, -R.bpi * 0.55 * 0.01, pay?.chg != null ? `Today's ${chg(pay)} ≈ ${smoney(-R.bpi * 0.55 * pay.chg)} margin a year` : null, pay?.chg != null ? -R.bpi * 0.55 * pay.chg : null, 'margin',
       `Fee revenue ${D.revTxt.bpi}; staff about 55% of fee revenue (assumption).`) });
-  add({ id: 'bpi-credit', co: 'bpi', cat: 'money', w: 1, name: 'Credit for a sale', why: 'Buyers pay more when they can borrow cheaply.',
-    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Prepare the 2027 to 2028 sale while spreads are tight.' });
+  add({ id: 'bpi-credit', co: 'bpi', cat: 'money', w: 1, name: 'Buyer financing', why: 'Buyers can pay more when they can borrow cheaply.',
+    read: fr('BAMLH0A0HYM2', -1, 0.25), lever: 'Sale timing, since cheaper credit likely lifts what buyers pay.' });
 
   /* Fair Harbor: sustainable swim and beachwear, online and wholesale */
   const sz = season(D.today);
   add({ id: 'fh-season', co: 'fh', cat: 'calendar', w: 3, name: 'Beach season', why: 'Most swim and beachwear sales land between Memorial Day and Labor Day.',
     read: { v: sz.v, d: sz.d, date: today, src: 'Retail calendar', url: null, dir: 0 },
-    lever: 'Lock wholesale orders for next summer now; push holiday gifting in the off season.' });
+    lever: 'Next summer’s wholesale orders locked early, and holiday gifting in the off season.' });
   const cl = S('RSCCAS');
   add({ id: 'fh-apparel', co: 'fh', cat: 'demand', w: 3, name: 'Apparel spending', why: 'Clothing store sales show how much people spend on apparel.',
-    read: fr('RSCCAS', 1, 0.02), lever: 'Lean into full-price sell-through while apparel spending grows.',
+    read: fr('RSCCAS', 1, 0.02), lever: 'Full-price sell-through while apparel spending grows.',
     sens: sens(`Each 1% change in apparel spending ≈ ${smoney(R.fh * 0.01)} sales a year`, R.fh * 0.01, cl?.chg != null ? `Today's ${chg(cl)} ≈ ${smoney(R.fh * cl.chg)} sales a year` : null, cl?.chg != null ? R.fh * cl.chg : null, 'sales',
       `Revenue ${D.revTxt.fh} (public filings); sales move one for one with apparel spending (assumption).`) });
   add({ id: 'fh-mood', co: 'fh', cat: 'demand', w: 2, name: 'Shopper confidence', why: 'Confident shoppers buy treats like new swimwear.',
-    read: fr('UMCSENT', 1, 0.05), lever: 'Lead with bundles and free returns while shoppers are cautious.' });
+    read: fr('UMCSENT', 1, 0.05), lever: 'Bundles and free returns while shoppers are cautious.' });
   add({ id: 'fh-tariff', co: 'fh', cat: 'costs', w: 3, name: 'Tariffs on imports', why: 'Most swimwear is made abroad, so duties raise the landed cost.',
     read: dutyRead(' · all US imports'),
-    lever: 'Re-quote with suppliers, shift sourcing and set prices for next summer before orders lock.',
+    lever: 'Supplier re-quotes, shifted sourcing and next summer’s prices set before orders lock.',
     sens: sens(`Each 10 points of added duty ≈ ${smoney(-R.fh * 0.35 * 0.9 * 0.1)} margin a year`, -R.fh * 0.35 * 0.9 * 0.1, null, null, 'margin',
       `Revenue ${D.revTxt.fh}; product cost about 35% of sales; 90% made abroad (assumptions).`) });
   add({ id: 'fh-freight', co: 'fh', cat: 'costs', w: 1, name: 'Shipping costs', why: 'Diesel and parcel surcharges raise the cost of every order shipped.',
-    read: fr('GASDESW', -1), lever: 'Raise the free-shipping threshold when fuel surcharges climb.',
+    read: fr('GASDESW', -1), lever: 'A higher free-shipping threshold when fuel surcharges climb.',
     sens: sens(`Each 10% rise in diesel ≈ ${smoney(-R.fh * 0.08 * 0.3 * 0.1)} margin a year`, -R.fh * 0.08 * 0.3 * 0.1, dsl?.chg != null ? `Today's ${chg(dsl)} ≈ ${smoney(-R.fh * 0.08 * 0.3 * dsl.chg)} margin a year` : null, dsl?.chg != null ? -R.fh * 0.08 * 0.3 * dsl.chg : null, 'margin',
       `Revenue ${D.revTxt.fh}; shipping about 8% of sales; fuel about 30% of shipping (assumptions).`) });
   add({ id: 'fh-weather', co: 'fh', cat: 'weather', w: 2, name: 'Spring weather', why: 'A warm spring pulls swim sales forward; a cold one pushes them back.',
     read: { v: sz.inSeason ? 'In season' : 'Off season', d: 'Watch April to June forecasts in the top coastal markets', date: today, src: 'Retail calendar', url: null, dir: 0 },
-    lever: 'Move spring email and ad spend to the warmest markets week by week.' });
+    lever: 'Spring email and ad spend shifted week by week to the warmest markets.' });
   const nyc = D.hz.fh;
-  add({ id: 'fh-nyc', co: 'fh', cat: 'housing', w: 1, name: 'Manhattan market', why: 'Manhattan foot traffic and home buying feed the SoHo store.',
+  add({ id: 'fh-nyc', co: 'fh', cat: 'housing', w: 1, name: 'Manhattan market', why: 'Manhattan foot traffic and home buying likely feed the SoHo store.',
     read: nyc ? { v: `${num(nyc.pend.cur)} Manhattan homes under contract`, d: `${pctS(nyc.pend.chg)} vs a year ago · listings ${pctS(nyc.active.chg)}`, date: hz, src: 'Realtor.com county data', url: URL_.realtor, dir: sgn(nyc.pend.chg, 0.03) } : null,
-    lever: 'Use the SoHo store for local events that bring neighbours in.', link: ['#/fh/market', 'Manhattan home sales'] });
+    lever: 'Local events at the SoHo store that bring neighbors in.', link: ['#/fh/market', 'Manhattan home sales'] });
   return F;
 }
 /** last 12 months vs the 12 before, from a monthly series' points */
@@ -421,7 +421,7 @@ function openFactor(ctx, f) {
     { label: 'Why it matters', html: `<div class="small">${h(f.why)}</div>` },
     { label: 'Reading now', html: `${readHtml(f.read)}<div class="mt-8">${dirChip(f.read.dir)}</div>` },
     ...(f.read.series || []).length > 1 ? [{ label: 'Series behind it', html: `<div class="col gap-8">${f.read.series.map(s => `<div class="small"><b>${h(s.label)}</b>: ${h(val(s))} <span class="text-2">${h(chg(s))} vs a year ago · ${h(asOf(s))}</span> <a class="dim" href="${h(s.url)}" target="_blank" rel="noopener" aria-label="Source">↗</a></div>`).join('')}</div>` }] : [],
-    { label: 'What to do', html: `<div class="small">${h(f.lever)}</div>` },
+    { label: 'Possible response', html: `<div class="small">${h(f.lever)}</div>` },
     f.sens ? { label: 'Size of the effect', html: `${effectHtml(f.sens)}<div class="small dim mt-8">${h(f.sens.assume)}</div>` } : null,
   ].filter(Boolean), actions: [...(f.link ? [{ label: f.link[1], href: f.link[0] }] : []), ...(f.read.url ? [{ label: 'Source ↗', href: f.read.url }] : [])] });
 }
@@ -456,19 +456,19 @@ async function overview(ctx) {
   const ed = F.find(f => f.id === 'bpi-vote');
   el.innerHTML = `<div class="m-signals">${ui.pageHead({
     title: 'What moves sales',
-    sub: `Drag: ${h(topHurt ? Copy.sentence(topHurt.name) : 'none')}${topHurt ? ` (${h(CO_NAME[topHurt.co])})` : ''}. Lift: ${h(topHelp ? Copy.sentence(topHelp.name) : 'none')}${topHelp ? ` (${h(CO_NAME[topHelp.co])})` : ''}.`,
+    sub: `From public data. Likely headwind: ${h(topHurt ? Copy.sentence(topHurt.name) : 'none found')}${topHurt ? ` (${h(CO_NAME[topHurt.co])})` : ''}. Likely tailwind: ${h(topHelp ? Copy.sentence(topHelp.name) : 'none found')}${topHelp ? ` (${h(CO_NAME[topHelp.co])})` : ''}.`,
     actions: `<a class="${ui.btnCls('secondary', '')}" href="#/signals/overview?co=all" data-sg-all>Sales levers, all six</a><a class="${ui.btnCls('secondary', '')}" href="#/signals/readings">Live readings</a>`,
   })}
   ${ui.kpis([
-    { label: 'Forces hurting now', value: `${hurts.length} <small class="sg-kpi-of">of ${big3.length}</small>`, sub: `${helps.length} helping`, color: 'var(--sys-bad)' },
+    { label: 'Likely headwinds now', value: `${hurts.length} <small class="sg-kpi-of">of ${big3.length}</small>`, sub: `${helps.length} tailwinds`, color: 'var(--sys-bad)' },
     { label: 'Largest margin hit (est.)', value: worst ? `${smoney(worst.sens.nowUsd)} <small class="sg-kpi-of">a year</small>` : '—', sub: worst ? `${h(CO_NAME[worst.co])} · ${h(Copy.sentence(worst.name))}` : 'not sized' },
     { label: 'Largest sales lift (est.)', value: best ? `${smoney(best.sens.nowUsd)} <small class="sg-kpi-of">a year</small>` : '—', sub: best ? `${h(CO_NAME[best.co])} · ${h(Copy.sentence(best.name))}` : 'not sized' },
     { label: 'Mortgage rate', value: mort ? val(mort) : '—', sub: mort ? `${h(chg(mort))} in a year` : 'not available', spark: mort ? ctx.charts.sparkline(mort.points.map(p => p[1]), { color: 'var(--sys-bad)' }) : '' },
-    { label: 'Days to Election Day', value: ed ? h(ed.read.v.split(' ')[0]) : '—', sub: 'BPI busy season', color: 'var(--co-bpi)' },
+    { label: 'Days to Election Day', value: ed ? h(ed.read.v.split(' ')[0]) : '—', sub: 'Likely BPI busy season', color: 'var(--co-bpi)' },
   ])}
-  <div class="mt-12">${ui.panel({ title: 'What moves each company', body: `<div id="sg-matrix"></div>`, flush: true })}</div>
+  <div class="mt-12">${ui.panel({ title: 'What likely moves each company', body: `<div id="sg-matrix"></div>`, flush: true })}</div>
   <div class="mt-12" id="sg-forces">${ui.panel({ title: 'Forces by company', actions: '<div id="sg-co"></div>', body: '<p class="sg-co-lead" id="sg-co-lead"></p><div class="sg-all" id="sg-all" hidden></div><div id="sg-tbl"></div>', flush: true })}</div>
-  <div class="mt-12">${ui.panel({ title: 'What to do now', actions: '<a class="sys-link" href="#/signals/overview?co=all" data-sg-all>All six</a>', body: `<ol class="sg-actions" id="sg-actions"></ol>` })}</div>
+  <div class="mt-12">${ui.panel({ title: 'Possible responses', actions: '<a class="sys-link" href="#/signals/overview?co=all" data-sg-all>All six</a>', body: `<ol class="sg-actions" id="sg-actions"></ol>` })}</div>
   ${ovMarks(ui, D, F)}
   </div>`;
   const root = el.querySelector('.m-signals');
@@ -482,7 +482,7 @@ async function overview(ctx) {
     return `<td><button type="button" class="sys-chip${st[1] ? ` sys-chip--${st[1]}` : ''} sg-cell${w === 3 ? ' hi' : ''}" data-co="${co}" data-cat="${cat}" title="${h(fs.map(f => `${f.name}: ${f.read.v}`).join(' · '))}" aria-label="${h(`${CO_NAME[co]}, ${CAT_NAME[cat]}: ${st[0]}, ${W_TXT[w].toLowerCase()} importance`)}">${st[0]}</button></td>`;
   };
   root.querySelector('#sg-matrix').innerHTML = `<div class="sys-table-wrap sg-mwrap"><table class="sys-table sg-matrix"><thead><tr><th>Force</th>${COS.map(c => `<th><span class="sys-dot" data-co="${c.id}" style="--co:var(--co-${c.id})" aria-hidden="true"></span> ${h(c.name)}</th>`).join('')}</tr></thead><tbody>${CATS.filter(([cat]) => F.some(f => f.cat === cat)).map(([cat, name]) => `<tr><td>${h(name)}</td>${COS.map(c => cell(c.id, cat)).join('')}</tr>`).join('')}</tbody></table></div>`;
-  root.querySelectorAll('.sg-cell').forEach(b => { b.onclick = () => { const fs = F.filter(f => f.co === b.dataset.co && f.cat === b.dataset.cat); if (fs.length === 1) return openFactor(ctx, fs[0]); ctx.inspector.open({ title: `${h(CO_NAME[b.dataset.co])} · ${h(CAT_NAME[b.dataset.cat])}`, sub: `${fs.length} forces`, color: `var(--co-${b.dataset.co})`, sections: fs.map(f => ({ label: f.name, html: `${readHtml(f.read)}<div class="mt-8">${dirChip(f.read.dir)}</div><div class="small mt-8"><b>Do:</b> ${h(f.lever)}</div>${f.sens ? `<div class="mt-8">${effectHtml(f.sens, true)}</div>` : ''}` })) }); }; });
+  root.querySelectorAll('.sg-cell').forEach(b => { b.onclick = () => { const fs = F.filter(f => f.co === b.dataset.co && f.cat === b.dataset.cat); if (fs.length === 1) return openFactor(ctx, fs[0]); ctx.inspector.open({ title: `${h(CO_NAME[b.dataset.co])} · ${h(CAT_NAME[b.dataset.cat])}`, sub: `${fs.length} forces`, color: `var(--co-${b.dataset.co})`, sections: fs.map(f => ({ label: f.name, html: `${readHtml(f.read)}<div class="mt-8">${dirChip(f.read.dir)}</div><div class="small mt-8"><b>Possible response:</b> ${h(f.lever)}</div>${f.sens ? `<div class="mt-8">${effectHtml(f.sens, true)}</div>` : ''}` })) }); }; });
 
   // action list: high and medium forces that hurt or help now, largest estimated effect first
   const acts = byRank([...hurts, ...helps]).slice(0, 8);
@@ -494,7 +494,7 @@ async function overview(ctx) {
     { key: 'name', label: 'Force', wrap: true, width: '240px', fmt: v => `<div class="strong">${h(v)}</div>` },
     { key: 'reading', label: 'Reading now', wrap: true, width: '260px', fmt: (v, r) => readShort(r.read) },
     { key: 'effect_now', label: 'Today', fmt: (v, r) => `${dirChip(r.read.dir)}<div class="small dim mt-8" title="${W_TXT[r.w]} importance">${W_TXT[r.w]}</div>` },
-    { key: 'lever', label: 'What to do', wrap: true, width: '240px', fmt: (v, r) => `<div class="small">${h(first(v))}</div>${r.link ? `<a class="small" href="${h(r.link[0])}">${h(r.link[1])} →</a>` : ''}` },
+    { key: 'lever', label: 'Possible response', wrap: true, width: '240px', fmt: (v, r) => `<div class="small">${h(first(v))}</div>${r.link ? `<a class="small" href="${h(r.link[0])}">${h(r.link[1])} →</a>` : ''}` },
     { key: 'size', label: 'Size (est.)', wrap: true, width: '220px', fmt: (v, r) => effectHtml(r.sens, true) },
   ];
   let tbl = null;   // the company table; null while All six or the phone cards are on screen
@@ -531,7 +531,7 @@ async function overview(ctx) {
     const rows = F.filter(f => f.co === co).map(f => ({ ...f, reading: `${f.read.v}${f.read.d ? ` (${f.read.d})` : ''}${f.read.src ? ` · ${f.read.src}${f.read.date ? `, ${f.read.date}` : ''}` : ''}`, effect_now: DIR[f.read.dir].t, size: f.sens ? `${f.sens.now || ''}${f.sens.now ? '. ' : ''}${f.sens.unit}` : '', _w: f.w * 10 + (f.read.dir < 0 ? 2 : f.read.dir > 0 ? 1 : 0) }));
     const hu = rows.filter(r => r.read.dir < 0).length, he = rows.filter(r => r.read.dir > 0).length;
     root.querySelector('#sg-co-lead').dataset.co = co;
-    root.querySelector('#sg-co-lead').innerHTML = `${rows.length} forces, ${hu} hurting, ${he} helping. Revenue ${h(D.revTxt[co])}`;
+    root.querySelector('#sg-co-lead').innerHTML = `${rows.length} forces, ${hu} likely hurting, ${he} helping. Revenue ${h(D.revTxt[co])}`;
     const host = root.querySelector('#sg-tbl');
     if (phone()) {   // phone: one card per force instead of a five-column table
       tbl = null;
@@ -642,7 +642,7 @@ const titleCase = s => String(s || '').toLowerCase().replace(/\b([a-z])/g, m => 
 
 export default {
   id: 'signals', name: 'Local signals', tag: 'Live', color: 'var(--sys-brand)', group: 'Command',
-  tagline: 'The local and market forces that move each company’s sales and margins, weather included',
+  tagline: 'Public readings on the forces likely moving each company’s sales and margins',
   views: [
     { id: 'overview', name: 'What moves sales', icon: '◎', render: overview },
     { id: 'readings', name: 'Live readings', icon: '∿', render: readings },

@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   How BSP buys · shared logic for the portal module (modules/bsp.js). The
-   methodology page (redesigns/methodology.html) now forwards to the portal;
+   Deal record · shared logic for the portal module (modules/bsp.js). The
+   old page (redesigns/methodology.html) now forwards to the portal;
    its script still imports this file until it is removed. Pure functions only: no
-   DOM framework, no portal runtime. Datasets: BSP acquisition methodology,
+   DOM framework, no portal runtime. Datasets: BSP deal record (bsp_methodology),
    BSP professional network, Punctual Pros / CET / Frontline and Thomas
    Scientific add-on target screens.
    Prepared by Syed Rahman.
@@ -41,7 +41,7 @@ export const DEAL_TYPE = { platform: 'Anchor', add_on: 'Add-on', exit: 'Exit' };
 export const STRENGTH = { strong: 'Strong', moderate: 'Moderate', weak: 'Weak' };
 
 /* ── Plain-English pass over dataset text (file names and dataset ids → human names) ── */
-const DS_NAMES = { cet_filings: 'CET public filings', bpi_filings: 'BPI public filings', pp_filings: 'Punctual Pros public filings', fairharbor_filings: 'Fair Harbor public filings', thomas_filings: 'Thomas Scientific public filings', frontline_filings: 'Frontline public filings', rival_filings: 'competitor filings', pe_landscape: 'private-equity landscape', ma_targets_pp: 'Punctual Pros add-on screen', ma_targets_cet: 'CET add-on screen', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on screens', bsp_firm: 'BSP firm profile', bsp_methodology: 'BSP methodology', bsp_network: 'BSP network', pp_market: 'Punctual Pros market model', pp_zips: 'Punctual Pros zip model' };
+const DS_NAMES = { cet_filings: 'CET public filings', bpi_filings: 'BPI public filings', pp_filings: 'Punctual Pros public filings', fairharbor_filings: 'Fair Harbor public filings', thomas_filings: 'Thomas Scientific public filings', frontline_filings: 'Frontline public filings', rival_filings: 'competitor filings', pe_landscape: 'private-equity landscape', ma_targets_pp: 'Punctual Pros add-on screen', ma_targets_cet: 'CET add-on screen', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on screens', bsp_firm: 'BSP firm profile', bsp_methodology: 'BSP deal record', bsp_network: 'BSP network', pp_market: 'Punctual Pros market model', pp_zips: 'Punctual Pros zip model' };
 export const tx = v => typeof v !== 'string' ? v : v
   .replace(/\bBSP(?![-\w])/g, 'BSP')
   .replace(/\bma_targets_\*(?:\.json)?/g, 'add-on target screens').replace(/\*_filings(?:\.json)?/g, 'company filings')
@@ -121,7 +121,7 @@ export const TESTS = {
   'crit-downside': { tested: true, how: 'Risk flags: start at 4 (a 5 needs earnings, leverage and concentration data from diligence), minus 1 per serious flag (union model, acquirer or anti-sale stance, sponsor or ESOP owner, concentration, regulatory), minus 0.5 per business-risk flag (key-person, cyclical or seasonal demand, contested market, non-core revenue) and per data-gap flag. Size and distance flags are not counted twice. Thomas Scientific targets lose 1 more because the company loan is marked near 88% of par.' },
 };
 const ESSENTIAL = { pp: 5, cet: 5, fl: 5, ts: 3 };
-/** Criteria tested per target (the BSP fit score); platform-level and neutral criteria are context only. */
+/** Criteria tested per target (the fit score); platform-level and neutral criteria are context only. */
 export const isTargetTest = id => TESTS[id]?.tested === true || TESTS[id]?.tested === 'proxy';
 const SERIOUS = /union|anti-?pe|stay independent|prefer to stay|itself an acquirer|acquirer|esop|employee-owned|sponsor|private equity|pe-backed|subsidiary|part of|concentration|regulat|litigation|lawsuit|osha|violation|declin|distress|bankrupt|name collision|affiliat/i;
 const MINOR = /transfer approval|consent|rebrand|not (disclosed|verified|public|found|captured|named)|undisclosed|unverified|modeled|modelled|estimate|unknown|no clean record|may be overstated|thin|limited data/i;
@@ -206,7 +206,7 @@ export function scoreTargets(b) {
     r._serious = [...serious, ...biz];
     // untested criteria
     for (const id of ['crit-recurring', 'crit-tech-upside', 'crit-mgmt-culture']) { s[id] = 3; why[id] = 'not tested · neutral'; }
-    // BSP fit = the target-level tests only (owner readiness, size band, adjacency, platform-thesis fit, downside),
+    // Fit = the target-level tests only (owner readiness, size band, adjacency, platform-thesis fit, downside),
     // each at its rubric weight, renormalised to 0-100. The full rubric (platform-level essentiality and runway, three
     // criteria held neutral) is kept as context in _full.
     let tot = 0, wsum = 0, ftot = 0, fsum = 0;
@@ -373,7 +373,7 @@ export function introFor(b, t) {
   const pc = PLATFORMS[t._p]?.node; if (!pc || !g.byId.has(pc)) return null;
   const leader = (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo');
   const ids = ['org-bsp', pc, leader?.id].filter(Boolean);
-  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default path: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, which is how most named BSP add-ons were sourced.` };
+  return { sourced: false, path_node_ids: ids, names: ids.map(id => g.byId.get(id)?.name), hops: ids.length - 1, confidence: 'unsourced', path: `No sourced intro path yet. Default path: ${leader ? `${leader.name} (${leader.title}) at ${g.byId.get(pc).name}` : g.byId.get(pc).name} makes the owner-to-owner approach, likely how most named BSP add-ons were sourced.` };
 }
 
 /* ── Chronological strip (inline SVG) ─────────────────────────────────────── */
@@ -408,15 +408,15 @@ export function firstCallScript(b, r) {
   const pc = P?.node; const leader = g && pc ? (g.adj.get(pc) || []).filter(e => e.relation === 'works_at' && e.to === pc && e.current !== false).map(e => g.byId.get(e.from)).find(n => n?.type === 'portfolio_ceo') : null;
   const skip = new Set(['org-bsp', pc, leader?.id]);
   const via = intro?.sourced ? (intro.path_node_ids || []).filter(id => !skip.has(id)).map(id => g.byId.get(id)?.name).filter(Boolean).slice(-1)[0] : null;
-  const what = r._p === 'pp' ? 'the leading home-services operator in the Mid-Atlantic' : r._p === 'cet' ? 'the leading electrical and energy services group across New England and the Mid-Atlantic' : r._p === 'fl' ? 'the managed-IT partner of choice for law firms' : 'the leading independent lab-supply distributor';
+  const what = r._p === 'pp' ? 'a home-services group in the Mid-Atlantic' : r._p === 'cet' ? 'an electrical and energy services group across New England' : r._p === 'fl' ? 'a managed-IT group for law firms' : 'an independent lab-supply distributor';
   const lines = [
-    { k: 'Who calls', t: `${leader ? `${leader.name} of ${P.short}` : `${P.short} leadership`}, with the Portfolio Resource Group${via ? `; ask ${via} for the introduction first` : '; no warm introduction is on file, so the call opens cold'}.` },
-    { k: 'Open', t: `“I lead ${P.short}. We are backed by BSP and building ${what}. I’d like to understand your plans; this is not an offer.”` },
+    { k: 'Possible caller', t: `${leader ? `${leader.name} of ${P.short}` : `${P.short} leadership`}${via ? `; a possible introduction through ${via}` : '; no warm introduction is on file'}.` },
+    { k: 'Open', t: `“I lead ${P.short}. We are backed by BSP and growing ${what}. I’d like to understand your plans; this is not an offer.”` },
     { k: 'Why them', t: clip(r.strategic_rationale || '', 240) },
-    { k: 'Ownership', t: `“Where are you on succession? With BSP the founder usually stays, keeps equity and helps lead the next acquisitions.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
+    { k: 'Ownership', t: `“Where are you on succession? In BSP’s disclosed deals, founders have usually stayed on.” Tests owner readiness; the screen reads ${r._owner.toLowerCase()}${r.founded_year ? `, founded ${r.founded_year}` : ''}.` },
     { k: 'Revenue quality', t: '“What share of revenue is repeat, maintenance or contracted?” Recurring revenue is 12% of the rubric and is not in the screen yet.' },
     { k: 'Bench and tools', t: '“Who runs the business day to day besides you, and what software runs dispatch, billing and the customer record?” Bench and tech upside are 14% of the rubric, untested so far.' },
-    r._serious?.length ? { k: 'Risk to clear', t: `Raise gently: ${r._serious.map(s => s.replace(/\.$/, '')).join('; ')}.` } : null,
+    r._serious?.length ? { k: 'Risk flags', t: `From the screen: ${r._serious.map(s => s.replace(/\.$/, '')).join('; ')}.` } : null,
     { k: 'Close', t: `“Could we meet with ${P.short}’s leadership in the next two weeks? We can walk you through how the last owner joined and what changed for their team.”` },
   ].filter(Boolean);
   return lines;

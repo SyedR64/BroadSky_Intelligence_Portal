@@ -551,7 +551,7 @@ export const LABELS = {
   cet_home_sales_ma: 'CET deed records (MA)', cet_home_sales_ct_ri: 'CET deed records (CT and RI)', cet_transfers_ma: 'CET property transfers (MA)', cet_transfers_ct_ri: 'CET property transfers (CT and RI)',
   ts_sales_gloucester_nj: 'Thomas Scientific deed records (Gloucester County, NJ)', bpi_sales_dc: 'BPI deed records (DC)', fh_sales_nyc: 'Fair Harbor deed records (New York City)',
   // research (data/research/)
-  ai_agents_portfolio: 'Portfolio AI-agent plan', bpi_filings: 'BPI public filings', bpi_playbook: 'BPI growth plan', bsp_firm: 'BSP firm profile',
+  ai_agents_portfolio: 'Portfolio AI-agent plan', bpi_filings: 'BPI public filings', bpi_playbook: 'BPI growth plan', bsp_firm: 'BSP firm profile', bsp_methodology: 'BSP deal record',
   cet_filings: 'CET public filings', cet_opportunities: 'CET opportunity radar', cet_playbook: 'CET growth plan', cet_wwtp_targets: 'CET wastewater-plant targets',
   design_refs: 'Design principles', fairharbor_filings: 'Fair Harbor public filings', fh_playbook: 'Fair Harbor growth plan', fl_midsize_firms: 'Mid-size law firms',
   fl_playbook: 'Frontline growth plan', frontline_filings: 'Frontline public filings', ma_targets_cet: 'CET add-on targets', ma_targets_fl_ts: 'Frontline and Thomas Scientific add-on targets',

@@ -52,7 +52,7 @@ KNOWN = {
     'redesigns/voice-ai.html': ('24/7 Voice AI', 'What missed calls cost, the vendors and a sample call.'),
     'redesigns/ai-agents.html': ('AI agents plan', '45 agents across six companies, with rollout and value.'),
     'redesigns/case-studies.html': ('Sponsor precedents', 'How other sponsors grew companies like these.'),
-    'redesigns/methodology.html': ('How BSP buys', 'How BSP finds, buys and grows companies.'),
+    'redesigns/methodology.html': ('Deal record', 'Every disclosed BSP deal, from public announcements.'),
     'assistant.html': ('Full assistant', 'The assistant, full screen.'),
     'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with sandbox apps and data.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),

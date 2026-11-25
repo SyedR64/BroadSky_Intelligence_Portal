@@ -28,7 +28,7 @@ MAX_DATASETS = 6
 
 LABELS = {
     'ai_agents_portfolio': 'Portfolio AI-agent plan', 'bpi_filings': 'BPI public filings', 'bpi_playbook': 'BPI growth plan', 'bsp_firm': 'BSP firm profile',
-    'bsp_methodology': 'BSP acquisition methodology', 'bsp_network': 'BSP professional network', 'cases_cross_sector': 'Cross-sector sponsor case studies',
+    'bsp_methodology': 'BSP deal record', 'bsp_network': 'BSP professional network', 'cases_cross_sector': 'Cross-sector sponsor case studies',
     'cases_home_services': 'Home-services company case studies', 'cet_filings': 'CET public filings', 'cet_opportunities': 'CET opportunity radar',
     'cet_playbook': 'CET growth plan', 'cet_wwtp_targets': 'CET wastewater-plant targets', 'design_refs': 'Design principles', 'fairharbor_filings': 'Fair Harbor public filings',
     'fh_playbook': 'Fair Harbor growth plan', 'fl_midsize_firms': 'Mid-size law firms', 'fl_playbook': 'Frontline growth plan', 'frontline_filings': 'Frontline public filings',

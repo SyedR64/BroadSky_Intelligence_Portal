@@ -1,7 +1,7 @@
 {
  "meta": {
   "dataset": "bsp_methodology",
-  "title": "How BSP buys: a reverse-engineered acquisition methodology",
+  "title": "Broad Sky's disclosed deals: patterns read from public announcements",
   "author": "Syed Rahman",
   "generated": "2026-10-06",
   "method": "Deal records rebuild every disclosed BSP transaction (the 7 companies bought since launch, 6 still held; the Smith + Howard exit; and 21 of 23 add-ons identified by name) from primary press releases fetched 2026-10-06 (Business Wire via FinancialContent mirrors, PR Newswire, bpigroup.com, smith-howard.com, comelectrical.com, broadskypartners.com, Franchise Times, Accounting Today, frontlinems.com, BV and Audax/SFNet releases). They are cross-referenced to the repo's SEC Form D, Form ADV, BDC schedule-of-investments and UK Companies House evidence in BSP firm profile, Thomas Scientific filings, Frontline filings, BPI filings, Punctual Pros filings, CET filings and Fair Harbor filings (retrieved 2026-09-24). quoted rationale strings are copied verbatim from the cited release; size signals marked 'est.' are the repo's labelled estimates, not disclosures. Patterns were inferred by tabulating seller type, advisers, lenders, SPVs, CEO outcomes and add-on timing across the deal records. Criteria weights are analyst inference from those patterns. cadence stats are computed in Python from the deal dates.",
@@ -28,7 +28,7 @@
    "exits": 1
   },
   "methodology_narrative": [
-   "BSP buys theme-first: each deal release frames the company as the output of a sector thesis studied in advance, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's watch on accounting before Smith + Howard.",
+   "The releases point to theme-first buying: each one frames the company as the output of a sector thesis studied in advance, from RJ David's 'over a year' in electrical services before CET to Adam Glucksman's watch on accounting before Smith + Howard.",
    "Since 2024 the filter has narrowed to essential services. Punctual Pros, Frontline and CET are all non-discretionary, and Fair Harbor remains the only discretionary consumer bet and the only portfolio company besides Frontline with no add-ons.",
    "Anchor acquisitions come from two kinds of seller: sponsor secondaries for the larger checks (Thomas from Carlyle, BPI from Svoboda, Frontline from BV) and founder or partner owners taking first institutional capital for the smaller ones (Fair Harbor, Smith + Howard, Punctual Pros, CET).",
    "In secondaries the outgoing sponsor often rolls a minority (Svoboda at BPI, BV at Frontline), and the inherited CEO is replaced at about 13-15 months (Simmons to Haas at Thomas, Naidoo to Britt at Frontline) while founder CEOs such as Sean Taylor, Matt Buckwalter and John Duquette Jr. stay.",
@@ -931,7 +931,7 @@
     "deal-fl"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Bring BSP a written sector map (fragmentation, tailwind, 2-3 candidate anchor companies) before naming a company; a target pitched without a theme does not match how they buy.",
+   "implication_for_next_deals": "In the disclosed deals a sector thesis came first, so a target with no theme behind it likely fits less well.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
@@ -955,7 +955,7 @@
     "deal-sh-exit"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Screen out discretionary consumer products; residential services qualify only when demand is non-discretionary (repair, replace, code-driven).",
+   "implication_for_next_deals": "Recent deals point away from discretionary consumer products; residential services likely fit only where demand is non-discretionary (repair, replace, code-driven).",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
     "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
@@ -981,7 +981,7 @@
     "deal-cet"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "For a larger company ($15M+ EBITDA), expect a sponsor seller and offer the outgoing sponsor a minority roll. For smaller companies, target founder or partner owners taking their first institutional capital.",
+   "implication_for_next_deals": "In the disclosed deals, larger companies ($15M+ EBITDA) came from sponsors, often with a minority roll; smaller ones came from founder or partner owners taking first institutional capital.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
@@ -1006,7 +1006,7 @@
     "deal-fl"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "For a secondary, underwrite a CEO-succession option (an operator from the Executive Board or the network) by month 12. For a founder deal, the founder's willingness to stay 3-5 years and run M&A is a gating item.",
+   "implication_for_next_deals": "In the disclosed secondaries a new CEO arrived by about month 13 to 15; in founder deals the founder stayed and led add-ons.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
     "https://www.prnewswire.com/news-releases/frontline-managed-services-appoints-tim-britt-as-chief-executive-officer-302670506.html",
@@ -1030,7 +1030,7 @@
     "deal-fh"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Have a named, warm first add-on before signing a company. A target that can only be the company and never feeds one is less attractive.",
+   "implication_for_next_deals": "With most first add-ons closing 6 to 9 months in, a first add-on was likely in view before signing.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/thomas-scientific-bolsters-distribution-and-sales-capabilities-with-acquisition-of-nci-301597482.html",
     "https://bpigroup.com/bpi-adds-european-business-strategy-public-policy-and-communications-offering-with-acquisition-of-boldt/",
@@ -1056,7 +1056,7 @@
     "deal-sh-jmm"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Build add-on pools from owner-operated firms that are succession-ready (founder age and tenure, family generation). Exclude sponsor-owned assets from tuck-in lists.",
+   "implication_for_next_deals": "Add-on pools likely skew to owner-operated, succession-ready firms; no disclosed add-on came from a sponsor.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/thomas-scientific-expands-distribution-and-sales-capabilities-with-the-acquisition-of-day-associates-inc-301892907.html",
     "https://www.smith-howard.com/smith-howard-acquires-smith-kesler-and-co/",
@@ -1092,7 +1092,7 @@
     "deal-ts-arrowhead"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Tag every candidate in the add-on target lists as geo-fill or capability and pace them in turn. A capability deal usually supports cross-selling into the existing base.",
+   "implication_for_next_deals": "Add-ons in the record alternate between geographic fill and new capability; capability deals usually support cross-selling into the existing base.",
    "source_urls": [
     "https://www.smith-howard.com/smith-howard-acquires-vip-search-and-vip-solutions-businesses/",
     "https://www.smith-howard.com/smith-howard-acquires-fahrenheit-advisors/",
@@ -1122,7 +1122,7 @@
     "deal-bpi-propper"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Score add-ons on distance to the nearest existing node, with a bonus for one new adjacent state per year.",
+   "implication_for_next_deals": "Distance to the nearest existing site likely matters most, with about one new adjacent state a year in the record.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
     "https://comelectrical.com/commonwealth-electrical-technologies-acquires-horton-electrical-services/",
@@ -1146,7 +1146,7 @@
     "deal-sh"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Against a $335M Fund I, any company needing more than ~$40M of equity probably needs a co-invest SPV. Pre-sound co-invest LPs, including Carlyle AlpInvest (Frontline), when sizing the next company.",
+   "implication_for_next_deals": "Against a $335M Fund I, a company needing more than about $40M of equity likely needs a co-invest SPV, as Frontline had with Carlyle AlpInvest.",
    "source_urls": [
     "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
     "https://www.sec.gov/Archives/edgar/data/1917661/000139834425008284/xslFormDX01/primary_doc.xml",
@@ -1172,7 +1172,7 @@
     "deal-fl"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Size the add-on delayed-draw line at close and leave room in the debt for a refinancing, as Thomas Scientific's December 2027 maturity shows.",
+   "implication_for_next_deals": "Each disclosed financing left delayed-draw room for add-ons; Thomas Scientific's December 2027 maturity shows why refinancing room likely matters.",
    "source_urls": [
     "https://www.sec.gov/Archives/edgar/data/1278752/000127875222000004/ainv2022q310-q.htm",
     "https://www.sec.gov/Archives/edgar/data/1278752/000095017023003448/mfic-20221231.htm",
@@ -1202,7 +1202,7 @@
     "deal-cet-nuwave"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Berenson and Harris Williams coverage bankers are the people most likely to see BSP's next company. Brief them on the theme map, and expect Berenson on any $100M+ EV deal.",
+   "implication_for_next_deals": "Berenson and Harris Williams recur in the disclosed deals, so their coverage bankers likely see many of BSP's processes.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
@@ -1231,7 +1231,7 @@
     "deal-ts-quintana"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Win anchor acquisitions through thematic preparation and banker relationships. Build add-on funnels through portfolio-company CEO relationships, outbound owner outreach and possibly a retained search firm.",
+   "implication_for_next_deals": "In the record, anchor deals came through banked processes, while add-ons came mostly through company CEO relationships and owner outreach.",
    "source_urls": [
     "https://www.franchisetimes.com/franchise_mergers_and_acquisitions/broad-sky-partners-acquires-large-authority-brands-operator/article_9c40f990-139e-11ef-a7c2-5bd16306f779.html",
     "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
@@ -1254,7 +1254,7 @@
     "deal-sh-geels"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Plan exits around a 3.5-4.5 year hold and a sponsor buyer. A visible tech/AI and offshore-delivery story was part of TPG's quoted rationale. By hold length and add-on count, BPI (3.4 years, 6 add-ons) looks closest to exit-ready.",
+   "implication_for_next_deals": "The one exit came after a 3.7-year hold, to a sponsor buyer whose quoted rationale cited the tech, AI and offshore build-out.",
    "source_urls": [
     "https://broadskypartners.com/broad-sky-partners-completes-sale-of-smith-howard-to-tpg/",
     "https://www.smith-howard.com/smith-howard-announces-significant-investment-from-tpg/"
@@ -1272,7 +1272,7 @@
     "deal-sh-exit"
    ],
    "strength": "strong",
-   "implication_for_next_deals": "Look first at assets held by Carlyle and MidOcean-adjacent sponsors and by BV- or Svoboda-style lower-middle-market sponsors. Treat Guggenheim and Baird as two-way counterparties (they sell to BSP and buy from BSP).",
+   "implication_for_next_deals": "Sellers in the record often link to Carlyle, MidOcean or lower-middle-market sponsors such as BV and Svoboda; Guggenheim and Baird appear on both sides of BSP deals.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",
@@ -1298,7 +1298,7 @@
     "deal-fl"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Default entry is a $2-20M EBITDA portfolio company at a sub-$100M EV, built up by add-ons. Go large only with >85% recurring revenue (Frontline-type) and avoid peak-cycle earnings (Thomas's COVID-testing bump).",
+   "implication_for_next_deals": "After Thomas, disclosed entries were likely $2-20M EBITDA (est.) companies under $100M EV, built up by add-ons; Frontline, the largest since, is over 85% recurring.",
    "source_urls": [
     "https://www.sec.gov/Archives/edgar/data/1901071/000190107124000001/xslFormDX01/primary_doc.xml",
     "https://www.sec.gov/Archives/edgar/data/1278752/000119312526335848/mfic-20260630.htm",
@@ -1321,7 +1321,7 @@
     "deal-pp"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Name the board chair and the PRG workstreams (tech/ops, finance, pricing, recruiting) in the first-round letter. Sellers cited BSP's 'dedicated operating resources' as a reason to choose it.",
+   "implication_for_next_deals": "Operators joined boards at entry, and sellers cited BSP's 'dedicated operating resources' as a reason to choose it.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/thomas-scientific-appoints-stan-haas-to-president-and-chief-executive-officer-301806043.html",
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-3-23-fair-harbor-secures-investment-from-broad-sky-partners",
@@ -1345,7 +1345,7 @@
     "deal-sh-skc"
    ],
    "strength": "moderate",
-   "implication_for_next_deals": "Offer founders of add-ons rollover into the portfolio company, not only cash, and test culture fit before price. In professional services, rollover is the retention mechanism.",
+   "implication_for_next_deals": "Founder rollover and culture language recur in the releases; in professional services, rollover likely works as the retention tool.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
     "https://markets.financialcontent.com/bpas/article/bizwire-2024-4-3-broad-sky-partners-acquires-punctual-pros-a-leading-franchisee-within-authority-brands-in-the-mid-atlantic-region",
@@ -1650,7 +1650,7 @@
     }
    ],
    "deal_count": 5,
-   "implication": "BSP's most-used buy-side bank, on every larger company except Punctual Pros and Fair Harbor. It is the most likely channel for BSP's next company.",
+   "implication": "BSP's most-used buy-side bank in the record, on every larger company except Punctual Pros and Fair Harbor.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://markets.financialcontent.com/bpas/article/bizwire-2023-4-27-bully-pulpit-interactive-receives-major-investment-from-broad-sky-partners",
@@ -1750,7 +1750,7 @@
     }
    ],
    "deal_count": 3,
-   "implication": "In CPA-firm M&A the specialist intermediary sourced both the company and later add-ons. Sector-specialist brokers are worth courting in each theme.",
+   "implication": "In CPA-firm M&A the specialist intermediary sourced both the company and later add-ons.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
     "https://www.smith-howard.com/smith-howard-and-market-street-partners-join-forces/",
@@ -1927,7 +1927,7 @@
     }
    ],
    "deal_count": 4,
-   "implication": "Add-ons mostly come from people the portfolio-company CEO already knows. Each portfolio-company CEO's relationship map is the first add-on list.",
+   "implication": "Add-ons in the record mostly came from people the portfolio-company CEO already knew.",
    "source_urls": [
     "https://www.prnewswire.com/news-releases/punctual-pros-strengthens-its-mid-atlantic-presence-with-acquisition-of-horvath-home-services-in-central-jersey-302321125.html",
     "https://www.smith-howard.com/smith-howard-welcomes-geels-norton-expanding-cyber-risk-audit-and-advisory-capabilities/",
@@ -1951,7 +1951,7 @@
     }
    ],
    "deal_count": 1,
-   "implication": "Part of the Thomas growth plan the BSP partners knew from Carlyle. A retained buy-side search mandate is a proven way to run a proprietary add-on program on a new company. Whether BSP-era Thomas deals used Harvey is not public.",
+   "implication": "Part of the Thomas growth plan the BSP partners knew from Carlyle. Whether BSP-era Thomas deals used Harvey is not public.",
    "source_urls": [
     "https://harveyllc.com/harvey-company-initiates-fourth-deal-thomas-scientific/",
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific"
@@ -1982,7 +1982,7 @@
     }
    ],
    "deal_count": 3,
-   "implication": "Theme-first origination: BSP picks a sector, then meets the leaders. Presenting a theme map is the way into their pipeline.",
+   "implication": "Theme-first origination: the releases describe a sector studied before the deal.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2025-3-19-commonwealth-electrical-technologies-a-leading-electrical-solutions-provider-in-the-northeast-acquired-by-broad-sky-partners",
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-11-15-smith-howard-and-broad-sky-partners-announce-strategic-platform-investment",
@@ -2009,7 +2009,7 @@
     }
    ],
    "deal_count": 2,
-   "implication": "Co-invest capacity sets the maximum company size. Carlyle AlpInvest and the Constellation members are the natural co-investors for a larger next deal.",
+   "implication": "Co-invest capacity likely sets the maximum company size; Carlyle AlpInvest and the Constellation members appear as co-investors.",
    "source_urls": [
     "https://markets.financialcontent.com/bpas/article/bizwire-2022-1-27-broad-sky-partners-announces-investment-from-capital-constellation-and-acquisition-of-thomas-scientific",
     "https://www.sec.gov/Archives/edgar/data/1899610/000189961026000006/capm_202603xn-csr.htm",

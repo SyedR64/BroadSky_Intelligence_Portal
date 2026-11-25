@@ -88,8 +88,8 @@ Menu for the firm levels: Home, Portfolio (six companies), Deals, Value creation
 | Deals | Acquisition engine (`ma`) | overview, pipeline, research, rivals, whitespace (and `screen`, `loans`, off the tabs) | Portfolio-wide add-on pipeline, theses joined to county home sales, stressed rivals, multiple arbitrage. Every target and rival profile carries its deal math and a "How we estimated this" disclosure, with a link into the acquisition model |
 | Deals | Acquisition model (`deal`) | returns, dcf, rollup, sensitivity | Live buyout, DCF, buy-and-build and sensitivity model with spreadsheet inputs; presets for the portfolio and every screened add-on (`#/deal/returns?p=<target id>`); rival scenarios by share link; Excel download with live formulas. Shared math in `modules/deal-lib.js` |
 | Deals | Private equity (`pe`) | landscape, deals, comparables | 35 competing sponsors, disclosed deals, rival presence by portfolio county |
-| Deals | How BSP buys (`bsp`) | deals, patterns, rubric | The firm's buying pattern and scoring rubric |
-| Value creation | Local signals (`signals`) | overview, readings | The local and market forces that move each company's sales and margins, sized in dollars (est.), and the public readings behind them |
+| Deals | Deal record (`bsp`) | deals, patterns, rubric, network | Every disclosed BSP deal from public announcements, the patterns read from them and an inferred rubric |
+| Value creation | Local signals (`signals`) | overview, readings | The forces likely moving each company's sales and margins, read from public data and sized in dollars (est.), and the readings behind them |
 | Value creation | Fundamentals (`fin`) | portfolio, comps (and `explorer`, `methods`, off the tabs) | Form D and ADV capital, triangulated financials, 31 public comps |
 | Value creation | Tech enablement (`techos`) | overview, evidence, roadmap, calculator | The six software theses (ServiceOS, GridOS, FirmOS, LabOS, SignalOS, HarborOS): KPIs moved, investment, EBITDA impact, roadmap, equity-value calculator |
 | Value creation | Connections (`connect`) | overview | Every tool by brand name with its state |
