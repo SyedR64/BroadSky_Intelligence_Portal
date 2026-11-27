@@ -1,6 +1,7 @@
 # Third-party notices
 
-This file covers the Globe renderer (`assets/godseye-cesium.js`, `assets/godseye-cesium.css`) and what it loads.
+This file covers the Globe renderer (`assets/godseye-cesium.js`, `assets/godseye-cesium.css`), the Globe screen's
+layers (`modules/globe.js`) and what they load.
 The screen is called "Globe" everywhere in the product. The reference project below is named here only to give
 its copyright notice; its name is a trademark of others and is not used in the product.
 
@@ -63,6 +64,32 @@ the build it serves (`Build/Cesium/`).
 |---|---|---|---|
 | NASA Global Imagery Browse Services (GIBS): Blue Marble shaded relief and bathymetry; VIIRS Black Marble 2016 night lights | The globe from orbit; city lights on the night side | NASA Earthdata data use guidance: ESDIS content is "generally not copyrighted" and "there are no restrictions on the use of these data"; NASA material may not imply NASA endorsement. GIBS asks clients to acknowledge it. | "Imagery: NASA GIBS" |
 | USDA and USGS, The National Map, "USGS Imagery Only" tile service | Aerial imagery of the lower 48 states near the ground | USGS: "USGS-authored or produced data and information are considered to be in the U.S. Public Domain"; USGS asks for credit. The service's own copyright line: "USDA, USGS The National Map: Orthoimagery." | "USDA, USGS The National Map" |
+
+### Layers on the key-free globe (`modules/globe.js`, the Layers switch and the "Live layers" tour)
+
+Terms read on 27 November 2026. Nothing below needs a key, and nothing is stored in this repository beyond the
+nightly snapshots that the Local signals screen already keeps in `data/live/`.
+
+| Source | Used for | Terms that allow this use | Credit shown on the globe |
+|---|---|---|---|
+| NASA GIBS: VIIRS Black Marble 2016 (`VIIRS_Black_Marble`, WMTS, web-mercator tiles to level 8) | Night lights from orbit, fading out as the camera nears the ground | The same NASA Earthdata guidance as above: NASA-led mission data is public domain (CC0) unless marked otherwise, with no restriction on use; NASA is to be acknowledged and its endorsement never implied. | "Night lights NASA GIBS" |
+| NOAA National Weather Service: the MRMS radar mosaic (`radar_base_reflectivity_time` image service on mapservices.weather.noaa.gov, a new frame about every five minutes) and active alerts (api.weather.gov) | Weather: the radar picture, the time of its newest frame, and the counties under an alert | The Weather Service's disclaimer: its information is in the public domain unless noted and may be used without charge for any lawful purpose, so long as it is not claimed as one's own, not presented as official once changed, and no endorsement or affiliation is implied. | "Radar and alerts NOAA National Weather Service" |
+| Realtor.com Economic Research (county inventory) and the Census Bureau's Building Permits Survey, from the nightly snapshots | Local signals: one mark for each county with a reading | As on the Local signals screen, which shows the same readings with their sources. | "Listings Realtor.com Permits Census Bureau" |
+
+Competitors and acquisition targets are this product's own research (`data/research/pp_market.json`,
+`data/research/globe_tours.json`); their source lines are in the screen's Sources list.
+
+**Aircraft positions are not shown.** No free source was found whose terms cover a company product:
+
+- OpenSky Network: its terms of use require a written licence for any for-profit or commercial entity and for any use
+  of its API in a live product. Its API also answers only pages on its own site.
+- adsb.fi: open data for personal, non-commercial use only.
+- adsb.lol: published under the Open Database License and open to everyone, but its API sends no cross-origin
+  header, so a page on this site cannot read it without a relay server of our own; it also allows 500 requests a day
+  for each address. Not used.
+
+If a licensed feed is added later, the layer must never show a callsign, a registration or any other identifier of
+an aircraft.
 
 ### Photorealistic globe (only with a key in `assets/runtime.json`)
 
