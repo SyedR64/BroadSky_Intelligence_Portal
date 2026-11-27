@@ -322,7 +322,7 @@ function syncHint() {
 const dlg = { el: null, opener: null, fromMain: false, apps: [], phase: 'idle', raf: 0, finish: null };
 function dialogHead(title, apps) {
   const mono = apps.length === 1 ? `<span class="ca-mono" aria-hidden="true">${esc(appMono(apps[0]))}</span>` : '';
-  return `<p class="sys-card-label">Broad Sky OS sandbox</p>
+  return `<p class="sys-card-label">Broad Sky OS example data</p>
     <div class="ca-dlg-title">${mono}<h2 class="sys-h3" id="ca-consent-h" tabindex="-1" autofocus>${esc(title)}</h2></div>`;
 }
 function openConsent(appIds) {

@@ -381,7 +381,7 @@ async function companyHome(ctx, role, live) {
   });
   el.innerHTML = `<div class="hm hm-co-home"${co ? ` data-co="${esc(co)}"` : ''}>${band}${outHTML()}
     ${dayHTML(role, esc)}
-    <p class="sys-src hm-src" data-method>Figures marked est. are sandbox examples modeled from the public estimates, and the band's first line is sample data; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
+    <p class="sys-src hm-src" data-method>Figures marked est. are examples modeled from the public estimates, and the band's first line is sample data; hold and add-ons are from public filings. Reported add-ons were named in the trade press, not announced by the company.</p>
     ${pillHTML(role, esc)}</div>`;
   wire(el, role);
   el.querySelectorAll('[data-hm="row"]').forEach(b => { b.onclick = () => { location.hash = `#/${b.dataset.id}`; }; });
@@ -412,7 +412,7 @@ async function roleHome(ctx, role) {
         attnHTML(`${esc(fill(role.home?.list_title || 'Today'))} · ${list.length + drafts.length}`, [...drafts, ...rows], [approvalLine(role, drafts.length)], 5)) }) + outHTML();
   }
   el.innerHTML = `<div class="hm hm-role${field ? ' hm-field' : ''}"${role.co ? ` data-co="${esc(role.co)}"` : ''}>${html}
-    <p class="sys-src hm-src" data-method>Sandbox records: fictional people and modeled numbers.</p>
+    <p class="sys-src hm-src" data-method>Example records: fictional people and modeled numbers.</p>
     ${pillHTML(role, esc)}</div>`;
   wire(el, role);
 }

@@ -2840,7 +2840,7 @@ def _site_brief(ws, args, sources):
         source_line = (f"Source: public property records where shown; layout is a rule of thumb for houses built around "
                        f"{house.get('year') or 1975} in {area.get('county')} County.")
     else:
-        source_line = 'Source: sandbox ServiceTitan record, fictional customer.'
+        source_line = 'Source: example ServiceTitan record, fictional customer.'
     key = (parsed.get('key') or site_line) + '|' + (zip_ or '')
     card = sketch(site_line, house, items, runs, {**hbasis, 'card': card_basis}, area, tri, focus, source_line, ns, key=key)
     extra_cards = []

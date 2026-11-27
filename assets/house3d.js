@@ -22,7 +22,12 @@
    - floors[].rooms are the rooms as the sketch lays them out; floors[].items and outside[] are equipment; floors[].runs are water,
      gas, drain, wire and duct lines. Heights are a drawing convention (the card has none for these).
    Every item and run becomes one named object whose userData (and glTF extras) carry role, kind, layer, basis and floor; the file
-   also carries the footprint, the parcel, the height and the storeys with their basis, in east, up, south metres. */
+   also carries the footprint, the parcel, the height and the storeys with their basis, in east, up, south metres.
+   The view draws a lit architectural model: matte physically based materials, a key light with soft shadows and a fill, tone
+   mapping, the ground at grade with a faint grid that fades out (a basement shows through it, with a line where grade meets the
+   walls), and faint outlines for what is cut away or above the chosen floor. Its finish never changes the basis rule: anything
+   likely stays see-through with dashed edges, anything recorded or public is solid. Equipment is a simple solid per kind; "Start
+   here" items glow in the accent and stand on an accent ring. It draws only while something moves. */
 
 const THREE_URLS = [
   'https://unpkg.com/three@0.169.0/build/three.module.js',
@@ -55,8 +60,12 @@ const SHAPE = {
   heat_pump: ['box', 0.85, 0.85, 0.85, 0], condenser: ['box', 0.8, 0.8, 0.8, 0], generator: ['box', 1.2, 0.8, 0.7, 0],
   panel: ['box', 0.4, 0.75, 0.12, 1.2], service_switch: ['box', 0.12, 0.18, 0.06, 1.3], gas_meter: ['box', 0.35, 0.45, 0.25, 0.7],
   gas_shutoff: ['ball', 0.09, 0, 0, 0.9], main_water: ['ball', 0.1, 0, 0, 0.4], fixture_shutoffs: ['ball', 0.08, 0, 0, 0.5],
-  sewer_cleanout: ['cyl', 0.07, 0.3, 0, 0],
+  sewer_cleanout: ['cyl', 0.07, 0.3, 0, 0], electric_meter: ['box', 0.3, 0.42, 0.2, 1.1],
 };
+// other names the cards use for the same equipment: drawn with the same symbol
+const SHAPE_ALIAS = { cleanout: 'sewer_cleanout', sump: 'sump_pump', meter: 'electric_meter', ac_condenser: 'condenser', shutoff: 'main_water' };
+const shapeKind = k => (SHAPE[k] ? k : SHAPE_ALIAS[k] || k);
+const shapeOf = k => SHAPE[shapeKind(k)] || ['box', 0.4, 0.4, 0.4, 0];
 // the frame takes in another building on the lot only while it stays this close: past 2.5 times the drawn building's own
 // bounding radius the drawn building would shrink to a speck. The nearest buildings join first and each one that would
 // push the frame past this is left out; when none fits, the drawn building keeps its own frame.
@@ -69,8 +78,14 @@ const VIEWS = { outside: [0.62, 1.08, 0.95], cutaway: [0.38, 0.86, 0.88], top: [
 const COLOR_VARS = {
   water: '--sys-info', drain: '--sys-ink-2', gas: '--sys-warn', elec: '--sys-bad', hvac: '--sys-good', walls: '--sys-mute',
   shell: '--sys-mute-2', room: '--sys-line-2', other: '--sys-ink', bg: '--sys-surface-2', pick: '--sys-ink',
-  pub: '--sys-ink', rec: '--sys-violet',
+  pub: '--sys-ink', rec: '--sys-violet', accent: '--sys-brand',
+  // the stage: the model's tones, the ground and its grid are worked out from these (applyTheme)
+  page: '--sys-bg', page2: '--sys-bg-2', page3: '--sys-bg-3', surface: '--sys-surface', ink: '--sys-ink', ink2: '--sys-ink-2',
+  line: '--sys-line', line2: '--sys-line-2', mute: '--sys-mute', orange: '--sys-orange', coral: '--sys-coral',
 };
+// equipment is drawn as pale lit solids, as in the film; a few carry the colour of their part (the yellow gas valve, the red switch plate)
+const ITEM_TONE = { gas_shutoff: 'warn', main_water: 'brass', service_switch: 'bad', fixture_shutoffs: 'brass', panel: 'steel', gas_meter: 'steel',
+  sewer_cleanout: 'dark', sump_pump: 'dark', furnace: 'steel', boiler: 'steel', oil_tank: 'steel' };
 const BASIS_WORD = { public: 'Public record', record: 'Company record', likely: 'Likely' };
 const EXAMPLE_LINE = 'Company record (example data)';
 
@@ -552,7 +567,8 @@ function buildModel(T, card) {
   const mats = [];
   const mat = (colorKey, basis, kind = 'solid') => {
     const likely = !isSolid(basis);
-    const m = new T.MeshLambertMaterial({ color: 0x888888, transparent: likely || kind === 'shell', opacity: kind === 'shell' ? 0.22 : likely ? 0.5 : 1,
+    // matte, physically based: the view lights it; the file keeps the plain colour, opacity and side
+    const m = new T.MeshStandardMaterial({ color: 0x888888, roughness: 0.86, metalness: 0, transparent: likely || kind === 'shell', opacity: kind === 'shell' ? 0.22 : likely ? 0.5 : 1,
       depthWrite: !(likely || kind === 'shell'), side: kind === 'shell' ? T.DoubleSide : T.FrontSide });
     m.name = `${colorKey} ${basisOf(basis)}`;
     m.userData = { colorKey, base: m.opacity };
@@ -590,6 +606,7 @@ function buildModel(T, card) {
     if (!site) slab.position.set(0, l.base - 0.03, 0);
     slab.name = `${l.name} floor`;
     slab.userData = { role: 'slab', layer: 'structure', level: l.id, basis: site && !l.below ? shellBasis : 'likely' };
+    addEdges(slab, 'shell', slab.userData.basis);
     g.add(slab); shell.push(slab);
     const wg = group(g, 'Walls', { role: 'group', layer: 'walls', level: l.id });
     const outer = exteriorWalls(plan);
@@ -636,7 +653,7 @@ function buildModel(T, card) {
     for (const it of l.items) {
       const attic = /^in the attic/i.test(String(it.note || ''));
       const m = itemMesh(T, it, mat, addEdges);
-      const s = SHAPE[it.kind] || ['box', 0.4, 0.4, 0.4, 0];
+      const s = shapeOf(it.kind);
       const y0 = attic ? top + 0.1 : l.base + s[4];
       placeItem(m, s, X(it.x), y0, Z(it.y));
       tagItem(m, it, l.id, false);
@@ -673,7 +690,7 @@ function buildModel(T, card) {
     for (const o of plan.outside) {
       const p = outsidePoint(plan, o);
       const m = itemMesh(T, o, mat, addEdges);
-      const s = SHAPE[o.kind] || ['box', 0.4, 0.4, 0.4, 0];
+      const s = shapeOf(o.kind);
       placeItem(m, s, X(p[0]), s[4], Z(p[1]));
       tagItem(m, o, 'outside', true);
       (sg[KIND_LAYER[o.kind]] || sg.hvac).add(m); items.push(m);
@@ -738,9 +755,47 @@ function outsidePoint(plan, o) {
   return [P[0] + N[0] * d, P[1] + N[1] * d];
 }
 
+/** A simple solid for each kind of equipment, built from a few boxes and cylinders (a symbol, never a likeness): a tank with its
+    flue, a cabinet with its plenum, a valve with its handle. Centred as the plain shape was: a box or cylinder spans -h/2 to h/2
+    on y, a valve sits round the origin. One merged geometry, so each item stays one object. */
+function itemGeom(T, kind, s) {
+  const [type, a, h, d] = s, P = [];
+  const add = (g, x = 0, y = 0, z = 0) => { g.translate(x, y, z); P.push(g); };
+  const box = (w, hh, dd, x, y, z) => add(new T.BoxGeometry(w, hh, dd), x, y, z);
+  const cyl = (r, hh, x, y, z, axis, r2 = r) => {
+    const g = new T.CylinderGeometry(r, r2, hh, 24);
+    if (axis === 'x') g.rotateZ(Math.PI / 2); else if (axis === 'z') g.rotateX(Math.PI / 2);
+    add(g, x, y, z);
+  };
+  const k = shapeKind(kind);
+  if (k === 'water_heater') { cyl(a, h * 0.86, 0, -h * 0.07); cyl(a * 0.92, h * 0.04, 0, h * 0.38); cyl(a * 0.18, h * 0.1, 0, h * 0.45); cyl(a * 0.5, h * 0.03, 0, h * 0.4) }
+  else if (k === 'furnace' || k === 'air_handler') { box(a, h * 0.74, d, 0, -h * 0.13); box(a * 0.84, h * 0.24, d * 0.84, 0, h * 0.37); if (k === 'furnace') cyl(0.06, h * 0.2, a * 0.28, h * 0.4, -d * 0.2); }
+  else if (k === 'boiler') { box(a, h * 0.86, d, 0, -h * 0.07); box(a * 0.5, h * 0.06, d * 0.5, 0, h * 0.39); cyl(0.07, h * 0.12, 0, h * 0.44, -d * 0.15); }
+  else if (k === 'oil_tank') { cyl(Math.min(a, h) * 0.5, d * 0.96, 0, h * 0.5 - Math.min(a, h) * 0.5, 0, 'z'); box(a * 0.7, h * 0.3, 0.08, 0, -h * 0.35, d * 0.3); box(a * 0.7, h * 0.3, 0.08, 0, -h * 0.35, -d * 0.3); }
+  else if (k === 'heat_pump' || k === 'condenser') { box(a, h * 0.9, d, 0, -h * 0.05); cyl(a * 0.36, h * 0.06, 0, h * 0.42); cyl(a * 0.1, h * 0.1, 0, h * 0.44); }
+  else if (k === 'generator') { box(a, h * 0.8, d, 0, -h * 0.1); box(a * 0.94, h * 0.18, d * 0.9, 0, h * 0.39); cyl(0.04, h * 0.2, a * 0.38, h * 0.4, 0); }
+  else if (k === 'panel') { box(a, h, d); box(a * 0.86, h * 0.88, 0.02, 0, 0, d / 2 + 0.01); }
+  else if (k === 'service_switch') { box(a, h, d); box(0.03, h * 0.4, 0.04, 0, 0, d / 2 + 0.02); }
+  else if (k === 'gas_meter' || k === 'electric_meter') {
+    box(a, h * 0.74, d * 0.8, 0, -h * 0.13);
+    cyl(a * 0.28, d * 0.3, 0, -h * 0.08, d * 0.48, 'z');
+    if (k === 'gas_meter') { cyl(0.025, h * 0.26, -a * 0.26, h * 0.37); cyl(0.025, h * 0.26, a * 0.26, h * 0.37); } else box(a * 0.5, h * 0.24, d * 0.4, 0, h * 0.38);
+  }
+  else if (k === 'sump_pump') { cyl(a, h * 0.3, 0, -h * 0.35); cyl(a * 0.45, h * 0.45, 0, -h * 0.02); cyl(0.025, h * 0.5, a * 0.3, h * 0.24); }
+  else if (k === 'sewer_cleanout') { cyl(a, h * 0.82, 0, -h * 0.09); cyl(a * 1.35, h * 0.18, 0, h * 0.41); }
+  else if (k === 'gas_shutoff') { cyl(0.03, 0.36, 0, 0, 0, 'x'); cyl(0.06, 0.12, 0, 0, 0, 'x'); box(0.22, 0.025, 0.04, 0.08, 0.075, 0); }
+  else if (k === 'main_water') { cyl(0.035, 0.38, 0, 0, 0, 'x'); cyl(0.065, 0.13, 0, 0, 0, 'x'); cyl(0.012, 0.08, 0, 0.08, 0); const t = new T.TorusGeometry(0.08, 0.014, 8, 24); t.rotateX(Math.PI / 2); add(t, 0, 0.12, 0); }
+  else if (k === 'fixture_shutoffs') { cyl(0.02, 0.22, 0, 0, 0, 'x'); cyl(0.04, 0.08, 0, 0, 0, 'x'); box(0.07, 0.035, 0.02, 0, 0.05, 0); }
+  else if (type === 'cyl') cyl(a, h);
+  else if (type === 'ball') add(new T.SphereGeometry(a, 20, 14));
+  else box(a, h, d);
+  const g = mergeGeoms(T, P);
+  if (k === 'gas_shutoff' || k === 'main_water' || k === 'fixture_shutoffs') g.scale(1.7, 1.7, 1.7);   // a valve is drawn larger than life, so it reads
+  return g;
+}
+
 function itemMesh(T, it, mat, addEdges) {
-  const s = SHAPE[it.kind] || ['box', 0.4, 0.4, 0.4, 0];
-  const g = s[0] === 'cyl' ? new T.CylinderGeometry(s[1], s[1], s[2], 18) : s[0] === 'ball' ? new T.SphereGeometry(s[1], 14, 10) : new T.BoxGeometry(s[1], s[2], s[3]);
+  const g = itemGeom(T, it.kind, shapeOf(it.kind));
   const layer = KIND_LAYER[it.kind] || 'other';
   const m = new T.Mesh(g, mat(layer, basisOf(it.basis)));
   addEdges(m, layer, basisOf(it.basis));
@@ -755,7 +810,7 @@ function tagItem(m, it, level, outside) {
   const label = String(it.label || 'Item');
   m.name = `${label}${likely ? ' (likely)' : ''}`;
   m.userData = { role: 'item', kind: String(it.kind || ''), layer: KIND_LAYER[it.kind] || 'other', level, outside, basis: b, likely,
-    label, note: String(it.note || ''), detail: it.detail ? String(it.detail) : '', focus: it.focus === true, key: it.key, pick: true, snapped: !!it.snapped };
+    label, note: String(it.note || ''), detail: it.detail ? String(it.detail) : '', focus: it.focus === true, focusOff: it.focus === false, key: it.key, pick: true, snapped: !!it.snapped };
 }
 
 /* ── the file ─────────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -902,21 +957,37 @@ function readColor(el, v) {
 }
 
 const chip = (attrs, text, pressed) => `<button type="button" class="sys-chip" ${attrs}${pressed === undefined ? '' : ` aria-pressed="${pressed}"`}>${esc(text)}</button>`;
+const lum = c => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+const mixC = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+const css = c => `rgb(${c.map(v => Math.round(Math.max(0, Math.min(1, v)) * 255)).join(',')})`;
+const INTRO_MS = 2600;        // the turn-in when the view first opens (none under reduced motion)
+const SECTION = 1.2;          // the cutaway cuts the walls of the floor in view at this height, so you look over them (a dollhouse section)
+// a card frames the floor in view at a three-quarter angle, looking down about 37 degrees, the house about 70 percent of the stage
+const CARD_VIEWS = { outside: [0.62, 1.02], cutaway: [0.6, 0.93], top: [0, 0.001] };
+const CARD_SHARE = 0.9;
+const MOVE_MS = 650;          // a turn to an item or a floor
+const CUT_FACING = 0.3;       // in the cutaway, an outside wall that faces the camera this much or more is cut away
+const easeInOut = t => 0.5 - 0.5 * Math.cos(Math.PI * t);
 
 /**
- * Draws the house in `container`. opts: { onClose?: () => void, view?: 'outside'|'cutaway'|'top' }.
- * Returns { destroy, setLayer(name, on), setFloor(n | id | 'all'), view(name), stats(), ready } — `ready` resolves once drawn.
- * Without WebGL it draws nothing and returns { fallback: true } with the same methods as no-ops.
+ * Draws the house in `container`. opts: { onClose?: () => void, view?: 'outside'|'cutaway'|'top',
+ *   embed?: true (inside a card: no own heading, compact controls), follow?: true (open on the floor that holds the "Start here"
+ *   items, frame that floor, and turn to a floor or an item when it is chosen), intro?: true (a slow turn-in on first draw, none
+ *   under reduced motion), onSelect?: (key | null) => void (an item or line was picked in the model, or the pick was cleared) }.
+ * Returns { destroy, setLayer(name, on), setFloor(n | id | 'all'), view(name), focus(key), hover(key | null), stats(), ready }
+ * — `ready` resolves once drawn. Without WebGL it draws nothing and returns { fallback: true } with the same methods as no-ops.
+ * The scene is drawn only when something changes (a turn, a pick, a theme change), never in a standing loop.
  */
 export function renderHouse3D(container, card, opts = {}) {
   const noop = () => {};
   if (!container || !supports3D()) {
-    return { fallback: true, destroy: noop, setLayer: noop, setFloor: noop, view: noop, stats: () => null, ready: Promise.resolve(false) };
+    return { fallback: true, destroy: noop, setLayer: noop, setFloor: noop, view: noop, focus: noop, hover: noop, stats: () => null, ready: Promise.resolve(false) };
   }
   ensureCss();
   const plan = planOf(card);
+  const embed = !!opts.embed, follow = !!opts.follow;
   const el = document.createElement('section');
-  el.className = 'h3 sys-card'; el.dataset.co = 'pp';
+  el.className = embed ? 'h3 is-embed' : 'h3 sys-card'; el.dataset.co = 'pp';   // inside a card it is part of that card, not a card of its own
   el.setAttribute('aria-label', plan.large ? '3D building' : '3D house');
   if (plan.large) el.classList.add('is-large');
   const levelChips = plan.levels.map((l, i) => chip(`data-h3="floor" data-floor="${i}"`, l.name, false)).join('');
@@ -929,24 +1000,34 @@ export function renderHouse3D(container, card, opts = {}) {
   const key = (held.has('public') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-pub"></span>Public record</span> ' : '')
     + (held.has('record') ? '<span class="h3-key-i"><span class="h3-key-solid h3-key-rec"></span>Company record</span> ' : '')
     + '<span class="h3-key-i"><span class="h3-key-dash"></span>Likely</span>';
-  el.innerHTML = `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || (plan.large ? 'Building' : 'House'))}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
-    + (opts.onClose ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm h3-close" data-h3="close">Close</button>` : '') + `</div>`
+  const views = `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${plan.large ? '' : chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`;
+  const floorsRow = plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Floor">${chip('data-h3="floor" data-floor="all"', 'All floors', true)}${levelChips}</div>`;
+  const layersRow = plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Layers">${LAYERS.map(([k, n]) => chip(`data-h3="layer" data-layer="${k}"`, n, true)).join('')}</div>`;   // a shell has no lines to show
+  const download = '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-h3="download">Download model</button>';
+  const acts = `<div class="h3-row h3-acts">${plan.large ? '' : chip('data-h3="wallmode"', 'Behind this wall', false)}${download}</div>`;
+  const head = embed ? '' : `<div class="h3-head"><h3 class="sys-card-title h3-addr">${esc(plan.address || (plan.large ? 'Building' : 'House'))}${plan.example ? ' <span class="h3-ex">· Example address</span>' : ''}</h3>`
+    + (opts.onClose ? `<button type="button" class="sys-btn sys-btn--ghost sys-btn--sm h3-close" data-h3="close">Close</button>` : '') + `</div>`;
+  // inside a card the view and floor chips stay in reach; the layers, "Behind this wall" and the file fold under "Layers and file"
+  const bar = embed
+    ? `<div class="h3-bar"><div class="h3-main">${views}${floorsRow}</div>`
+      + (plan.large ? `<div class="h3-row h3-acts">${download}</div>` : `<details class="h3-more"><summary>Layers and file</summary><div class="h3-more-body">${layersRow}${acts}</div></details>`) + `</div>`
+    : `<div class="h3-bar">${views}${floorsRow}${layersRow}${acts}</div>`;
+  el.innerHTML = head
     + `<div class="h3-stage"><canvas class="h3-canvas" role="img" aria-label="${plan.large ? '3D building model' : '3D house model'}"></canvas><div class="h3-labels" aria-hidden="true"></div>`
     + `<p class="h3-key">${key}</p>`
-    + `<div class="h3-info" aria-live="polite" hidden></div></div>`
-    + `<div class="h3-bar">`
-    + `<div class="sys-chips h3-row" role="group" aria-label="View">${chip('data-h3="view" data-v="outside"', 'Outside', true)}${plan.large ? '' : chip('data-h3="view" data-v="cutaway"', 'Cutaway', false)}${chip('data-h3="view" data-v="top"', 'Top', false)}</div>`
-    + (plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Floor">${chip('data-h3="floor" data-floor="all"', 'All floors', true)}${levelChips}</div>`)
-    + (plan.large ? '' : `<div class="sys-chips h3-row" role="group" aria-label="Layers">${LAYERS.map(([k, n]) => chip(`data-h3="layer" data-layer="${k}"`, n, true)).join('')}</div>`)   // a shell has no lines to show
-    + `<div class="h3-row h3-acts">${plan.large ? '' : chip('data-h3="wallmode"', 'Behind this wall', false)}<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm" data-h3="download">Download model</button></div>`
-    + `</div>`;
+    // inside a card the picked item's details sit under the stage, never over the model
+    + (embed ? `</div><div class="h3-info" aria-live="polite" hidden></div>` : `<div class="h3-info" aria-live="polite" hidden></div></div>`)
+    + bar;
   container.appendChild(el);
   const canvas = el.querySelector('canvas'), labelsEl = el.querySelector('.h3-labels'), info = el.querySelector('.h3-info');
 
-  const state = { layers: Object.fromEntries(LAYERS.map(([k]) => [k, true])), floor: 'all', view: opts.view || 'outside', wallMode: false, picked: null, dead: false };
-  let T, renderer, scene, camera, model, raf = 0, colors = {};
-  const orbit = { theta: 0.62, phi: 1.08, r: 20, target: null, anim: null, fit: null, own: 0, preset: false };
-  const api = { fallback: false, destroy, setLayer, setFloor, view: setView, stats, ready: null, el };
+  const state = { layers: Object.fromEntries(LAYERS.map(([k]) => [k, true])), floor: 'all', view: opts.view || 'outside', wallMode: false, picked: null, hover: null, dead: false };
+  // a card opens on the floor that holds the "Start here" items, with the floors above it drawn as faint outlines
+  if (follow && !plan.large && plan.focusLevel && plan.levels.length > 1 && plan.focusLevel !== plan.levels[plan.levels.length - 1].id) state.floor = plan.focusLevel;
+  let T, renderer, scene, under, camera, model, raf = 0, colors = {}, lights = null, ground = null, ghosts = [], marks = [], pickRing = null, lastCut = '';
+  const contact = [], glowLines = [];   // a second, additive copy of each structural edge: a soft glow on the dark stage   // soft contact shadows: under the house, under each item, along the foot of each wall
+  const orbit = { theta: 0.62, phi: 1.08, r: 20, target: null, anim: null, spin: null, fit: null, own: 0, preset: false, base: null };
+  const api = { fallback: false, destroy, setLayer, setFloor, view: setView, focus: focusOn, hover: hoverKey, stats, ready: null, el };
 
   api.ready = (async () => {
     try { T = await loadThree(); } catch (e) {
@@ -954,12 +1035,16 @@ export function renderHouse3D(container, card, opts = {}) {
       console.warn('house view: three.js did not load', e); return false;
     }
     if (state.dead) return false;
-    renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true });
+    renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setClearColor(0x000000, 0);
+    renderer.autoClear = false;
+    renderer.toneMapping = T.NeutralToneMapping ?? T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFShadowMap;   // filtered with a radius: soft edges at a fraction of the cost
     scene = new T.Scene();
+    under = new T.Scene();   // the ground, drawn first and under everything, so the basement shows through it below grade
     camera = new T.PerspectiveCamera(40, 1, 0.05, 500);
-    scene.add(new T.HemisphereLight(0xffffff, 0x777777, 2.2));
-    const sun = new T.DirectionalLight(0xffffff, 1.4); sun.position.set(8, 14, 10); scene.add(sun);
     model = buildModel(T, card);
     scene.add(model.root);
     const { W, D, top, bottom } = model.size;
@@ -967,8 +1052,16 @@ export function renderHouse3D(container, card, opts = {}) {
     orbit.span = Math.max(W, D, top - bottom);
     orbit.radius = orbit.own = 0.5 * Math.hypot(W + 2, D + 2, top - bottom);
     frameOthers();
+    orbit.base = { target: orbit.target.clone(), fit: orbit.fit };
+    stage();
     makeLabels();
-    applyTheme(); bindInput(); resize(); setView(state.view, true); apply();
+    applyTheme(true); bindInput(); resize(); setView(state.view, true); apply();
+    if (opts.intro && !reduced()) {
+      // the turn-in: from a quarter turn back and a little further off, eased into the resting view, then it stops
+      const goal = { theta: orbit.theta, phi: orbit.phi, r: orbit.r };
+      Object.assign(orbit, { theta: goal.theta - 1.05, phi: Math.max(0.3, goal.phi - 0.2), r: goal.r * 1.32 });
+      animateTo(goal, INTRO_MS);
+    }
     el.dataset.ready = '1';
     return true;
   })();
@@ -1007,64 +1100,354 @@ export function renderHouse3D(container, card, opts = {}) {
     orbit.fit = pts;
     camera.far = Math.max(camera.far, orbit.radius * 14); camera.updateProjectionMatrix();   // the far block stays drawn out to the widest zoom
   }
-  // how far back the camera stands, looking along (theta, phi), so every point is inside FIT_SHARE of the picture
-  function fitDistance(pts, theta, phi, vf, hf) {
+  // how far back the camera stands, looking along (theta, phi) at `target`, so every point is inside FIT_SHARE of the picture
+  function fitDistance(pts, theta, phi, vf, hf, target = orbit.target, share = follow && !orbit.base?.fit ? CARD_SHARE : FIT_SHARE) {
     const dir = new T.Vector3(Math.sin(phi) * Math.sin(theta), Math.cos(phi), Math.sin(phi) * Math.cos(theta));
     const up = phi < 0.01 ? new T.Vector3(-Math.sin(theta), 0, -Math.cos(theta)) : new T.Vector3(0, 1, 0);
     const m = new T.Matrix4().lookAt(dir, new T.Vector3(), up), right = new T.Vector3(), camUp = new T.Vector3(), z = new T.Vector3();
     m.extractBasis(right, camUp, z);
-    const tx = Math.tan(hf / 2) * FIT_SHARE, ty = Math.tan(vf / 2) * FIT_SHARE, c = new T.Vector3();
+    const tx = Math.tan(hf / 2) * share, ty = Math.tan(vf / 2) * share, c = new T.Vector3();
     let d = 0;
     for (const p of pts) {
-      c.subVectors(p, orbit.target);
+      c.subVectors(p, target);
       d = Math.max(d, c.dot(dir) + Math.abs(c.dot(right)) / tx, c.dot(dir) + Math.abs(c.dot(camUp)) / ty);
     }
     return d;
   }
+  /** The frame for a floor (or 'all'): what the camera looks at and the points it keeps in the picture. Without `follow`, and on a
+      lot with another building, it is always the drawn building's own frame. */
+  function frameFor(id) {
+    if (!follow || orbit.base.fit) return orbit.base;
+    const lv = id === 'all' ? null : plan.levels.find(l => l.id === id);
+    const { bottom, top } = model.size;
+    const y0 = lv ? lv.base - 0.1 : bottom, y1 = lv ? lv.base + Math.min(lv.height, SECTION + 0.4) : top + (plan.large ? 0.3 : 0);
+    const ring = plan.site ? plan.site.ring.map(p => [(p[0] - plan.w / 2) * plan.site.kx, (p[1] - plan.h / 2) * plan.site.kz])
+      : [[-model.size.W / 2, -model.size.D / 2], [model.size.W / 2, -model.size.D / 2], [model.size.W / 2, model.size.D / 2], [-model.size.W / 2, model.size.D / 2]];
+    const pts = [];
+    for (const [x, z] of ring) { pts.push(new T.Vector3(x, y0, z), new T.Vector3(x, y1, z)); }
+    for (const o of model.items) if (o.userData.outside) { const p = o.getWorldPosition(new T.Vector3()); pts.push(p); }
+    // the whole building stays in the picture (the floors above as faint outlines); the camera looks a little towards the chosen floor
+    const box = new T.Box3().setFromPoints(pts), whole = new T.Box3().setFromPoints(pts.concat(lv ? [new T.Vector3(0, bottom, 0), new T.Vector3(0, top, 0)] : []));
+    const target = whole.getCenter(new T.Vector3()).lerp(box.getCenter(new T.Vector3()), 0.7);
+    // the chosen floor is the subject: it is framed whole with about one storey above and below it, so its fixtures are large
+    // enough to read. The rest of the house (faint glass) may run out of the top of the picture; "All floors" shows it whole.
+    model.roof.geometry.computeBoundingBox();
+    const roofTop = model.roof.geometry.boundingBox.max.y + model.roof.position.y;
+    const lo = Math.max(bottom, y0 - 1.2), hi = Math.min(roofTop, y1 + 2.2);
+    const all = lv ? pts.concat(ring.flatMap(([x, z]) => [new T.Vector3(x, lo, z), new T.Vector3(x, hi, z)])) : pts;
+    return { target, fit: all };
+  }
 
-  /* colours follow the page theme */
-  function applyTheme() {
+  /* the stage: lights, a soft shadow on the ground, the ground with a faint grid, faint outlines for what is cut or hidden */
+  function stage() {
+    const R = orbit.radius;
+    const hemi = new T.HemisphereLight(0xffffff, 0xffffff, 1.1);
+    const key = new T.DirectionalLight(0xffffff, 2.4);
+    const fill = new T.DirectionalLight(0xffffff, 0.55);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 3;
+    key.shadow.bias = -0.0004; key.shadow.normalBias = 0.025;
+    if ('intensity' in key.shadow) key.shadow.intensity = 0.8;
+    const sc = key.shadow.camera, ext = R * 1.6;
+    sc.left = -ext; sc.right = ext; sc.top = ext; sc.bottom = -ext; sc.near = 0.1; sc.far = R * 10;
+    const t = orbit.target;
+    key.position.set(t.x - R * 1.3, t.y + R * 2.6, t.z + R * 1.7); key.target.position.copy(t);
+    fill.position.set(t.x + R * 2, t.y + R * 0.8, t.z - R * 1.6); fill.target.position.copy(t);
+    scene.add(hemi, key, key.target, fill, fill.target);
+    lights = { hemi, key, fill };
+    // shadows land on a plane at grade with a hole where the building stands (the floors carry their own)
+    const gR = Math.max(R * 5, 30, ...(plan.site && plan.site.parcel.length ? plan.site.parcel.map(p => 1.3 * Math.hypot((p[0] - plan.w / 2) * plan.site.kx, (p[1] - plan.h / 2) * plan.site.kz)) : [0]));
+    const shape = new T.Shape([[-gR, -gR], [gR, -gR], [gR, gR], [-gR, gR]].map(p => new T.Vector2(p[0], p[1])));
+    const foot = plan.site ? plan.site.ring.map(p => [(p[0] - plan.w / 2) * plan.site.kx, (plan.front === 'top' ? -1 : 1) * (p[1] - plan.h / 2) * plan.site.kz])
+      : [[-model.size.W / 2, -model.size.D / 2], [model.size.W / 2, -model.size.D / 2], [model.size.W / 2, model.size.D / 2], [-model.size.W / 2, model.size.D / 2]];
+    shape.holes.push(new T.Path(foot.map(p => new T.Vector2(p[0], -p[1]))));
+    const sg = new T.ShapeGeometry(shape); sg.rotateX(-Math.PI / 2);
+    const shadow = new T.Mesh(sg, new T.ShadowMaterial({ opacity: 0.28, transparent: true, depthWrite: false }));
+    shadow.position.y = 0.002; shadow.receiveShadow = true; shadow.renderOrder = -1; shadow.raycast = () => {};
+    scene.add(shadow);
+    const tex = new T.CanvasTexture(document.createElement('canvas'));
+    tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4;
+    const disc = new T.Mesh(new T.CircleGeometry(gR, 96), new T.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false, toneMapped: false }));
+    disc.rotation.x = -Math.PI / 2; disc.position.y = -0.004;
+    under.add(disc);
+    ground = { disc, tex, shadow, R: gR };
+    // a line round the building at grade, where a basement goes below the ground
+    if (plan.levels.some(l => l.below)) {
+      const pts = foot.map(p => new T.Vector3(p[0], 0.012, p[1])); pts.push(pts[0].clone());
+      const grade = new T.Line(new T.BufferGeometry().setFromPoints(pts), new T.LineBasicMaterial({ transparent: true, opacity: 0.7, depthWrite: false }));
+      grade.userData = { colorKey: 'grade' }; grade.raycast = () => {};
+      scene.add(grade); ground.grade = grade;
+    }
+    // shadows: the floors, the equipment and the lines cast; a see-through wall does not
+    model.root.traverse(o => { if (o.isMesh) { o.receiveShadow = true; } });
+    // a barely-there outline of the floors and roof above the floor in view
+    model.root.updateMatrixWorld(true);
+    const gm = new T.LineBasicMaterial({ transparent: true, opacity: 0.1, depthWrite: false });
+    gm.userData = { colorKey: 'ghost' };
+    // and the outside walls and roof above it as very faint frosted glass, so the whole house still reads
+    const glass = new T.MeshStandardMaterial({ transparent: true, opacity: 0.08, depthWrite: false, roughness: 0.3, metalness: 0, side: T.DoubleSide });
+    glass.userData = { colorKey: 'walls' }; ghosts.glass = glass;
+    for (const o of model.shell) {
+      const u = o.userData;
+      if (!((u.role === 'wall' && !u.inside) || u.role === 'roof')) continue;
+      const g = new T.Mesh(o.geometry, glass);
+      g.matrixAutoUpdate = false; g.matrix.copy(o.matrixWorld); g.visible = false; g.raycast = () => {};
+      g.userData = { of: o }; scene.add(g); ghosts.push(g);
+    }
+    for (const o of model.shell) {
+      const u = o.userData;
+      if (!(u.role === 'slab' || u.role === 'roof' || (u.role === 'wall' && !u.inside))) continue;
+      const g = new T.LineSegments(new T.EdgesGeometry(o.geometry, 20), gm);
+      g.matrixAutoUpdate = false; g.matrix.copy(o.matrixWorld); g.visible = false; g.raycast = () => {};
+      g.userData = { of: o }; scene.add(g); ghosts.push(g);
+    }
+    ghosts.mat = gm;
+    // the outward direction of each outside wall on the ground, for the cut
+    const flip = plan.front === 'top' ? -1 : 1;
+    for (const w of model.walls) {
+      const u = w.userData, wl = u.wall; if (u.inside || !wl) continue;
+      let n;
+      if (plan.site) {
+        const [a, b] = [wl.a, wl.b], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+        n = [(b[1] - a[1]) / L, -(b[0] - a[0]) / L];
+        const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        if (inRing([m[0] + n[0] * 0.3, m[1] + n[1] * 0.3], plan.site.ring)) n = [-n[0], -n[1]];
+        n = [n[0], flip * n[1]];
+      } else n = { front: [0, 1], rear: [0, -1], left: [-1, 0], right: [1, 0] }[u.side] || [0, 0];
+      u.normal = n;
+    }
+    // the cut edge of each wall: a lighter cap where the section cuts it
+    for (const w of model.walls) {
+      const len = w.geometry.parameters.width;
+      const cm = new T.MeshStandardMaterial({ roughness: 0.9, metalness: 0, transparent: true, depthWrite: false });
+      cm.userData = { colorKey: 'cap' };
+      const cap = new T.Mesh(new T.BoxGeometry(len, 0.012, WALL_T + 0.004), cm);
+      cap.position.set(w.position.x, 0, w.position.z); cap.rotation.y = w.rotation.y; cap.visible = false; cap.raycast = () => {};
+      scene.add(cap); w.userData.cap = cap;
+    }
+    contactShadows(foot);
+    model.root.traverse(o => {
+      if (!(o.isLineSegments && o.userData.role === 'edge')) return;
+      const r = o.parent?.userData.role; if (!['wall', 'slab', 'roof', 'outbuilding'].includes(r)) return;
+      const src = o.material, m = src.isLineDashedMaterial ? new T.LineDashedMaterial({ dashSize: src.dashSize, gapSize: src.gapSize }) : new T.LineBasicMaterial();
+      Object.assign(m, { transparent: true, opacity: 0.55, blending: T.AdditiveBlending, depthWrite: false });
+      const g = new T.LineSegments(o.geometry, m); g.raycast = () => {}; g.userData = { role: 'glow' }; g.scale.setScalar(1.004);
+      o.parent.add(g); glowLines.push(g);
+    });
+    // "Start here": an accent ring on the floor under each item (and a thin stem up to one on the wall); the picked item gets its own
+    for (const o of model.items) if (isFocusItem(o)) marks.push(ringFor(o, 'accent'));
+    pickRing = ringFor(null, 'pick');
+  }
+  /** Soft dark textures standing in for ambient shadow, so the house sits on the ground and things on their floors even where the
+      shadow map is faint: a pool under the house, a spot under each item, a soft band along the foot of each wall. */
+  function contactShadows(foot) {
+    const tex = (w, h, paint) => { const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); return t; };
+    const blob = tex(128, 128, (g, w, h) => { const r = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.5, 'rgba(255,255,255,.45)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, w, h); });
+    const band = tex(8, 64, (g, w, h) => { const r = g.createLinearGradient(0, 0, 0, h); r.addColorStop(0, 'rgba(255,255,255,0)'); r.addColorStop(0.5, 'rgba(255,255,255,1)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, w, h); });
+    const mk = (map, op, of) => {
+      const m = new T.MeshBasicMaterial({ alphaMap: map, transparent: true, opacity: op, depthWrite: false, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2 });
+      m.userData = { colorKey: 'shade' };
+      const g = new T.PlaneGeometry(1, 1); g.rotateX(-Math.PI / 2);
+      const x = new T.Mesh(g, m); x.raycast = () => {}; x.userData = { of }; x.renderOrder = 1; scene.add(x); contact.push(x); return x;
+    };
+    contact.maps = [blob, band];
+    // under the house: a pool a little wider than the outline, at grade
+    let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+    for (const [x, z] of foot) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+    const pool = mk(blob, 0.5, model.walls[0] || model.root);
+    pool.scale.set((x1 - x0) * 1.25 + 1.5, 1, (z1 - z0) * 1.25 + 1.5);
+    contact.pool = pool; pool.position.set((x0 + x1) / 2, 0.006, (z0 + z1) / 2);
+    pool.userData.of = { visible: true };
+    scene.remove(pool); under.add(pool); pool.material.depthTest = false;   // drawn with the ground, under everything: it never darkens the house itself
+    for (const o of model.items) {
+      const b = new T.Box3().setFromObject(o), sz = b.getSize(new T.Vector3()), c = b.getCenter(new T.Vector3());
+      const y = o.userData.level === 'outside' ? 0 : floorYOf(o);
+      const k = Math.max(0.35, Math.max(sz.x, sz.z) * 1.7);
+      const sh = mk(blob, b.min.y - y > 0.3 ? 0.3 : 0.6, o);
+      sh.scale.set(k, 1, k); sh.position.set(c.x, y + 0.03, c.z);
+    }
+    for (const w of model.walls) {
+      const lv = plan.levels.find(l => l.id === w.userData.level); if (!lv) continue;
+      const st = mk(band, w.userData.inside ? 0.28 : 0.38, w);
+      st.scale.set(w.geometry.parameters.width, 1, 0.75); st.rotation.y = w.rotation.y; st.position.set(w.position.x, lv.base + 0.03, w.position.z);
+    }
+  }
+  function floorYOf(o) {
+    const lv = plan.levels.find(l => l.id === o.userData.level);
+    return lv ? lv.base : 0;
+  }
+  function ringFor(o, colorKey) {
+    const grp = new T.Group(); grp.raycast = () => {};
+    const m = new T.MeshBasicMaterial({ transparent: true, opacity: 0.95, depthWrite: false, toneMapped: false, side: T.DoubleSide });
+    m.userData = { colorKey };
+    const ring = new T.Mesh(new T.RingGeometry(1, 1.16, 48), m); ring.rotation.x = -Math.PI / 2; ring.renderOrder = 2;
+    const stem = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 1, 6), m); stem.renderOrder = 2;
+    grp.add(ring, stem); grp.userData = { of: null, ring, stem, mat: m };
+    scene.add(grp);
+    placeRing(grp, o);
+    return grp;
+  }
+  function placeRing(grp, o) {
+    grp.userData.of = o; grp.visible = !!o;
+    if (!o) return;
+    const b = new T.Box3().setFromObject(o), s = b.getSize(new T.Vector3()), c = b.getCenter(new T.Vector3());
+    const y = Math.max(floorYOf(o), o.userData.level === 'outside' ? 0 : -99), r = Math.max(0.22, Math.max(s.x, s.z) / 2 + 0.14) * (grp.userData.mat.userData.colorKey === 'pick' ? 1.25 : 1);
+    const { ring, stem } = grp.userData;
+    ring.scale.set(r, r, 1); ring.position.set(c.x, y + 0.03, c.z);
+    const gap = b.min.y - y;
+    stem.visible = gap > 0.25;
+    stem.scale.set(1, Math.max(0.01, gap), 1); stem.position.set(c.x, y + gap / 2, c.z);
+  }
+  const isFocusItem = o => !!o && o.userData.role === 'item' && (o.userData.focus || (!o.userData.focusOff && plan.focus.includes(o.userData.kind)));
+
+  /* colours follow the page theme: the model's tones are worked out from the tokens, so both themes read as a lit model */
+  function drawGround() {
+    if (!ground) return;
+    const N = 1024, c = ground.tex.image;
+    c.width = c.height = N;
+    const g = c.getContext('2d'), R = ground.R;
+    g.clearRect(0, 0, N, N);
+    // a pool of light under the house, the ground falling off into the stage around it
+    const pool = g.createRadialGradient(N / 2, N / 2, 0, N / 2, N / 2, N / 2);
+    pool.addColorStop(0, css(colors.groundLit)); pool.addColorStop(0.3, css(colors.groundFill)); pool.addColorStop(1, css(colors.groundFill));
+    g.fillStyle = pool; g.fillRect(0, 0, N, N);
+    // a faint grid: a line a metre apart (wider on a big lot), every fifth a little stronger
+    const pxm = N / (2 * R);
+    let step = 1; while (step * pxm < 9) step *= 2.5;
+    g.lineWidth = 1;
+    for (let i = 0, k = 0; i <= R; i += step, k++) {
+      for (const s of i ? [-1, 1] : [1]) {
+        const p = N / 2 + s * i * pxm;
+        g.strokeStyle = css(k % 5 ? colors.gridMinor : colors.gridMajor);
+        g.beginPath(); g.moveTo(p, 0); g.lineTo(p, N); g.moveTo(0, p); g.lineTo(N, p); g.stroke();
+      }
+    }
+    // fades out towards the edge of the disc, so the ground has no hard rim
+    g.globalCompositeOperation = 'destination-in';
+    const fade = g.createRadialGradient(N / 2, N / 2, N * 0.08, N / 2, N / 2, N / 2);
+    fade.addColorStop(0, 'rgba(0,0,0,1)'); fade.addColorStop(0.3, 'rgba(0,0,0,0.9)'); fade.addColorStop(0.65, 'rgba(0,0,0,0.35)'); fade.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = fade; g.fillRect(0, 0, N, N);
+    g.globalCompositeOperation = 'source-over';
+    ground.tex.needsUpdate = true;
+  }
+  function applyTheme(noDraw) {
     if (!model) return;
     for (const [k, v] of Object.entries(COLOR_VARS)) colors[k] = readColor(el, v);
-    for (const m of model.mats) { const c = colors[m.userData.colorKey] || colors.other; m.color.setRGB(c[0], c[1], c[2], T.SRGBColorSpace); }
-    const bg = colors.bg; scene.background = new T.Color().setRGB(bg[0], bg[1], bg[2], T.SRGBColorSpace);
-    if (state.picked) highlight(state.picked, true);
-    draw();
+    const dark = lum(colors.page) < 0.4;
+    // the model: a pale matte card-stock tone on the dark stage, a soft grey on the light one; edges a step darker
+    colors.walls = dark ? mixC(colors.ink2, colors.ink, 0.3) : mixC(colors.line2, colors.surface, 0.25);
+    colors.shell = dark ? mixC(colors.ink2, colors.surface, 0.12) : mixC(colors.line2, colors.ink2, 0.12);
+    colors.room = dark ? mixC(colors.ink2, colors.ink, 0.15) : mixC(colors.line, colors.surface, 0.4);
+    // edges: a cool near-white that glows on the dark stage (ink with a little info), a cool slate on the light one
+    colors.edge = dark ? mixC(colors.ink, colors.water, 0.28) : mixC(colors.ink2, colors.water, 0.3);
+    colors.ghost = colors.edge;
+    colors.concrete = dark ? mixC(colors.ink2, colors.page, 0.5) : mixC(colors.line2, colors.mute, 0.35);
+    colors.concreteFloor = dark ? mixC(colors.ink2, colors.page, 0.6) : mixC(colors.line2, colors.mute, 0.2);
+    // lines: copper water, yellow gas, dark grey drain (the plan's key keeps its own)
+    colors.pipe = { water: mixC(colors.orange, colors.coral, 0.35).map(v => v * 0.85), gas: colors.gas, drain: dark ? mixC(colors.ink2, colors.page, 0.62) : mixC(colors.ink2, colors.ink, 0.4),
+      elec: colors.elec, hvac: dark ? mixC(colors.ink2, colors.ink, 0.3) : colors.mute };
+    colors.fixture = dark ? mixC(colors.ink, colors.ink2, 0.35) : mixC(colors.surface, colors.line2, 0.55);
+    colors.itemTone = { warn: colors.gas, bad: colors.elec, brass: mixC(colors.orange, colors.gas, 0.5), steel: dark ? mixC(colors.ink2, colors.page, 0.25) : mixC(colors.line2, colors.mute, 0.5),
+      dark: dark ? mixC(colors.ink2, colors.page, 0.7) : mixC(colors.ink2, colors.ink, 0.3) };
+    colors.grade = colors.ghost;
+    colors.groundFill = dark ? mixC(colors.page3, colors.surface, 0.35) : mixC(colors.page2, colors.surface, 0.2);
+    colors.groundLit = dark ? mixC(colors.groundFill, colors.ink2, 0.12) : colors.surface;
+    // a faint cool grid, as on the film's studio floor
+    colors.gridMinor = dark ? mixC(mixC(colors.line2, colors.water, 0.18), colors.groundFill, 0.25) : mixC(colors.line, colors.groundFill, 0.4);
+    colors.gridMajor = dark ? mixC(colors.line2, colors.water, 0.32) : mixC(colors.line, colors.line2, 0.5);
+    const set = (m, c) => m.color.setRGB(c[0], c[1], c[2], T.SRGBColorSpace);
+    for (const m of model.mats) {
+      const k = m.userData.colorKey;
+      const structural = k === 'walls' || k === 'shell' || k === 'room';
+      set(m, (m.isLineBasicMaterial || m.isLineDashedMaterial) && structural ? colors.edge : colors[k] || colors.other);
+    }
+    model.root.traverse(o => {
+      if (!o.isMesh) return;
+      const u = o.userData, below = plan.levels.find(l => l.id === u.level)?.below;
+      if (u.role === 'storey') set(o.material, colors.edge);
+      else if (u.role === 'run') set(o.material, colors.pipe[u.layer] || colors.pipe.water);
+      else if (u.role === 'item') set(o.material, ITEM_TONE[shapeKind(u.kind)] ? colors.itemTone[ITEM_TONE[shapeKind(u.kind)]] : colors.fixture);
+      else if (below && u.role === 'wall') set(o.material, colors.concrete);   // the basement: concrete
+      else if (below && (u.role === 'slab' || u.role === 'room')) set(o.material, colors.concreteFloor);
+    });
+    for (const g of glowLines) { set(g.material, colors.edge); g.visible = dark; }
+    if (ghosts.mat) { set(ghosts.mat, colors.ghost); ghosts.mat.opacity = dark ? 0.4 : 0.3; }
+    if (ground && ground.grade) set(ground.grade.material, colors.grade);
+    for (const g of [...marks, pickRing].filter(Boolean)) set(g.userData.mat, g.userData.mat.userData.colorKey === 'pick' ? colors.pick : colors.accent);
+    colors.cap = dark ? mixC(colors.ink, colors.walls, 0.25) : mixC(colors.surface, colors.walls, 0.15);
+    colors.shade = dark ? mixC(colors.page, [0, 0, 0], 0.5) : mixC(colors.ink, colors.page, 0.15);
+    for (const w of model.walls) if (w.userData.cap) set(w.userData.cap.material, colors.cap);
+    for (const x of contact) set(x.material, colors.shade);
+    if (contact.pool) contact.pool.material.opacity = dark ? 0.55 : 0.22;
+    if (ghosts.glass) { set(ghosts.glass, colors.walls); ghosts.glass.opacity = dark ? 0.1 : 0.14; }
+    // each room a slightly different floor tone, so the rooms can be told apart
+    model.shell.filter(o => o.userData.role === 'room').forEach((o, i) => set(o.material, mixC(colors.room, i % 2 ? colors.walls : colors.shell, [0, 0.35, 0.18, 0.5][i % 4])));
+    if (lights) {
+      // a warm key from one side, a cool fill from the other
+      const warm = mixC([1, 1, 1], colors.accent, 0.16), cool = mixC([1, 1, 1], colors.water, 0.28);
+      lights.key.color.setRGB(warm[0], warm[1], warm[2], T.SRGBColorSpace); lights.fill.color.setRGB(cool[0], cool[1], cool[2], T.SRGBColorSpace);
+      lights.hemi.color.setRGB(1, 1, 1);
+      const gc = mixC(colors.page, [1, 1, 1], dark ? 0.35 : 0.1);
+      lights.hemi.groundColor.setRGB(gc[0], gc[1], gc[2], T.SRGBColorSpace);
+      lights.hemi.intensity = dark ? 0.85 : 1.0;
+      lights.key.intensity = dark ? 3.2 : 3.0;
+      lights.fill.intensity = dark ? 1.0 : 0.8;
+      if (ground) ground.shadow.material.opacity = dark ? 0.55 : 0.3;
+    }
+    drawGround();
+    for (const o of [...model.items, ...model.runs, ...model.walls]) glow(o);
+    if (!noDraw) draw();
   }
   const themeObs = new MutationObserver(() => applyTheme());
   themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-sys-theme', 'data-theme', 'class'] });
   let mq = null; try { mq = matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener('change', applyTheme); } catch { /* old browsers */ }
 
-  /* labels: one per item and run; a label that would overlap one already placed is skipped, focus items first */
+  /* labels: one per item and line. "Start here" items and the picked one are always named; any other only while pointed at or
+     focused in the list. A label that would overlap one already placed moves up a step, then is left out (the picked one never). */
   let labelNodes = [];
   function makeLabels() {
-    const all = [...model.items, ...model.runs].sort((a, b) => Number(b.userData.focus) - Number(a.userData.focus));
+    const all = [...model.items, ...model.runs].sort((a, b) => Number(isFocusItem(b)) - Number(isFocusItem(a)));
     labelNodes = all.map(o => {
       const d = document.createElement('span');
-      d.className = `h3-label is-${basisOf(o.userData.basis)}`;
+      d.className = `h3-label is-${basisOf(o.userData.basis)}${isFocusItem(o) ? ' is-focus' : ''}`;
       d.textContent = o.userData.likely ? `${o.userData.label}, likely` : o.userData.label;
+      d.hidden = true;
       labelsEl.appendChild(d);
+      if (o.userData.role === 'item') { const b = new T.Box3().setFromObject(o); o.userData.top = [(b.min.x + b.max.x) / 2, b.max.y + 0.06, (b.min.z + b.max.z) / 2]; }
       return { o, d };
     });
   }
+  const named = o => isFocusItem(o) || o === state.picked || o === state.hover;
   function placeLabels() {
-    const r = canvas.getBoundingClientRect(), placed = [], v = new T.Vector3();
-    for (const { o, d } of labelNodes) {
-      let vis = isShown(o);
+    const r = canvas.getBoundingClientRect(), v = new T.Vector3();
+    const keyEl = el.querySelector('.h3-key');   // the key sits top left: labels keep out of it
+    const placed = keyEl && keyEl.offsetWidth ? [[keyEl.offsetLeft - 4, 0, keyEl.offsetLeft + keyEl.offsetWidth + 4, keyEl.offsetTop + keyEl.offsetHeight + 2]] : [];
+    const order = [...labelNodes].sort((a, b) => Number(b.o === state.picked) - Number(a.o === state.picked) || Number(b.o === state.hover) - Number(a.o === state.hover));
+    for (const { o, d } of order) {
+      let vis = isShown(o) && named(o);
       if (vis) {
-        if (o.userData.anchor) v.fromArray(o.userData.anchor); else { o.getWorldPosition(v); v.y += 0.35; }
+        if (o.userData.anchor) v.fromArray(o.userData.anchor); else if (o.userData.top) v.fromArray(o.userData.top); else { o.getWorldPosition(v); v.y += 0.35; }
         v.project(camera);
         if (v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) vis = false;
       }
       if (!vis) { d.hidden = true; continue; }
       d.hidden = false;   // measured shown: a label hidden on the last frame reads 0 px wide, and its real box would overlap
+      d.classList.toggle('is-on', o === state.picked);
       const w = d.offsetWidth || 80, h = d.offsetHeight || 18;
-      const x = Math.min(r.width - w / 2 - 4, Math.max(w / 2 + 4, (v.x + 1) / 2 * r.width)), y = Math.max(h + 6, (1 - v.y) / 2 * r.height);
-      const box = [x - w / 2, y - h - 4, x + w / 2, y - 4];
-      const hit = placed.some(b => !(box[2] + 3 < b[0] || box[0] > b[2] + 3 || box[3] + 3 < b[1] || box[1] > b[3] + 3));
-      const keep = !hit || o === state.picked;
-      d.hidden = !keep;
-      if (keep) { d.style.transform = `translate(${Math.round(box[0])}px,${Math.round(box[1])}px)`; placed.push(box); }
+      const x = Math.min(r.width - w / 2 - 4, Math.max(w / 2 + 4, (v.x + 1) / 2 * r.width)), py = (1 - v.y) / 2 * r.height;
+      let box = null, stem = 10;
+      // up a step at a time; a "Start here" or picked label may also move to one side or below its item, and is always shown
+      const must = isFocusItem(o) || o === state.picked, step = h + 6, side = w / 2 + 8;
+      const tries = [[0, 0], [0, 1], [0, 2]].concat(must ? [[-1, 0], [1, 0], [-1, 1], [1, 1], [0, 3], [0, -2.2], [-1, 2], [1, 2]] : []);
+      for (const [sx, lift] of tries) {
+        const cx = Math.min(r.width - w / 2 - 4, Math.max(w / 2 + 4, x + sx * side));
+        const y = Math.min(r.height - 4, Math.max(h + 6, py - 10 - lift * step));
+        const b = [cx - w / 2, y - h, cx + w / 2, y];
+        if (!placed.some(q => !(b[2] + 3 < q[0] || b[0] > q[2] + 3 || b[3] + 3 < q[1] || b[1] > q[3] + 3))) { box = b; stem = sx ? 0 : Math.max(0, py - y); break; }
+      }
+      if (!box && o === state.picked) { const y = Math.max(h + 6, py - 10); box = [x - w / 2, y - h, x + w / 2, y]; stem = Math.max(4, py - y); }
+      d.hidden = !box;
+      if (box) { d.style.transform = `translate(${Math.round(box[0])}px,${Math.round(box[1])}px)`; d.style.setProperty('--h3-stem', `${Math.round(stem)}px`); placed.push(box); }
     }
   }
 
@@ -1077,38 +1460,77 @@ export function renderHouse3D(container, card, opts = {}) {
     return !!lv && !!s && lv.base <= s.base;     // the chosen floor and what is under it
   }
   function effectiveFloor() { return state.floor === 'all' && state.view === 'top' ? plan.focusLevel : state.floor; }
+  // in the cutaway the walls of the floor in view (the chosen one, or the top one shown) are cut at SECTION, so you look over them
+  function sectionLevel() {
+    if (state.view !== 'cutaway' || plan.large) return null;
+    const sel = effectiveFloor();
+    if (sel !== 'all') return sel;
+    return plan.levels.filter(l => levelShown(l.id)).at(-1)?.id || null;
+  }
+  const isCut = () => false;   // (no wall is taken away: the section shows them all)
   function isShown(o) {
     const u = o.userData;
     if (u.layer && state.layers[u.layer] === false) return false;
     if (u.role === 'roof') return state.view === 'outside' && state.floor === 'all' && state.layers.walls;
     if (u.level && !levelShown(u.level)) return false;
-    if (u.role === 'wall' && state.view === 'cutaway' && u.side === 'front') return false;
+    if (isCut(u)) return false;
     return true;
   }
-  function apply() {
+  const cutKey = () => `${state.view}:${sectionLevel()}`;
+  function applySection() {
+    const sec = sectionLevel();
+    for (const w of model.walls) {
+      const u = w.userData, lv = plan.levels.find(l => l.id === u.level);
+      if (!lv) continue;
+      const h = w.geometry.parameters.height, cut = u.level === sec && h > SECTION + 0.05;
+      u.section = cut;
+      w.scale.y = cut ? SECTION / h : 1;
+      w.position.y = lv.base + (cut ? SECTION : h) / 2;
+      const cap = u.cap;
+      if (cap) { cap.visible = cut && isShown(w); cap.position.y = lv.base + SECTION + 0.006; cap.material.opacity = isSolid(u.basis) ? 1 : 0.75; }
+    }
+  }
+  function apply(noDraw) {
     if (!model) return;
     const sel = effectiveFloor();
     model.root.traverse(o => {
       if (!o.isMesh) return;
       o.visible = isShown(o);
       const u = o.userData;
-      if (o.material && o.material.userData && u.role !== 'item' && u.role !== 'run') {
-        // walls are see-through inside the house; dimmer under the chosen floor
-        const base = o.material.userData.base;
-        let op = base;
-        if (u.role === 'wall') op = state.view === 'outside' && sel === 'all' ? 0.3 : state.view === 'top' ? 0.12 : 0.2;
-        if (sel !== 'all' && u.level !== sel && u.level !== 'outside' && u.level !== 'site') op *= 0.5;
-        if (state.wallMode && u.role === 'wall') op = Math.max(op, 0.3);
-        o.material.opacity = op;
-      }
+      const dim = sel !== 'all' && u.level !== sel && u.level !== 'outside' && u.level !== 'site';
+      let op = 1;
       if (u.role === 'item' || u.role === 'run') {
-        const dim = sel !== 'all' && u.level !== sel && u.level !== 'outside';
-        o.material.opacity = (u.likely ? 0.5 : 1) * (dim ? 0.35 : 1);
-        const tr = u.likely || dim;
-        if (o.material.transparent !== tr) { o.material.transparent = tr; o.material.needsUpdate = true; }
-        o.material.depthWrite = !tr;
+        op = (u.likely ? 0.55 : 1) * (dim ? 0.35 : 1);
+      } else if (o.material && o.material.userData) {
+        // recorded or public parts are solid; likely ones are see-through, walls most of all, so the inside reads
+        const solid = isSolid(u.basis);
+        if (u.role === 'wall') op = solid ? (state.view === 'top' ? 0.35 : 1) : state.view === 'top' ? 0.16 : u.inside ? 0.32 : 0.38;
+        else if (u.role === 'slab') op = solid ? 1 : 0.9;
+        else if (u.role === 'room') op = solid ? 1 : 0.6;
+        else if (u.role === 'roof' || u.role === 'outbuilding') op = solid ? 1 : 0.42;
+        else if (u.role === 'storey') op = solid ? 1 : 0.7;
+        else op = solid ? 1 : 0.55;
+        if (dim) op *= 0.5;
+        if (state.wallMode && u.role === 'wall') op = Math.max(op, 0.3);
+        if (u.role === 'wall' && o === state.picked) op = Math.max(op, 0.55);
       }
+      if (u.role === 'wall') o.material.roughness = isSolid(u.basis) ? 0.9 : 0.35;   // a likely wall is frosted glass, a recorded one matte
+      o.material.opacity = op;
+      const tr = op < 1;
+      if (o.material.transparent !== tr) { o.material.transparent = tr; o.material.needsUpdate = true; }
+      o.material.depthWrite = !tr || u.role === 'slab';
+      o.castShadow = o.visible && (u.role === 'item' || u.role === 'run' || ((u.role === 'slab' || u.role === 'wall' || u.role === 'roof' || u.role === 'outbuilding' || u.role === 'storey') && op >= 0.8));
     });
+    for (const g of ghosts) {
+      const o = g.userData.of, u = o.userData;
+      g.visible = state.view !== 'top' && !o.visible && !(u.layer && state.layers[u.layer] === false) && (u.role !== 'roof' || state.layers.walls);
+    }
+    for (const g of marks) g.visible = !!g.userData.of && isShown(g.userData.of);
+    if (pickRing) pickRing.visible = !!state.picked && state.picked.userData.role === 'item' && isShown(state.picked);
+    if (ground && ground.grade) ground.grade.visible = state.view !== 'top';
+    lastCut = cutKey();
+    applySection();
+    for (const x of contact) x.visible = !!x.userData.of && x.userData.of.visible;
     // controls reflect the state
     el.querySelectorAll('[data-h3="view"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === state.view)));
     el.querySelectorAll('[data-h3="floor"]').forEach(b => {
@@ -1118,10 +1540,10 @@ export function renderHouse3D(container, card, opts = {}) {
     el.querySelectorAll('[data-h3="layer"]').forEach(b => b.setAttribute('aria-pressed', String(state.layers[b.dataset.layer] !== false)));
     el.querySelector('[data-h3="wallmode"]')?.setAttribute('aria-pressed', String(state.wallMode));
     el.classList.toggle('is-wallmode', state.wallMode);
-    draw();
+    if (!noDraw) draw();
   }
 
-  /* camera: one finger turns, two fingers or the wheel zoom */
+  /* camera: one finger turns, two fingers or the wheel zoom; a turn keeps going a little and slows to a stop */
   function placeCamera() {
     const t = orbit.target, r = orbit.r;
     camera.position.set(t.x + r * Math.sin(orbit.phi) * Math.sin(orbit.theta), t.y + r * Math.cos(orbit.phi), t.z + r * Math.sin(orbit.phi) * Math.cos(orbit.theta));
@@ -1129,55 +1551,95 @@ export function renderHouse3D(container, card, opts = {}) {
     if (orbit.phi < 0.01) camera.up.set(-Math.sin(orbit.theta), 0, -Math.cos(orbit.theta));
     camera.lookAt(t);
   }
+  function animateTo(goal, ms) {
+    orbit.spin = null;
+    const from = { theta: orbit.theta, phi: orbit.phi, r: orbit.r, target: orbit.target.clone() };
+    if (!ms || reduced()) {
+      orbit.anim = null;
+      Object.assign(orbit, { theta: goal.theta, phi: goal.phi, r: goal.r });
+      if (goal.target) orbit.target.copy(goal.target);
+      apply(); return;
+    }
+    const t0 = performance.now(), ease = ms === INTRO_MS ? easeInOut : t => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    orbit.anim = () => {
+      const t = Math.min(1, (performance.now() - t0) / ms), e = ease(t);
+      orbit.theta = from.theta + (goal.theta - from.theta) * e; orbit.phi = from.phi + (goal.phi - from.phi) * e; orbit.r = from.r + (goal.r - from.r) * e;
+      if (goal.target) orbit.target.lerpVectors(from.target, goal.target, e);
+      if (t >= 1) orbit.anim = null;
+    };
+    apply();
+  }
+  function aspectFov() {
+    const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
+    const vf = (camera.fov * Math.PI) / 180;
+    return [vf, 2 * Math.atan(Math.tan(vf / 2) * aspect)];
+  }
   function setView(name, instant) {
     if (!VIEWS[name]) return;
     state.view = name;
     if (!camera) return;
-    const [th, ph, k] = VIEWS[name];
+    const [th, ph] = follow ? CARD_VIEWS[name] : VIEWS[name], k = VIEWS[name][2];
     orbit.preset = true;   // the camera stands where the view puts it until someone turns or zooms
+    const [vf, hf] = aspectFov();
+    const F = follow ? frameFor(state.floor) : orbit.base;
     // far enough that the whole house (its bounding sphere) fits the narrower side of the picture
-    const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
-    const vf = (camera.fov * Math.PI) / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * aspect);
-    const r = orbit.fit ? fitDistance(orbit.fit, th, ph, vf, hf)   // the drawn building and another on the lot, each whole in the picture
+    const r = F.fit ? fitDistance(F.fit, th, ph, vf, hf, F.target)   // the drawn building and another on the lot, each whole in the picture
       : (orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * (plan.large && name === 'top' ? k * 1.3 : k);   // a long shell seen from above needs room
-    const goal = { theta: th, phi: ph, r };
-    if (instant || reduced()) { Object.assign(orbit, goal); apply(); return; }
-    const from = { theta: orbit.theta, phi: orbit.phi, r: orbit.r }, t0 = performance.now();
-    orbit.anim = () => {
-      const t = Math.min(1, (performance.now() - t0) / 450), e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-      orbit.theta = from.theta + (goal.theta - from.theta) * e; orbit.phi = from.phi + (goal.phi - from.phi) * e; orbit.r = from.r + (goal.r - from.r) * e;
-      if (t >= 1) orbit.anim = null;
-    };
-    apply();
+    animateTo({ theta: th, phi: ph, r, target: follow ? F.target : null }, instant ? 0 : 450);
+  }
+  /** On a card, choosing a floor turns the camera to frame it (the angle is kept). */
+  function frameFloor(instant) {
+    if (!follow || !camera) return;
+    const [vf, hf] = aspectFov(), F = frameFor(state.floor);
+    orbit.preset = true;
+    animateTo({ theta: orbit.theta, phi: orbit.phi, r: fitDistance(F.fit, orbit.theta, orbit.phi, vf, hf, F.target), target: F.target }, instant ? 0 : MOVE_MS);
+  }
+  function stepSpin() {
+    const s = orbit.spin;
+    orbit.theta -= s.th; orbit.phi = Math.min(1.5, Math.max(0.001, orbit.phi - s.ph));
+    s.th *= 0.9; s.ph *= 0.9;
+    if (Math.abs(s.th) + Math.abs(s.ph) < 0.0004) orbit.spin = null;
+  }
+  function render() {
+    renderer.clear();
+    renderer.render(under, camera);
+    renderer.render(scene, camera);
   }
   function draw() {
     if (!renderer || raf || state.dead) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
-      if (orbit.anim) { orbit.anim(); draw(); }
-      placeCamera(); renderer.render(scene, camera); placeLabels();
+      if (state.dead) return;
+      if (orbit.anim) orbit.anim();
+      if (orbit.spin) stepSpin();
+      if (cutKey() !== lastCut) apply(true);   // turning round the cutaway changes which outside walls are cut
+      placeCamera(); render(); placeLabels();
+      if (orbit.anim || orbit.spin) draw();   // drawn only while something moves
     });
   }
   function resize() {
     if (!renderer) return;
+    if (!canvas.isConnected) { destroy(); return; }   // the card was taken off the page: free what the view drew
     const w = canvas.clientWidth || 300, h = canvas.clientHeight || 300;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
     // a frame that holds another building is fitted to the picture's size, so it is fitted again when the picture changes size,
     // unless someone has turned or zoomed since the view was chosen
-    if (orbit.fit && orbit.preset) setView(state.view, !orbit.anim); else draw();
+    if (follow && orbit.preset && !orbit.anim && orbit.base) frameFloor(true);
+    else if (orbit.fit && orbit.preset) setView(state.view, !orbit.anim); else draw();
   }
   const ro = new ResizeObserver(resize); ro.observe(canvas);
 
-  const pointers = new Map(); let down = null, pinch = 0;
+  const pointers = new Map(); let down = null, pinch = 0, lastMove = null, hoverAt = null, hoverRaf = 0;
   function bindInput() {
     canvas.addEventListener('pointerdown', e => {
       canvas.setPointerCapture?.(e.pointerId);
       pointers.set(e.pointerId, [e.clientX, e.clientY]);
+      orbit.spin = null;
       if (pointers.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 };
       if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); if (down) down.moved = 99; }
     });
     canvas.addEventListener('pointermove', e => {
-      if (!pointers.has(e.pointerId)) return;
+      if (!pointers.has(e.pointerId)) { if (e.pointerType === 'mouse') queueHover(e.clientX, e.clientY); return; }
       const prev = pointers.get(e.pointerId); pointers.set(e.pointerId, [e.clientX, e.clientY]);
       if (pointers.size === 1) {
         const dx = e.clientX - prev[0], dy = e.clientY - prev[1];
@@ -1185,6 +1647,7 @@ export function renderHouse3D(container, card, opts = {}) {
         orbit.anim = null; orbit.preset = false;
         orbit.theta -= dx * 0.008;
         orbit.phi = Math.min(1.5, Math.max(0.001, orbit.phi - dy * 0.008));
+        lastMove = { th: dx * 0.008, ph: dy * 0.008, t: performance.now() };
         draw();
       } else if (pointers.size === 2) {
         const [a, b] = [...pointers.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -1195,38 +1658,77 @@ export function renderHouse3D(container, card, opts = {}) {
       const was = pointers.has(e.pointerId); pointers.delete(e.pointerId);
       if (pointers.size < 2) pinch = 0;
       if (was && down && pointers.size === 0 && down.moved < 8 && performance.now() - down.t < 600) pick(e.clientX, e.clientY);
-      if (pointers.size === 0) down = null;
+      // let go mid-turn: the house keeps turning a little and slows to a stop (not under reduced motion)
+      else if (was && pointers.size === 0 && lastMove && performance.now() - lastMove.t < 80 && !reduced()) { orbit.spin = { th: lastMove.th, ph: lastMove.ph }; draw(); }
+      if (pointers.size === 0) { down = null; lastMove = null; }
     };
-    canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); down = null; });
+    canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); down = null; lastMove = null; });
+    canvas.addEventListener('pointerleave', () => { if (!pointers.size) setHover(null); });
     canvas.addEventListener('wheel', e => { e.preventDefault(); zoom(Math.exp(e.deltaY * 0.0015)); }, { passive: false });
+    el.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      // Escape closes the item's card first, then leaves "Behind this wall"
+      if (state.picked) { select(null); e.stopPropagation(); }
+      else if (state.wallMode) { state.wallMode = false; apply(); e.stopPropagation(); }
+    });
   }
-  function zoom(f) { orbit.anim = null; orbit.preset = false; orbit.r = Math.min(orbit.radius * 12, Math.max(orbit.own * 0.6, orbit.r * f)); draw(); }   // in as close as to the drawn building alone
+  function zoom(f) { orbit.anim = null; orbit.spin = null; orbit.preset = false; orbit.r = Math.min(orbit.radius * 12, Math.max(orbit.own * 0.6, orbit.r * f)); draw(); }   // in as close as to the drawn building alone
+
+  /* pointing (a mouse): the item or line under it is named and the pointer says it can be pressed */
+  function queueHover(x, y) {
+    hoverAt = [x, y];
+    if (hoverRaf || !model) return;
+    hoverRaf = requestAnimationFrame(() => {
+      hoverRaf = 0;
+      if (!hoverAt || state.dead || state.wallMode) return;
+      setHover(hitAt(hoverAt[0], hoverAt[1]));
+    });
+  }
+  function setHover(o) {
+    if (state.hover === o) return;
+    state.hover = o;
+    canvas.style.cursor = o ? 'pointer' : '';
+    draw();
+  }
+  function hoverKey(k) { if (model) setHover(k ? findKey(k) : null); }
 
   /* tapping: an item or line opens its card; in "Behind this wall" a wall lists what runs inside it */
-  const ray = () => new T.Raycaster();
-  function pick(cx, cy) {
-    if (!model) return;
+  function hitAt(cx, cy) {
     const r = canvas.getBoundingClientRect();
-    const rc = ray(); rc.setFromCamera(new T.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
+    const rc = new T.Raycaster(); rc.setFromCamera(new T.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
     const pool = (state.wallMode ? model.walls : [...model.items, ...model.runs, ...[model.outline, model.parcel].filter(Boolean)]).filter(o => o.visible && isShown(o));
     const hit = rc.intersectObjects(pool, false)[0];
-    select(hit ? hit.object : null);
+    return hit ? hit.object : null;
   }
-  function highlight(o, on) {
-    if (!o) return;
-    const c = on ? colors.pick : colors[o.material.userData.colorKey] || colors.other;
-    o.material.emissive?.setRGB(on ? c[0] * 0.35 : 0, on ? c[1] * 0.35 : 0, on ? c[2] * 0.35 : 0, T.SRGBColorSpace);
-    if (o.userData.role === 'wall') o.material.opacity = on ? 0.55 : o.material.opacity;
+  function pick(cx, cy) {
+    if (!model) return;
+    select(hitAt(cx, cy), true);
   }
-  function select(o) {
-    if (state.picked) highlight(state.picked, false);
+  // the glow: "Start here" items in the accent from the start; the picked one stronger (a wall in the ink tone)
+  function glow(o) {
+    const m = o && o.material; if (!m || !m.emissive) return;
+    const on = o === state.picked, f = isFocusItem(o);
+    const c = on ? (o.userData.role === 'wall' ? colors.pick : colors.accent) : f ? colors.accent : null;
+    const k = on ? 0.5 : 0.28;
+    if (c) m.emissive.setRGB(c[0] * k, c[1] * k, c[2] * k, T.SRGBColorSpace); else m.emissive.setRGB(0, 0, 0);
+  }
+  function select(o, fromModel) {
+    const was = state.picked;
     state.picked = o;
-    if (!o) { info.hidden = true; info.innerHTML = ''; apply(); return; }
-    highlight(o, true);
+    if (was) glow(was);
+    if (pickRing) placeRing(pickRing, o && o.userData.role === 'item' ? o : null);
+    if (!o) { info.hidden = true; info.innerHTML = ''; apply(); if (fromModel || was) notify(null, fromModel); return; }
+    glow(o);
     info.innerHTML = o.userData.role === 'wall' ? wallCard(o) : o.userData.role === 'outline' || o.userData.role === 'parcel' ? siteCard(o) : itemCard(o);
     info.hidden = false;
-    info.querySelector('[data-h3="dismiss"]')?.addEventListener('click', () => select(null));
-    draw();
+    info.querySelector('[data-h3="dismiss"]')?.addEventListener('click', () => select(null, true));
+    apply();
+    notify(o, fromModel);
+  }
+  function notify(o, fromModel) {
+    if (!fromModel || typeof opts.onSelect !== 'function') return;
+    const k = o && (o.userData.role === 'item' || o.userData.role === 'run') ? o.userData.key : null;
+    try { opts.onSelect(k); } catch (e) { console.warn('house view: select callback failed', e); }
   }
   // one chip per basis; a company record on an example card says so
   const basisChip = b => {
@@ -1274,7 +1776,7 @@ export function renderHouse3D(container, card, opts = {}) {
     if (k === 'view') setView(b.dataset.v);
     else if (k === 'floor') setFloor(b.dataset.floor === 'all' ? 'all' : Number(b.dataset.floor));
     else if (k === 'layer') setLayer(b.dataset.layer, state.layers[b.dataset.layer] === false);
-    else if (k === 'wallmode') { state.wallMode = !state.wallMode; select(null); if (state.wallMode) state.layers.walls = true; apply(); }
+    else if (k === 'wallmode') { state.wallMode = !state.wallMode; select(null, true); if (state.wallMode) { state.layers.walls = true; setHover(null); } apply(); }
     else if (k === 'close') opts.onClose?.();
     else if (k === 'download') {
       b.disabled = true;
@@ -1291,15 +1793,42 @@ export function renderHouse3D(container, card, opts = {}) {
     const key = LAYERS.find(([k, n]) => k === name || n.toLowerCase() === String(name).toLowerCase())?.[0];
     if (!key) return;
     state.layers[key] = !!on;
-    if (state.picked && !isShown(state.picked)) select(null);
+    if (state.picked && !isShown(state.picked)) select(null, true);
     apply();
   }
   function setFloor(n) {
     if (n === 'all' || n === undefined || n === null) state.floor = 'all';
     else if (typeof n === 'number') state.floor = plan.levels[n]?.id || 'all';
     else state.floor = plan.levels.find(l => l.id === n || l.name === n)?.id || 'all';
-    if (state.picked && !isShown(state.picked)) select(null);
+    if (state.picked && !isShown(state.picked)) select(null, true);
     apply();
+    frameFloor();
+  }
+  const findKey = k => [...(model?.items || []), ...(model?.runs || [])].find(o => o.userData.key === k || o.name === k) || null;
+  /** Turns the model to an item or line (by key): shows its floor, turns the camera round to its side of the house (the near walls
+      are cut there, so it is in sight) and picks it. Returns false when there is no such object. */
+  function focusOn(k) {
+    if (!model) return false;
+    const o = findKey(k); if (!o) return false;
+    const u = o.userData;
+    if (u.layer && state.layers[u.layer] === false) state.layers[u.layer] = true;
+    const lv = plan.levels.find(l => l.id === u.level);
+    if (lv && !levelShown(lv.id)) state.floor = lv.id;
+    if (follow && lv && state.floor !== 'all' && state.floor !== lv.id) state.floor = lv.id;
+    if (state.view === 'outside' && !plan.large) state.view = 'cutaway';
+    select(o);
+    const F = follow ? frameFor(state.floor) : orbit.base;
+    const p = u.top ? new T.Vector3().fromArray(u.top) : u.anchor ? new T.Vector3().fromArray(u.anchor) : o.getWorldPosition(new T.Vector3());
+    const dx = p.x - F.target.x, dz = p.z - F.target.z;
+    let th = Math.hypot(dx, dz) > 0.4 ? Math.atan2(dx, dz) : orbit.theta;
+    th += Math.round((orbit.theta - th) / (2 * Math.PI)) * 2 * Math.PI;   // the short way round
+    const ph = state.view === 'top' ? VIEWS.top[1] : (follow ? CARD_VIEWS : VIEWS).cutaway[1];
+    const [vf, hf] = aspectFov();
+    const target = F.target.clone().lerp(p, 0.7);
+    const r = (F.fit ? fitDistance(F.fit, th, ph, vf, hf, target) : orbit.radius / Math.sin(Math.min(vf, hf) / 2)) * 0.95;
+    orbit.preset = false;
+    animateTo({ theta: th, phi: ph, r, target }, MOVE_MS);
+    return true;
   }
   /** What the scene holds, for checks: every item and run with its basis, and what is visible now. */
   function stats() {
@@ -1313,8 +1842,9 @@ export function renderHouse3D(container, card, opts = {}) {
     const at = o => [Math.round(o.position.x * 1000) / 1000, Math.round(o.position.z * 1000) / 1000];
     const S = plan.site;
     const toM = p => [(p[0] - plan.w / 2) * S.kx, (p[1] - plan.h / 2) * S.kz];
-    return { items: model.items.map(o => ({ ...row(o), at: at(o), snapped: !!o.userData.snapped })), runs: model.runs.map(row),
-      walls: model.walls.map(o => ({ ...row(o), inside: !!o.userData.inside, a: S ? toM(o.userData.wall.a) : null, b: S ? toM(o.userData.wall.b) : null })),
+    return { items: model.items.map(o => ({ ...row(o), at: at(o), snapped: !!o.userData.snapped, focus: isFocusItem(o), glow: !!o.material.emissive && o.material.emissive.r + o.material.emissive.g + o.material.emissive.b > 0 })),
+      runs: model.runs.map(row),
+      walls: model.walls.map(o => ({ ...row(o), inside: !!o.userData.inside, section: !!o.userData.section, a: S ? toM(o.userData.wall.a) : null, b: S ? toM(o.userData.wall.b) : null })),
       roofVisible: model.roof.visible,
       shell: model.shell.map(row), address: plan.address, example: plan.example, large: plan.large, note: plan.note,
       rooms: plan.levels.reduce((n, l) => n + l.rooms.length, 0), levelRows: plan.levels.map(l => ({ id: l.id, name: l.name, base: l.base, height: l.height })),
@@ -1323,6 +1853,10 @@ export function renderHouse3D(container, card, opts = {}) {
         shellBasis: plan.shellBasis, rot: S.rot, snapped: plan.snapped, storeyH: plan.storeyH, area: S.area } : null,
       view: state.view, floor: state.floor, layers: { ...state.layers }, levels: plan.levels.map(l => l.id),
       behind: model.walls.map((w, i) => ({ i, name: w.name, level: w.userData.level, list: behindWall(plan, w.userData.level, w.userData.wall) })),
+      picked: state.picked ? state.picked.userData.key || state.picked.name : null, moving: !!(orbit.anim || orbit.spin), drawing: !!raf,
+      labels: labelNodes.filter(n => !n.d.hidden).map(n => n.d.textContent),
+      render: { toneMapped: renderer.toneMapping !== T.NoToneMapping, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio(), programs: renderer.info.programs?.length || 0,
+        ghosts: ghosts.filter(g => g.visible).length, section: model.walls.filter(w => w.userData.section && w.visible).map(w => w.name), contact: contact.filter(x => x.visible).length },
       frame: frameStats() };
   }
   /** Where the camera stands and what the picture holds, for checks: the screen box (canvas px) of the drawn building's walls,
@@ -1351,10 +1885,16 @@ export function renderHouse3D(container, card, opts = {}) {
       outbuildings: model.shell.filter(o => o.userData.role === 'outbuilding').map(o => ({ name: o.name, kind: o.userData.kind, ...box([o]) })) };
   }
   function destroy() {
+    if (state.dead) return;
     state.dead = true; ro.disconnect(); themeObs.disconnect(); try { mq?.removeEventListener('change', applyTheme); } catch { /* */ }
     if (raf) cancelAnimationFrame(raf);
+    if (hoverRaf) cancelAnimationFrame(hoverRaf);
+    const free = root => root?.traverse(o => { o.geometry?.dispose?.(); const m = o.material; if (m && !model?.mats.includes(m)) { m.map?.dispose?.(); m.dispose?.(); } });
     if (model) { model.root.traverse(o => { o.geometry?.dispose?.(); }); model.mats.forEach(m => m.dispose()); }
-    renderer?.dispose(); el.remove();
+    free(scene); free(under);
+    ground?.tex.dispose(); (contact.maps || []).forEach(t => t.dispose());
+    if (renderer) { renderer.dispose(); try { renderer.forceContextLoss(); } catch { /* */ } }
+    el.remove();
   }
   api.pickAt = (x, y) => pick(x, y);
   api.selectWall = i => select(plan.large ? null : model?.walls[i] || null);

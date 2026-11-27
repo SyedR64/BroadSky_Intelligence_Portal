@@ -8,7 +8,7 @@ Serves the repository on 127.0.0.1 (no backend), opens a small test page (served
 and, for every sample card at 1440x900 and 390x844 in light and dark:
   - the view draws with no console error and no sideways scroll;
   - every item and run of the card is one object in the scene, and likely ones are flagged likely (translucent, dashed);
-  - the view, floor, layer and "Behind this wall" controls work, and tapping an item opens its card;
+  - the view, floor, layer and "Behind this wall" controls work (the cutaway cuts the top floor's walls low), and tapping an item opens its card;
   - "Download model" saves <address>.glb, which loads back in three.js GLTFLoader with the same item and run count;
   - "Example address" is written only on a card from company example data, and a company record there says "(example data)";
   - a large building (building.kind "large" or layout.from "none"): the shell only, the real outline stood up with a line at each
@@ -20,6 +20,10 @@ and, for every sample card at 1440x900 and 390x844 in light and dark:
     height, rooms, inside walls, items and runs sit inside the outline, wire and duct runs are drawn, "Behind this wall" lists the
     runs touching each wall with their basis and never calls a wall clear, and the file carries the footprint, the parcel and a
     basis on every object, placed east and south of the card's origin;
+  - card mode (embed, follow, intro), as the agent's floor sketch card opens it: a lit model (tone mapping, shadows, pixel ratio at
+    most 2) in the cutaway on the "Start here" floor (its walls cut low), the floors above as faint glass, contact shadows, "Start here" items glowing and always
+    named, a turn-in that stops (none under reduced motion), focus(key) picking an item on its floor, likely parts still
+    see-through and dashed, and destroy freeing the canvas;
   - framing (reduced motion, canvas 328, 358, 700 and 1000 px wide): on a lot with another building (the town hall sample and the
     nj_full fixture) every corner of the drawn building and of each "Other building" block is at least 6 px inside the picture in
     every view offered, also when the picture narrows after the view was chosen (a turn is kept then); with three more buildings
@@ -407,6 +411,85 @@ def framing_checks(br, base, samples, check):
     check('frame: the samples and the fixture hold a lot with another building', n_other >= 8, str(n_other))
 
 
+CARD_MOUNT = """async ([c, o]) => { if (window.h) window.h.destroy(); const host = document.getElementById('host');
+    window.h = window.H.renderHouse3D(host, c, o); await window.h.ready; return true; }"""
+
+
+def card_mode_checks(br, base, samples, check):
+    """The view as a card opens it (embed, follow, intro): a lit model (tone mapping, shadows, pixel ratio at most 2), opened in the
+    cutaway on the floor that holds the "Start here" items, its walls cut low (a dollhouse section), the floors above as faint glass,
+    soft contact shadows; "Start here" items glow and are always named, other items only while pointed at; a slow turn-in that stops (none
+    under reduced motion) and nothing drawn after; focus(key) shows the item's floor, picks it and turns the camera to it; the
+    likely parts stay see-through with dashed edges; destroy frees the canvas. Light and dark, 1440 and 390 px."""
+    plumber = next(s['card'] for s in samples if s['card']['address'].startswith('27 Brindlemoor'))
+    for theme, (vw, vh), red in (('dark', (1440, 900), False), ('light', (390, 844), True)):
+        ctx = br.new_context(viewport={'width': vw, 'height': vh}, reduced_motion='reduce' if red else 'no-preference', color_scheme=theme)
+        html = PAGE % (' data-sys-theme="dark"' if theme == 'dark' else '')
+        ctx.route(f'{base}/__house3d_check.html*', lambda r: r.fulfill(status=200, content_type='text/html', body=html))
+        page = ctx.new_page()
+        errs = []
+        page.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
+        page.on('pageerror', lambda e: errs.append(str(e)))
+        page.goto(f'{base}/__house3d_check.html?i=0')
+        page.wait_for_function('window.done === true', timeout=60000)
+        tag = f'card mode {vw} {theme}{" reduced" if red else ""}'
+        for card in (plumber,) + tuple(s['card'] for s in samples if (s['card'].get('building') or {}).get('kind') == 'house'):
+            t = f"{tag} {card['address']}"
+            page.evaluate(CARD_MOUNT, [card, {'embed': True, 'follow': True, 'intro': True, 'view': 'cutaway'}])
+            st = page.evaluate('window.h.stats()')
+            r = st['render']
+            check(f'card mode: a lit model, tone mapped, soft shadows, pixel ratio at most 2 [{t}]', r['toneMapped'] and r['shadows'] and 0 < r['pixelRatio'] <= 2, json.dumps(r))
+            check(f'card mode: no heading or Close of its own inside a card [{t}]', page.locator('.h3-addr').count() == 0 and page.locator('[data-h3="close"]').count() == 0)
+            focus = [o for o in st['items'] if o['focus']]
+            fl = st['floor']
+            # the floor of the first "Start here" kind in the card's own focus order (as planOf picks it)
+            want_floor = next((o['level'] for k in card.get('focus') or [] for o in focus if o['kind'] == k and o['level'] != 'outside'),
+                              next((o['level'] for o in focus if o['level'] != 'outside'), None))
+            top = st['levels'][-1]
+            check(f'card mode: opens in the cutaway on the "Start here" floor, its walls cut low, the floors above as faint glass, contact shadows [{t}]', st['view'] == 'cutaway'
+                  and (fl == want_floor if want_floor and want_floor != top else fl == 'all') and (r['ghosts'] > 0 or fl == 'all') and r['section'] and r['contact'] > 0,
+                  json.dumps({'floor': fl, 'want': want_floor, 'ghosts': r['ghosts'], 'section': r['section'], 'contact': r['contact']}))
+            check(f'card mode: "Start here" items glow and only they are named at rest [{t}]', all(o['glow'] for o in focus)
+                  and not any(o['glow'] for o in st['items'] if not o['focus'])
+                  and all(any(l.split(',')[0] == o['name'].replace(' (likely)', '') for l in st['labels']) for o in focus if o['visible'])
+                  and len(st['labels']) <= sum(1 for o in focus if o['visible']), json.dumps({'labels': st['labels'], 'focus': [o['name'] for o in focus]}))
+            lk = [o for o in st['items'] + st['runs'] if o['likely']]
+            walls = [w for w in st['walls'] if w['basis'] == 'likely']
+            check(f'card mode: likely stays see-through and dashed, recorded stays solid [{t}]', all(o['transparent'] for o in lk)
+                  and all(o['dashedEdges'] for o in st['items'] if o['likely']) and all(w['dashedEdges'] and w['transparent'] for w in walls if w['visible'])
+                  and all(not o['transparent'] for o in st['items'] + st['runs'] if not o['likely'] and o['level'] in (fl, 'outside')))
+            if red:
+                check(f'card mode: no turn-in under reduced motion [{t}]', not st['moving'])
+            else:
+                f0 = st['frame']
+                page.wait_for_timeout(400)
+                moving = page.evaluate('window.h.stats().moving')
+                page.wait_for_function('() => !window.h.stats().moving && !window.h.stats().drawing', timeout=20000)
+                f1 = page.evaluate('window.h.stats().frame')
+                page.wait_for_timeout(300)
+                idle = page.evaluate('window.h.stats().drawing')
+                # the turn is timed, not counted in frames: a slow software frame may outlast it, so the turn is read from where the camera went
+                check(f'card mode: a slow turn-in that stops, nothing drawn after [{t}]', abs(f1['theta'] - f0['theta']) > 0.3 and not idle,
+                      json.dumps({'moving': moving, 'theta': [f0['theta'], f1['theta']]}))
+            item = next((o for o in st['items'] if not o['focus'] and o['level'] != 'outside'), None)
+            if item:
+                ok = page.evaluate("""n => { const s = window.h.stats(), o = s.items.find(x => x.name === n);
+                    const lv = o.level, idx = s.items.filter(x => x.level === lv).findIndex(x => x.name === n); return window.h.focus(lv + '-i' + idx); }""", item['name'])
+                page.wait_for_function('() => { const s = window.h.stats(); return !s.moving && !s.drawing; }', timeout=20000)
+                s2 = page.evaluate('window.h.stats()')
+                o2 = next(o for o in s2['items'] if o['name'] == item['name'])
+                check(f'card mode: focus(key) shows its floor, picks it and names it [{t}]', ok and o2['visible'] and o2['glow']
+                      and item['name'].replace(' (likely)', '') in ' '.join(s2['labels']) and s2['picked'],
+                      json.dumps({'ok': ok, 'picked': s2['picked'], 'labels': s2['labels'], 'floor': s2['floor']}))
+            page.keyboard.press('Escape')
+        n = page.evaluate("() => { window.h.destroy(); return document.querySelectorAll('.h3, canvas').length; }")
+        check(f'card mode: destroy frees the view [{tag}]', n == 0)
+        sw = page.evaluate('document.documentElement.scrollWidth')
+        check(f'card mode: no sideways scroll, no console error [{tag}]', sw <= vw and not errs, ' | '.join(errs)[:300])
+        ctx.close()
+
+
+
 def file_checks(check, card, back, tag):
     b = card['building']
     site = back.get('site') or {}
@@ -449,7 +532,7 @@ def main():
             fails.append(f'{name}: {detail}')
 
     with sync_playwright() as p:
-        br = p.chromium.launch(args=['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'])
+        br = p.chromium.launch(args=['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'])
         for theme in ('light', 'dark'):
             for vw, vh in ((1440, 900), (390, 844)):
                 ctx = br.new_context(viewport={'width': vw, 'height': vh}, accept_downloads=True,
@@ -511,7 +594,9 @@ def main():
                         st2 = page.evaluate('window.h.stats()')
                         ok = st2['view'] == v and page.get_attribute(f'[data-h3="view"][data-v="{v}"]', 'aria-pressed') == 'true'
                         if v == 'cutaway':
-                            ok = ok and not any(w['visible'] for w in st2['walls'] if w['name'] == 'Front wall')
+                            # a dollhouse section: the walls of the top floor shown are cut low (you look over them), none stands full height
+                            top_lv = st2['levels'][-1]
+                            ok = ok and all(w['section'] for w in st2['walls'] if w['level'] == top_lv and w['visible']) and any(w['section'] for w in st2['walls'])
                         if v == 'top':
                             ok = ok and len({w['level'] for w in st2['walls'] if w['visible']}) == 1
                         check(f'view {v} [{tag}]', ok)
@@ -605,6 +690,7 @@ def main():
                     page.close()
                 ctx.close()
         framing_checks(br, base, samples, check)
+        card_mode_checks(br, base, samples, check)
         # no WebGL: nothing is drawn and the caller keeps the 2D sketch
         ctx = br.new_context(viewport={'width': 390, 'height': 844})
         ctx.add_init_script("""(() => { const g = HTMLCanvasElement.prototype.getContext;

@@ -24,7 +24,7 @@ export const ICON = {
 
 /* ── Theme ────────────────────────────────────────────────────────────────────
    One preference for every page: html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme'
-   (light by default, like the site; an explicit saved choice wins). system.css swaps the tokens; html[data-theme] is
+   (dark by default, like the site; an explicit saved choice wins). system.css swaps the tokens; html[data-theme] is
    mirrored for older module CSS hooks. Whoever flips the attribute (the console toggle, the frame, the assistant),
    Theme.watch callers hear it: maps swap their tiles in place, so a view keeps its filters and selection. */
 const THEME_KEY = 'bsp-theme';
@@ -36,7 +36,7 @@ export const Theme = {
     const h = document.documentElement, v = t === 'dark' ? 'dark' : 'light';
     if (h.dataset.sysTheme !== v) h.dataset.sysTheme = v;
     if (h.dataset.theme !== v) h.dataset.theme = v;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', v === 'dark' ? '#0a0e14' : '#fbfaf7');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', v === 'dark' ? '#08090b' : '#f6f7f8');
   },
   set(t) {
     const F = globalThis.BSPFrame;
@@ -630,10 +630,33 @@ export const Tour = {
 };
 
 /* ── App shell / router ───────────────────────────────────────────────────── */
-const searchIndex = [], SCREEN = 'Screen';   // the search box's tag for a screen
+const searchIndex = [], SCREEN = 'Screen', ACTION = 'Action';   // the command bar's tags for a screen and for an action
 /* Levels (modules/registry.js LEVELS and its rules): app.html hands the tables over through App.levels. Until it does,
    every screen is a firm screen and the firm menu is drawn. */
 const FIRM_LEVELS = ['firm_leadership', 'firm_team'];
+/* ── Status strip ─────────────────────────────────────────────────────────────
+   The line under the console (app.html #statusbar, system.css §7c): when the nightly public snapshots were last
+   refreshed (data/live/manifest.json; green within two days, amber when older, absent if the file cannot be read), the
+   two shortcuts, and the date and time on the visitor's own clock. It reads; it never claims a feed is live. */
+const Status = {
+  start() {
+    const el = $('#statusbar'); if (!el) return;
+    const clock = $('.sys-status-clock', el), data = $('.sys-status-data', el);
+    const tick = () => {
+      const d = new Date(); if (!clock) return;
+      clock.dateTime = d.toISOString();
+      clock.textContent = `${d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}`;
+    };
+    tick(); setInterval(tick, 20000);
+    snapshot('manifest').then(m => {
+      const at = m && m.generated_at ? new Date(m.generated_at) : null; if (!data || !at || isNaN(at)) return;
+      data.dataset.st = Date.now() - at.getTime() < 2 * 864e5 ? 'good' : 'warn';
+      data.innerHTML = `<span class="sys-dot" aria-hidden="true"></span>Public data refreshed ${esc(at.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))}`;
+      data.hidden = false;
+    }).catch(() => { /* no snapshot: the strip shows the shortcuts and the clock only */ });
+  },
+};
+
 const ACCESS = { table: {}, only: {}, menus: {}, names: {}, param: {}, companies: [] };
 const HOME = '#/home/overview', DENIED = 'Not in this view.';
 export const App = {
@@ -798,7 +821,7 @@ export const App = {
   },
   palette() {
     let el = $('#palette'); if (el) return el.remove();
-    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search" aria-label="Search screens, companies and records" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div></div>`; document.body.appendChild(el);
+    el = document.createElement('div'); el.id = 'palette'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Search and commands'); el.innerHTML = `<div class="sys-card pal"><div class="pal-in">${ICON.search}<input class="pal-input" placeholder="Search or run a command" aria-label="Search screens, companies and records, or run a command" autofocus><span class="sys-kbd">Esc</span></div><div class="pal-list" role="listbox"></div><div class="pal-foot sys-src" aria-hidden="true"><span><kbd class="sys-kbd">↑</kbd><kbd class="sys-kbd">↓</kbd>Move</span><span><kbd class="sys-kbd">↵</kbd>Open</span></div></div>`; document.body.appendChild(el);
     const inp = $('input', el), list = $('.pal-list', el); let items = [], active = 0;
     const role = Session.role();
     // the empty box: six screens at most, for the level in view: the ones opened last, then the menu's
@@ -809,19 +832,36 @@ export const App = {
       for (const i of App.menu(role).flatMap(g => g.items)) { const v = i.v || App.firstView(i.m, role); if (v) add(`${i.m.id}/${v.id}`, i.href, i.label, i.m.color); }
       return out;
     };
+    // the actions: only what a control already on the screen does. Each one presses that control (or calls the helper the
+    // control calls), so the command bar can never do something the page cannot; an action whose control is not on this
+    // screen, or not in this role's view, is not listed
+    const actions = () => {
+      const out = [], add = (label, run) => out.push({ label, run, kind: ACTION });
+      const ask = $('.sys-top .sys-ask'), who = $('.sys-top .sys-viewas-btn');
+      if (ask) add('Ask the agent', () => ask.click());
+      for (const k of ['src', 'method']) { const b = $(`#topbar [data-drawer-btn="${k}"]`); if (b && !b.hidden) add(`${b.getAttribute('aria-expanded') === 'true' ? 'Close' : 'Open'} ${Drawers.NAMES[k]}`, () => b.click()); }
+      if (who) add('Change Viewing as', () => who.click());
+      add(Theme.get() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme', () => Theme.toggle());
+      if (Tour.steps.length && App.canHref('#/briefing/play', role)) add(Tour.running ? 'Stop the narrated tour' : 'Start the narrated tour', () => (Tour.running ? Tour.stop() : Tour.start(0)));
+      return out;
+    };
+    const pick = it => { if (!it) return; el.remove(); if (typeof it.run === 'function') it.run(); else location.hash = it.href; };
     const draw = () => {
       const q = inp.value.trim().toLowerCase();
-      items = q ? searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q) && App.canHref(i.href, role)).slice(0, 40) : screens();
+      // a typed word: the actions it names first (there are few), then screens and records; the empty box: screens, then every action
+      const acts = actions();
+      items = q ? [...acts.filter(a => a.label.toLowerCase().includes(q)), ...searchIndex.filter(i => (i.label + ' ' + (i.sub || '')).toLowerCase().includes(q) && App.canHref(i.href, role)).slice(0, 40)] : [...screens(), ...acts];
       active = 0;
       const tag = new Set(items.map(i => i.kind || '')).size > 1;   // the kind is shown only when the results mix kinds
-      list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-h="${esc(i.href)}">${tag ? `<span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span>` : `<span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>`}<span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`;
-      $$('.pal-item', list).forEach(x => x.onclick = () => { location.hash = x.dataset.h; el.remove(); });
+      list.innerHTML = items.map((i, k) => `<div class="pal-item ${k === 0 ? 'active' : ''}" role="option" aria-selected="${k === 0}" data-i="${k}">${tag ? `<span class="sys-card-label k"><span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>${esc(i.kind || '')}</span>` : `<span class="sys-dot" style="--co:${i.color || 'var(--sys-mute-2)'}" aria-hidden="true"></span>`}<span class="ellipsis">${esc(i.label)}</span>${i.sub ? `<span class="s ellipsis">${esc(i.sub)}</span>` : ''}</div>`).join('') || `<div class="empty">No matches</div>`;
+      $$('.pal-item', list).forEach(x => x.onclick = () => pick(items[Number(x.dataset.i)]));
     };
     inp.oninput = draw; draw(); inp.focus();
-    inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { location.hash = items[active].href; el.remove(); } $$('.pal-item', list).forEach((x, k) => { x.classList.toggle('active', k === active); x.setAttribute('aria-selected', String(k === active)); if (k === active) x.scrollIntoView({ block: 'nearest' }); }); };
+    inp.onkeydown = e => { if (e.key === 'Escape') el.remove(); if (e.key === 'ArrowDown') { active = Math.min(items.length - 1, active + 1); } if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); } if (e.key === 'Enter' && items[active]) { e.preventDefault(); pick(items[active]); return; } $$('.pal-item', list).forEach((x, k) => { x.classList.toggle('active', k === active); x.setAttribute('aria-selected', String(k === active)); if (k === active) x.scrollIntoView({ block: 'nearest' }); }); };
     el.onclick = e => { if (e.target === el) el.remove(); };
   },
   start() {
+    Status.start();
     window.addEventListener('hashchange', () => { if (location.hash !== App._at) App.route(); });
     // Back and Forward: a step between two entries whose ?role= differs (a "Viewing as" change sits between them) fires
     // popstate and often no hashchange. The address wins, as on a first load: its role is put back in view (that change

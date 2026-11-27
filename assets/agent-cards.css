@@ -114,11 +114,27 @@
 .ca-fact-src{font:500 var(--sys-fs-xs)/1.4 var(--sys-font);color:var(--sys-mute)}
 .ca-fact-srcs{margin:var(--sys-sp-2) 0 0;padding-left:1.2em;font-size:var(--sys-fs-xs);line-height:1.5;color:var(--sys-ink-2);overflow-wrap:anywhere}
 
-/* 3D and "Show on map" */
-.ca-fs-acts{margin:0;gap:var(--sys-sp-2);flex-wrap:wrap}
-.ca-fs-mapslot{display:contents}
+/* 3D first: the model leads the card; the equipment list sits beside it from about 720 px of card width (its own scroll, the
+   stage's height), under it when narrower; the flat plan opens under them from "Plan" */
+.ca-sketch{container-type:inline-size;min-width:0}
+.ca-fs-body{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0;--ca-stage-h:clamp(320px,62vw,440px)}
 .ca-3d{min-width:0}
 .ca-3d .h3{box-shadow:none}
+.ca-3d-wait{display:grid;place-items:center;height:var(--ca-stage-h);border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);background:var(--sys-surface-2)}
+@container (min-width:720px){
+  .ca-fs-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,34%);align-items:stretch;--ca-stage-h:clamp(420px,44cqw,560px)}
+  .ca-fs-body.no-list{grid-template-columns:minmax(0,1fr)}
+  /* the list is the stage's height and scrolls on its own */
+  .ca-fs-body>.ca-equip{align-self:start;box-sizing:border-box;height:var(--ca-stage-h);overflow:auto;overscroll-behavior:contain;border:1px solid var(--sys-line);border-radius:var(--sys-r-sm);padding:0 var(--sys-sp-2)}
+  .ca-fs-body>.ca-equip li:last-child{border-bottom:0}
+}
+.ca-eq.is-on{background:var(--sys-surface-2);box-shadow:inset 3px 0 0 var(--sys-brand)}
+.ca-eq:focus-visible{outline:2px solid var(--sys-focus);outline-offset:-2px}
+.ca-fs-plan{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
+.ca-fs-plan[hidden]{display:none}
+.ca-plan-btn[aria-pressed="true"]{background:var(--sys-ink);color:var(--sys-surface);border-color:var(--sys-ink)}
+.ca-fs-acts{margin:0;gap:var(--sys-sp-2);flex-wrap:wrap}
+.ca-fs-mapslot{display:contents}
 .ca-map,.ca-view{min-width:0}
 .ca-map{gap:var(--sys-sp-2);box-shadow:none}
 .ca-map .sys-card-title{margin:0;overflow-wrap:anywhere}

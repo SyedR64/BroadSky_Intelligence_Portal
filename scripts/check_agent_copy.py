@@ -36,9 +36,9 @@ TOKEN = re.compile(r'\{month:-?\d+\}')
 NYC = re.compile(r'New York City|\bNYC\b|Manhattan|Brooklyn|Queens')
 PRG_FULL = 'Portfolio Resource Group'
 PRG_DESC = 'Portfolio Resource Group (PRG)'
-# "sandbox" may appear in visible copy only here (SPEC 1.3), plus the page's meta description (SPEC 1.1)
-SANDBOX_OK = ('<b>Sandbox:</b>', 'Sandbox:', 'Broad Sky OS sandbox', 'Example apps with sandbox records',
-              'Source: sandbox ServiceTitan record', 'A sandbox AI agent for BSP')
+# "sandbox" is never shown to a visitor (the owner's ruling of 27 November 2026, which replaces the earlier allowed places):
+# the tag, the source lines and the dialog label read "Example data" / "example". Ids, class names and keys keep their names.
+SANDBOX_OK = ()
 # catalogue fields whose text is visible on the page (SPEC 6.4 rule 5)
 VISIBLE_KEYS = {'label', 'label_a', 'desc', 'sells', 'lines', 'depts', 'chips', 'placeholder', 'read', 'wont', 'numbers_text',
                 'public', 'actions', 'unavailable'}

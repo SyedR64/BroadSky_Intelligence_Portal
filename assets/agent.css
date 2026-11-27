@@ -12,7 +12,7 @@
 /* Tablets and laptops: a compact hero so the agent (role, today's list and the question box) starts above the fold */
 @media (min-width:561px){
   .ca .sys-hero{padding:var(--sys-sp-4) 0 var(--sys-sp-3)}
-  .ca .sys-hero .sys-h1{font-size:var(--sys-fs-2xl)}
+  .ca .sys-hero .sys-h1{font-size:var(--sys-fs-xl)}
   .ca .sys-hero .sys-lead{max-width:none;font-size:var(--sys-fs-base)}
 }
 .ca-hero{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-4)}
@@ -228,7 +228,7 @@ html[data-dock] .ca-actions .sys-chip{flex-shrink:0}
 /* the composer, pinned to the bottom; the approval line and the "Reads …" line stay small and muted under it */
 html[data-dock] .ca-chat .ch-inline .ch-compose{order:5;position:sticky;bottom:0;z-index:2;margin-top:auto;padding:var(--sys-sp-3) var(--sys-sp-4) var(--sys-sp-3);border-top:1px solid var(--sys-line);background:var(--sys-bg-2)}
 html[data-dock] .ca-chat .ch-inline:has(.ca-actions:not([hidden])) .ch-compose{margin-top:0}
-html[data-dock] .ca-chat .ch-inline .ch-box{padding:6px 6px 6px var(--sys-sp-4);border-radius:var(--sys-r-xl);box-shadow:var(--sys-sh-1)}
+html[data-dock] .ca-chat .ch-inline .ch-box{padding:6px 6px 6px var(--sys-sp-4);border-radius:var(--sys-r);box-shadow:none}
 html[data-dock] .ca-chat .ch-box textarea{min-height:24px;padding:6px 0;font-size:var(--sys-fs-sm);scrollbar-width:none}
 html[data-dock] .ca-chat .ch-inline .ch-btn{width:36px;height:36px}
 html[data-dock] .ca-chat .ch-inline .ch-ac{top:auto;bottom:calc(100% + 8px)}

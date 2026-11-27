@@ -79,7 +79,7 @@ async function overview(ctx) {
       <h2 class="sys-card-title">States and marks</h2>
       <ul class="sys-card-list">
         <li><b>Live</b>: a public feed or record the OS draws on.</li>
-        <li><b>Sandbox</b>: connected in the demonstration, with example data.</li>
+        <li><b>Example data</b>: connected in the demonstration, with example records.</li>
         <li><b>Connector available</b>: the vendor publishes an API or connector.</li>
         <li><b>Planned</b>: on the software roadmap.</li>
         ${Object.keys(MARK_NOTE).filter(k => marks.has(k)).map(k => `<li><b>${esc(k === DEFAULT_MARK ? 'No mark' : D.marks[k])}</b>: ${MARK_NOTE[k]}</li>`).join('')}

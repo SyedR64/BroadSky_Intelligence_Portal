@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>All pages · Broad Sky OS</title>
 <meta name="description" content="Every page and portal screen, grouped by company.">
-<meta name="theme-color" content="#fbfaf7">
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<meta name="theme-color" content="#08090b">
+<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage 'bsp-theme'), dark by default, applied before the stylesheets load; the frame's top-bar button changes it */(function(){var t='dark';try{var s=localStorage.getItem('bsp-theme');if(s==='dark'||s==='light')t=s}catch(e){}document.documentElement.setAttribute('data-sys-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#08090b':'#f6f7f8')})();</script>
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">
@@ -62,7 +62,7 @@
       </div>
       <ul class="lp-list lp-map-list">
         <li><a href="app.html#/home/overview">Broad Sky OS</a><span>The firm view: six companies, today and approvals.</span></li>
-        <li><a href="app.html#/home/agent">Agent</a><span>Ask as any of 44 roles, with sandbox apps.</span></li>
+        <li><a href="app.html#/home/agent">Agent</a><span>Ask as any of 44 roles, with example apps.</span></li>
         <li><a href="app.html#/connect/overview">Connections</a><span>Every tool by name, with its state.</span></li>
         <li><a href="sitemap.html">All pages</a><span>This page.</span></li>
       </ul>

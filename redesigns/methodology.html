@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deal record · Broad Sky OS</title>
 <meta name="description" content="The deal record now opens inside the portal.">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#08090b">
 <!-- A forwarding page (scripts/ci_check.py): the deal record lives in the portal. It is not rendered, indexed or listed. -->
 <meta name="bsp-forward" content="../app.html#/bsp/deals">
 <script>/* hand the visitor on at once. The old page's section links map to the portal screens that now hold them; the query string stays as it was */(function(){var view='#/bsp/deals',to='../app.html'+view;try{var map={'#rubric':'#/bsp/rubric','#next':'#/bsp/rubric','#patterns':'#/bsp/patterns','#cadence':'#/bsp/patterns','#network':'#/bsp/network','#channels':'#/bsp/patterns'};if(map[location.hash])view=map[location.hash];to='../app.html'+location.search+view}catch(e){}location.replace(to);document.addEventListener('DOMContentLoaded',function(){var a=document.getElementById('go');if(a)a.setAttribute('href',to)})})();</script>
 <noscript><meta http-equiv="refresh" content="0; url=../app.html#/bsp/deals"></noscript>
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage 'bsp-theme'), dark by default, applied before the stylesheets load */(function(){var t='dark';try{var s=localStorage.getItem('bsp-theme');if(s==='dark'||s==='light')t=s}catch(e){}document.documentElement.setAttribute('data-sys-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#08090b':'#f6f7f8')})();</script>
 <link rel="icon" href="../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

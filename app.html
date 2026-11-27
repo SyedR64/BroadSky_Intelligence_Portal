@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" data-sys-theme="light" data-theme="light">
+<html lang="en" data-sys-theme="dark" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Broad Sky OS</title>
 <meta name="description" content="Broad Sky OS: the firm and its six companies in one place, with a view for every role.">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#08090b">
 <link rel="icon" href="BSP_Logo.png">
 <script>
   /* One theme for the whole site (UNIFIED.md §8): html[data-sys-theme] from the saved choice under localStorage
-     'bsp-theme', light by default like every other page. Runs before the stylesheets so dark never flashes light. */
-  (function () { var t = 'light'; try { var s = localStorage.getItem('bsp-theme'); if (s === 'dark' || s === 'light') t = s; } catch (e) { }
+     'bsp-theme', dark by default like every other page. Runs before the stylesheets so the saved theme never flashes the other one. */
+  (function () { var t = 'dark'; try { var s = localStorage.getItem('bsp-theme'); if (s === 'dark' || s === 'light') t = s; } catch (e) { }
     var h = document.documentElement; h.setAttribute('data-sys-theme', t); h.setAttribute('data-theme', t);
-    if (t === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0a0e14'); })();
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#08090b' : '#f6f7f8'); })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <link rel="stylesheet" href="assets/system.css?v=20261125120619">
@@ -55,6 +55,13 @@
   </main>
   <aside id="inspector" class="sys-card" aria-label="Inspector" aria-hidden="true"></aside>
 </div>
+<!-- status strip (system.css §7c; hidden at 900px and narrower): when the public data was last refreshed, the two
+     shortcuts, and the visitor's own date and time. assets/core.js Status fills it -->
+<footer id="statusbar" class="sys-status" aria-label="Status">
+  <span class="sys-status-item sys-status-data" hidden></span>
+  <span class="sys-status-item sys-status-keys" aria-hidden="true"><span><kbd class="sys-kbd">⌘K</kbd>Command</span><span><kbd class="sys-kbd">⌘J</kbd>Ask</span></span>
+  <time class="sys-status-item sys-status-clock"></time>
+</footer>
 <script type="module">
   import { Frame } from './assets/frame.js?v=20261125120619';
   import { App } from './assets/core.js?v=20261125120619';
@@ -62,8 +69,8 @@
   import { enhance, retitle, viewTitle } from './modules/copy.js?v=20261125120619';
   import { MapCmd } from './assets/mapcmd.js?v=20261125120619';
 
-  // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (light by default)
-  const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'dark' ? 'dark' : 'light' });
+  // 1 · shared frame strip above the rail and console (UNIFIED.md §8); the theme is the visitor's saved choice (dark by default)
+  const frame = Frame.mount({ variant: 'app', theme: document.documentElement.dataset.sysTheme === 'light' ? 'light' : 'dark' });
   // screens reach the frame through ctx.app (the home's dock takes over Ask while it is on screen: frame.setAsk)
   App.frame = frame;
 
@@ -74,7 +81,12 @@
   const title = () => { const m = App.current, v = App.view; if (!m || !v) return; retitle(content, m, v); const t = `${viewTitle(m, v)} · Broad Sky OS`; if (document.title !== t) document.title = t; };
   const settle = () => { enhance(content); Frame.humanize(content); Frame.humanize(document.getElementById('topbar')); title(); };
   const route = App.route;
-  App.route = async function (...args) { const r = await route.apply(App, args); settle(); return r; };
+  // a screen change plays the short arrival once (app.css #main[data-enter]). The mark goes on at the START of the change, so
+  // whatever the screen draws in the next moment rises in; it comes off before a slow screen (a map, a framed page) finishes,
+  // so nothing that is already on screen ever blinks. A redraw of the same screen (a filter, a parameter) plays nothing.
+  const main = document.getElementById('main'); let shown = '', enterT = 0;
+  const enter = () => { const k = location.hash.split('?')[0]; if (k === shown) return; shown = k; main.dataset.enter = ''; clearTimeout(enterT); enterT = setTimeout(() => { delete main.dataset.enter; }, 700); };
+  App.route = async function (...args) { enter(); const r = await route.apply(App, args); settle(); return r; };
   let queue = new Set(), pending = 0;
   const watch = el => new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest('.leaflet-pane')) queue.add(n); else if (n.nodeType === 3 && n.parentElement) queue.add(n.parentElement);

@@ -44,7 +44,7 @@ KNOWN = {
     'index.html': ('Home', 'The front page: what the site is and where to start.'),
     'app.html': ('Portal', 'The six companies and the deal tools. Every screen is listed below.'),
     'os-home': ('Broad Sky OS', 'The firm view: six companies, today and approvals.'),
-    'os-agent': ('Agent', 'Ask as any of 44 roles, with sandbox apps.'),
+    'os-agent': ('Agent', 'Ask as any of 44 roles, with example apps.'),
     'os-connect': ('Connections', 'Every tool by name, with its state.'),
     'theater.html': ('3D map', 'A 3D fly-through of home sales, bids, add-on targets and live weather alerts.'),
     'sitemap.html': (PAGE_NAME, 'This page.'),
@@ -54,7 +54,7 @@ KNOWN = {
     'redesigns/case-studies.html': ('Sponsor precedents', 'How other sponsors grew companies like these.'),
     'redesigns/methodology.html': ('Deal record', 'Every disclosed BSP deal, from public announcements.'),
     'assistant.html': ('Full assistant', 'The assistant, full screen.'),
-    'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with sandbox apps and data.'),
+    'agent.html': ('Company agent', 'Ask as any role at BSP or its six companies, with example apps and data.'),
     'briefing/executive_memo.html': ('Executive memo', 'Four pages: where the six companies stand and what to do next.'),
 }
 CO_PAGE = {
@@ -68,8 +68,8 @@ FILES = [
     ('briefing/broad_sky_intro.mp4', 'Cinematic film', '2 minutes 13 seconds.'),
     ('briefing/BSP_Desk_Memo.pdf', 'Executive memo (PDF)', 'The memo as a printable PDF.'),
 ]
-# Applied before the stylesheets load so a saved dark theme never flashes light (UNIFIED.md §8).
-THEME_JS = '<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage \'bsp-theme\', light by default) before the stylesheets load; the frame\'s top-bar button changes it */(function(){try{var t=localStorage.getItem(\'bsp-theme\');if(t===\'dark\'||t===\'light\'){document.documentElement.setAttribute(\'data-sys-theme\',t);if(t===\'dark\'){var m=document.querySelector(\'meta[name="theme-color"]\');if(m)m.setAttribute(\'content\',\'#0a0e14\')}}}catch(e){}})();</script>'
+# Applied before the stylesheets load so the saved theme never flashes the other one (UNIFIED.md §8).
+THEME_JS = '<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage \'bsp-theme\'), dark by default, applied before the stylesheets load; the frame\'s top-bar button changes it */(function(){var t=\'dark\';try{var s=localStorage.getItem(\'bsp-theme\');if(s===\'dark\'||s===\'light\')t=s}catch(e){}document.documentElement.setAttribute(\'data-sys-theme\',t);var m=document.querySelector(\'meta[name="theme-color"]\');if(m)m.setAttribute(\'content\',t===\'dark\'?\'#08090b\':\'#f6f7f8\')})();</script>'
 SKIP_DIRS = {'legacy', 'scripts', 'node_modules', 'data', '.git', 'assets', 'tools'}
 
 
@@ -279,7 +279,7 @@ def main():
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{PAGE_NAME} · Broad Sky OS</title>
 <meta name="description" content="Every page and portal screen, grouped by company.">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#08090b">
 {THEME_JS}
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">

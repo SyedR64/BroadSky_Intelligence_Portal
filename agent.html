@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Company agent · Broad Sky OS</title>
-<meta name="description" content="A sandbox AI agent for BSP and its six companies: pick a role, connect its apps and ask, from partner to technician.">
-<meta name="theme-color" content="#fbfaf7">
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<meta name="description" content="An AI agent for BSP and its six companies, on example data: pick a role, connect its apps and ask, from partner to technician.">
+<meta name="theme-color" content="#08090b">
+<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage 'bsp-theme'), dark by default, applied before the stylesheets load; the frame's top-bar button changes it */(function(){var t='dark';try{var s=localStorage.getItem('bsp-theme');if(s==='dark'||s==='light')t=s}catch(e){}document.documentElement.setAttribute('data-sys-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#08090b':'#f6f7f8')})();</script>
 <meta name="author" content="Syed Rahman">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="BSP_Logo.png">
@@ -41,7 +41,7 @@
   <section class="sys-hero" id="top" aria-labelledby="ca-h1">
     <div class="sys-wrap ca-hero">
       <h1 class="sys-h1" id="ca-h1">Company agent</h1>
-      <span class="sys-chip sys-chip--info ca-sandbox">Sandbox: example data</span>
+      <span class="sys-chip sys-chip--info ca-sandbox">Example data</span>
     </div>
   </section>
 
@@ -73,8 +73,8 @@
     <div class="sys-wrap">
       <details class="ca-about" data-method>
         <summary>Where the numbers come from</summary>
-        <p class="sys-src" data-src>Sandbox: fictional people and modeled numbers. No company systems are connected.</p>
-        <p class="sys-src" data-src>Example apps with sandbox records. Access is read-only; every action is a draft until approved.</p>
+        <p class="sys-src" data-src>Example data: fictional people and modeled numbers. No company systems are connected.</p>
+        <p class="sys-src" data-src>Example apps and records. Access is read-only; every action is a draft until approved.</p>
         <p class="sys-src" data-method>Modeled figures start from the public estimates in the portal. Access rules for each role are checked on every question.</p>
         <div class="sys-actions"><a class="sys-btn sys-btn--secondary sys-btn--sm" href="app.html">Open the portal</a><a class="sys-btn sys-btn--secondary sys-btn--sm" href="redesigns/ai-agents.html">AI agents plan</a></div>
       </details>

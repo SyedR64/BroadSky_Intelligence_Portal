@@ -31,7 +31,7 @@
   --radius:var(--sys-r-sm); --radius-lg:var(--sys-r); --shadow:var(--sys-sh-3); --ease:var(--sys-ease);
 }
 /* console geometry */
-:root{--rail-w:272px; --insp-w:380px; --bar-h:56px; --pad:clamp(18px,2vw,24px)}   /* --pad = .sys-card padding */
+:root{--rail-w:236px; --insp-w:380px; --bar-h:44px; --pad:16px}   /* --pad = .sys-card padding */
 
 /* ── 2 · base inside the console (zero specificity: system and module CSS win) ── */
 html,body{height:100%;overflow:hidden}
@@ -50,9 +50,9 @@ html,body{height:100%;overflow:hidden}
 :where(#app) ::-webkit-scrollbar-thumb{background:var(--sys-line-2);border-radius:var(--sys-r-pill);border:2px solid var(--sys-bg)}
 :where(#app) ::-webkit-scrollbar-track{background:transparent}
 /* raw headings in module markup read the system scale */
-:where(#content) h1{font-size:var(--sys-fs-2xl);font-weight:800;line-height:1.06;letter-spacing:var(--sys-tr-head)}
-:where(#content,#inspector) h2{font-size:var(--sys-fs-xl);font-weight:700;line-height:var(--sys-lh-snug);letter-spacing:var(--sys-tr-title)}
-:where(#content,#inspector) h3{font-size:clamp(18px,1.6vw,20px);font-weight:700;line-height:1.3;letter-spacing:var(--sys-tr-title)}
+:where(#content) h1{font-size:var(--sys-fs-2xl);font-weight:600;line-height:1.1;letter-spacing:var(--sys-tr-head)}
+:where(#content,#inspector) h2{font-size:var(--sys-fs-xl);font-weight:600;line-height:var(--sys-lh-snug);letter-spacing:var(--sys-tr-title)}
+:where(#content,#inspector) h3{font-size:15px;font-weight:600;line-height:1.35;letter-spacing:var(--sys-tr-title)}
 /* headings inherit their colour, so dark stages (the 3D theater) and dark bands keep light text */
 :where(#content){color:var(--sys-ink)}
 :where(#content,#inspector) h4{font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
@@ -69,21 +69,35 @@ html,body{height:100%;overflow:hidden}
 body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same top bar as every page */
 #app{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr) auto;height:100vh;width:100%;background:var(--sys-bg)}
 #main{display:flex;flex-direction:column;min-width:0;min-height:0}
-#content{flex:1;min-height:0;overflow:auto;padding:var(--sys-sp-6) var(--sys-gut) var(--sys-sp-7);position:relative;background:var(--sys-bg)}
-#content.flush{padding:0;overflow:hidden}
+#content{flex:1;min-height:0;overflow:auto;padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-7);position:relative;background:var(--sys-bg) linear-gradient(var(--sys-grid-line) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,var(--sys-grid-line) 1px,transparent 1px) 0 0/32px 32px}
+#content.flush{padding:0;overflow:hidden;background:var(--sys-bg)}
+/* a screen arrives with a short rise, its first blocks a beat apart. app.html marks #main[data-enter] for 0.7s from the
+   start of a screen change; a map or a framed page (.flush) is never animated, since it draws late and must not blink */
+@keyframes sys-rise{from{opacity:0;transform:translateY(6px)}}
+@media (prefers-reduced-motion:no-preference){
+  #main[data-enter] #content:not(.flush)>*{animation:sys-rise .26s var(--sys-ease) backwards}
+  #main[data-enter] #content:not(.flush)>:nth-child(2){animation-delay:.04s}
+  #main[data-enter] #content:not(.flush)>:nth-child(n+3){animation-delay:.08s}
+}
 
 /* rail: a vertical sys-nav; module dots carry the company accents */
-#rail{display:flex;flex-direction:column;min-height:0;background:var(--sys-bg);border-right:1px solid var(--sys-line)}
-.rail-nav{flex:1;overflow-y:auto;padding:var(--sys-sp-3) var(--sys-sp-3) var(--sys-sp-4)}
+#rail{display:flex;flex-direction:column;min-height:0;background:var(--sys-bg-2);border-right:1px solid var(--sys-line)}
+.rail-nav{flex:1;overflow-y:auto;padding:var(--sys-sp-2) var(--sys-sp-2) var(--sys-sp-4)}
 .rail-group+.rail-group{margin-top:var(--sys-sp-4)}
 /* a module that is off the menu, while it is open: a 15th item under a rule, with no heading of its own */
 .rail-group+.rail-group--open{margin-top:var(--sys-sp-2);padding-top:var(--sys-sp-2);border-top:1px solid var(--sys-line)}
-.rail-section{padding:var(--sys-sp-2) var(--sys-sp-3) var(--sys-sp-2)}
-.rail-item{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-pill);font:500 14px/1.2 var(--sys-font);letter-spacing:-.005em;color:var(--sys-ink-2);text-decoration:none;white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
+.rail-section{padding:var(--sys-sp-2) var(--sys-sp-3) var(--sys-sp-1);font-size:10.5px}
+.rail-item{position:relative;display:flex;align-items:center;gap:10px;min-height:30px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-sm);font:500 13px/1.2 var(--sys-font);letter-spacing:-.005em;color:var(--sys-ink-2);text-decoration:none;white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
 :where(#app) a.rail-item{color:var(--sys-ink-2);text-decoration:none}
 .rail-item:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
-.rail-item[aria-current]{background:var(--co-soft);color:var(--co-ink);font-weight:600}
-.rail-item .sys-dot{box-shadow:0 0 0 3px var(--co-soft)}
+/* the screen in view: a raised row with the live accent as a 2px bar; the company colour stays on its dot */
+.rail-item[aria-current]{background:var(--sys-bg-3);color:var(--sys-ink);font-weight:600}
+.rail-item[aria-current]::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;border-radius:2px;background:var(--sys-brand)}
+.rail-item .sys-dot{width:6px;height:6px}
+/* colour means a company: the six companies keep their accent dot, every other screen carries a quiet one */
+.rail-item:not(:is([data-mod="cet"],[data-mod="pp"],[data-mod="fl"],[data-mod="ts"],[data-mod="bpi"],[data-mod="fh"])) .sys-dot{background:var(--sys-line-2)}
+.rail-item[aria-current]:not(:is([data-mod="cet"],[data-mod="pp"],[data-mod="fl"],[data-mod="ts"],[data-mod="bpi"],[data-mod="fh"])) .sys-dot{background:var(--sys-brand)}
+@media (pointer:coarse){.rail-item{min-height:40px}}
 /* menu foot, one line in the .sys-src face: the "All pages" link (firm levels only), then the author and month. The link
    is a 32px-tall target; the line wraps only if the type falls back to a wider face */
 .rail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 var(--sys-sp-3);margin-top:0;padding:var(--sys-sp-1) var(--sys-sp-5);border-top:1px solid var(--sys-line);font-size:11px}
@@ -94,7 +108,7 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .rail-pick{display:none}
 
 /* view bar: the system sub-nav pattern (module title + view links + actions) */
-#topbar{display:flex;align-items:center;gap:var(--sys-sp-4);height:var(--bar-h);padding:0 var(--sys-gut);flex-shrink:0;background:var(--sys-top-bg);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--sys-line);position:relative;z-index:5}
+#topbar{display:flex;align-items:center;gap:var(--sys-sp-4);height:var(--bar-h);padding:0 var(--sys-gut);flex-shrink:0;background:var(--sys-bg-2);border-bottom:1px solid var(--sys-line);position:relative;z-index:5}
 .view-tabs{flex:1;min-width:0}
 .view-tabs--one{visibility:hidden}
 /* closed section (<details>): .sys-fold and the module names that share its look live in assets/system.css (R7), so a
@@ -103,7 +117,12 @@ body[data-sys-layout="app"]>.sys-top{background:var(--sys-top-bg)}   /* the same
 .insp-fold>summary{gap:var(--sys-sp-2);padding:var(--sys-sp-2) var(--sys-sp-3)}
 .insp-fold>.insp-sec{margin:0;padding:var(--sys-sp-3);border-top:1px solid var(--sys-line)}
 :where(#app) a.view-tab{text-decoration:none}
+/* tabs: plain words on the bar; the screen in view carries the live accent as an underline */
 .view-tab{gap:6px}
+#topbar .view-tabs{align-self:stretch;gap:var(--sys-sp-1)}
+#topbar a.view-tab{height:auto;align-self:stretch;padding:0 10px;border-radius:0;font-size:13px}
+#topbar a.view-tab:hover{background:transparent;color:var(--sys-ink)}
+#topbar a.view-tab[aria-current]{background:transparent;color:var(--sys-ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--sys-brand)}
 .view-tab .n{height:18px;padding:0 5px;font-size:10px}
 /* the bar's controls: the as-of chip, "Sources" and "Method" (each only when the screen has one: assets/core.js
    Drawers), then "Search" with its shortcut on wide screens, an icon at 1280px and narrower (§9) */
@@ -299,24 +318,34 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 
 /* ── 7 · search palette (⌘K), tour bar, toast ─────────────────────────────── */
 #palette{position:fixed;inset:0;z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding:12vh var(--sys-gut) 0;background:color-mix(in srgb,var(--sys-ink) 28%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.pal{width:680px;max-width:100%;padding:0;gap:0;overflow:hidden;box-shadow:var(--sys-sh-3)}
+.pal{width:640px;max-width:100%;padding:0;gap:0;overflow:hidden;box-shadow:var(--sys-sh-3);animation:pal-in var(--sys-t) var(--sys-ease)}
+@keyframes pal-in{from{opacity:0;transform:translateY(-6px) scale(.985)}}
 .pal-in{display:flex;align-items:center;gap:var(--sys-sp-3);padding:0 var(--sys-sp-5);border-bottom:1px solid var(--sys-line);color:var(--sys-mute)}
 .pal-in svg{width:18px;height:18px;flex-shrink:0}
-.pal .pal-input{flex:1;min-width:0;min-height:60px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font:500 17px/1.2 var(--sys-font);color:var(--sys-ink)}
+.pal .pal-input{flex:1;min-width:0;min-height:48px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font:500 15px/1.2 var(--sys-font);color:var(--sys-ink)}
 .pal .pal-input:focus{box-shadow:none;outline:none}
 .pal-in:focus-within{box-shadow:inset 0 -2px 0 var(--sys-focus)}
 .pal-list{max-height:52vh;overflow:auto;padding:var(--sys-sp-2)}
-.pal-item{display:flex;align-items:center;gap:var(--sys-sp-3);min-height:44px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-sm);cursor:pointer;font-size:var(--sys-fs-sm);color:var(--sys-ink)}
+.pal-item{position:relative;display:flex;align-items:center;gap:var(--sys-sp-3);min-height:36px;padding:0 var(--sys-sp-3);border-radius:var(--sys-r-sm);cursor:pointer;font-size:var(--sys-fs-sm);color:var(--sys-ink)}
 .pal-item:hover,.pal-item.active{background:var(--sys-bg-3)}
+.pal-item.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:2px;background:var(--sys-brand)}
+@media (pointer:coarse){.pal-item{min-height:44px}}
 .pal-item .k{min-width:96px;flex-shrink:0}
 .pal-item .k .sys-dot{width:7px;height:7px}
 .pal-item .s{margin-left:auto;color:var(--sys-mute);font-size:var(--sys-fs-xs)}
+/* the key hints under the list (keyboard only: hidden where there is no hover, and from screen readers) */
+.pal-foot{display:flex;align-items:center;gap:var(--sys-sp-4);margin:0;padding:var(--sys-sp-2) var(--sys-sp-5);border-top:1px solid var(--sys-line)}
+.pal-foot span{display:inline-flex;align-items:center;gap:var(--sys-sp-1)}
+.pal-foot .sys-kbd{min-width:22px;justify-content:center;font-family:var(--sys-mono)}
+@media (hover:none){.pal-foot{display:none}}
 #tour{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:1500;width:min(880px,calc(100vw - 2 * var(--sys-gut)));box-shadow:var(--sys-sh-3)}
 #tour .cap{font-size:var(--sys-fs-base);line-height:1.55;color:var(--sys-ink)}
 #tour .meta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-3)}
 #tour .meta .sys-src{margin:0}
 #tour .prog{flex:1;min-width:80px;height:3px;background:var(--sys-bg-3);border-radius:var(--sys-r-pill);overflow:hidden}
 #tour .prog i{display:block;height:100%;background:var(--sys-grad);transition:width .3s linear}
+/* the floating Ask button sits above the status strip */
+@media (min-width:901px){body[data-sys-layout="app"] .ch.ch-floating :is(.ch-launch,.ch-panel){bottom:calc(var(--sys-status-h) + 12px)}body[data-sys-layout="app"] .ch.ch-floating .ch-panel{height:min(760px,calc(100vh - var(--sys-status-h) - 32px))}}
 .toast{position:fixed;right:var(--sys-gut);bottom:var(--launch-clear,24px);z-index:3000;max-width:min(420px,calc(100vw - 2 * var(--sys-gut)));box-shadow:var(--sys-sh-2)}
 
 /* ── 8 · print ───────────────────────────────────────────────────────────── */
@@ -343,6 +372,8 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
      the tabs, the controls take a second row, right-aligned */
   #topbar{height:auto;padding:var(--sys-sp-2) var(--sys-gut);gap:var(--sys-sp-2);flex-wrap:wrap}
   .view-tabs{flex:1 1 180px;margin-left:calc(-1 * var(--sys-gut));padding-left:var(--sys-gut)}
+  #topbar .view-tabs{align-self:auto}
+  #topbar a.view-tab{height:40px;align-self:auto}
   .view-tabs--one{flex-basis:0}
   #inspector.open{position:fixed;right:var(--sys-sp-2);top:var(--sys-sp-2);bottom:var(--sys-sp-2);z-index:1200;margin:0;width:min(calc(100vw - 16px),var(--insp-w));box-shadow:var(--sys-sh-3)}
   #content{padding:var(--sys-sp-5) var(--sys-gut) var(--sys-sp-6)}

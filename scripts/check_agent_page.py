@@ -71,6 +71,8 @@ def new_page(browser, w, h, dark=False, reduced=False):
     ctx = browser.new_context(viewport={'width': w, 'height': h}, reduced_motion='reduce' if reduced else 'no-preference')
     if dark:
         ctx.add_init_script("try{localStorage.setItem('bsp-theme','dark')}catch(e){}")
+    else:   # the site is dark by default: a light run starts from a saved light choice, and a check that changes the theme keeps its change
+        ctx.add_init_script("try{if(!localStorage.getItem('bsp-theme'))localStorage.setItem('bsp-theme','light')}catch(e){}")
     return ctx, ctx.new_page()
 
 
@@ -150,7 +152,7 @@ def page_checks(browser, site, catalog):
     dlg = page.locator('#ca-consent')
     check('Connect opens the consent dialog', poll(lambda: dlg.evaluate('d => d.open'), 3))
     first = (dlg.locator('.sys-card-label').first.text_content() or '').strip()
-    check('first dialog label is "Broad Sky OS sandbox"', first == 'Broad Sky OS sandbox', first)
+    check('first dialog label is "Broad Sky OS example data"', first == 'Broad Sky OS example data', first)
     n_inputs = dlg.locator('input, select, textarea').count()
     check('consent dialog has no input, select or textarea', n_inputs == 0, f'{n_inputs} found')
     visible_text_ok(page, catalog, 'consent dialog')
@@ -318,7 +320,7 @@ SKETCH_GEOMETRY_JS = """async (evs) => {
   for (const [name, ev] of Object.entries(evs)) {
     const host = document.createElement('div'); host.id = 'ca-geo'; document.querySelector('main').append(host);
     host.append(m.renderCard(JSON.parse(JSON.stringify(ev)), { widget: { root: host } }));
-    host.querySelectorAll('.ca-fs-svg').forEach(d => { d.hidden = false; });
+    host.querySelectorAll('.ca-fs-plan, .ca-fs-svg').forEach(d => { d.hidden = false; });   // the plan sits behind "Plan" when the card leads with 3D
     const r = { labelOver: [], ringOver: [], clipped: [], arrowGap: [], links: [], runs: [] };
     for (const svg of host.querySelectorAll('svg.ca-fs')) {
       const vb = svg.viewBox.baseVal;
@@ -624,7 +626,8 @@ CARD_JS = """async ([card, opts]) => {
 
 def live_card_checks(browser, site):
     """A live floor_sketch card (a recorded public-building card): the real outline behind the plan, the place chip, the key, the
-    facts in a closed section, no "Example address"; the 3D control opens and closes cleanly; a company-record card keeps
+    facts in a closed section, no "Example address"; the 3D model opens by itself with the list beside it (under it on a
+    phone) and the flat plan behind "Plan"; a company-record card keeps
     "Example address". 1440x900 and 390x844, light and dark."""
     fx = json.load(open(SITE_CARD, encoding='utf-8'))
     live, cmd_card = fx['card'], fx['map_command']
@@ -662,15 +665,31 @@ def live_card_checks(browser, site):
               json.dumps({k: r[k] for k in ('factsOpen', 'facts', 'srcs', 'srcList')}))
         check(f'{label}: no "Example address", sandbox or fictional words on a live card', not re.search(r'example address|sandbox|fictional', r['text'], re.I))
         check(f'{label}: "Show on map" built from the place', r['map'] == 1)
-        # 3D: opens assets/house3d.js under the plan, and a second press removes it cleanly
-        btn = page.locator('#ca-t article.ca-sketch [data-ca="3d"]')
-        btn.click()
-        opened = poll(lambda: page.evaluate("() => { const h = document.querySelector('#ca-t .ca-3d'); return !h.hidden && !!h.querySelector('.h3, p.sys-src:not(.ca-3d-wait)'); }"), 10)
+        # 3D first: the model opens by itself (lazy, stamped import) as the first thing under the card's header, the list beside it
+        # at 1440 px (the stage's height, its own scroll) and under it at 390 px; the flat plan waits behind a pressed-state "Plan"
+        page.locator('#ca-t article.ca-sketch').scroll_into_view_if_needed()
+        opened = poll(lambda: page.evaluate("() => { const a = document.querySelector('#ca-t article.ca-sketch'); return a.dataset.view === '3d' && !!a.querySelector('.ca-3d .h3[data-ready=\"1\"]'); }"), 30, 0.25)
         mod = page.evaluate("() => [...performance.getEntriesByType('resource')].some(e => /assets\\/house3d\\.js\\?v=/.test(e.name))")
-        check(f'{label}: 3D opens the house view (lazy, stamped import)', opened and mod and btn.get_attribute('aria-expanded') == 'true')
-        btn.click()
-        gone = page.evaluate("() => { const h = document.querySelector('#ca-t .ca-3d'); return h.hidden && h.childElementCount === 0; }")
-        check(f'{label}: a second press removes the 3D view', gone and btn.get_attribute('aria-expanded') == 'false')
+        lay = page.evaluate("""() => { const a = document.querySelector('#ca-t article.ca-sketch'), st = a.querySelector('.h3-stage'), li = a.querySelector('.ca-fs-body > .ca-equip');
+          const R = e => e ? e.getBoundingClientRect() : null, s = R(st), l = R(li), plan = a.querySelector('.ca-fs-plan'), btn = a.querySelector('[data-ca="plan"]');
+          const firstBlock = [...a.children].find(c => !c.matches('.sys-card-label, .ca-fs-title, .ca-fs-placebar, .ca-fs-outline-t, .ca-house, .ca-fs-area'));
+          return { first: firstBlock ? firstBlock.className : '', stage: s && [s.left, s.top, s.width, s.height], list: l && [l.left, l.top, l.width, l.height],
+                   listScroll: li ? getComputedStyle(li).overflowY : '', planHidden: plan.hidden, btn: btn ? [btn.textContent.trim(), btn.getAttribute('aria-pressed')] : null,
+                   old3d: a.querySelectorAll('[data-ca="3d"]').length }; }""")
+        check(f'{label}: the 3D model opens by itself, lazily, first under the header (no 3D button)', opened and mod and 'ca-fs-body' in lay['first'] and lay['old3d'] == 0,
+              json.dumps({'opened': opened, 'mod': mod, 'first': lay['first']}))
+        if w >= 1000:
+            side = lay['stage'] and lay['list'] and lay['list'][0] >= lay['stage'][0] + lay['stage'][2] - 1 and abs(lay['list'][1] - lay['stage'][1]) <= 2 and abs(lay['list'][3] - lay['stage'][3]) <= 2 and lay['listScroll'] in ('auto', 'scroll')
+            check(f'{label}: the list sits beside the stage, the same height, with its own scroll', side, json.dumps(lay))
+        else:
+            under = lay['stage'] and lay['list'] and lay['list'][1] >= lay['stage'][1] + lay['stage'][3] and lay['stage'][2] >= w - 120
+            check(f'{label}: the list sits under the stage on a phone', under, json.dumps(lay))
+        check(f'{label}: the flat plan waits behind a "Plan" control, not pressed', lay['planHidden'] and lay['btn'] == ['Plan', 'false'], json.dumps(lay['btn']))
+        page.locator('#ca-t article.ca-sketch [data-ca="plan"]').click()
+        shown = page.evaluate("() => { const a = document.querySelector('#ca-t article.ca-sketch'), p = a.querySelector('.ca-fs-plan'); return !p.hidden && p.querySelector('.ca-fs-svg:not([hidden]) svg').getBoundingClientRect().width > 200 && a.querySelector('[data-ca=\"plan\"]').getAttribute('aria-pressed') === 'true'; }")
+        page.locator('#ca-t article.ca-sketch [data-ca="plan"]').click()
+        hid = page.evaluate("() => document.querySelector('#ca-t article.ca-sketch .ca-fs-plan').hidden")
+        check(f'{label}: "Plan" shows the flat plan and hides it again', shown and hid)
         # a company-record card (example data) still says so
         page.evaluate(CARD_JS, [{**sandbox, 'id': 'fs-sbx'}, {}])
         ex = page.evaluate("() => [...document.querySelectorAll('#ca-t article.ca-sketch')].at(-1).querySelector('.ca-fs-ex')?.textContent || ''")
@@ -680,6 +699,72 @@ def live_card_checks(browser, site):
         check(f'{label}: no sideways scroll, nothing outside the site, no console errors', sw == w and r['wide'] <= 1 and not outside and not con.errors,
               json.dumps({'sw': sw, 'wide': r['wide'], 'outside': outside[:2], 'errors': con.errors[:2]}))
         ctx.close()
+
+
+def place_answer_checks(browser, site):
+    """The plumber's place answer (the prepared answer, backend off), 3D first: "Start here" items glow and are named in the model
+    from the start, the model turns in once and then stops (drawn only while something moves; no turn at all under reduced motion),
+    pressing a row turns the model to that item, shows its floor and picks it, and picking in the model marks its row. With no
+    WebGL the flat plan shows by itself with one plain line saying the 3D view is unavailable. No console errors."""
+    for w, h, dark, red in ((1440, 900, True, False), (390, 844, False, True)):
+        label = f"place answer {w} px {'dark' if dark else 'light'}{' reduced motion' if red else ''}"
+        ctx, page = new_page(browser, w, h, dark=dark, reduced=red)
+        con = Console(page, site)
+        page.goto(f'{site}/agent.html?role=pp-plumber&backend=off')
+        wait_ready(page)
+        page.locator('[data-ca="sig"]').click()
+        page.locator('#ca-chat article.ca-sketch').scroll_into_view_if_needed()
+        ok = poll(lambda: page.evaluate("() => document.querySelector('#ca-chat article.ca-sketch')?.dataset.view === '3d'"), 30, 0.25)
+        st = page.evaluate("() => document.querySelector('#ca-chat article.ca-sketch')._h3.stats()")
+        focus = [o for o in st['items'] if o['focus']]
+        named = [o['name'].replace(' (likely)', '') for o in focus]
+        check(f'{label}: "Start here" items glow and are named in the model from the start', ok and focus and all(o['glow'] for o in focus)
+              and all(any(t.startswith(n) for t in st['labels']) for n in named) and len(st['labels']) <= len(focus) + 1,
+              json.dumps({'labels': st['labels'], 'focus': named}))
+        check(f'{label}: a lit model (tone mapping, soft shadows, pixel ratio at most 2), opened on the "Start here" floor, cutaway',
+              st['render']['toneMapped'] and st['render']['shadows'] and st['render']['pixelRatio'] <= 2 and st['floor'] == 'basement' and st['view'] == 'cutaway'
+              and st['render']['section'] and st['render']['contact'] > 0, json.dumps(st['render']))
+        if not red:
+            moving = st['moving']
+            still = poll(lambda: not page.evaluate("() => { const s = document.querySelector('#ca-chat article.ca-sketch')._h3.stats(); return s.moving || s.drawing; }"), 8, 0.2)
+            check(f'{label}: the turn-in plays once and stops; nothing is drawn after', still, json.dumps({'moving at first': moving}))
+        else:
+            check(f'{label}: no turn-in under reduced motion', not st['moving'])
+        # a row in the list turns the model to its item and picks it
+        page.locator('#ca-chat article.ca-sketch .ca-eq[data-ca="equip"]').nth(3).click()
+        r = page.evaluate("""() => { const a = document.querySelector('#ca-chat article.ca-sketch'), s = a._h3.stats(), row = a.querySelectorAll('.ca-eq[data-ca="equip"]')[3];
+          return { picked: s.picked, floor: s.floor, row: row.dataset.k, on: row.classList.contains('is-on'), info: a.querySelector('.h3-info').innerText }; }""")
+        check(f'{label}: pressing a row picks its item in the model, on its floor, and marks the row', r['picked'] and r['picked'].startswith('basement-i') and r['on']
+              and 'Furnace' in r['info'], json.dumps(r))
+        # picking in the model marks the row; Escape clears it
+        page.evaluate("() => document.querySelector('#ca-chat article.ca-sketch')._h3.select(null)")
+        page.wait_for_timeout(200 if red else 900)
+        k = page.evaluate("""() => { const a = document.querySelector('#ca-chat article.ca-sketch');
+          const l = [...a.querySelectorAll('.h3-label.is-focus')].find(e => !e.hidden && e.textContent.startsWith('Water heater')); if (!l) return 'no label';
+          const r = l.getBoundingClientRect(), stem = parseFloat(l.style.getPropertyValue('--h3-stem')) || 10;
+          a._h3.pickAt(r.left + r.width / 2, r.bottom + stem + 8);
+          const on = a.querySelector('.ca-eq.is-on'); return on ? on.querySelector('b').textContent : 'none'; }""")
+        check(f'{label}: picking an item in the model marks its row in the list', k == 'Water heater', str(k))
+        page.keyboard.press('Escape')
+        sw = page.evaluate('document.documentElement.scrollWidth')
+        check(f'{label}: no sideways scroll, no console errors', sw == w and not con.errors, json.dumps({'sw': sw, 'errors': con.errors[:3]}))
+        ctx.close()
+    # no WebGL: the plan by itself, as a card with no model shows it, and one plain line
+    ctx, page = new_page(browser, 390, 844)
+    ctx.add_init_script("""(() => { const g = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (t, ...r) { return /webgl/.test(t) ? null : g.call(this, t, ...r); }; })();""")
+    con = Console(page, site)
+    page.goto(f'{site}/agent.html?role=pp-plumber&backend=off')
+    wait_ready(page)
+    page.locator('[data-ca="sig"]').click()
+    page.wait_for_selector('#ca-chat article.ca-sketch', timeout=10000)
+    page.wait_for_timeout(800)
+    r = page.evaluate("""() => { const a = document.querySelector('#ca-chat article.ca-sketch'), p = a.querySelector('.ca-fs-plan');
+      return { plan: !!p && !p.hidden && p.querySelector('.ca-fs-svg:not([hidden]) svg').getBoundingClientRect().width > 200, btn: a.querySelectorAll('[data-ca="plan"], [data-ca="3d"], .ca-3d').length,
+               line: [...a.querySelectorAll('.ca-3d-off')].map(e => e.textContent), list: !!a.querySelector('.ca-equip') }; }""")
+    check('place answer, no WebGL: the flat plan shows by itself with one line saying the 3D view is unavailable', r['plan'] and r['btn'] == 0 and r['list']
+          and r['line'] == ['The 3D view is unavailable in this browser.'] and not con.errors, json.dumps(r))
+    ctx.close()
 
 
 # ── the plan drawing rules (FLOORPLAN_SPEC R1, R2, R3, R4, R6, R7): cards built to the new card contract ───────────────────
@@ -719,6 +804,7 @@ PLAN_JS = """async (card) => {
   document.getElementById('ca-plan')?.remove();
   const host = document.createElement('div'); host.id = 'ca-plan'; document.querySelector('.ca-main').prepend(host);
   const a = m.renderCard(card, { widget: { root: host } }); host.append(a);
+  a.querySelector('[data-ca="plan"][aria-pressed="false"]')?.click();   // a card that leads with 3D keeps its flat plan behind "Plan"
   await new Promise(r => setTimeout(r, 400));
   return true;
 }"""
@@ -1480,8 +1566,8 @@ HOME_MEASURE = """() => {
   const h1s = [...main.querySelectorAll('h1')], d = main.querySelector('.sys-display'), serif = [...main.querySelectorAll('*')].filter(e => shown(e) && /Instrument Serif/.test(getComputedStyle(e).fontFamily));
   const ask = [...main.querySelectorAll('[data-hm="ask"]')].filter(shown);
   const band = main.querySelector('.sys-command'), pill = main.querySelector('.sys-askbar');
-  return { h1: h1s.length, display: d ? { t: d.textContent.trim(), fs: parseFloat(getComputedStyle(d).fontSize), ff: getComputedStyle(d).fontFamily, isH1: d.tagName === 'H1' } : null,
-    serif: serif.length, font: document.fonts.check('400 40px "Instrument Serif"'), small, small12, low: low.slice(0, 6), tiny: tiny.slice(0, 6),
+  return { h1: h1s.length, display: d ? { t: d.textContent.trim(), fs: parseFloat(getComputedStyle(d).fontSize), ff: getComputedStyle(d).fontFamily, fw: getComputedStyle(d).fontWeight, isH1: d.tagName === 'H1' } : null,
+    serif: serif.length, small, small12, low: low.slice(0, 6), tiny: tiny.slice(0, 6),
     sideways: document.documentElement.scrollWidth > document.documentElement.clientWidth || main.scrollWidth > main.clientWidth,
     ask: ask.length, band: band ? { bg: getComputedStyle(band).backgroundColor, theme: band.dataset.sysTheme, r: parseFloat(getComputedStyle(band).borderTopLeftRadius) } : null,
     pill: pill ? { show: pill.hasAttribute('data-show'), top: pill.getBoundingClientRect().top } : null, vh: innerHeight,
@@ -1506,8 +1592,8 @@ def _home_page(browser, site, role, w, h, dark):
 
 def command_checks(browser, site):
     """The command band on every kind of home (firm, company leadership, the fund, office, field), offline, in both themes from
-    360 to 1440 px: one h1, the band headline in the display face at 28 px or more and no other text in it, the band a dark island
-    (its navy token in either theme, radius 32 or 24), no text under 11 px anywhere in the home and none under 12 px in the band,
+    360 to 1440 px: one h1, the band headline in the sans at weight 600 and 24 px or more and no serif face anywhere, the band a dark
+    island (its token, the same in both themes, radius 12, or 10 at 560 px and narrower), no text under 11 px anywhere in the home and none under 12 px in the band,
     tiles, day strip and pill, text contrast 4.5:1 (3:1 for large type) on the real composited backgrounds, the ask box's
     placeholder too, every control at least 24 px, no sideways scroll, exactly one ask entry on screen. Then: the band's ask box
     from the keyboard (Tab order reaches it after the menu; a question typed there opens the dock and is asked in it), the role's
@@ -1523,12 +1609,12 @@ def command_checks(browser, site):
         ctx, page, outside, con = _home_page(browser, site, role, w, h, dark)
         m = page.evaluate(HOME_MEASURE)
         d = m['display'] or {}
-        check(f'{tag}: one h1, the band headline in the display face at 28 px or more, the face used nowhere else',
-              m['h1'] == 1 and d.get('isH1') and d.get('t') and d.get('fs', 0) >= 28 and d.get('ff', '').startswith('"Instrument Serif"') and m['serif'] == 1 and m['font'],
-              json.dumps({k: m[k] for k in ('h1', 'display', 'serif', 'font')})[:300])
-        navy = 'rgb(17, 27, 42)' if dark else 'rgb(11, 19, 34)'
-        check(f'{tag}: the band is a dark island on its navy token, radius {24 if w <= 560 else 32}',
-              m['band'] and m['band']['theme'] == 'dark' and m['band']['bg'] == navy and m['band']['r'] == (24 if w <= 560 else 32), json.dumps(m['band']))
+        check(f'{tag}: one h1, the band headline in the sans at weight 600 and 24 px or more, no serif face anywhere in the home',
+              m['h1'] == 1 and d.get('isH1') and d.get('t') and d.get('fs', 0) >= 24 and re.match(r'^["\']?Inter', d.get('ff', '')) and str(d.get('fw')) == '600'
+              and m['serif'] == 0, json.dumps({k: m[k] for k in ('h1', 'display', 'serif')})[:300])
+        band_bg = 'rgb(15, 17, 20)'   # --sys-cmd-bg, the same in both themes
+        check(f'{tag}: the band is a dark island on its token, radius {10 if w <= 560 else 12}',
+              m['band'] and m['band']['theme'] == 'dark' and m['band']['bg'] == band_bg and m['band']['r'] == (10 if w <= 560 else 12), json.dumps(m['band']))
         check(f'{tag}: no text under 11 px, none under 12 px in the band and the parts below it', not m['small'] and not m['small12'], json.dumps({'small': m['small'][:4], 'small12': m['small12'][:4]}))
         check(f'{tag}: text contrast 4.5:1 (3:1 large) on the composited background, the placeholder too', not m['low'], json.dumps(m['low']))
         check(f'{tag}: every link and button is at least 24 px', not m['tiny'], json.dumps(m['tiny']))
@@ -1730,8 +1816,8 @@ def backend_checks(browser, site, tmp):
         check('backend: one floor sketch renders from the card event', got and page.locator('#ca-chat .ca-sketch').count() == 1,
               str(page.locator('#ca-chat .ca-sketch').count()))
         cites = lambda: page.evaluate("[...document.querySelectorAll('#ca-chat .ch-sources .m')].map(e => e.textContent).join(' | ')")  # noqa: E731
-        poll(lambda: 'Sandbox app' in cites(), 10, 0.25)
-        check('backend: a citation reads "Sandbox app"', 'Sandbox app' in cites(), cites()[:120])
+        poll(lambda: 'Example app' in cites(), 10, 0.25)
+        check('backend: a citation reads "Example app"', 'Example app' in cites(), cites()[:120])
         check('backend: q is gone from the URL', 'q=' not in urllib.parse.urlsplit(page.url).query, page.url)
         check('backend: no console errors', not con.errors, '; '.join(con.errors[:3]))
         ctx.close()
@@ -1759,6 +1845,7 @@ def main():
             try:
                 signature_checks(browser, site, catalog)
                 live_card_checks(browser, site)
+                place_answer_checks(browser, site)
                 plan_rules_checks(browser, site)
                 plan_phone_checks(browser, site)
                 view_card_checks(browser, site)

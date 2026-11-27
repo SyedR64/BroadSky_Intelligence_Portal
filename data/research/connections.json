@@ -3,7 +3,7 @@
  "as_of": "2026-11-23",
  "states": {
   "live": "Live",
-  "sandbox": "Sandbox",
+  "sandbox": "Example data",
   "available": "Connector available",
   "planned": "Planned"
  },

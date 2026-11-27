@@ -12,26 +12,31 @@
    class is prefixed .sys-, element resets use :where() so page CSS always wins.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── 1 · tokens (light, the default) ──────────────────────────────────────── */
+/* ── 1 · tokens (the light theme's values; the site opens dark, §2, unless the visitor chose light) ── */
+/* The look is an operations console (UNIFIED.md §4): neutral graphite or paper surfaces, hairline borders, small radii,
+   a monospace for figures, labels and status tags, and ONE live accent (--sys-brand, an amber orange) for selection,
+   focus and the things that are happening now. Company accents (--co-*) stay as small dots and card rules.            */
 :root{
   /* surfaces + ink */
-  --sys-bg:#fbfaf7; --sys-bg-2:#f4f2ed; --sys-bg-3:#ece9e2;
-  --sys-surface:#ffffff; --sys-surface-2:#faf9f6;
-  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#545c69; --sys-mute-2:#646b77;   /* both pass 4.5:1 on --sys-bg-3 (Accessibility, UNIFIED.md §13) */
-  --sys-line:#e8e5de; --sys-line-2:#d8d4ca;
+  --sys-bg:#f6f7f8; --sys-bg-2:#eef0f2; --sys-bg-3:#e4e7ea;
+  --sys-surface:#ffffff; --sys-surface-2:#fafbfc;
+  --sys-ink:#0b0e13; --sys-ink-2:#343b46; --sys-mute:#525a66; --sys-mute-2:#5f6773;   /* both pass 4.5:1 on --sys-bg-3 (Accessibility, UNIFIED.md §13) */
+  --sys-line:#e2e5e9; --sys-line-2:#cfd4da;
   --sys-on-ink:#ffffff;                 /* text on an ink (primary) fill */
   --sys-on-accent:#0a0e14;              /* text on a company-accent or brand fill (white fails on most accents) */
   --sys-navy:#0e2236;
-  /* brand */
-  --sys-brand:#b84a17; --sys-orange:#f2832f; --sys-coral:#e2533f; --sys-violet:#6a5cff;
-  --sys-grad:linear-gradient(100deg,#f2832f 0%,#e2533f 42%,#b9468f 70%,#6a5cff 100%);
-  --sys-grad-soft:linear-gradient(100deg,rgba(242,131,47,.14),rgba(226,83,63,.10) 40%,rgba(106,92,255,.12));
+  /* brand: the one live accent. --sys-brand is its text-safe shade on this theme; --sys-orange the raw hue for fills */
+  --sys-brand:#b0470f; --sys-orange:#f2832f; --sys-coral:#e2533f; --sys-violet:#6a5cff;
+  --sys-grad:linear-gradient(100deg,#ffb347 0%,#ff8a2a 55%,#f0622d 100%);   /* one hue family: amber to orange */
+  --sys-grad-soft:linear-gradient(100deg,rgba(255,179,71,.14),rgba(255,138,42,.10) 55%,rgba(240,98,45,.10));
   /* status */
   --sys-good:#15803d; --sys-warn:#b45309; --sys-bad:#c62828; --sys-info:#2563eb;
   /* frame */
-  --sys-top-h:56px; --sys-top-bg:rgba(251,250,247,.86);
-  --sys-banner-bg:#0c1320; --sys-banner-fg:#e9ecf1;
-  --sys-footer-bg:#0c1320; --sys-footer-fg:#c4ccd8; --sys-footer-mute:#8792a3;
+  --sys-top-h:56px; --sys-top-bg:rgba(246,247,248,.9);
+  --sys-banner-bg:#0b0e13; --sys-banner-fg:#e9ecf1;
+  --sys-footer-bg:#0b0e13; --sys-footer-fg:#c4ccd8; --sys-footer-mute:#8792a3;
+  --sys-status-h:26px;                  /* the shell's status strip (§7c) */
+  --sys-grid-line:color-mix(in srgb,var(--sys-ink) 3.5%,transparent);   /* the faint grid behind the shell's content */
   /* company accents (same hues as the portal rail) */
   --co-pp:#f08a3c; --co-cet:#4c8dff; --co-fl:#9d7bff; --co-ts:#2ecc8f; --co-bpi:#e05c8a; --co-fh:#3fd0e0;
   --co:var(--sys-brand); --co-ink:var(--sys-brand); --co-soft:rgba(184,74,23,.08);
@@ -49,7 +54,7 @@
   --sys-fs-3xl:clamp(36px,6.2vw,72px);    /* h1, page titles */
   --sys-fs-display:clamp(48px,9vw,112px); /* landing hero only */
   --sys-lh-tight:1.04; --sys-lh-snug:1.28; --sys-lh-body:1.6;
-  --sys-tr-display:-.05em; --sys-tr-head:-.04em; --sys-tr-title:-.02em; --sys-tr-label:.12em;
+  --sys-tr-display:-.045em; --sys-tr-head:-.03em; --sys-tr-title:-.015em; --sys-tr-label:.1em;
   /* spacing scale (4-based) */
   --sys-sp-1:4px; --sys-sp-2:8px; --sys-sp-3:12px; --sys-sp-4:16px; --sys-sp-5:24px;
   --sys-sp-6:32px; --sys-sp-7:48px; --sys-sp-8:64px; --sys-sp-9:96px; --sys-sp-10:128px;
@@ -59,28 +64,30 @@
   /* layout */
   --sys-wrap:1200px; --sys-wrap-wide:1320px; --sys-wrap-narrow:760px; --sys-gut:clamp(16px,4vw,40px);
   /* radii */
-  --sys-r-xs:6px; --sys-r-sm:10px; --sys-r:16px; --sys-r-md:var(--sys-r); --sys-r-lg:24px; --sys-r-pill:999px;  /* --sys-r-md is an alias of --sys-r */
-  --sys-r-xl:32px;                        /* the command band (§6q) */
-  /* the command band (§6q): one display face for its single headline, never under 28px; figures in Inter */
-  --sys-font-display:"Instrument Serif",ui-serif,Georgia,"Times New Roman",serif;
-  /* the headline follows the band's own width (cqi of the band, a size container), not the window: 44px+ on a tablet band,
-     one line beside the docked agent; a little smaller once the mark takes the band's top-right corner */
-  --sys-fs-command:clamp(36px,7cqi,66px); --sys-fs-command-marked:clamp(36px,6.2cqi,66px); --sys-tr-command:-.03em;
-  --sys-fs-fig:clamp(24px,2.3vw,34px);
-  /* the band is a deep navy island in both themes (one step lighter than the page in dark, §2); panels inside it are
-     lighter washes, not borders */
-  --sys-cmd-bg:#0b1322; --sys-cmd-panel:rgba(255,255,255,.055); --sys-cmd-panel-2:rgba(255,255,255,.09); --sys-cmd-line:rgba(255,255,255,.10);
-  --sys-cmd-field:rgba(255,255,255,.08); --sys-cmd-field-line:rgba(255,255,255,.16);   /* the ask box on the band */
-  --sys-cmd-glow-1:rgba(106,124,255,.18); --sys-cmd-glow-2:rgba(240,135,74,.09);        /* the band's light, top right and floor */
+  /* small, squared corners. --sys-r-pill keeps its name (every button, chip, field and menu item reads it) but is no
+     longer a pill: controls are squared tags. Dots and round marks use 50%, never this token. */
+  --sys-r-xs:3px; --sys-r-sm:5px; --sys-r:8px; --sys-r-md:var(--sys-r); --sys-r-lg:10px; --sys-r-pill:6px;  /* --sys-r-md is an alias of --sys-r */
+  --sys-r-xl:12px;                        /* the command band (§6q) */
+  /* the command band (§6q): its single headline is the sans at weight 600 (the serif display face is retired), never under 24px */
+  --sys-font-display:var(--sys-font);
+  /* the headline follows the band's own width (cqi of the band, a size container), not the window; a little smaller once
+     the mark takes the band's top-right corner */
+  --sys-fs-command:clamp(24px,4.2cqi,38px); --sys-fs-command-marked:clamp(24px,3.9cqi,38px); --sys-tr-command:-.03em;
+  --sys-fs-fig:clamp(22px,2vw,28px);
+  /* the band is a graphite island in both themes (one step above the page in dark, §2); panels inside it are lighter
+     washes, and the band itself carries one hairline */
+  --sys-cmd-bg:#0f1114; --sys-cmd-panel:rgba(255,255,255,.045); --sys-cmd-panel-2:rgba(255,255,255,.08); --sys-cmd-line:rgba(255,255,255,.09);
+  --sys-cmd-field:rgba(255,255,255,.06); --sys-cmd-field-line:rgba(255,255,255,.14);   /* the ask box on the band */
+  --sys-cmd-glow-1:rgba(255,152,56,.10); --sys-cmd-glow-2:rgba(255,152,56,.035);        /* the band's light, top right and floor: the accent, faint */
   /* the hold bar (§6q): its track and the hatch of the exit window */
-  --sys-hold-track:#e4e0d6; --sys-hold-zone:#b45309; --sys-hold-mark:#3a4250;
+  --sys-hold-track:#dfe3e7; --sys-hold-zone:#b45309; --sys-hold-mark:#343b46;
   /* shadows */
-  --sys-sh-1:0 1px 2px rgba(12,19,32,.05),0 1px 1px rgba(12,19,32,.03);
-  --sys-sh-2:0 12px 32px -12px rgba(12,19,32,.16),0 2px 6px rgba(12,19,32,.05);
-  --sys-sh-3:0 40px 80px -30px rgba(12,19,32,.35),0 12px 28px -12px rgba(12,19,32,.18);
-  --sys-ring:0 0 0 3px rgba(226,83,63,.25);
+  --sys-sh-1:0 1px 1px rgba(11,14,19,.04);
+  --sys-sh-2:0 10px 28px -14px rgba(11,14,19,.18),0 2px 5px rgba(11,14,19,.05);
+  --sys-sh-3:0 36px 72px -30px rgba(11,14,19,.36),0 12px 26px -12px rgba(11,14,19,.18);
+  --sys-ring:0 0 0 3px rgba(255,152,56,.28);
   /* motion */
-  --sys-ease:cubic-bezier(.2,.7,.2,1); --sys-t:.2s;
+  --sys-ease:cubic-bezier(.2,.7,.2,1); --sys-t:.16s;
 }
 
 /* ── 2 · dark variant (portal console, theater, dark bands) ───────────────── */
@@ -88,20 +95,22 @@
    dark band. Same type, spacing, radii, accents; only colour tokens change.     */
 [data-sys-theme="dark"]{
   color-scheme:dark;
-  --sys-bg:#0a0e14; --sys-bg-2:#0e141c; --sys-bg-3:#161f2a;
-  --sys-surface:#111821; --sys-surface-2:#161f2a;
-  --sys-ink:#e6edf3; --sys-ink-2:#b6c2d0; --sys-mute:#8b98a8; --sys-mute-2:#7a889a;
-  --sys-line:#1f2a37; --sys-line-2:#2a3746;
-  --sys-on-ink:#0a0e14;
-  --sys-brand:#f0874a;
-  --sys-grad-soft:linear-gradient(100deg,rgba(242,131,47,.16),rgba(226,83,63,.10) 40%,rgba(106,92,255,.16));
-  --sys-good:#2ecc8f; --sys-warn:#f5b73d; --sys-bad:#ff6b6b; --sys-info:#6aa2ff;
-  --sys-top-bg:rgba(14,20,28,.9);
-  --sys-banner-bg:#161f2a; --sys-banner-fg:#c9d3df;
-  --sys-footer-bg:#06090e; --sys-footer-fg:#b6c2d0; --sys-footer-mute:#6b7a8d;
-  --sys-sh-1:0 1px 2px rgba(0,0,0,.4);
-  --sys-sh-2:0 14px 34px -14px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.35);
-  --sys-sh-3:0 40px 80px -30px rgba(0,0,0,.75),0 12px 28px -12px rgba(0,0,0,.5);
+  /* near-black graphite, neutral (no blue cast); depth is one hairline and one step of surface, not shadow */
+  --sys-bg:#08090b; --sys-bg-2:#0c0e11; --sys-bg-3:#171a1f;
+  --sys-surface:#0f1114; --sys-surface-2:#14171b;
+  --sys-ink:#eceef1; --sys-ink-2:#b4bac3; --sys-mute:#8d949f; --sys-mute-2:#7f8691;   /* both pass 4.5:1 on --sys-bg-3 */
+  --sys-line:#1c2026; --sys-line-2:#2b3038;
+  --sys-on-ink:#08090b;
+  --sys-brand:#ff9838;                  /* the live accent: amber orange, 8:1 or better on every dark surface */
+  --sys-grad-soft:linear-gradient(100deg,rgba(255,179,71,.12),rgba(255,138,42,.08) 55%,rgba(240,98,45,.08));
+  --sys-good:#3ddc97; --sys-warn:#f2c14e; --sys-bad:#ff6b6b; --sys-info:#6aa9ff;
+  --sys-top-bg:rgba(11,13,16,.94);
+  --sys-banner-bg:#14171b; --sys-banner-fg:#c5cbd3;
+  --sys-footer-bg:#050608; --sys-footer-fg:#b4bac3; --sys-footer-mute:#737a85;
+  --sys-grid-line:rgba(255,255,255,.022);
+  --sys-sh-1:none;
+  --sys-sh-2:0 14px 30px -14px rgba(0,0,0,.72),0 2px 6px rgba(0,0,0,.4);
+  --sys-sh-3:0 40px 80px -30px rgba(0,0,0,.8),0 12px 28px -12px rgba(0,0,0,.55);
   --co-ink:color-mix(in srgb,var(--co) 78%,var(--sys-ink));
   --co-soft:color-mix(in srgb,var(--co) 14%,transparent);
 }
@@ -111,19 +120,24 @@
    light island fall back to the light tokens.                                  */
 :root[data-sys-theme="dark"][data-theme="light"],[data-sys-theme="light"]{
   color-scheme:light;
-  --sys-bg:#fbfaf7; --sys-bg-2:#f4f2ed; --sys-bg-3:#ece9e2; --sys-surface:#fff; --sys-surface-2:#faf9f6;
-  --sys-ink:#0c1320; --sys-ink-2:#3a4250; --sys-mute:#545c69; --sys-mute-2:#646b77;
-  --sys-line:#e8e5de; --sys-line-2:#d8d4ca; --sys-on-ink:#fff; --sys-brand:#b84a17;
+  --sys-bg:#f6f7f8; --sys-bg-2:#eef0f2; --sys-bg-3:#e4e7ea; --sys-surface:#fff; --sys-surface-2:#fafbfc;
+  --sys-ink:#0b0e13; --sys-ink-2:#343b46; --sys-mute:#525a66; --sys-mute-2:#5f6773;
+  --sys-line:#e2e5e9; --sys-line-2:#cfd4da; --sys-on-ink:#fff; --sys-brand:#b0470f;
+  --sys-grad-soft:linear-gradient(100deg,rgba(255,179,71,.14),rgba(255,138,42,.10) 55%,rgba(240,98,45,.10));
   --sys-good:#15803d; --sys-warn:#b45309; --sys-bad:#c62828; --sys-info:#2563eb;
-  --sys-top-bg:rgba(251,250,247,.86); --sys-banner-bg:#0c1320; --sys-banner-fg:#e9ecf1;
-  --sys-footer-bg:#0c1320; --sys-footer-fg:#c4ccd8; --sys-footer-mute:#8792a3;
+  --sys-top-bg:rgba(246,247,248,.9); --sys-banner-bg:#0b0e13; --sys-banner-fg:#e9ecf1;
+  --sys-footer-bg:#0b0e13; --sys-footer-fg:#c4ccd8; --sys-footer-mute:#8792a3;
+  --sys-grid-line:color-mix(in srgb,var(--sys-ink) 3.5%,transparent);
+  --sys-sh-1:0 1px 1px rgba(11,14,19,.04);
+  --sys-sh-2:0 10px 28px -14px rgba(11,14,19,.18),0 2px 5px rgba(11,14,19,.05);
+  --sys-sh-3:0 36px 72px -30px rgba(11,14,19,.36),0 12px 26px -12px rgba(11,14,19,.18);
 }
 [data-sys-theme="light"]:not(html){background:var(--sys-bg);color:var(--sys-ink)}
 /* The command band's tokens follow the page, not the band: the band carries data-sys-theme="dark" on itself and keeps
    the root's values. In dark the band sits one step above the page (--sys-bg). */
 :root[data-sys-theme="dark"]:not([data-theme="light"]){
-  --sys-cmd-bg:#111b2a; --sys-cmd-panel:rgba(255,255,255,.05); --sys-cmd-panel-2:rgba(255,255,255,.085);
-  --sys-hold-track:#1f2a37; --sys-hold-zone:#f5b73d; --sys-hold-mark:#b6c2d0;
+  --sys-cmd-bg:#0f1114; --sys-cmd-panel:rgba(255,255,255,.04); --sys-cmd-panel-2:rgba(255,255,255,.075);
+  --sys-hold-track:#1c2026; --sys-hold-zone:#f2c14e; --sys-hold-mark:#b4bac3;
 }
 /* Text-safe status shades: status colours as text (est. badges, status chips,
    risk levels) sit on 10–12% tints of themselves, where the raw hue misses
@@ -155,9 +169,9 @@ html:has(.sys-subnav){--sys-subnav-h:48px}
    own ring (box-shadow on inputs, stroke on SVG nodes) still wins; nothing may
    remove focus without replacing it (UNIFIED.md §13). Dark surfaces inside a
    light page (banner, footer, dark bands) switch to the light-on-dark shade.   */
-:root{--sys-focus:#b84a17}
-[data-sys-theme="dark"],.sys-banner,.sys-footer{--sys-focus:#f0874a}
-:root[data-sys-theme="dark"][data-theme="light"],[data-sys-theme="light"]{--sys-focus:#b84a17}
+:root{--sys-focus:#b0470f}
+[data-sys-theme="dark"],.sys-banner,.sys-footer{--sys-focus:#ff9838}
+:root[data-sys-theme="dark"][data-theme="light"],[data-sys-theme="light"]{--sys-focus:#b0470f}
 :where(:focus-visible){outline:2px solid var(--sys-focus);outline-offset:2px}
 :where(.sys-top,.sys-banner,.sys-crumb,.sys-footer,[class*="sys-"]) :focus-visible{outline:2px solid var(--sys-focus);outline-offset:3px;border-radius:6px}
 :where(main[tabindex="-1"]):focus{outline:none}
@@ -190,7 +204,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;flex-shrink:0;min-width:0}
 .sys-brand svg{width:30px;height:30px;flex-shrink:0;border-radius:50%}
 [data-sys-theme="dark"] .sys-brand svg,.sys-footer .sys-brand svg{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
-.sys-brand-name{display:flex;flex-direction:column;font-weight:800;font-size:15px;letter-spacing:-.02em;line-height:1.05;white-space:nowrap}
+.sys-brand-name{display:flex;flex-direction:column;font-weight:700;font-size:15px;letter-spacing:-.02em;line-height:1.05;white-space:nowrap}
 .sys-brand-sub{font:500 10px/1.2 var(--sys-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--sys-mute);margin-top:3px}
 .sys-nav{display:flex;align-items:center;gap:2px;min-width:0}
 .sys-nav a{position:relative;display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 11px;border-radius:var(--sys-r-pill);text-decoration:none;font:500 14px/1 var(--sys-font);letter-spacing:-.005em;color:var(--sys-ink-2);white-space:nowrap;transition:background var(--sys-t),color var(--sys-t)}
@@ -203,7 +217,7 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-ask:hover{border-color:var(--sys-ink);box-shadow:var(--sys-sh-2)}
 .sys-ask[aria-expanded="true"]{border-color:var(--sys-ink);background:var(--sys-bg-3)}   /* a page's own Ask panel is open (frame.js setAskState) */
 .sys-ask .sys-dot{background:#22c55e;width:7px;height:7px}
-.sys-kbd{display:inline-flex;align-items:center;height:22px;padding:0 6px;border-radius:var(--sys-r-xs);background:var(--sys-bg-3);color:var(--sys-mute);font:500 11px/1 var(--sys-mono);letter-spacing:.02em}
+.sys-kbd{display:inline-flex;align-items:center;height:20px;padding:0 5px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-xs);background:var(--sys-bg-2);color:var(--sys-mute);font:500 11px/1 var(--sys-mono);letter-spacing:.02em}
 .sys-menu{display:none;width:40px;height:40px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0}
 .sys-menu span{display:block;width:16px;height:1.6px;border-radius:2px;background:var(--sys-ink);transition:transform var(--sys-t)}
 .sys-menu[aria-expanded="true"] span:first-child{transform:translateY(3.3px) rotate(45deg)}
@@ -356,15 +370,15 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-eyebrow{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 13px 6px 11px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:color-mix(in srgb,var(--sys-surface) 72%,transparent);box-shadow:var(--sys-sh-1);font:500 12px/1.3 var(--sys-mono);color:var(--sys-ink-2)}
 .sys-eyebrow b{color:var(--sys-ink);font-weight:600}
 .sys-eyebrow .sys-dot{background:var(--co)}
-.sys-h1{margin-top:var(--sys-sp-5);font-size:var(--sys-fs-3xl);font-weight:800;line-height:1.02;letter-spacing:var(--sys-tr-head);max-width:18ch;text-wrap:balance}
+.sys-h1{margin-top:var(--sys-sp-5);font-size:var(--sys-fs-3xl);font-weight:700;line-height:1.02;letter-spacing:var(--sys-tr-head);max-width:18ch;text-wrap:balance}
 .sys-h1--display{font-size:var(--sys-fs-display);line-height:.95;letter-spacing:var(--sys-tr-display)}
 .sys-hero .sys-lead{margin-top:var(--sys-sp-5);font-size:var(--sys-fs-lg);max-width:60ch}
 .sys-actions{display:flex;flex-wrap:wrap;gap:var(--sys-sp-3);margin-top:var(--sys-sp-6)}
 .sys-hero--center{text-align:center}
 .sys-hero--center .sys-h1,.sys-hero--center .sys-lead{margin-left:auto;margin-right:auto}
 .sys-hero--center .sys-actions{justify-content:center}
-.sys-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:clamp(32px,5vw,56px);background:var(--sys-line);border:1px solid var(--sys-line);border-radius:var(--sys-r);overflow:hidden;box-shadow:var(--sys-sh-1)}
-.sys-kpis>.sys-kpi{background:var(--sys-surface);border:0;border-radius:0;box-shadow:none}
+.sys-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:clamp(32px,5vw,56px);background:var(--sys-surface);border:1px solid var(--sys-line);border-radius:var(--sys-r);overflow:hidden;box-shadow:var(--sys-sh-1)}
+.sys-kpis>.sys-kpi{background:var(--sys-surface);border:0;border-radius:0;box-shadow:1px 0 0 var(--sys-line),0 1px 0 var(--sys-line)}
 
 /* ── 6b · section ─────────────────────────────────────────────────────────── */
 .sys-section{padding:var(--sys-section-y) 0}
@@ -377,8 +391,8 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 .sys-kicker{display:flex;align-items:center;gap:10px;margin-bottom:var(--sys-sp-4);font:600 var(--sys-fs-xs)/1 var(--sys-mono);letter-spacing:var(--sys-tr-label);text-transform:uppercase;color:var(--co-ink)}
 .sys-kicker::before{content:"";width:18px;height:2px;border-radius:2px;background:var(--sys-grad);flex-shrink:0}
 [data-co] .sys-kicker::before,.sys-kicker[data-co]::before{background:var(--co)}
-.sys-h2{font-size:var(--sys-fs-2xl);font-weight:800;line-height:1.06;letter-spacing:var(--sys-tr-head);text-wrap:balance}
-.sys-h3{font-size:var(--sys-fs-xl);font-weight:700;line-height:var(--sys-lh-snug);letter-spacing:var(--sys-tr-title)}
+.sys-h2{font-size:var(--sys-fs-2xl);font-weight:700;line-height:1.06;letter-spacing:var(--sys-tr-head);text-wrap:balance}
+.sys-h3{font-size:var(--sys-fs-xl);font-weight:600;line-height:var(--sys-lh-snug);letter-spacing:var(--sys-tr-title)}
 .sys-lead{margin-top:var(--sys-sp-4);max-width:62ch;font-size:clamp(16px,1.5vw,18.5px);line-height:1.6;color:var(--sys-ink-2)}
 .sys-src{margin-top:var(--sys-sp-4);font:500 var(--sys-fs-xs)/1.55 var(--sys-mono);color:var(--sys-mute)}
 .sys-src b{font-weight:600;color:var(--sys-ink-2)}
@@ -393,14 +407,14 @@ body[data-sys-print="own"]{--accent:var(--sys-brand)}
 
 /* ── 6d · card ────────────────────────────────────────────────────────────── */
 .sys-card{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;padding:clamp(18px,2vw,24px);background:var(--sys-surface);border:1px solid var(--sys-line);border-radius:var(--sys-r);box-shadow:var(--sys-sh-1);color:var(--sys-ink);text-decoration:none;transition:transform .25s var(--sys-ease),box-shadow .25s var(--sys-ease),border-color .25s}
-a.sys-card:hover,.sys-card--link:hover{transform:translateY(-3px);box-shadow:var(--sys-sh-2);border-color:var(--sys-line-2)}
+a.sys-card:hover,.sys-card--link:hover{transform:translateY(-1px);box-shadow:var(--sys-sh-2);border-color:var(--sys-line-2)}
 .sys-card[data-co]{overflow:hidden}
-.sys-card[data-co]::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--co)}
+.sys-card[data-co]::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--co)}
 .sys-card--flat{box-shadow:none;background:var(--sys-surface-2)}
 .sys-card--feature{padding:clamp(22px,3vw,36px);border-radius:var(--sys-r-lg)}
 .sys-card-label{display:flex;align-items:center;gap:8px;font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
 .sys-card-label .sys-dot{border-radius:3px}
-.sys-card-title{font-size:clamp(18px,1.6vw,20px);font-weight:700;line-height:1.3;letter-spacing:var(--sys-tr-title);color:var(--sys-ink)}
+.sys-card-title{font-size:clamp(17px,1.5vw,19px);font-weight:600;line-height:1.3;letter-spacing:var(--sys-tr-title);color:var(--sys-ink)}
 .sys-card-body{font-size:14.5px;line-height:1.55;color:var(--sys-ink-2)}
 .sys-card-body p+p{margin-top:8px}
 .sys-card-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:14px;color:var(--sys-ink-2)}
@@ -418,13 +432,13 @@ a.sys-card:hover,.sys-card--link:hover{transform:translateY(-3px);box-shadow:var
 .sys-kpi-sub{font-size:13px;line-height:1.45;color:var(--sys-mute)}
 .sys-delta{font:600 12px/1 var(--sys-mono);letter-spacing:0}
 .sys-delta--up{color:var(--sys-good)} .sys-delta--down{color:var(--sys-bad)}
-.sys-kpi[data-co]{border-top:3px solid var(--co)}
+.sys-kpi[data-co]{border-top:2px solid var(--co)}
 
 /* ── 6f · table ───────────────────────────────────────────────────────────── */
 .sys-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--sys-surface);border:1px solid var(--sys-line);border-radius:var(--sys-r);box-shadow:var(--sys-sh-1)}
 .sys-table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.45;color:var(--sys-ink-2)}
-.sys-table th{position:sticky;top:0;text-align:left;padding:11px 16px;background:var(--sys-bg-2);border-bottom:1px solid var(--sys-line);font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--sys-mute);white-space:nowrap}
-.sys-table td{padding:12px 16px;border-bottom:1px solid var(--sys-line);vertical-align:top}
+.sys-table th{position:sticky;top:0;text-align:left;padding:9px 14px;background:var(--sys-bg-2);border-bottom:1px solid var(--sys-line);font:600 var(--sys-fs-2xs)/1.3 var(--sys-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--sys-mute);white-space:nowrap}
+.sys-table td{padding:10px 14px;border-bottom:1px solid var(--sys-line);vertical-align:top}
 .sys-table tbody tr:last-child td{border-bottom:0}
 .sys-table tbody tr:hover td{background:var(--sys-surface-2)}
 .sys-table td:first-child{color:var(--sys-ink);font-weight:500}
@@ -432,22 +446,22 @@ a.sys-card:hover,.sys-card--link:hover{transform:translateY(-3px);box-shadow:var
 .sys-table caption{caption-side:bottom;text-align:left;padding:12px 16px;border-top:1px solid var(--sys-line);font:500 var(--sys-fs-xs)/1.5 var(--sys-mono);color:var(--sys-mute)}
 
 /* ── 6g · note / callout ──────────────────────────────────────────────────── */
-.sys-note{--n:var(--sys-mute);display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--sys-line);border-left:3px solid var(--n);border-radius:var(--sys-r-sm);background:color-mix(in srgb,var(--n) 6%,var(--sys-surface));font-size:14px;line-height:1.55;color:var(--sys-ink-2)}
+.sys-note{--n:var(--sys-mute);display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--sys-line);border-left:2px solid var(--n);border-radius:var(--sys-r-sm);background:color-mix(in srgb,var(--n) 6%,var(--sys-surface));font-size:14px;line-height:1.55;color:var(--sys-ink-2)}
 .sys-note b,.sys-note-title{color:var(--sys-ink);font-weight:600}
 .sys-note--info{--n:var(--sys-info)} .sys-note--warn{--n:var(--sys-warn)} .sys-note--good{--n:var(--sys-good)} .sys-note--bad{--n:var(--sys-bad)}
 .sys-note--co{--n:var(--co)}
 .sys-note-ico{flex-shrink:0;width:18px;height:18px;margin-top:1px;color:var(--n)}
 
 /* ── 6h · estimate badge ──────────────────────────────────────────────────── */
-.sys-est{display:inline-flex;align-items:center;margin-left:.35em;padding:3px 6px;border-radius:var(--sys-r-pill);vertical-align:.12em;font:600 11px/1 var(--sys-mono);letter-spacing:.03em;white-space:nowrap;color:var(--sys-warn-ink);background:color-mix(in srgb,var(--sys-warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--sys-warn) 32%,transparent)}
+.sys-est{display:inline-flex;align-items:center;margin-left:.35em;padding:3px 5px;border-radius:var(--sys-r-xs);vertical-align:.12em;font:600 11px/1 var(--sys-mono);letter-spacing:.03em;white-space:nowrap;color:var(--sys-warn-ink);background:color-mix(in srgb,var(--sys-warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--sys-warn) 32%,transparent)}
 .sys-est--illus{color:var(--sys-info-ink);background:color-mix(in srgb,var(--sys-info) 10%,transparent);border-color:color-mix(in srgb,var(--sys-info) 30%,transparent)}
 .sys-est--live{color:var(--sys-good-ink);background:color-mix(in srgb,var(--sys-good) 10%,transparent);border-color:color-mix(in srgb,var(--sys-good) 30%,transparent)}
 .sys-kpi-value .sys-est{font-size:11px;letter-spacing:.03em}
 
 /* ── 6i · chips ───────────────────────────────────────────────────────────── */
 .sys-chips{display:flex;flex-wrap:wrap;gap:8px}
-.sys-chip{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:0 12px;border-radius:var(--sys-r-pill);border:1px solid var(--sys-line-2);background:var(--sys-surface);font:500 13px/1.2 var(--sys-font);color:var(--sys-ink-2);text-decoration:none;white-space:nowrap}
-.sys-chip[data-co]::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--co)}
+.sys-chip{display:inline-flex;align-items:center;gap:6px;min-height:26px;padding:0 9px;border-radius:var(--sys-r-sm);border:1px solid var(--sys-line-2);background:var(--sys-surface);font:500 12.5px/1.2 var(--sys-font);color:var(--sys-ink-2);text-decoration:none;white-space:nowrap}
+.sys-chip[data-co]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--co)}
 button.sys-chip,a.sys-chip{cursor:pointer;transition:border-color var(--sys-t),color var(--sys-t),background var(--sys-t)}
 button.sys-chip:hover,a.sys-chip:hover{border-color:var(--sys-ink);color:var(--sys-ink)}
 .sys-chip[aria-pressed="true"],.sys-chip[aria-current]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
@@ -455,12 +469,12 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-chip--soft{border-color:transparent;background:var(--co-soft);color:var(--co-ink);font-weight:600}
 /* status chips: same hues as notes and est. badges; status only (§6) */
 .sys-chip--good{--s:var(--sys-good);--s-ink:var(--sys-good-ink)} .sys-chip--warn{--s:var(--sys-warn);--s-ink:var(--sys-warn-ink)} .sys-chip--bad{--s:var(--sys-bad);--s-ink:var(--sys-bad-ink)} .sys-chip--info{--s:var(--sys-info);--s-ink:var(--sys-info-ink)}
-:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info){border-color:color-mix(in srgb,var(--s) 32%,transparent);background:color-mix(in srgb,var(--s) 10%,var(--sys-surface));color:var(--s-ink);font-weight:600}
-:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info){border-color:color-mix(in srgb,var(--s) 32%,transparent);background:color-mix(in srgb,var(--s) 10%,var(--sys-surface));color:var(--s-ink);font:600 12px/1.2 var(--sys-mono);letter-spacing:-.01em}   /* 12px: the type floor of the home band (UNIFIED.md §3d) */
+:is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
 :is(.sys-chip--good,.sys-chip--warn,.sys-chip--bad,.sys-chip--info)[data-co]::before{background:currentColor}
 
 /* ── 6j · buttons ─────────────────────────────────────────────────────────── */
-.sys-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:var(--sys-r-pill);border:1px solid transparent;font:600 15px/1 var(--sys-font);letter-spacing:-.01em;text-decoration:none;white-space:nowrap;cursor:pointer;transition:transform var(--sys-t) var(--sys-ease),box-shadow var(--sys-t) var(--sys-ease),background var(--sys-t),border-color var(--sys-t),color var(--sys-t)}
+.sys-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--sys-r-pill);border:1px solid transparent;font:600 14px/1 var(--sys-font);letter-spacing:-.005em;text-decoration:none;white-space:nowrap;cursor:pointer;transition:transform var(--sys-t) var(--sys-ease),box-shadow var(--sys-t) var(--sys-ease),background var(--sys-t),border-color var(--sys-t),color var(--sys-t)}
 .sys-btn svg{width:14px;height:14px;flex-shrink:0}
 .sys-btn--primary{background:var(--sys-ink);color:var(--sys-on-ink)}
 .sys-btn--primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px -10px color-mix(in srgb,var(--sys-ink) 60%,transparent)}
@@ -468,12 +482,13 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-btn--secondary:hover{border-color:var(--sys-ink)}
 .sys-btn--ghost{background:transparent;color:var(--sys-ink-2)}
 .sys-btn--ghost:hover{background:var(--sys-bg-3);color:var(--sys-ink)}
-.sys-btn--accent{background:var(--sys-grad);background-size:140% 100%;color:#fff}
-.sys-btn--accent:hover{background-position:100% 0;transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(226,83,63,.6)}
-.sys-btn--co{background:var(--co);color:#fff}
+.sys-btn--accent{background:var(--sys-grad);background-size:140% 100%;color:var(--sys-on-accent)}
+.sys-btn--accent:hover{background-position:100% 0;transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(255,138,42,.55)}
+.sys-btn--co{background:var(--co);color:var(--sys-on-accent)}
 .sys-btn--co:hover{transform:translateY(-1px);box-shadow:0 12px 26px -12px var(--co)}
-.sys-btn--sm{min-height:36px;padding:0 14px;font-size:13.5px}
-.sys-btn--lg{min-height:52px;padding:0 26px;font-size:16px}
+.sys-btn--sm{min-height:32px;padding:0 12px;font-size:13px}
+.sys-btn--lg{min-height:48px;padding:0 22px;font-size:15px}
+@media (pointer:coarse){.sys-btn{min-height:44px}.sys-btn--sm{min-height:36px}.sys-btn--lg{min-height:52px}}
 .sys-btn--block{width:100%}
 .sys-btn[disabled],.sys-btn[aria-disabled="true"]{opacity:.5;pointer-events:none}
 
@@ -481,7 +496,7 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-cta{padding:clamp(40px,6vw,72px) 0}
 .sys-cta-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sys-sp-5) var(--sys-sp-6);padding:clamp(24px,4vw,44px);border:1px solid var(--sys-line);border-radius:var(--sys-r-lg);background:var(--sys-grad-soft),var(--sys-surface);box-shadow:var(--sys-sh-2)}
 .sys-cta-copy{flex:1 1 420px;min-width:0}
-.sys-cta h2{font-size:clamp(24px,3vw,36px);font-weight:800;line-height:1.1;letter-spacing:var(--sys-tr-head);text-wrap:balance}
+.sys-cta h2{font-size:clamp(24px,3vw,36px);font-weight:700;line-height:1.1;letter-spacing:var(--sys-tr-head);text-wrap:balance}
 .sys-cta p{margin-top:10px;font-size:16px;color:var(--sys-ink-2);max-width:56ch}
 .sys-cta .sys-actions{margin-top:0}
 
@@ -504,7 +519,7 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 /* ── 6m · prose ───────────────────────────────────────────────────────────── */
 .sys-prose{max-width:68ch;font-size:var(--sys-fs-md);line-height:1.7;color:var(--sys-ink-2)}
 .sys-prose>*+*{margin-top:1em}
-.sys-prose h2{margin-top:1.8em;font-size:clamp(22px,2.4vw,28px);font-weight:800;line-height:1.15;letter-spacing:-.03em;color:var(--sys-ink)}
+.sys-prose h2{margin-top:1.8em;font-size:clamp(22px,2.4vw,28px);font-weight:700;line-height:1.15;letter-spacing:-.03em;color:var(--sys-ink)}
 .sys-prose h3{margin-top:1.5em;font-size:19px;font-weight:700;line-height:1.3;letter-spacing:-.015em;color:var(--sys-ink)}
 .sys-prose a{color:var(--sys-ink);text-decoration:underline;text-decoration-color:var(--sys-line-2);text-underline-offset:3px}
 .sys-prose a:hover{text-decoration-color:var(--sys-ink)}
@@ -529,7 +544,7 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-compare-tag{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute)}
 .sys-compare-tag b{padding:5px 10px;border-radius:var(--sys-r-pill);background:var(--sys-bg-3);color:var(--sys-ink);font-weight:600}
 .sys-compare-col--after .sys-compare-tag b{background:var(--co-soft);color:var(--co-ink)}
-.sys-compare-dev{position:relative;overflow:hidden;border:1px solid var(--sys-line-2);border-radius:12px;background:var(--sys-surface);box-shadow:var(--sys-sh-2)}
+.sys-compare-dev{position:relative;overflow:hidden;border:1px solid var(--sys-line-2);border-radius:var(--sys-r);background:var(--sys-surface);box-shadow:var(--sys-sh-2)}
 .sys-compare-bar{display:flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-bottom:1px solid var(--sys-line);background:var(--sys-bg-2);font:500 11.5px/1 var(--sys-mono);color:var(--sys-mute)}
 .sys-compare-bar i{flex-shrink:0;width:9px;height:9px;border-radius:50%;background:var(--sys-line-2)}
 .sys-compare-bar span{min-width:0;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -603,7 +618,7 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
    row has the same shape. Depth comes from lighter washes, not borders. Below it: status tiles in the fixed company
    order, the day strip, and a sticky ask pill that shows once the band's ask box has scrolled away. CSS imagery only. */
 .sys-command[data-sys-theme]{position:relative;isolation:isolate;container:sys-command/inline-size;display:flex;flex-direction:column;gap:18px;padding:clamp(20px,2.6vw,36px) clamp(20px,3vw,40px);border-radius:var(--sys-r-xl);background:var(--sys-cmd-bg);color:var(--sys-ink);overflow:hidden}
-:root[data-sys-theme="dark"]:not([data-theme="light"]) .sys-command[data-sys-theme]{box-shadow:inset 0 0 0 1px var(--sys-cmd-line)}
+.sys-command[data-sys-theme]{box-shadow:inset 0 0 0 1px var(--sys-cmd-line)}
 /* light from the top-right corner and a warm floor, CSS only */
 .sys-command::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(110% 90% at 100% 0%,var(--sys-cmd-glow-1),transparent 55%),radial-gradient(70% 60% at 0% 100%,var(--sys-cmd-glow-2),transparent 60%)}
 /* the constellation: one star per company in its accent, quiet decoration (aria-hidden SVG, lines in currentColor). It shows
@@ -617,26 +632,27 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-command-head{display:flex;flex-direction:column;gap:10px;min-width:0}
 .sys-command-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0;font:600 var(--sys-fs-xs)/1.3 var(--sys-mono);letter-spacing:var(--sys-tr-label);text-transform:uppercase;color:var(--sys-ink-2)}
 .sys-command-kicker .sys-dot{background:var(--sys-good);box-shadow:0 0 0 4px color-mix(in srgb,var(--sys-good) 22%,transparent)}
-.sys-display{margin:0;font:400 var(--sys-fs-command)/1.02 var(--sys-font-display);letter-spacing:var(--sys-tr-command);color:var(--sys-ink);text-wrap:balance}
+.sys-display{margin:0;font:600 var(--sys-fs-command)/1.1 var(--sys-font-display);letter-spacing:var(--sys-tr-command);color:var(--sys-ink);text-wrap:balance}
 /* numerals in the headline are set in the sans: the display face's 1 reads as a lowercase l */
-.sys-display-num{font-family:var(--sys-font);font-weight:400;font-size:.84em;letter-spacing:-.04em}
+.sys-display-num{font:inherit;letter-spacing:inherit}
 .sys-command-lead{margin:0;max-width:62ch;font-size:var(--sys-fs-base);line-height:1.5;color:var(--sys-ink-2)}
 
 /* the ask box: a pill with a round send button (a form with one text field). On the band it is a lighter wash. */
-.sys-askbox{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:60px;padding:6px 6px 6px 22px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);box-shadow:var(--sys-sh-2);color:var(--sys-ink);font:400 var(--sys-fs-base)/1.2 var(--sys-font)}
+.sys-askbox{display:flex;align-items:center;gap:var(--sys-sp-2);min-height:48px;padding:4px 4px 4px 16px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);box-shadow:var(--sys-sh-2);color:var(--sys-ink);font:400 var(--sys-fs-base)/1.2 var(--sys-font)}
 .sys-askbox:has(:focus-visible){outline:2px solid var(--sys-focus);outline-offset:3px}
-.sys-askbox input{flex:1 1 auto;min-width:0;height:46px;margin:0;padding:0;border:0;background:transparent;color:var(--sys-ink);font:inherit;outline:none}
+.sys-askbox input{flex:1 1 auto;min-width:0;height:38px;margin:0;padding:0;border:0;background:transparent;color:var(--sys-ink);font:inherit;outline:none}
 .sys-askbox input:is(:focus,:focus-visible){outline:none;box-shadow:none}   /* the ring is the pill's (:has above), never a second one inside */
 .sys-askbox input::placeholder{color:var(--sys-mute);opacity:1}
 .sys-command .sys-askbox{background:var(--sys-cmd-field);border-color:var(--sys-cmd-field-line);box-shadow:none}
-.sys-send{display:inline-grid;place-items:center;flex-shrink:0;width:48px;height:48px;margin:0;padding:0;border:0;border-radius:50%;background:var(--sys-ink);color:var(--sys-on-ink);cursor:pointer;transition:transform var(--sys-t) var(--sys-ease)}
-.sys-send svg{width:18px;height:18px}
+.sys-send{display:inline-grid;place-items:center;flex-shrink:0;width:38px;height:38px;margin:0;padding:0;border:0;border-radius:var(--sys-r-sm);background:var(--sys-ink);color:var(--sys-on-ink);cursor:pointer;transition:transform var(--sys-t) var(--sys-ease)}
+.sys-send svg{width:16px;height:16px}
+@media (pointer:coarse){.sys-askbox{min-height:56px}.sys-askbox input{height:44px}.sys-send{width:44px;height:44px}}
 .sys-send:hover{transform:translateY(-1px)}
 .sys-send:focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px}
 .sys-command-ask{display:flex;flex-direction:column;gap:var(--sys-sp-3);min-width:0}
 .sys-command-ask>.sys-askbox{max-width:800px}
 .sys-prompts{display:flex;flex-wrap:wrap;gap:var(--sys-sp-2)}
-.sys-prompts .sys-chip{min-height:36px;padding:0 14px;font-size:var(--sys-fs-sm);white-space:normal;text-align:left}
+.sys-prompts .sys-chip{min-height:30px;padding:0 11px;font-size:var(--sys-fs-sm);white-space:normal;text-align:left}
 .sys-command .sys-prompts .sys-chip{border-color:var(--sys-cmd-line);background:var(--sys-cmd-panel);color:var(--sys-ink-2)}
 .sys-command .sys-prompts .sys-chip:hover{border-color:var(--sys-ink-2);color:var(--sys-ink)}
 /* the role's own question: first, in the brand's warm tone, with an arrow */
@@ -685,7 +701,7 @@ button.sys-chip[aria-pressed="true"]:hover,a.sys-chip[aria-current]:hover{backgr
 .sys-attn-row{position:relative;display:grid;grid-template-columns:76px minmax(0,1fr) auto;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-4);min-height:64px;padding:8px 16px 8px 8px;border-radius:var(--sys-r);background:var(--sys-cmd-panel);transition:background var(--sys-t)}
 .sys-attn-row:hover{background:var(--sys-cmd-panel-2)}
 .sys-attn-row:has(.sys-attn-open:focus-visible){outline:2px solid var(--sys-focus);outline-offset:2px}
-.sys-attn-when{--s:var(--sys-mute);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;padding:4px 6px;border-radius:12px;background:var(--sys-cmd-panel);box-shadow:inset 3px 0 0 var(--s);font:600 19px/1 var(--sys-font);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--sys-ink);text-align:center}
+.sys-attn-when{--s:var(--sys-mute);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;padding:4px 6px;border-radius:var(--sys-r-sm);background:var(--sys-cmd-panel);box-shadow:inset 3px 0 0 var(--s);font:600 19px/1 var(--sys-font);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--sys-ink);text-align:center}
 .sys-attn-when small{margin-top:4px;font:600 var(--sys-fs-xs)/1 var(--sys-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sys-ink-2)}
 .sys-attn-when--text{padding:4px 10px;font-size:var(--sys-fs-sm);line-height:1.2;letter-spacing:0;white-space:nowrap}
 .sys-attn-when[data-st="warn"]{--s:var(--sys-warn)} .sys-attn-when[data-st="info"]{--s:var(--sys-info)} .sys-attn-when[data-st="good"]{--s:var(--sys-good)} .sys-attn-when[data-st="bad"]{--s:var(--sys-bad)}
@@ -818,7 +834,7 @@ th[aria-sort="descending"] .sys-sort::after{opacity:1}
    attention row puts its status under the text */
 @container sys-command (max-width:560px){
   .sys-figs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-  .sys-fig{gap:4px;padding:10px 10px 12px;border-radius:12px}
+  .sys-fig{gap:4px;padding:10px 10px 12px;border-radius:var(--sys-r-sm)}
   /* the figures side by side line up: the label row is as tall as the tallest label (a subgrid of three rows) */
   @supports (grid-template-rows:subgrid){.sys-fig{display:grid;grid-row:span 3;grid-template-rows:subgrid;align-content:start;row-gap:4px}}
   .sys-fig-label{letter-spacing:.03em}
@@ -841,15 +857,51 @@ th[aria-sort="descending"] .sys-sort::after{opacity:1}
 body[data-sys-layout="app"]{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
 body[data-sys-layout="app"]>.sys-top,body[data-sys-layout="app"]>.sys-banner{position:relative;flex-shrink:0}
 body[data-sys-layout="app"]>.sys-top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--sys-bg-2)}
-body[data-sys-layout="app"] .sys-top-in{max-width:none;padding:0 16px}
+body[data-sys-layout="app"] .sys-top-in{max-width:none;padding:0 14px}
+html:has(>body[data-sys-layout="app"]){--sys-top-h:44px}
+/* density: the shell and the agent it embeds set type one step down from a reading page. The scope sits in :where(), so
+   each rule weighs the same as the base rule it follows: a component that sets its own padding (.panel) still wins */
+body[data-sys-layout="app"],html[data-embed] body{--sys-fs-base:14px;--sys-fs-sm:12.5px;--sys-fs-md:15px;--sys-fs-lg:15px;--sys-fs-xl:17px;--sys-gap:12px;font-size:var(--sys-fs-base);line-height:1.5}
+body[data-sys-layout="app"] .sys-top{font-size:14px}
+body[data-sys-layout="app"] .sys-brand svg{width:24px;height:24px}
+body[data-sys-layout="app"] .sys-brand-name{font-size:14px}
+body[data-sys-layout="app"] :is(.sys-ask,.sys-viewas-btn){height:30px}
+@media (pointer:coarse){html:has(>body[data-sys-layout="app"]){--sys-top-h:52px}body[data-sys-layout="app"] :is(.sys-ask,.sys-viewas-btn){height:40px}:is(a,button).sys-chip{min-height:36px}}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-card{padding:16px;gap:8px}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-card-title{font-size:15px;line-height:1.35}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-card-body{font-size:13.5px}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-kpi{padding:14px 16px;gap:6px}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-kpi-value{font-size:clamp(20px,1.9vw,26px)}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-kpi-sub{font-size:12.5px}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-table{font-size:13px}
+:where(body[data-sys-layout="app"],html[data-embed] body) .sys-lead{font-size:14.5px;line-height:1.5}
 body[data-sys-layout="app"] #app{flex:1 1 0;height:auto;min-height:0;width:100%}
+/* the status strip under the console: mono readouts on one line (app.html #statusbar, assets/core.js Status). The first
+   item is how fresh the public data is; the shortcuts and the clock sit at the right. Hidden on phones and in print. */
+.sys-status{flex:0 0 var(--sys-status-h);display:flex;align-items:center;gap:var(--sys-sp-4);min-width:0;padding:0 14px;border-top:1px solid var(--sys-line);background:var(--sys-bg-2);color:var(--sys-mute);font:500 11px/1 var(--sys-mono);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.sys-status-item{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.sys-status-item[hidden]{display:none}
+.sys-status-data .sys-dot{width:6px;height:6px;background:var(--sys-mute-2)}
+.sys-status-data[data-st="good"] .sys-dot{background:var(--sys-good)}
+.sys-status-data[data-st="warn"] .sys-dot{background:var(--sys-warn)}
+.sys-status-keys{margin-left:auto;gap:var(--sys-sp-3)}
+.sys-status-keys span{display:inline-flex;align-items:center;gap:6px}
+.sys-status .sys-kbd{height:16px;padding:0 4px;font-size:10px;text-transform:none}
+.sys-status-clock{color:var(--sys-ink-2);font-variant-numeric:tabular-nums}
+@media (max-width:900px),print{.sys-status{display:none}}
+@media (hover:none){.sys-status-keys{display:none}.sys-status-clock{margin-left:auto}}
 
 /* ── 7a2 · layout: embedded page (?embed=1, frame.js mountEmbed) ──────────── */
 /* The shell draws the page inside an iframe that fills its content area: no
    top bar, footer, crumb row, concept tag, page sub-bar or floating Ask button.
    The page scrolls inside the frame (one scroll); links that leave the page
    open in the top window (frame.js mountEmbed).                                */
-html[data-embed]{--sys-top-h:0px;--sys-subnav-h:0px}
+html[data-embed]{--sys-top-h:0px;--sys-subnav-h:0px;
+  /* inside the shell a page is one more screen: its hero and section titles step down to the console scale */
+  --sys-fs-3xl:clamp(24px,3vw,32px);--sys-fs-2xl:clamp(19px,2.2vw,24px);--sys-fs-display:clamp(28px,3.6vw,38px);--sys-section-y:clamp(28px,4vw,48px);--sys-head-gap:clamp(16px,2vw,24px)}
+html[data-embed] .sys-hero{padding:clamp(24px,3vw,36px) 0 clamp(20px,2.5vw,28px)}
+html[data-embed] .sys-hero::before{display:none}
+html[data-embed] :is(.sys-h1,.sys-h2){font-weight:600;line-height:1.15}
 html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed] .sys-subnav,html[data-embed] .sys-concept,html[data-embed] .sys-footer,html[data-embed] .ch.ch-floating{display:none!important}
 
 /* ── 7b · layout: minimal transparent frame (theater.html) ────────────────── */
@@ -869,19 +921,20 @@ html[data-embed] body>.sys-top,html[data-embed] body>.sys-crumb,html[data-embed]
    for filter bars, an icon button, a pressed button, and the console's view
    title (one step down the type scale: the section-title size, since a view
    heading sits under the frame and a sub-nav rather than in a hero).          */
-body[data-sys-layout="app"] .sys-h1{margin-top:0;max-width:none;font-size:var(--sys-fs-2xl);line-height:1.06;color:var(--sys-ink)}
+body[data-sys-layout="app"] .sys-h1{margin-top:0;max-width:none;font-size:var(--sys-fs-2xl);font-weight:600;line-height:1.1;color:var(--sys-ink)}
 :root{--sys-stage:#05070b}   /* the 3D theater stage: dark in both themes */
 .sys-filters{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sys-sp-2) var(--sys-sp-3)}
 .sys-field{display:inline-flex;align-items:center;gap:var(--sys-sp-2);min-width:0}
 .sys-field-label{font:600 var(--sys-fs-2xs)/1.2 var(--sys-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sys-mute);white-space:nowrap}
-.sys-input{min-height:36px;min-width:0;max-width:100%;padding:0 14px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);color:var(--sys-ink);font:500 var(--sys-fs-sm)/1.2 var(--sys-font);transition:border-color var(--sys-t),box-shadow var(--sys-t)}
+.sys-input{min-height:32px;min-width:0;max-width:100%;padding:0 12px;border:1px solid var(--sys-line-2);border-radius:var(--sys-r-pill);background:var(--sys-surface);color:var(--sys-ink);font:500 var(--sys-fs-sm)/1.2 var(--sys-font);transition:border-color var(--sys-t),box-shadow var(--sys-t)}
 .sys-input::placeholder{color:var(--sys-mute)}
 .sys-input:hover{border-color:var(--sys-mute-2)}
 .sys-input:focus{outline:none;border-color:var(--sys-ink);box-shadow:var(--sys-ring)}
 .sys-input:focus-visible{outline:2px solid var(--sys-focus);outline-offset:2px}
 input.sys-input[type="search"]{min-width:min(240px,100%)}
 select.sys-input{padding-right:32px;-webkit-appearance:none;appearance:none;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--sys-mute) 50%),linear-gradient(135deg,var(--sys-mute) 50%,transparent 50%);background-position:calc(100% - 17px) 52%,calc(100% - 12px) 52%;background-size:5px 5px;background-repeat:no-repeat}
-.sys-btn--icon{width:36px;min-width:36px;padding:0}
+.sys-btn--icon{width:32px;min-width:32px;padding:0}
+@media (pointer:coarse){.sys-input{min-height:36px}.sys-btn--icon{width:36px;min-width:36px}}
 .sys-btn--icon svg{width:16px;height:16px}
 body[data-sys-layout="app"] .sys-btn[aria-pressed="true"]{background:var(--sys-ink);border-color:var(--sys-ink);color:var(--sys-on-ink)}
 

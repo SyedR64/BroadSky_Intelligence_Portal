@@ -4285,7 +4285,7 @@ def build_catalog(roles, pool, st, org_files):
         nm = app_name('pp', a)['name']
         if nm in TERMS and a != 'marketing':
             apps[a]['term'] = TERMS[nm]
-    return {'version': 1, 'sandbox_line': 'Sandbox: fictional people and modeled numbers. No company systems are connected.',
+    return {'version': 1, 'sandbox_line': 'Example data: fictional people and modeled numbers. No company systems are connected.',
             'start_roles': ['pp-hvac-technician', 'pp-ceo', 'bsp-managing-partner'],
             'start_labels': {'pp-hvac-technician': 'HVAC technician', 'pp-ceo': 'Punctual Pros CEO', 'bsp-managing-partner': 'Managing partner'},
             'orgs': [{'id': o, 'name': ORG_NAME[o], 'co': None if o == 'bsp' else o, 'sells': SELLS[o], 'lines': LINES[o], 'depts': DEPTS[o],

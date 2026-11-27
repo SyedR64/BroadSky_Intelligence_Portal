@@ -852,23 +852,56 @@ function factsHTML(ev) {
   const links = srcs.filter(s => s.title).map(s => `<li>${s.url && /^https:\/\//.test(String(s.url)) ? `<a class="sys-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title)}${s.publisher ? ` · ${esc(s.publisher)}` : ''}${s.date ? ` · ${esc(fmtDate(s.date, true))}` : ''}</li>`).join('');
   return `<details class="ca-facts"><summary>Public facts</summary><dl class="ca-fields ca-fact-list">${rows.join('')}</dl>${links ? `<ol class="ca-fact-srcs" data-src>${links}</ol>` : ''}</details>`;
 }
-/** The 3D control: opens assets/house3d.js under the plan (loaded on first use, with this file's ?v= stamp); a second press, or
- *  the view's own Close, removes it and frees what it drew. */
-function toggle3D(a, ev, btn) {
-  const host = a.querySelector('.ca-3d'); if (!host) return;
-  const close = () => {
-    try { a._h3?.destroy?.(); } catch (e) { console.warn('3D view did not close cleanly', e); }
-    a._h3 = null; host.replaceChildren(); host.hidden = true; btn.setAttribute('aria-expanded', 'false');
-  };
-  if (btn.getAttribute('aria-expanded') === 'true') { close(); btn.focus({ preventScroll: true }); return; }
-  btn.setAttribute('aria-expanded', 'true'); host.hidden = false;
-  host.innerHTML = '<p class="sys-src ca-3d-wait">Loading the 3D view</p>';
+/** True when this browser can draw WebGL (checked once): a card then leads with the 3D model, otherwise with the flat plan. */
+let webgl = null;
+function canWebGL() {
+  if (webgl !== null) return webgl;
+  try {
+    const c = document.createElement('canvas'), g = window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'));
+    webgl = !!g; g?.getExtension?.('WEBGL_lose_context')?.loseContext();
+  } catch { webgl = false; }
+  return webgl;
+}
+/** Map a list row's key (f<floor>-<i>, o<i>) to the model's key (<floor id>-i<n>, out-<n>), and back. The model counts only the
+ *  entries that are objects, so an empty slot in the card shifts its numbers the same way. */
+function modelKeys(floors, outside) {
+  const to = new Map();
+  floors.forEach((f, fi) => {
+    let n = 0;
+    (Array.isArray(f.items) ? f.items : []).forEach((it, i) => { if (it && typeof it === 'object') to.set(`f${fi}-${i}`, `${String(f.id ?? '')}-i${n++}`); });
+  });
+  let n = 0;
+  (Array.isArray(outside) ? outside : []).forEach((it, i) => { if (it && typeof it === 'object') to.set(`o${i}`, `out-${n++}`); });
+  const back = new Map([...to].map(([k, v]) => [v, k]));
+  return { to: k => to.get(k), back: k => back.get(k) };
+}
+/** The 3D model inside the card: loaded with this file's ?v= stamp when the card first comes into view, drawn on the floor that
+ *  holds the "Start here" items. If the library does not load (or draws nothing), the card falls back to the flat plan alone. */
+function open3D(a, ev, keys, flat) {
+  const host = a.querySelector('.ca-3d'); if (!host || a._h3) return;
+  a._h3 = { pending: true };
   import(new URL('./house3d.js' + STAMP, import.meta.url).href).then(H => {
-    if (btn.getAttribute('aria-expanded') !== 'true') return;   // closed while it loaded
-    host.replaceChildren();
-    if (!H.supports3D()) { host.innerHTML = '<p class="sys-src">The 3D view needs WebGL, which this browser does not offer.</p>'; return; }
-    a._h3 = H.renderHouse3D(host, ev, { onClose: () => { close(); btn.focus({ preventScroll: true }); } });
-  }).catch(e => { console.warn('3D view did not load', e); host.innerHTML = '<p class="sys-src">The 3D view did not load.</p>'; });
+    if (!a.isConnected && !a._h3) return;
+    if (!H.supports3D()) { flat(true); return; }
+    host.querySelector('.ca-3d-wait')?.remove();
+    const v = H.renderHouse3D(host, ev, { embed: true, follow: true, intro: true, view: a.dataset.large ? 'outside' : 'cutaway',
+      onSelect: k => markRow(a, k ? keys.back(k) : null, true) });
+    a._h3 = v;
+    v.ready.then(ok => { if (!ok) { try { v.destroy(); } catch { /* */ } a._h3 = null; flat(true); } else a.dataset.view = '3d'; });
+  }).catch(e => { console.warn('3D view did not load', e); a._h3 = null; flat(true); });
+}
+/** The list row for a model key is marked as the one picked (and scrolled into view inside the list, never the page). */
+function markRow(a, key, fromModel) {
+  a.querySelectorAll('.ca-eq.is-on').forEach(r => { r.classList.remove('is-on'); r.removeAttribute('aria-current'); });
+  if (!key) return;
+  const row = [...a.querySelectorAll('.ca-eq[data-ca="equip"]')].find(r => r.dataset.k === key);
+  if (!row) return;
+  row.classList.add('is-on'); row.setAttribute('aria-current', 'true');
+  const list = a.querySelector('.ca-equip');
+  if (fromModel && list && list.scrollHeight > list.clientHeight) {
+    const lr = list.getBoundingClientRect(), rr = row.getBoundingClientRect();
+    if (rr.top < lr.top || rr.bottom > lr.bottom) list.scrollTop += rr.top - lr.top - (lr.height - rr.height) / 2;
+  }
 }
 
 /** Redraws the plans at the card's own width (text and markers keep their size): at once when the card is first laid out, then
@@ -893,6 +926,10 @@ function fitWidth(a, floors, svgOf) {
   const ro = new ResizeObserver(() => {
     if (!a.isConnected) return;
     if (first) { first = false; draw(); return; }
+    // a real change of width (a window narrowing, not a scrollbar coming and going) is drawn at once: the 3D model beside the plan
+    // may hold the next frame, and the plan should not sit at the old width meanwhile
+    const w = widthNow();
+    if (w && Math.abs(w - drawn) > 40) { clearTimeout(timer); draw(); return; }
     clearTimeout(timer); timer = setTimeout(draw, 120);
   });
   ro.observe(a);
@@ -937,40 +974,101 @@ export function renderSketch(ev, ctx = {}) {
   const a = document.createElement('article');
   a.className = 'ca-sketch sys-card'; a.dataset.co = 'pp';
   if (live) a.dataset.live = '1';
+  if (large) a.dataset.large = '1';
   a._cmd = (ev.map_command && typeof ev.map_command === 'object' ? ev.map_command.cmd || ev.map_command : null) || siteCmd(ev);
+  // 3D first: the model leads the card whenever the card has one and the browser can draw it; the flat plan waits behind "Plan".
+  // A card with no model (no floors, or a large building with no outline) or no WebGL shows the flat plan alone, as before.
+  const has3D = !!floors.length && !(large && !fp);
+  const lead3D = has3D && canWebGL();
+  const listHTML = list.length || unplaced.length ? `<ul class="ca-equip" aria-label="Equipment">${unplaced.map(m => unplacedRow(m, focus)).join('')}${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '';
+  const planHTML = (floors.length ? `<div class="sys-chips ca-fs-floors" role="group" aria-label="Floor">${floors.map((f, i) => `<button type="button" class="sys-chip" data-ca="floor" data-floor="${i}" aria-pressed="${i === cur}">${esc(f.name || `Floor ${i + 1}`)}</button>`).join('')}</div>` : '')
+    + floors.map((f, i) => `<div class="ca-fs-svg" data-floor="${i}"${i === cur ? '' : ' hidden'}>${svgOf(f, i, 720)}</div>`).join('')
+    + legendHTML(ev, markers, floors, outlines.some(Boolean));
   a.innerHTML = `<div class="sys-card-label">Floor sketch <span class="sys-chip sys-chip--${basis[1]}">${basis[0]}</span>${example ? ' <span class="sys-chip sys-chip--soft ca-fs-ex">Example address</span>' : ''}</div>`
     + `<h3 class="sys-card-title ca-fs-title" tabindex="-1">${esc(ev.address || ev.place?.label || ev.title || 'Floor sketch')}</h3>`
     + placeHTML(ev, fp)
     + (houseText(ev) ? `<p class="ca-house sys-card-body">${esc(houseText(ev))}</p>` : '')
     + (ev.area?.label ? `<p class="sys-src ca-fs-area">${esc(ev.area.label)}</p>` : '')
-    + (floors.length ? `<div class="sys-chips ca-fs-floors" role="group" aria-label="Floor">${floors.map((f, i) => `<button type="button" class="sys-chip" data-ca="floor" data-floor="${i}" aria-pressed="${i === cur}">${esc(f.name || `Floor ${i + 1}`)}</button>`).join('')}</div>` : '')
-    + floors.map((f, i) => `<div class="ca-fs-svg" data-floor="${i}"${i === cur ? '' : ' hidden'}>${svgOf(f, i, 720)}</div>`).join('')
-    + legendHTML(ev, markers, floors, outlines.some(Boolean))
-    + (list.length || unplaced.length ? `<ul class="ca-equip">${unplaced.map(m => unplacedRow(m, focus)).join('')}${list.map(m => equipRow(m, focus, floors)).join('')}</ul>` : '')
+    + (lead3D
+      ? `<div class="ca-fs-body${listHTML ? '' : ' no-list'}"><div class="ca-3d"><p class="sys-src ca-3d-wait">Loading the 3D view</p></div>${listHTML}</div>`
+        + `<div class="sys-actions ca-fs-acts"><button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-plan-btn" data-ca="plan" aria-pressed="false" aria-controls="">Plan</button><span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div>`
+        + `<div class="ca-fs-plan" hidden>${planHTML}</div>`
+      : `<div class="ca-fs-plan">${has3D ? '<p class="sys-src ca-3d-off">The 3D view is unavailable in this browser.</p>' : ''}${planHTML}</div>${listHTML}`
+        + (a._cmd ? `<div class="sys-actions ca-fs-acts"><span class="ca-fs-mapslot">${mapControlHTML(a._cmd)}</span></div>` : ''))
     + factsHTML(ev)
-    + (floors.length || a._cmd ? `<div class="sys-actions ca-fs-acts">${floors.length && !(large && !fp) ? '<button type="button" class="sys-btn sys-btn--secondary sys-btn--sm ca-3d-btn" data-ca="3d" aria-expanded="false">3D</button>' : ''}<span class="ca-fs-mapslot">${a._cmd ? mapControlHTML(a._cmd) : ''}</span></div><div class="ca-3d" hidden></div>` : '')
     + (ev.source_line ? `<p class="sys-src" data-src>${esc(ev.source_line)}</p>` : '');   // the shell moves it to the Sources drawer (copy rule 4)
   /** A map command that came as its own card in the same answer: this card's "Show on map" sends it. */
-  a._setMap = cmd => { if (!cmd || typeof cmd !== 'object') return; a._cmd = cmd; const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(cmd); };
+  a._setMap = cmd => {
+    if (!cmd || typeof cmd !== 'object') return; a._cmd = cmd;
+    let slot = a.querySelector('.ca-fs-mapslot');
+    if (!slot) {   // a flat card with no actions row yet
+      const row = document.createElement('div'); row.className = 'sys-actions ca-fs-acts'; row.innerHTML = '<span class="ca-fs-mapslot"></span>';
+      (a.querySelector('.ca-equip') || a.querySelector('.ca-fs-plan')).after(row); slot = row.firstChild;
+    }
+    slot.innerHTML = mapControlHTML(cmd);
+  };
   for (const m of [...(ctx.turn?.querySelectorAll?.('article.ca-map') || [])]) { if (m._cmd) a._cmd = m._cmd; m.remove(); }   // one control per answer
-  if (a._cmd) { const slot = a.querySelector('.ca-fs-mapslot'); if (slot) slot.innerHTML = mapControlHTML(a._cmd); }
+  if (a._cmd) a._setMap(a._cmd);
+  const planEl = a.querySelector('.ca-fs-plan'), planBtn = a.querySelector('[data-ca="plan"]');
+  if (planEl && planBtn) { planEl.id = `ca-plan-${String(ev.id || Math.random().toString(36).slice(2)).replace(/[^\w-]/g, '')}`; planBtn.setAttribute('aria-controls', planEl.id); }
+  const keys = modelKeys(floors, ev.outside);
+  /** The 3D view cannot draw here after all: the flat plan alone, as a card without a model shows it, and one plain line. */
+  const flat = say => {
+    const host = a.querySelector('.ca-3d'), body = a.querySelector('.ca-fs-body');
+    if (!body) return;
+    host?.remove();
+    const listEl = body.querySelector('.ca-equip');
+    planEl.hidden = false;
+    if (say && !planEl.querySelector('.ca-3d-off')) planEl.insertAdjacentHTML('afterbegin', '<p class="sys-src ca-3d-off">The 3D view is unavailable in this browser.</p>');
+    body.replaceWith(planEl);
+    if (listEl) planEl.after(listEl);
+    planBtn?.remove();
+    a.dataset.view = 'plan';
+    a._fit?.();
+  };
+  const setPlan = on => {
+    if (!planBtn) return;
+    planBtn.setAttribute('aria-pressed', String(on)); planEl.hidden = !on;
+    if (on) a._fit?.();
+  };
+  if (lead3D) {
+    // the library loads when the card first comes into view, not before
+    if (typeof IntersectionObserver === 'function') {
+      const io = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { io.disconnect(); open3D(a, ev, keys, flat); } }, { rootMargin: '200px 0px' });
+      io.observe(a);
+    } else queueMicrotask(() => open3D(a, ev, keys, flat));
+  }
   const show = i => {
     a.querySelectorAll('.ca-fs-svg').forEach(d => { d.hidden = Number(d.dataset.floor) !== i; });
     a.querySelectorAll('[data-ca="floor"]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.floor) === i)));
   };
+  const view3D = () => (a._h3 && !a._h3.pending && !a._h3.fallback ? a._h3 : null);
   a.addEventListener('click', e => {
     const b = e.target.closest?.('[data-ca]'); if (!b || !a.contains(b)) return;
     if (b.dataset.ca === 'floor') { show(Number(b.dataset.floor)); return; }
     if (b.dataset.ca === 'map') { runMap(a._cmd); return; }
-    if (b.dataset.ca === '3d') { toggle3D(a, ev, b); return; }
+    if (b.dataset.ca === 'plan') { setPlan(b.getAttribute('aria-pressed') !== 'true'); return; }
     if (b.dataset.ca === 'equip') {
       const i = Number(b.dataset.floor); show(i);
-      const box = a.querySelector(`.ca-fs-svg[data-floor="${i}"]`);
-      const g = [...(box?.querySelectorAll('.ca-fs-m') || [])].find(x => x.dataset.k === b.dataset.k);
-      box?.scrollIntoView({ block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
-      if (g) { g.classList.remove('is-pulse'); void g.getBoundingClientRect(); g.classList.add('is-pulse'); clearTimeout(g._t); g._t = setTimeout(() => g.classList.remove('is-pulse'), 1200); }
+      markRow(a, b.dataset.k);
+      // the model turns to the item, shows its floor and picks it; on a phone the stage is brought into view above the list
+      const v = view3D();
+      if (v && v.focus(keys.to(b.dataset.k))) {
+        const st = a.querySelector('.ca-3d .h3-stage'), r = st?.getBoundingClientRect();
+        if (r && (r.bottom < 80 || r.top > innerHeight - 80)) st.scrollIntoView({ block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
+      }
+      // and still pulses it on the plan when the plan is showing
+      if (planEl && !planEl.hidden) {
+        const box = a.querySelector(`.ca-fs-svg[data-floor="${i}"]`);
+        const g = [...(box?.querySelectorAll('.ca-fs-m') || [])].find(x => x.dataset.k === b.dataset.k);
+        if (!v) box?.scrollIntoView({ block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
+        if (g) { g.classList.remove('is-pulse'); void g.getBoundingClientRect(); g.classList.add('is-pulse'); clearTimeout(g._t); g._t = setTimeout(() => g.classList.remove('is-pulse'), 1200); }
+      }
     }
   });
+  // pointing at a row or reaching it from the keyboard names the item in the model
+  const hov = e => { const r = e.target.closest?.('.ca-eq[data-ca="equip"]'); view3D()?.hover(r && e.type !== 'pointerout' && e.type !== 'focusout' ? keys.to(r.dataset.k) : null); };
+  for (const t of ['pointerover', 'pointerout', 'focusin', 'focusout']) a.querySelector('.ca-equip')?.addEventListener(t, hov);
   fitWidth(a, floors, svgOf);
   try { ctx.onSketch?.(ev); } catch (e) { console.warn('sketch callback failed', e); }
   return a;

@@ -21,7 +21,7 @@
      active   'home'|'agent'|'connect'|'concepts'|'os'|'playbooks'  (auto from URL; 'os' and 'playbooks' mark Concepts)
      co       'pp'|'cet'|'fl'|'ts'|'bpi'|'fh'   company accent + crumb  (auto from URL)
      persona  chat persona for the Ask button      (default: co, else 'portal')
-     theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'light').
+     theme    'light'|'dark'                       fallback when the visitor has no saved choice (default 'dark').
                                                     The visitor's choice (localStorage 'bsp-theme', set by the top-bar
                                                     theme button on every page) always wins, except on a 'minimal'
                                                     page that passes theme: 'dark' (the 3D map stage), which stays dark.
@@ -462,10 +462,10 @@ function footerHTML() {
 }
 
 /* ── chat wiring ──────────────────────────────────────────────────────────── */
-const state = { mounted: null, chat: null, persona: 'portal', theme: 'light', observer: null, loading: null, askFn: null };
+const state = { mounted: null, chat: null, persona: 'portal', theme: 'dark', observer: null, loading: null, askFn: null };
 
 /* ── theme: one preference for every page ─────────────────────────────────────
-   html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme' (light by default). Each page's
+   html[data-sys-theme] = 'light' | 'dark', saved under localStorage 'bsp-theme' (dark by default). Each page's
    head applies the saved value before the stylesheets load; the top-bar button (and the portal's Theme helper,
    which calls setTheme) changes it everywhere, and other open tabs follow through the storage event. */
 const THEME_KEY = 'bsp-theme';
@@ -487,7 +487,7 @@ function applyTheme(t) {
   const h = document.documentElement;
   if (h.dataset.sysTheme !== t) h.dataset.sysTheme = t;
   if (h.hasAttribute('data-theme') && h.dataset.theme !== t) h.dataset.theme = t;   // older module CSS hooks html[data-theme]
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#0a0e14' : '#fbfaf7');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t === 'dark' ? '#08090b' : '#f6f7f8');
   state.theme = t; paintThemeToggles();
   return t;
 }
@@ -737,7 +737,7 @@ function mount(opts = {}) {
   // theme: the visitor's saved choice wins; a 'minimal' page that asks for dark (the 3D map) stays dark
   themeLocked = variant === 'minimal' && opts.theme === 'dark';
   o.themeToggle = !themeLocked && opts.themeToggle !== false;
-  applyTheme(themeLocked ? 'dark' : (savedTheme() || (opts.theme === 'dark' ? 'dark' : 'light')));
+  applyTheme(themeLocked ? 'dark' : (savedTheme() || (opts.theme === 'light' ? 'light' : 'dark')));
   if (opts.chat) state.chat = opts.chat;
   const html = document.documentElement, body = document.body;
   body.dataset.sysLayout = variant;
@@ -807,7 +807,7 @@ function mountEmbed(opts, w) {
   html.dataset.embed = '';
   state.persona = opts.persona || w.co || 'portal';
   if (opts.chat) state.chat = opts.chat;
-  applyTheme(savedTheme() || (opts.theme === 'dark' ? 'dark' : 'light'));
+  applyTheme(savedTheme() || (opts.theme === 'light' ? 'light' : 'dark'));
   body.dataset.sysLayout = 'embed';
   const co = opts.co !== undefined ? opts.co : w.co;
   if (co && !body.dataset.co) body.dataset.co = co;

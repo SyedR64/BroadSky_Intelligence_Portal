@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fair Harbor concept · Broad Sky OS</title>
 <meta name="description" content="Concept site for Fair Harbor: swimwear and shirts made from recycled plastic bottles.">
-<meta name="theme-color" content="#fbfaf7">
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load; the frame's top-bar button changes it */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<meta name="theme-color" content="#08090b">
+<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage 'bsp-theme'), dark by default, applied before the stylesheets load; the frame's top-bar button changes it */(function(){var t='dark';try{var s=localStorage.getItem('bsp-theme');if(s==='dark'||s==='light')t=s}catch(e){}document.documentElement.setAttribute('data-sys-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#08090b':'#f6f7f8')})();</script>
 <link rel="icon" href="../../BSP_Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

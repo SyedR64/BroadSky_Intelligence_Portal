@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Broad Sky OS</title>
 <meta name="description" content="Broad Sky OS: one operating system for Broad Sky and its six companies, with an agent for every role.">
-<meta name="theme-color" content="#fbfaf7">
+<meta name="theme-color" content="#08090b">
 <!-- A forwarding page (scripts/ci_check.py): the front door opens the firm view of Broad Sky OS. It is not rendered, indexed or listed. -->
 <meta name="bsp-forward" content="app.html#/home/overview">
 <script>/* hand the visitor on at once, keeping the query string (?role=, ?backend=). Old anchors of the front page land where their content now lives (OS build spec 4.5) */(function(){var MAP={'#briefing':'app.html#/briefing/play','#platforms':'app.html#/home/overview','#deals':'app.html#/ma/pipeline','#os':'redesigns/#os','#growth-plans':'redesigns/#growth-plans'};var to='app.html#/home/overview';try{var t=MAP[location.hash]||to,i=t.indexOf('#'),path=t.slice(0,i),hash=t.slice(i);to=path+(location.search||'')+hash}catch(e){}location.replace(to);document.addEventListener('DOMContentLoaded',function(){var a=document.getElementById('go');if(a)a.setAttribute('href',to)})})();</script>
 <noscript><meta http-equiv="refresh" content="0; url=app.html#/home/overview"></noscript>
-<script>/* one theme for the whole site (UNIFIED.md §8): apply the saved choice (localStorage 'bsp-theme', light by default) before the stylesheets load */(function(){try{var t=localStorage.getItem('bsp-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-sys-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#0a0e14')}}}catch(e){}})();</script>
+<script>/* one theme for the whole site (UNIFIED.md §8): the saved choice (localStorage 'bsp-theme'), dark by default, applied before the stylesheets load */(function(){var t='dark';try{var s=localStorage.getItem('bsp-theme');if(s==='dark'||s==='light')t=s}catch(e){}document.documentElement.setAttribute('data-sys-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#08090b':'#f6f7f8')})();</script>
 <meta name="author" content="Syed Rahman">
 <link rel="icon" href="BSP_Logo.png">
 <link rel="apple-touch-icon" href="BSP_Logo.png">

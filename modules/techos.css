@@ -91,7 +91,7 @@
 .m-techos .tx-ladder .lr[data-id]{cursor:pointer}
 .m-techos .tx-ladder .lr[data-id]:hover{background:var(--sys-surface-2)}
 .m-techos .tx-ladder .ll b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--sys-fs-xs);font-weight:600;color:var(--sys-ink)}
-.m-techos .tx-ladder .ll span{display:block;font-size:var(--sys-fs-2xs);color:var(--sys-mute)}
+.m-techos .tx-ladder .ll span:not(.sys-est){display:block;font-size:var(--sys-fs-2xs);color:var(--sys-mute)}
 .m-techos .tx-ladder .lt{position:relative;height:22px;margin-right:44px}
 .m-techos .tx-ladder .lt::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--sys-line)}
 .m-techos .tx-ladder .band{position:absolute;top:0;bottom:0;background:var(--co-soft);border-left:1px dashed var(--sys-line-2);border-right:1px dashed var(--sys-line-2)}
