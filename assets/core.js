@@ -783,7 +783,10 @@ export const App = {
     // MENUS for a company level), filtered by LEVELS. App.modules keeps its order. A module that is open but not on the
     // menu is drawn as one more item under a rule, with no heading (app.css .rail-group--open)
     const role = Session.role(), groups = App.menu(role), items = groups.flatMap(g => g.items);
-    let act = items.find(i => i.v && i.m === App.current && i.v === App.view) || items.find(i => !i.v && i.m === App.current) || null;
+    // a company menu can hold one screen of a module under the module's own name ("Local signals", "Marketing engine"):
+    // that item stays current on the module's other screens, so the same name is never drawn twice
+    let act = items.find(i => i.v && i.m === App.current && i.v === App.view) || items.find(i => !i.v && i.m === App.current)
+      || items.find(i => i.v && i.m === App.current && i.label === i.m.name) || null;
     if (!act && App.current && App.view) { act = { key: App.current.id, m: App.current, v: null, label: App.current.name, href: App.href(App.current.id, App.view.id, App.params) }; groups.push({ name: '', off: true, items: [act] }); }
     App._railAct = act ? act.key : '';
     const refocus = App._railKey && nav.contains(document.activeElement);   // keyboard user on the rail: keep focus there after the re-render

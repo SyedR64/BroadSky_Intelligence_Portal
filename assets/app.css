@@ -354,6 +354,7 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 /* ── 9 · responsive ──────────────────────────────────────────────────────── */
 /* short windows: the menu tightens so every item (17 for the firm), and one more while a module off the menu is open,
    shows without scrolling (820px covers a 1280x800 laptop; 780px covers 768px- and 720px-tall screens) */
+@media (max-height:820px) and (pointer:fine){.rail-item{min-height:28px}}   /* a mouse or trackpad only: touch rows keep 40px */
 @media (max-height:820px){.rail-nav{padding-bottom:var(--sys-sp-3)}.rail-group+.rail-group{margin-top:var(--sys-sp-3)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-2)}}
 @media (max-height:780px){.rail-nav{padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}.rail-group+.rail-group{margin-top:var(--sys-sp-2)}.rail-section{padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-1);padding-top:var(--sys-sp-1)}}
 @media (max-width:1280px){.search-btn{width:36px;min-width:36px;padding:0;justify-content:center}.search-btn .search-label,.search-btn .sys-kbd{display:none}}
