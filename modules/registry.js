@@ -19,6 +19,7 @@ import pe from './pe.js?v=20261125120619';
 import national from './national.js?v=20261125120619';
 import fin from './fin.js?v=20261125120619';
 import techos from './techos.js?v=20261125120619';
+import marketing from './marketing.js?v=20261125120619';
 import theater from './theater.js?v=20261125120619';
 import briefing from './briefing.js?v=20261125120619';
 import connect from './connect.js?v=20261125120619';
@@ -26,7 +27,7 @@ import globe from './globe.js?v=20261125120619';
 /* Menu names. The window title reads "<module name> · <view title>" (modules/copy.js VIEW_TITLES), so a module name
    must not repeat a word of its own view titles ("PE landscape · sponsor landscape"). Ids never change. */
 const NAMES = { home: 'Home', cases: 'Sponsor precedents', pe: 'Private equity', national: 'US expansion', fin: 'Fundamentals', briefing: 'Narrated tour' };
-export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing, connect, globe];
+export const modules = [home, signals, bsp, cet, pp, fl, ts, bpi, fh, ma, deal, cases, pe, national, fin, techos, theater, briefing, connect, globe, marketing];
 for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
 
 /* ── The firm's side menu (OS_SPEC 4.3): Home, then three groups, one item per module, in this order ──────────
@@ -35,7 +36,7 @@ for (const m of modules) if (NAMES[m.id]) m.name = NAMES[m.id];
    open. The firm levels see this menu filtered by LEVELS below (investor relations: Home, Fundamentals, Connections);
    the company levels use MENUS instead. It must fit with no scrolling at 1440x900 and at 1280x800.
    scripts/make_sitemap.py reads RAIL by regex: keep it one statement of ['Group name', ['id', …]] pairs. */
-const RAIL = [['Home', ['home']], ['Portfolio', ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos', 'connect', 'globe']]];
+const RAIL = [['Home', ['home']], ['Portfolio', ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh']], ['Deals', ['ma', 'deal', 'pe', 'bsp']], ['Value creation', ['signals', 'fin', 'techos', 'marketing', 'connect', 'globe']]];
 /* The modules off the menu. In the portal the open one is drawn as a 15th item under a rule, with no heading (a fourth
    heading does not fit a laptop screen); this name is the heading they share on the "All pages" page (make_sitemap.py). */
 const OFF_MENU_GROUP = 'More';
@@ -89,6 +90,8 @@ export const ALIASES = {
 const FIRM = ['firm_leadership', 'firm_team'], LEAD = [...FIRM, 'co_leadership'], OFFICE = [...LEAD, 'co_office'], ALL = [...OFFICE, 'co_field'];
 export const COMPANIES = ['cet', 'pp', 'fl', 'ts', 'bpi', 'fh'];
 export const SECTORS = { cet: 'commercial_electrical_energy', pp: 'residential_home_services', fl: 'legal_bpo_managed_services', ts: 'lab_distribution', bpi: 'communications_agencies', fh: 'apparel_dtc' };
+/* the office roles that run marketing: each company's sales lead, and Fair Harbor's e-commerce manager */
+const MARKETERS = ['pp-sales', 'cet-sales', 'fl-sales', 'ts-sales', 'bpi-sales', 'fh-sales', 'fh-ecommerce-manager'];
 /* the office roles in sales or operations, who see their company's Local signals overview */
 const SALES_OPS = ['pp-sales', 'pp-location-gm', 'cet-sales', 'cet-project-manager', 'fl-sales', 'ts-sales', 'ts-inside-sales', 'bpi-sales', 'fh-sales'];
 export const LEVELS = {
@@ -132,6 +135,10 @@ export const LEVELS = {
   'techos': { to: FIRM },
   'techos/roadmap': { to: LEAD, own: true, param: 'co' },
   'techos/overview': { to: [...FIRM, 'co_office'], own: true, param: 'os' },
+  'marketing': { to: FIRM },   // the board of all six is the firm's; a company opens its own three screens below
+  'marketing/build': { to: LEAD, own: true, param: 'co', plus: MARKETERS },
+  'marketing/cost': { to: LEAD, own: true, param: 'co', plus: MARKETERS },
+  'marketing/queue': { to: LEAD, own: true, param: 'co', plus: MARKETERS },
   'theater': { to: LEAD },
   'briefing': { to: OFFICE },
   'connect': { to: OFFICE },
@@ -146,12 +153,12 @@ export const ONLY = { 'bsp-investor-relations': ['home', 'fin/portfolio', 'conne
    module, '<co>/plan' one screen of it. An item names a module or one screen; a screen item opens with its own-company
    parameter. An item the role cannot open, or whose screen does not exist yet, is left out. The firm levels use RAIL. */
 export const MENUS = {
-  co_leadership: ['home', '<co>', 'fin/portfolio', 'ma/pipeline', 'signals/overview', '<co>/plan', '<co>/tools', 'connect', 'globe'],
-  co_office: ['home', '<co>', '<co>/tools', 'connect'],
+  co_leadership: ['home', '<co>', 'fin/portfolio', 'ma/pipeline', 'signals/overview', 'marketing/build', '<co>/plan', '<co>/tools', 'connect', 'globe'],
+  co_office: ['home', '<co>', 'marketing/build', '<co>/tools', 'connect'],   // marketing/build shows for the MARKETERS roles only
   co_field: ['home'],
 };
 /* names for the screen items of those menus (a module item reads the module's name) */
-export const MENU_NAMES = { 'fin/portfolio': 'Fundamentals', 'ma/pipeline': 'Add-on pipeline', 'signals/overview': 'Local signals', '<co>/plan': 'Plan', '<co>/tools': 'Tools' };
+export const MENU_NAMES = { 'fin/portfolio': 'Fundamentals', 'ma/pipeline': 'Add-on pipeline', 'signals/overview': 'Local signals', 'marketing/build': 'Marketing engine', '<co>/plan': 'Plan', '<co>/tools': 'Tools' };
 
 /* Flags only: nothing below reorders `modules` or any module's views. */
 RAIL.forEach(([group, ids], g) => ids.forEach((id, i) => { const m = modules.find(x => x.id === id); if (m) { m.group = group; m.railPos = g * 100 + i; } }));

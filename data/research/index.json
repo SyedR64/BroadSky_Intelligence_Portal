@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-26",
+ "generated": "2026-11-27",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -222,6 +222,20 @@
    "generated": "2026-09-24"
   },
   {
+   "name": "marketing_engine",
+   "folder": "research",
+   "title": "Marketing engine: channels, public ad rates, example campaigns and example ad concepts",
+   "item_count": 14,
+   "bytes": 49492,
+   "generated": "2026-11-27",
+   "lists": {
+    "channels": 5,
+    "platforms": 14,
+    "minimums": 3,
+    "sources": 29
+   }
+  },
+  {
    "name": "pe_landscape",
    "folder": "research",
    "title": "Private-equity competitive landscape for BSP (LMM business & consumer services)",
@@ -433,12 +447,12 @@
   }
  ],
  "totals": {
-  "research_files": 41,
-  "research_items": 4863,
+  "research_files": 42,
+  "research_items": 4877,
   "sales_files": 10,
   "sales_rows": 182351,
-  "bytes": 45244827,
+  "bytes": 45294319,
   "data_from": "2026-09-24",
-  "data_to": "2026-11-23"
+  "data_to": "2026-11-27"
  }
 }
