@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-26",
+ "generated": "2026-11-27",
  "files": [
   {
    "name": "ai_agents_portfolio",
@@ -107,7 +107,7 @@
    "folder": "research",
    "title": "connections",
    "item_count": 0,
-   "bytes": 34724,
+   "bytes": 34729,
    "generated": null,
    "lists": {
     "sources": 46,
@@ -188,6 +188,14 @@
    "lists": {
     "tours": 7
    }
+  },
+  {
+   "name": "legal_watchlist",
+   "folder": "research",
+   "title": "Legal records watch list",
+   "item_count": 177,
+   "bytes": 51710,
+   "generated": "2026-11-27"
   },
   {
    "name": "ma_ppp_screen",
@@ -433,12 +441,12 @@
   }
  ],
  "totals": {
-  "research_files": 41,
-  "research_items": 4863,
+  "research_files": 42,
+  "research_items": 5040,
   "sales_files": 10,
   "sales_rows": 182351,
-  "bytes": 45244827,
+  "bytes": 45296542,
   "data_from": "2026-09-24",
-  "data_to": "2026-11-23"
+  "data_to": "2026-11-27"
  }
 }

@@ -17,6 +17,7 @@
 import { Data, Fmt, Live, esc } from './core.js?v=20261125120619';
 import { Session } from './session.js?v=20261125120619';
 import * as GI from './globe-intents.js?v=20261125120619';
+import * as LI from './legal-intents.js?v=20261125120619';
 
 const ROOT = new URL('../', import.meta.url).href;              // repo root, works from any page depth
 const APP = ROOT + 'app.html';
@@ -738,6 +739,16 @@ async function siteAddress(widget, g) {
   const hash = GI.addressHash(text);
   if (!found && widget.mode === 'floating') setTimeout(() => { location.hash = hash; }, 300);
   return { local: true, html: `<p>${esc(GI.addressReply(g.addr, found))}</p>`, links: found ? [] : [app(hash, 'Open the address lookup')], followups: [], ...(!found && widget.mode === 'inline' && !widget.opts?.hostedOnly ? { go: APP + hash } : {}) };
+}
+/* Public legal records about watched competitors and targets (assets/legal-intents.js): answered from the nightly file,
+   each row linked to its public source. No model call; the file holds companies only. */
+const LEGAL_URL = ROOT + 'data/live/legal_signals.json';
+let legalFile = null;
+const loadLegal = () => (legalFile ||= fetch(LEGAL_URL, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null).then(d => { if (!d) legalFile = null; return d; }));
+async function legalRecords(widget, g) {
+  const a = LI.legalAnswer(g, await loadLegal());
+  const rows = a.rows.map(r => `<li><b>${esc(r.party)}</b> · ${esc(LI.TYPE_NAME[r.type] || 'Record')} · ${esc(LI.dayWords(r.date))}<br>${esc(LI.recordLine(r))} <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(LI.sourceName(r.source))} →</a></li>`).join('');
+  return { local: true, html: `<p>${esc(a.text)}</p>${rows ? `<ul class="ch-legal">${rows}</ul>` : ''}`, links: [app(a.hash, 'Open Legal records')], followups: [] };
 }
 const PORTAL_INTENTS = [
   { id: 'globe_best3', rx: [{ test: s => !!GI.bestTargets(s, null) }], run: () => ({ html: '<p>Opening the globe.</p>', links: [app('#/globe/view?tour=best3', 'Open the globe')], followups: [] }) },
@@ -1790,7 +1801,11 @@ class Widget {
   /** A typed command that needs no model (best three targets, an address with a job), for the portal assistant and the role agent only; null otherwise. */
   // the Ask panel takes both typed commands; the role agent takes the best-three tour only, and answers an address with its own
   // site tool (it holds the customer's job and history)
-  globeIntent(q) { const g = this.id === 'portal' || this.opts?.hostedOnly ? GI.classify(q, { co: roleCo() }) : null; return g && (this.id === 'portal' || g.kind === 'best3') ? g : null; }
+  globeIntent(q) {
+    const mine = this.id === 'portal' || !!this.opts?.hostedOnly, g = mine ? GI.classify(q, { co: roleCo() }) : null;
+    if (g) return this.id === 'portal' || g.kind === 'best3' ? g : null;
+    return mine ? LI.legalIntent(q, roleCo()) : null;   // public legal records: answered from the nightly file
+  }
   /** Answers built in the browser go to the chat log; the hosted research agent logs its own on the server. */
   logAnswer(q, rec) {
     if (rec.kind === 'claude' && rec.via === 'hosted') return;
@@ -1813,7 +1828,7 @@ class Widget {
       // A docked assistant reads the page behind it at ask time; the research assistant gets it with every question.
       const view = this.mode === 'floating' ? viewContext() : null;
       const only = !!this.opts?.hostedOnly;   // company agent: the server gets the raw question (no follow-up rewriting, no intents)
-      const { hit, eq, fu, aboutView, toHosted } = gi ? { hit: { id: gi.kind === 'best3' ? 'globe_best3' : 'site_address', run: () => (gi.kind === 'best3' ? globeBest3(this, gi) : siteAddress(this, gi)) }, eq: q, fu: null, aboutView: false, toHosted: false } : only ? { hit: null, eq: q, fu: null, aboutView: false, toHosted: true } : routeOf(q, intents, this.ctx, !!view);
+      const { hit, eq, fu, aboutView, toHosted } = gi ? { hit: { id: gi.kind === 'best3' ? 'globe_best3' : gi.kind === 'legal' ? 'legal_records' : 'site_address', run: () => (gi.kind === 'best3' ? globeBest3(this, gi) : gi.kind === 'legal' ? legalRecords(this, gi) : siteAddress(this, gi)) }, eq: q, fu: null, aboutView: false, toHosted: false } : only ? { hit: null, eq: q, fu: null, aboutView: false, toHosted: true } : routeOf(q, intents, this.ctx, !!view);
       if (fu) this.note(turn, fu);
       st.push(only ? "Reading this role's apps" : aboutView && view ? 'Reading this view' : 'Searching the portfolio data');
       // A spoken question goes to the research assistant first, for one short answer. When it is off or fails, the usual route below

@@ -143,6 +143,20 @@
     "https://www.federalregister.gov/api/v1/documents/facets/type?conditions%5Bpublication_date%5D%5Bgte%5D=2026-01-01&conditions%5Bpublication_date%5D%5Blte%5D=2026-11-26&conditions%5Bagencies%5D%5B%5D=health-and-human-services-department"
    ],
    "title": "Federal Register rules and proposed rules, year to date vs last year"
+  },
+  "legal_signals": {
+   "status": "ok",
+   "file": "data/live/legal_signals.json",
+   "fetched_at": "2026-11-27T11:30:15Z",
+   "rows": 105,
+   "bytes": 88914,
+   "seconds": 33.4,
+   "source_urls": [
+    "https://www.courtlistener.com/feed/search/",
+    "https://data.ct.gov/resource/xfev-8smz.json",
+    "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+   ],
+   "title": "Public legal records about watched companies (scripts/refresh_legal.py)"
   }
  },
  "generated_at": "2026-11-26T19:01:24Z",

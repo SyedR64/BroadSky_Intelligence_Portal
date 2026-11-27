@@ -166,6 +166,7 @@ Live feeds are fetched in the browser: NWS alerts (`api.weather.gov`), Open-Mete
 | `nih_awards` | NIH award dollars and counts, year to date vs the same days last year, 8 research states; largest funded institutions | NIH RePORTER |
 | `federal_buying` | Monthly federal contract dollars for lab supplies, PR and advertising, northeastern electrical and HVAC trades | USASpending |
 | `policy_activity` | Federal rules, proposed rules and presidential documents, year to date vs last year (all agencies, EPA, Energy, HHS) | Federal Register |
+| `legal_signals` (written by `scripts/refresh_legal.py`) | Public records naming a watched competitor, add-on target or sector rival: federal court dockets (past year), active Connecticut liens, federal contract awards (past year). Companies only; a private party in a case caption reads "Individual". The watch list is `data/research/legal_watchlist.json`; the first slice reads 30 of its 177 companies. Survey of sources: `briefing/legal_records_sources.md` | CourtListener public search feed (RECAP archive, Free Law Project); Connecticut Open Data; USASpending |
 
 Each source is fetched on its own; a failed source keeps its previous file and `data/live/manifest.json` records every status, row count and fetch time. Local signals reads these files plus the county table (`data/national_counties.json`) and the revenue points in each company's filings estimate table.
 

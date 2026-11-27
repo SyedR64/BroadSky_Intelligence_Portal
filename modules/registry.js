@@ -96,6 +96,7 @@ export const LEVELS = {
   'home/firm': { to: FIRM },
   'signals': { to: LEAD, own: true },
   'signals/overview': { to: LEAD, own: true, param: 'co', plus: SALES_OPS },
+  'signals/legal': { to: LEAD, own: true, param: 'co' },
   'bsp': { to: FIRM },
   'bsp/patterns': { to: LEAD },
   'bsp/rubric': { to: LEAD },

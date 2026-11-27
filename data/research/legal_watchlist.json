@@ -1,0 +1,2704 @@
+{
+ "meta": {
+  "title": "Legal records watch list",
+  "generated": "2026-11-27",
+  "count": 177,
+  "description": "Competitors, add-on targets and sector rivals whose public records are read by scripts/refresh_legal.py. Built from pp_market, ma_targets_pp, ma_targets_cet, ma_targets_fl_ts and rival_filings. Companies only.",
+  "fields": {
+   "phrases": "the name as searched, lower case, whole words",
+   "wide": "true for a distinctive national name: no place test",
+   "states": "states whose courts and registries count, when more than the home state",
+   "role": "competitor, target or rival",
+   "from": "the research file the name came from"
+  }
+ },
+ "items": [
+  {
+   "id": "pp-9faa088f",
+   "co": "pp",
+   "name": "Haller Enterprises",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Lititz",
+   "lat": 40.153998,
+   "lon": -76.304314,
+   "phrases": [
+    "haller enterprises"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-c73fb9a1",
+   "co": "pp",
+   "name": "Brubaker Inc.",
+   "role": "competitor",
+   "state": "PA",
+   "city": "East Hempfield",
+   "lat": 40.082513,
+   "lon": -76.383962,
+   "phrases": [
+    "brubaker inc"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-4b985753",
+   "co": "pp",
+   "name": "HB McClure / HB Home Services",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Harrisburg",
+   "lat": 40.275891,
+   "lon": -76.88502,
+   "phrases": [
+    "hb mcclure",
+    "hb home services"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-cacd022a",
+   "co": "pp",
+   "name": "W.C. Eshenaur & Son",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Harrisburg",
+   "lat": 40.275891,
+   "lon": -76.88502,
+   "phrases": [
+    "wc eshenaur and son"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-ded2ac23",
+   "co": "pp",
+   "name": "UGI Heating, Cooling & Plumbing",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Wyomissing",
+   "lat": 40.334655,
+   "lon": -75.966089,
+   "phrases": [
+    "ugi heating cooling and plumbing"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-e7348cae",
+   "co": "pp",
+   "name": "ECS Comfort Heating & Cooling",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Palmyra",
+   "lat": 40.310026,
+   "lon": -76.594781,
+   "phrases": [
+    "ecs comfort heating and cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-8472ff7e",
+   "co": "pp",
+   "name": "Oxford Plumbing & Heating",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Oxford",
+   "lat": 39.785561,
+   "lon": -75.979652,
+   "phrases": [
+    "oxford plumbing and heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-665e60f3",
+   "co": "pp",
+   "name": "Neffsville Plumbing, Heating & Cooling",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Lancaster",
+   "lat": 40.042061,
+   "lon": -76.30099,
+   "phrases": [
+    "neffsville plumbing heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-83763fd4",
+   "co": "pp",
+   "name": "Essig Plumbing & Heating",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Ontelaunee",
+   "lat": 40.452545,
+   "lon": -75.939495,
+   "phrases": [
+    "essig plumbing and heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-db9e8cde",
+   "co": "pp",
+   "name": "JM Lapp Plumbing & Heating",
+   "role": "competitor",
+   "state": "PA",
+   "city": "New Holland",
+   "lat": 40.101294,
+   "lon": -76.090147,
+   "phrases": [
+    "jm lapp plumbing and heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-52d7c5ba",
+   "co": "pp",
+   "name": "Robert H. Ranck Inc.",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Lancaster",
+   "lat": 40.042061,
+   "lon": -76.30099,
+   "phrases": [
+    "robert h ranck"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-0acfceca",
+   "co": "pp",
+   "name": "Lancaster Plumbing, Heating, Cooling & Electrical",
+   "role": "competitor",
+   "state": "PA",
+   "city": "East Petersburg",
+   "lat": 40.10336,
+   "lon": -76.349739,
+   "phrases": [
+    "lancaster plumbing heating cooling and electrical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-6b4b4585",
+   "co": "pp",
+   "name": "Susquehanna Mechanical",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Bainbridge",
+   "lat": 40.0909,
+   "lon": -76.668,
+   "phrases": [
+    "susquehanna mechanical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-82d388d7",
+   "co": "pp",
+   "name": "The Witmer Company",
+   "role": "competitor",
+   "state": "PA",
+   "city": "New Holland",
+   "lat": 40.101294,
+   "lon": -76.090147,
+   "phrases": [
+    "witmer company"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-4b2f523d",
+   "co": "pp",
+   "name": "SOC Energy",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Harrisburg",
+   "lat": 40.275891,
+   "lon": -76.88502,
+   "phrases": [
+    "soc energy",
+    "service oil company"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-222702e4",
+   "co": "pp",
+   "name": "Central Penn Plumbing Service",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Mechanicsburg",
+   "lat": 40.211404,
+   "lon": -77.00593,
+   "phrases": [
+    "central penn plumbing service"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-85f3ec17",
+   "co": "pp",
+   "name": "Pronto Plumbing Heating Air & Drains",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Camp Hill",
+   "lat": 40.242192,
+   "lon": -76.9274,
+   "phrases": [
+    "pronto plumbing heating air",
+    "secco home services"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-afd66bd4",
+   "co": "pp",
+   "name": "Zimmerman Plumbing, Heating & Air Conditioning",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Mechanicsburg",
+   "lat": 40.211404,
+   "lon": -77.00593,
+   "phrases": [
+    "zimmerman plumbing heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-9ecb835c",
+   "co": "pp",
+   "name": "A.C. Rimmer",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Mechanicsburg",
+   "lat": 40.211404,
+   "lon": -77.00593,
+   "phrases": [
+    "ac rimmer"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-67ea14df",
+   "co": "pp",
+   "name": "Advance HAWS",
+   "role": "competitor",
+   "state": "PA",
+   "city": "York",
+   "lat": 39.964798,
+   "lon": -76.73184,
+   "phrases": [
+    "advance haws"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-bdea38c4",
+   "co": "pp",
+   "name": "RiverView Mechanical",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Hellam",
+   "lat": 40.02338,
+   "lon": -76.596347,
+   "phrases": [
+    "riverview mechanical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-b428f4ef",
+   "co": "pp",
+   "name": "R.D. Heller Inc.",
+   "role": "competitor",
+   "state": "PA",
+   "city": "York",
+   "lat": 39.964798,
+   "lon": -76.73184,
+   "phrases": [
+    "rd heller"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-93f7c12d",
+   "co": "pp",
+   "name": "Hopewell Heating & Air Conditioning",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Red Lion",
+   "lat": 39.898606,
+   "lon": -76.607749,
+   "phrases": [
+    "hopewell heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-60ac92ea",
+   "co": "pp",
+   "name": "Sandwell Mechanical",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Gettysburg",
+   "lat": 39.830597,
+   "lon": -77.234147,
+   "phrases": [
+    "sandwell mechanical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-805b5c22",
+   "co": "pp",
+   "name": "Chamberlin's Reliable Heating & Cooling",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Shippensburg",
+   "lat": 40.048733,
+   "lon": -77.523193,
+   "phrases": [
+    "chamberlins reliable heating and cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-1daa7ff3",
+   "co": "pp",
+   "name": "Countryside Fuel",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Myerstown",
+   "lat": 40.372139,
+   "lon": -76.305579,
+   "phrases": [
+    "countryside fuel"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-481f27df",
+   "co": "pp",
+   "name": "Trinity Comfort Heating & Cooling",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Birdsboro",
+   "lat": 40.262329,
+   "lon": -75.810113,
+   "phrases": [
+    "trinity comfort heating and cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-275fb616",
+   "co": "pp",
+   "name": "Gehringer Mechanical",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Boyertown",
+   "lat": 40.33233,
+   "lon": -75.637478,
+   "phrases": [
+    "gehringer mechanical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-ca409f63",
+   "co": "pp",
+   "name": "Sunrise Plumbing Heating Cooling",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Reading",
+   "lat": 40.33922,
+   "lon": -75.926277,
+   "phrases": [
+    "sunrise plumbing heating cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-8ebdf6ed",
+   "co": "pp",
+   "name": "Horizon Services",
+   "role": "competitor",
+   "state": "DE",
+   "city": "Wilmington",
+   "lat": 39.735651,
+   "lon": -75.532104,
+   "phrases": [
+    "horizon services"
+   ],
+   "wide": false,
+   "from": "pp_market",
+   "states": [
+    "DE",
+    "PA",
+    "NJ",
+    "MD"
+   ]
+  },
+  {
+   "id": "pp-5c768a3f",
+   "co": "pp",
+   "name": "Brandywine Valley Heating & Air Conditioning",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Exton",
+   "lat": 40.029916,
+   "lon": -75.633061,
+   "phrases": [
+    "brandywine valley heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-08bedbe2",
+   "co": "pp",
+   "name": "Montco Heating & Air",
+   "role": "competitor",
+   "state": "PA",
+   "city": "Pottstown",
+   "lat": 40.250924,
+   "lon": -75.644754,
+   "phrases": [
+    "montco heating and air"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-3cdf4d13",
+   "co": "pp",
+   "name": "NJR Home Services",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Wall",
+   "lat": 40.165827,
+   "lon": -74.09799,
+   "phrases": [
+    "njr home services"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-1bd028be",
+   "co": "pp",
+   "name": "Dash Mechanical",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Brick",
+   "lat": 40.061773,
+   "lon": -74.109557,
+   "phrases": [
+    "dash mechanical"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-4e355800",
+   "co": "pp",
+   "name": "Lawes Company",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Shrewsbury",
+   "lat": 40.32645,
+   "lon": -74.057373,
+   "phrases": [
+    "lawes company"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-2c562223",
+   "co": "pp",
+   "name": "NJPD Plumbing & Heating",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Lakewood",
+   "lat": 40.093975,
+   "lon": -74.211478,
+   "phrases": [
+    "njpd plumbing and heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-a5c81961",
+   "co": "pp",
+   "name": "Garden State Air Conditioning & Heat",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Freehold",
+   "lat": 40.260219,
+   "lon": -74.275884,
+   "phrases": [
+    "garden state air conditioning and heat"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-cc6bcfc4",
+   "co": "pp",
+   "name": "Mid-State Heating & Cooling",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Howell",
+   "lat": 40.178108,
+   "lon": -74.206225,
+   "phrases": [
+    "mid state heating and cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-1be22374",
+   "co": "pp",
+   "name": "Prism Heating & Air Conditioning",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Toms River",
+   "lat": 39.994856,
+   "lon": -74.187754,
+   "phrases": [
+    "prism heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-c04721a9",
+   "co": "pp",
+   "name": "Long's Air Conditioning & Heating",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Toms River",
+   "lat": 39.994856,
+   "lon": -74.187754,
+   "phrases": [
+    "longs air conditioning and heating"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-137b4c82",
+   "co": "pp",
+   "name": "Eastern Shore Heating & Air Conditioning",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Brick",
+   "lat": 40.061773,
+   "lon": -74.109557,
+   "phrases": [
+    "eastern shore heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-3641534a",
+   "co": "pp",
+   "name": "J.H. Roberts Heating & Cooling",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Forked River",
+   "lat": 39.825808,
+   "lon": -74.180757,
+   "phrases": [
+    "jh roberts heating and cooling"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-1ea3f88f",
+   "co": "pp",
+   "name": "McCollum Home Services",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Manahawkin",
+   "lat": 39.689943,
+   "lon": -74.242653,
+   "phrases": [
+    "mccollum home services"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-1e365375",
+   "co": "pp",
+   "name": "Tamco Air",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Manalapan",
+   "lat": 40.282353,
+   "lon": -74.346564,
+   "phrases": [
+    "tamco air"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-e4a7bacd",
+   "co": "pp",
+   "name": "DelRen HVAC",
+   "role": "competitor",
+   "state": "NJ",
+   "city": "Jamesburg",
+   "lat": 40.349038,
+   "lon": -74.440202,
+   "phrases": [
+    "delren hvac"
+   ],
+   "wide": false,
+   "from": "pp_market"
+  },
+  {
+   "id": "pp-36522349",
+   "co": "pp",
+   "name": "Plug It In LLC (Mister Sparky of Manalapan)",
+   "role": "target",
+   "state": "NJ",
+   "city": "Manalapan",
+   "lat": 40.2873,
+   "lon": -74.3435,
+   "phrases": [
+    "plug it in llc"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-1e915378",
+   "co": "pp",
+   "name": "Regal Plumbing, Heating & A/C",
+   "role": "target",
+   "state": "PA",
+   "city": "Hanover",
+   "lat": 39.8007,
+   "lon": -76.983,
+   "phrases": [
+    "regal plumbing heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-eda63ab1",
+   "co": "pp",
+   "name": "Ressler & Mateer",
+   "role": "target",
+   "state": "PA",
+   "city": "Brownstown",
+   "lat": 40.124,
+   "lon": -76.2155,
+   "phrases": [
+    "ressler and mateer"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-36aa2cb1",
+   "co": "pp",
+   "name": "JSL Mechanical, Inc.",
+   "role": "target",
+   "state": "PA",
+   "city": "Reinholds",
+   "lat": 40.2687,
+   "lon": -76.115,
+   "phrases": [
+    "jsl mechanical"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-2cf94b5b",
+   "co": "pp",
+   "name": "WM Buffington Company Heating, Cooling & Plumbing",
+   "role": "target",
+   "state": "PA",
+   "city": "Highspire",
+   "lat": 40.2107,
+   "lon": -76.7911,
+   "phrases": [
+    "wm buffington heating cooling and plumbing"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-5e5bf8f4",
+   "co": "pp",
+   "name": "Stambaugh Plumbing & Heating, Inc.",
+   "role": "target",
+   "state": "PA",
+   "city": "York New Salem",
+   "lat": 39.9012,
+   "lon": -76.7897,
+   "phrases": [
+    "stambaugh plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-f63baf79",
+   "co": "pp",
+   "name": "Rodney B. Smith Plumbing, Heating & Cooling, Inc.",
+   "role": "target",
+   "state": "PA",
+   "city": "Chambersburg",
+   "lat": 39.9376,
+   "lon": -77.6611,
+   "phrases": [
+    "rodney b smith plumbing heating and cooling"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-71a1e500",
+   "co": "pp",
+   "name": "McCleary Heating & Cooling",
+   "role": "target",
+   "state": "PA",
+   "city": "Chambersburg",
+   "lat": 39.9376,
+   "lon": -77.6611,
+   "phrases": [
+    "mccleary heating and cooling"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-1dbc7287",
+   "co": "pp",
+   "name": "Mann Plumbing & Heating, LLC",
+   "role": "target",
+   "state": "PA",
+   "city": "Fayetteville",
+   "lat": 39.9112,
+   "lon": -77.55,
+   "phrases": [
+    "mann plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-34c5fed0",
+   "co": "pp",
+   "name": "Eberly's Plumbing & Heating Inc.",
+   "role": "target",
+   "state": "PA",
+   "city": "Greencastle",
+   "lat": 39.7904,
+   "lon": -77.7278,
+   "phrases": [
+    "eberlys plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-18a034ed",
+   "co": "pp",
+   "name": "Moyer Total Indoor Comfort",
+   "role": "target",
+   "state": "PA",
+   "city": "Kutztown",
+   "lat": 40.5173,
+   "lon": -75.7774,
+   "phrases": [
+    "moyer total indoor comfort"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-57249498",
+   "co": "pp",
+   "name": "Oliver Heating & Cooling",
+   "role": "target",
+   "state": "PA",
+   "city": "Morton",
+   "lat": 39.9098,
+   "lon": -75.3283,
+   "phrases": [
+    "oliver heating and cooling"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-47ce4c63",
+   "co": "pp",
+   "name": "Good Plumbing, Heating & Air Conditioning",
+   "role": "target",
+   "state": "PA",
+   "city": "Souderton",
+   "lat": 40.3118,
+   "lon": -75.3252,
+   "phrases": [
+    "good plumbing heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-7c363215",
+   "co": "pp",
+   "name": "Maitz Home Services",
+   "role": "target",
+   "state": "PA",
+   "city": "Allentown",
+   "lat": 40.6084,
+   "lon": -75.4902,
+   "phrases": [
+    "maitz home services"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-8320b18f",
+   "co": "pp",
+   "name": "Curtis Total Service",
+   "role": "target",
+   "state": "PA",
+   "city": "Allentown",
+   "lat": 40.6084,
+   "lon": -75.4902,
+   "phrases": [
+    "curtis total service"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-6fa27d8b",
+   "co": "pp",
+   "name": "Timothy Off Plumbing, Heating & Air Conditioning",
+   "role": "target",
+   "state": "PA",
+   "city": "West Chester",
+   "lat": 39.9607,
+   "lon": -75.6055,
+   "phrases": [
+    "timothy off plumbing heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-3d6b334f",
+   "co": "pp",
+   "name": "Boulden Brothers",
+   "role": "target",
+   "state": "DE",
+   "city": "Newark",
+   "lat": 39.6837,
+   "lon": -75.7497,
+   "phrases": [
+    "boulden brothers"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-811d155f",
+   "co": "pp",
+   "name": "Warner Service",
+   "role": "target",
+   "state": "MD",
+   "city": "Frederick",
+   "lat": 39.4143,
+   "lon": -77.4105,
+   "phrases": [
+    "rw warner inc"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-4fd2398c",
+   "co": "pp",
+   "name": "H&B Plumbing and Heating, Inc.",
+   "role": "target",
+   "state": "MD",
+   "city": "Chesapeake City",
+   "lat": 39.5276,
+   "lon": -75.8105,
+   "phrases": [
+    "h and b plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-cfb48ba3",
+   "co": "pp",
+   "name": "Maichle's Heating & Air Conditioning",
+   "role": "target",
+   "state": "DE",
+   "city": "New Castle",
+   "lat": 39.6621,
+   "lon": -75.5663,
+   "phrases": [
+    "maichles heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-be9632fa",
+   "co": "pp",
+   "name": "Charles A. Klein & Sons, Inc.",
+   "role": "target",
+   "state": "MD",
+   "city": "Sykesville",
+   "lat": 39.3737,
+   "lon": -76.9678,
+   "phrases": [
+    "charles a klein and sons"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-21833f1b",
+   "co": "pp",
+   "name": "C&C Air Conditioning, Heating, Plumbing & Electric",
+   "role": "target",
+   "state": "NJ",
+   "city": "Belford",
+   "lat": 40.4262,
+   "lon": -74.0868,
+   "phrases": [
+    "c and c air conditioning heating plumbing and electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-53034d6c",
+   "co": "pp",
+   "name": "Bovio Rubino Service",
+   "role": "target",
+   "state": "NJ",
+   "city": "Voorhees",
+   "lat": 39.8519,
+   "lon": -74.9616,
+   "phrases": [
+    "bovio rubino service"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-7f84f885",
+   "co": "pp",
+   "name": "RA Nichols Plumbing, Heating & Cooling",
+   "role": "target",
+   "state": "NJ",
+   "city": "Helmetta",
+   "lat": 40.3768,
+   "lon": -74.4238,
+   "phrases": [
+    "ra nichols plumbing heating and cooling"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-afbec753",
+   "co": "pp",
+   "name": "AA Richards Heating & Cooling",
+   "role": "target",
+   "state": "NJ",
+   "city": "Belmar",
+   "lat": 40.1784,
+   "lon": -74.0218,
+   "phrases": [
+    "aa richards heating and cooling"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-e05cd7e6",
+   "co": "pp",
+   "name": "Oceanside Home Services",
+   "role": "target",
+   "state": "NJ",
+   "city": "Allenhurst",
+   "lat": 40.2368,
+   "lon": -74.0018,
+   "phrases": [
+    "oceanside home services",
+    "oceanside service inc"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-dd703bd5",
+   "co": "pp",
+   "name": "FS Plumbing & Heating",
+   "role": "target",
+   "state": "NJ",
+   "city": "Freehold",
+   "lat": 40.2601,
+   "lon": -74.2738,
+   "phrases": [
+    "fs plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-178bcde0",
+   "co": "pp",
+   "name": "Broadley's Plumbing, Heating & Air Conditioning",
+   "role": "target",
+   "state": "NJ",
+   "city": "Marmora",
+   "lat": 39.2548,
+   "lon": -74.649,
+   "phrases": [
+    "broadleys plumbing heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-b63750b0",
+   "co": "pp",
+   "name": "Jenkins & Sons Plumbing & Heating",
+   "role": "target",
+   "state": "NJ",
+   "city": "Pleasantville",
+   "lat": 39.3898,
+   "lon": -74.524,
+   "phrases": [
+    "jenkins and sons plumbing and heating"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-c2fb6c04",
+   "co": "pp",
+   "name": "Clay's Climate Control",
+   "role": "target",
+   "state": "NJ",
+   "city": "Linwood",
+   "lat": 39.3398,
+   "lon": -74.5752,
+   "phrases": [
+    "clays climate control"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-09c29246",
+   "co": "pp",
+   "name": "Lenegan Plumbing Heating & Air Conditioning",
+   "role": "target",
+   "state": "NJ",
+   "city": "Ocean City",
+   "lat": 39.2776,
+   "lon": -74.5746,
+   "phrases": [
+    "lenegan plumbing heating and air conditioning"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-5a23776f",
+   "co": "pp",
+   "name": "Laury Heating Cooling & Plumbing",
+   "role": "target",
+   "state": "NJ",
+   "city": "Vineland",
+   "lat": 39.4864,
+   "lon": -75.026,
+   "phrases": [
+    "laury heating cooling and plumbing"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-128d3077",
+   "co": "pp",
+   "name": "Harris Plumbing, Heating, Air & Electric",
+   "role": "target",
+   "state": "NJ",
+   "city": "Salem",
+   "lat": 39.5718,
+   "lon": -75.4672,
+   "phrases": [
+    "harris plumbing heating air and electric",
+    "de harris services inc"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "pp-51a24ddf",
+   "co": "pp",
+   "name": "Sanders Home Services",
+   "role": "target",
+   "state": "NJ",
+   "city": "Voorhees",
+   "lat": 39.8519,
+   "lon": -74.9616,
+   "phrases": [
+    "sanders home services"
+   ],
+   "wide": false,
+   "from": "ma_targets_pp"
+  },
+  {
+   "id": "cet-fbab6e80",
+   "co": "cet",
+   "name": "McDonald Electrical Corporation",
+   "role": "target",
+   "state": "MA",
+   "city": "Hingham",
+   "lat": 42.2418,
+   "lon": -70.8898,
+   "phrases": [
+    "mcdonald electrical"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-0b34edd1",
+   "co": "cet",
+   "name": "K.M. Kelly, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Rochdale (Leicester)",
+   "lat": 42.1987,
+   "lon": -71.9048,
+   "phrases": [
+    "km kelly"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-57000070",
+   "co": "cet",
+   "name": "Coghlin Electrical Contractors, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Worcester",
+   "lat": 42.2626,
+   "lon": -71.8023,
+   "phrases": [
+    "coghlin electrical contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-dba87950",
+   "co": "cet",
+   "name": "FM Generator, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Canton",
+   "lat": 42.1584,
+   "lon": -71.1448,
+   "phrases": [
+    "fm generator"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-a88f2ac4",
+   "co": "cet",
+   "name": "Murphy Electric & Industrial Control",
+   "role": "target",
+   "state": "MA",
+   "city": "Pembroke",
+   "lat": 42.0715,
+   "lon": -70.8092,
+   "phrases": [
+    "murphy electric and industrial control"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-6b36e98d",
+   "co": "cet",
+   "name": "Elm Electrical, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Westfield",
+   "lat": 42.1251,
+   "lon": -72.7495,
+   "phrases": [
+    "elm electrical"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-12905d54",
+   "co": "cet",
+   "name": "CTEC Solar",
+   "role": "target",
+   "state": "CT",
+   "city": "Bloomfield",
+   "lat": 41.8265,
+   "lon": -72.7301,
+   "phrases": [
+    "ctec solar",
+    "c tec solar llc"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-9516cfd0",
+   "co": "cet",
+   "name": "Averill Electric Co., Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "South Easton",
+   "lat": 42.0473,
+   "lon": -71.1017,
+   "phrases": [
+    "averill electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-90b17f1e",
+   "co": "cet",
+   "name": "Suburban Electric Contracting, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Stoughton",
+   "lat": 42.1251,
+   "lon": -71.1023,
+   "phrases": [
+    "suburban electric contracting"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-5b310285",
+   "co": "cet",
+   "name": "Aldon Electric, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Weymouth",
+   "lat": 42.218,
+   "lon": -70.941,
+   "phrases": [
+    "aldon electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-c30051f8",
+   "co": "cet",
+   "name": "JM Electrical Company, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Lynnfield",
+   "lat": 42.5387,
+   "lon": -71.0481,
+   "phrases": [
+    "jm electrical"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-9baed5b7",
+   "co": "cet",
+   "name": "S&W Electrical Contractors, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Bridgewater",
+   "lat": 41.9904,
+   "lon": -70.975,
+   "phrases": [
+    "s and w electrical contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-60af5da4",
+   "co": "cet",
+   "name": "Automated Building Systems, Inc.",
+   "role": "target",
+   "state": "CT",
+   "city": "Glastonbury",
+   "lat": 41.7123,
+   "lon": -72.6082,
+   "phrases": [
+    "automated building systems"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-e3035ae0",
+   "co": "cet",
+   "name": "Fischbach & Moore Electric Group, LLC",
+   "role": "target",
+   "state": "MA",
+   "city": "Boston",
+   "lat": 42.2946,
+   "lon": -71.0507,
+   "phrases": [
+    "fischbach and moore electric group"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-9934f80f",
+   "co": "cet",
+   "name": "Arden Engineering Constructors, LLC",
+   "role": "target",
+   "state": "RI",
+   "city": "Pawtucket",
+   "lat": 41.8787,
+   "lon": -71.3826,
+   "phrases": [
+    "arden engineering constructors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-273640dc",
+   "co": "cet",
+   "name": "D/E/F Services Group, Ltd.",
+   "role": "target",
+   "state": "CT",
+   "city": "Jewett City (Griswold)",
+   "lat": 41.6065,
+   "lon": -71.9807,
+   "phrases": [
+    "d e f services group"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-dc07bbc3",
+   "co": "cet",
+   "name": "M.L. Schmitt Electric",
+   "role": "target",
+   "state": "MA",
+   "city": "Springfield",
+   "lat": 42.1015,
+   "lon": -72.5898,
+   "phrases": [
+    "ml schmitt electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-e37acc8a",
+   "co": "cet",
+   "name": "Dinto Electrical Group",
+   "role": "target",
+   "state": "CT",
+   "city": "Middlebury",
+   "lat": 41.5279,
+   "lon": -73.1276,
+   "phrases": [
+    "dinto electrical group",
+    "paul dinto electrical contractors inc"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-78d41a53",
+   "co": "cet",
+   "name": "Dagle Electrical Construction Corp.",
+   "role": "target",
+   "state": "MA",
+   "city": "Wilmington",
+   "lat": 42.5465,
+   "lon": -71.1737,
+   "phrases": [
+    "dagle electrical construction"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-32ebadef",
+   "co": "cet",
+   "name": "D&D Electrical Contractors / DNET Cabling",
+   "role": "target",
+   "state": "MA",
+   "city": "Woburn",
+   "lat": 42.4793,
+   "lon": -71.1523,
+   "phrases": [
+    "d and d electrical contractors",
+    "dnet cabling"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-c11f5564",
+   "co": "cet",
+   "name": "Coutts Brothers, Inc.",
+   "role": "target",
+   "state": "ME",
+   "city": "Gardiner",
+   "lat": 44.2301,
+   "lon": -69.7755,
+   "phrases": [
+    "coutts brothers"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-f67be2f3",
+   "co": "cet",
+   "name": "Nappa Electrical Contractors",
+   "role": "target",
+   "state": "MA",
+   "city": "Billerica",
+   "lat": 42.5584,
+   "lon": -71.2689,
+   "phrases": [
+    "nappa electrical contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-1d05b65e",
+   "co": "cet",
+   "name": "C&H Electric, Inc.",
+   "role": "target",
+   "state": "CT",
+   "city": "Waterbury",
+   "lat": 41.5582,
+   "lon": -73.0515,
+   "phrases": [
+    "c and h electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-f5e2b227",
+   "co": "cet",
+   "name": "Griffin Electrical Contractors, Inc.",
+   "role": "target",
+   "state": "CT",
+   "city": "Southington",
+   "lat": 41.5965,
+   "lon": -72.8776,
+   "phrases": [
+    "griffin electrical contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-88c528b2",
+   "co": "cet",
+   "name": "Longchamps Electric",
+   "role": "target",
+   "state": "NH",
+   "city": "Manchester",
+   "lat": 42.9956,
+   "lon": -71.4548,
+   "phrases": [
+    "longchamps electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-7c29a4d0",
+   "co": "cet",
+   "name": "Lighthouse Electrical Contracting Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Hingham",
+   "lat": 42.2418,
+   "lon": -70.8898,
+   "phrases": [
+    "lighthouse electrical contracting"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-f9fccc30",
+   "co": "cet",
+   "name": "NY-Conn Corporation",
+   "role": "target",
+   "state": "CT",
+   "city": "Danbury",
+   "lat": 41.3948,
+   "lon": -73.454,
+   "phrases": [
+    "ny conn"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-a0d2249a",
+   "co": "cet",
+   "name": "Rivers Electrical Corporation",
+   "role": "target",
+   "state": "MA",
+   "city": "Woburn",
+   "lat": 42.4793,
+   "lon": -71.1523,
+   "phrases": [
+    "rivers electrical"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-ee75ae67",
+   "co": "cet",
+   "name": "Driscoll Electric",
+   "role": "target",
+   "state": "MA",
+   "city": "Medford",
+   "lat": 42.4184,
+   "lon": -71.1062,
+   "phrases": [
+    "driscoll electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-a448e03b",
+   "co": "cet",
+   "name": "Rossi Electric",
+   "role": "target",
+   "state": "RI",
+   "city": "Cranston",
+   "lat": 41.7798,
+   "lon": -71.4373,
+   "phrases": [
+    "rossi electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-5efaf7b1",
+   "co": "cet",
+   "name": "Dynasty Electric, LLC",
+   "role": "target",
+   "state": "MA",
+   "city": "Rehoboth",
+   "lat": 41.8404,
+   "lon": -71.2495,
+   "phrases": [
+    "dynasty electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-f2cc2070",
+   "co": "cet",
+   "name": "Racette Electric Inc.",
+   "role": "target",
+   "state": "VT",
+   "city": "Pittsford",
+   "lat": 43.7062,
+   "lon": -73.0232,
+   "phrases": [
+    "racette electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-fe85387a",
+   "co": "cet",
+   "name": "Delmar Electrical Contractors, LLC",
+   "role": "target",
+   "state": "CT",
+   "city": "Oakville (Watertown)",
+   "lat": 41.5932,
+   "lon": -73.0851,
+   "phrases": [
+    "delmar electrical contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-6843690d",
+   "co": "cet",
+   "name": "Northeast Electrical & Mechanical Services, Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Dedham",
+   "lat": 42.2418,
+   "lon": -71.1662,
+   "phrases": [
+    "northeast electrical and mechanical services"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-1cdc02eb",
+   "co": "cet",
+   "name": "Cruz Electric Inc.",
+   "role": "target",
+   "state": "MA",
+   "city": "Woburn",
+   "lat": 42.4793,
+   "lon": -71.1523,
+   "phrases": [
+    "cruz electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-dff3f16b",
+   "co": "cet",
+   "name": "Midway Utility Contractors, LLC",
+   "role": "target",
+   "state": "NH",
+   "city": "Seabrook",
+   "lat": 42.8948,
+   "lon": -70.8712,
+   "phrases": [
+    "midway utility contractors"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-6fbf4f69",
+   "co": "cet",
+   "name": "DeBlois Electric",
+   "role": "target",
+   "state": "ME",
+   "city": "Lewiston",
+   "lat": 44.1004,
+   "lon": -70.2148,
+   "phrases": [
+    "deblois electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-acb9f90b",
+   "co": "cet",
+   "name": "Daniels Electric Corporation",
+   "role": "target",
+   "state": "NH",
+   "city": "Gilford",
+   "lat": 43.5476,
+   "lon": -71.4065,
+   "phrases": [
+    "daniels electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-30bdfe1f",
+   "co": "cet",
+   "name": "MEI Electrical Contractors & Systems Integrators",
+   "role": "target",
+   "state": "VT",
+   "city": "Westfield",
+   "lat": 44.8837,
+   "lon": -72.4501,
+   "phrases": [
+    "mei electrical contractors and systems integrators"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-0142edc0",
+   "co": "cet",
+   "name": "Benoit Electric",
+   "role": "target",
+   "state": "VT",
+   "city": "Barre",
+   "lat": 44.197,
+   "lon": -72.5018,
+   "phrases": [
+    "benoit electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-87088808",
+   "co": "cet",
+   "name": "Seabee Electric, Inc.",
+   "role": "target",
+   "state": "ME",
+   "city": "Scarborough",
+   "lat": 43.5781,
+   "lon": -70.3217,
+   "phrases": [
+    "seabee electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-a7387214",
+   "co": "cet",
+   "name": "Cummings Electric",
+   "role": "target",
+   "state": "VT",
+   "city": "South Burlington",
+   "lat": 44.4669,
+   "lon": -73.1709,
+   "phrases": [
+    "cummings electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "cet-afd54b0a",
+   "co": "cet",
+   "name": "Cole Electric, Inc.",
+   "role": "target",
+   "state": "VT",
+   "city": "East Thetford",
+   "lat": 43.8187,
+   "lon": -72.1876,
+   "phrases": [
+    "cole electric"
+   ],
+   "wide": false,
+   "from": "ma_targets_cet"
+  },
+  {
+   "id": "fl-31e71b9e",
+   "co": "fl",
+   "name": "Innovative Computing Systems, Inc.",
+   "role": "target",
+   "state": "CA",
+   "city": "Los Angeles",
+   "lat": 34.0522,
+   "lon": -118.2437,
+   "phrases": [
+    "innovative computing systems"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-883cb56b",
+   "co": "fl",
+   "name": "Kraft & Kennedy, Inc.",
+   "role": "target",
+   "state": "NY",
+   "city": "New York",
+   "lat": 40.7497,
+   "lon": -73.976,
+   "phrases": [
+    "kraft and kennedy"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-ae5df9da",
+   "co": "fl",
+   "name": "Helm360",
+   "role": "target",
+   "state": "CA",
+   "city": "Poway",
+   "lat": 32.9628,
+   "lon": -117.0359,
+   "phrases": [
+    "helm360"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-dde8857b",
+   "co": "fl",
+   "name": "Intelligent Technical Solutions",
+   "role": "target",
+   "state": "NV",
+   "city": "Las Vegas",
+   "lat": 36.1699,
+   "lon": -115.1398,
+   "phrases": [
+    "intelligent technical solutions"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-6d0ef548",
+   "co": "fl",
+   "name": "Uptime Legal Systems",
+   "role": "target",
+   "state": "MN",
+   "city": "Eden Prairie",
+   "lat": 44.8547,
+   "lon": -93.4708,
+   "phrases": [
+    "uptime legal systems"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-d3af7310",
+   "co": "fl",
+   "name": "Affinity Consulting Group",
+   "role": "target",
+   "state": "FL",
+   "city": "Largo",
+   "lat": 27.9095,
+   "lon": -82.7873,
+   "phrases": [
+    "affinity consulting group"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-8b983995",
+   "co": "fl",
+   "name": "Tabush Group",
+   "role": "target",
+   "state": "NY",
+   "city": "New York",
+   "lat": 40.7536,
+   "lon": -73.9895,
+   "phrases": [
+    "tabush group"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-7a892d1c",
+   "co": "fl",
+   "name": "PSM Partners",
+   "role": "target",
+   "state": "IL",
+   "city": "Chicago",
+   "lat": 41.8781,
+   "lon": -87.6298,
+   "phrases": [
+    "psm partners",
+    "porcaro stolarek mete partners llc"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-fc5a99f0",
+   "co": "fl",
+   "name": "The Garver Group",
+   "role": "target",
+   "state": "NJ",
+   "city": "Voorhees",
+   "lat": 39.8454,
+   "lon": -74.953,
+   "phrases": [
+    "garver group"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-48326dc2",
+   "co": "fl",
+   "name": "The Legal Billing Group",
+   "role": "target",
+   "state": "CA",
+   "city": "West Hollywood",
+   "lat": 34.09,
+   "lon": -118.3617,
+   "phrases": [
+    "legal billing group"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-3b6cbda4",
+   "co": "fl",
+   "name": "Strategic Technology Solutions",
+   "role": "target",
+   "state": "CA",
+   "city": "Torrance",
+   "lat": 33.8358,
+   "lon": -118.3406,
+   "phrases": [
+    "strategic technology solutions"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "fl-7eddd8c0",
+   "co": "fl",
+   "name": "LegalEase Solutions",
+   "role": "target",
+   "state": "MI",
+   "city": "Ann Arbor",
+   "lat": 42.2808,
+   "lon": -83.743,
+   "phrases": [
+    "legalease solutions"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-548aae9e",
+   "co": "ts",
+   "name": "Midland Scientific, Inc.",
+   "role": "target",
+   "state": "NE",
+   "city": "La Vista",
+   "lat": 41.1839,
+   "lon": -96.0314,
+   "phrases": [
+    "midland scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-62ebaa55",
+   "co": "ts",
+   "name": "Capitol Scientific",
+   "role": "target",
+   "state": "TX",
+   "city": "Austin",
+   "lat": 30.2672,
+   "lon": -97.7431,
+   "phrases": [
+    "capitol scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-23b24833",
+   "co": "ts",
+   "name": "Valutek",
+   "role": "target",
+   "state": "AZ",
+   "city": "Phoenix",
+   "lat": 33.4484,
+   "lon": -112.074,
+   "phrases": [
+    "valutek"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-be14ea60",
+   "co": "ts",
+   "name": "GFS Chemicals",
+   "role": "target",
+   "state": "OH",
+   "city": "Powell",
+   "lat": 40.1578,
+   "lon": -83.0752,
+   "phrases": [
+    "gfs chemicals"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-507a00f2",
+   "co": "ts",
+   "name": "Andwin Corporation",
+   "role": "target",
+   "state": "CA",
+   "city": "Simi Valley",
+   "lat": 34.2694,
+   "lon": -118.7815,
+   "phrases": [
+    "andwin corporation",
+    "andwin scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-3da647fe",
+   "co": "ts",
+   "name": "Genesee Scientific",
+   "role": "target",
+   "state": "CA",
+   "city": "El Cajon",
+   "lat": 32.7948,
+   "lon": -116.9625,
+   "phrases": [
+    "genesee scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-4442a127",
+   "co": "ts",
+   "name": "Laboratory Equipment Company",
+   "role": "target",
+   "state": "CA",
+   "city": "Hayward",
+   "lat": 37.6688,
+   "lon": -122.0808,
+   "phrases": [
+    "laboratory equipment company",
+    "labequipco"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-fd26a81f",
+   "co": "ts",
+   "name": "Krackeler Scientific, Inc.",
+   "role": "target",
+   "state": "NY",
+   "city": "Albany",
+   "lat": 42.6526,
+   "lon": -73.7562,
+   "phrases": [
+    "krackeler scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-79fca1d6",
+   "co": "ts",
+   "name": "Micronova Manufacturing",
+   "role": "target",
+   "state": "CA",
+   "city": "Torrance",
+   "lat": 33.8358,
+   "lon": -118.3406,
+   "phrases": [
+    "micronova manufacturing"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-81ead37a",
+   "co": "ts",
+   "name": "RICCA Chemical Company",
+   "role": "target",
+   "state": "TX",
+   "city": "Arlington",
+   "lat": 32.7357,
+   "lon": -97.1081,
+   "phrases": [
+    "ricca chemical"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-9eb9748a",
+   "co": "ts",
+   "name": "Boston BioProducts",
+   "role": "target",
+   "state": "MA",
+   "city": "Ashland",
+   "lat": 42.2612,
+   "lon": -71.4634,
+   "phrases": [
+    "boston bioproducts"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-6bae6270",
+   "co": "ts",
+   "name": "Quartzy",
+   "role": "target",
+   "state": "CA",
+   "city": "Hayward",
+   "lat": 37.6688,
+   "lon": -122.0808,
+   "phrases": [
+    "quartzy"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-968e0e65",
+   "co": "ts",
+   "name": "Tovatech",
+   "role": "target",
+   "state": "TX",
+   "city": "Plano",
+   "lat": 33.0198,
+   "lon": -96.6989,
+   "phrases": [
+    "tovatech"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-b832eb1b",
+   "co": "ts",
+   "name": "BioSurplus",
+   "role": "target",
+   "state": "CA",
+   "city": "San Diego",
+   "lat": 32.7157,
+   "lon": -117.1611,
+   "phrases": [
+    "biosurplus"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-1dc2a95b",
+   "co": "ts",
+   "name": "Stellar Scientific",
+   "role": "target",
+   "state": "MD",
+   "city": "Owings Mills",
+   "lat": 39.4196,
+   "lon": -76.7803,
+   "phrases": [
+    "stellar scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-ae18ebde",
+   "co": "ts",
+   "name": "DOT Scientific, Inc.",
+   "role": "target",
+   "state": "MI",
+   "city": "Burton",
+   "lat": 42.9995,
+   "lon": -83.6163,
+   "phrases": [
+    "dot scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-b3597720",
+   "co": "ts",
+   "name": "Globe Scientific",
+   "role": "target",
+   "state": "NJ",
+   "city": "Mahwah",
+   "lat": 41.0887,
+   "lon": -74.1438,
+   "phrases": [
+    "globe scientific"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-0dac7c73",
+   "co": "ts",
+   "name": "Pfaltz & Bauer",
+   "role": "target",
+   "state": "CT",
+   "city": "Waterbury",
+   "lat": 41.5582,
+   "lon": -73.0515,
+   "phrases": [
+    "pfaltz and bauer"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "ts-3769eba2",
+   "co": "ts",
+   "name": "Cleanroom Connection LLC",
+   "role": "target",
+   "state": "TX",
+   "city": "Spring Branch",
+   "lat": 29.8633,
+   "lon": -98.4264,
+   "phrases": [
+    "cleanroom connection"
+   ],
+   "wide": false,
+   "from": "ma_targets_fl_ts"
+  },
+  {
+   "id": "cet-09574810",
+   "co": "cet",
+   "name": "IES Holdings",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "ies holdings"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "cet-12c7f16b",
+   "co": "cet",
+   "name": "Interstate Electrical Services",
+   "role": "rival",
+   "state": "MA",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "interstate electrical services"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "cet-9b25cbdb",
+   "co": "cet",
+   "name": "J. & M. Brown Company",
+   "role": "rival",
+   "state": "MA",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "j and m brown company",
+    "jm brown company"
+   ],
+   "wide": false,
+   "from": "rival_filings"
+  },
+  {
+   "id": "cet-f8643ebe",
+   "co": "cet",
+   "name": "Sciens Building Solutions",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "sciens building solutions"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-128ed28c",
+   "co": "pp",
+   "name": "Wrench Group",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "wrench group"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-32bea7d8",
+   "co": "pp",
+   "name": "Apex Service Partners",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "apex service partners"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-6d246a8b",
+   "co": "pp",
+   "name": "TurnPoint Services",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "turnpoint services"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-86a984b1",
+   "co": "pp",
+   "name": "Heartland Home Services",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "heartland home services inc"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-31ffb4a5",
+   "co": "pp",
+   "name": "Redwood Services",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "redwood services lp"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-e2af2226",
+   "co": "pp",
+   "name": "Legacy Service Partners",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "legacy service partners"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "pp-0a3455d2",
+   "co": "pp",
+   "name": "Sila Services",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "sila services llc",
+    "sila heating and air conditioning"
+   ],
+   "wide": true,
+   "from": "rival_filings",
+   "states": [
+    "PA",
+    "NJ",
+    "DE"
+   ]
+  },
+  {
+   "id": "pp-90320c76",
+   "co": "pp",
+   "name": "Any Hour Services",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "any hour llc",
+    "any hour inc"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "ts-4ba19ec0",
+   "co": "ts",
+   "name": "Avantor",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "avantor",
+    "vwr international"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "ts-7b3fce78",
+   "co": "ts",
+   "name": "Calibre Scientific",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "calibre scientific"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "ts-e91c0d80",
+   "co": "ts",
+   "name": "CELLTREAT Scientific Products",
+   "role": "rival",
+   "state": "MA",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "celltreat"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "fl-bbf7c929",
+   "co": "fl",
+   "name": "Consilio",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "consilio llc",
+    "consilio services"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "fl-f336d02f",
+   "co": "fl",
+   "name": "Epiq",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "epiq systems",
+    "epiq global",
+    "epiq class action",
+    "epiq ediscovery",
+    "dti holdco"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "fl-778f3a84",
+   "co": "fl",
+   "name": "Integreon",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "integreon"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "bpi-01c34eb4",
+   "co": "bpi",
+   "name": "Stagwell",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "stagwell"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "bpi-3374911b",
+   "co": "bpi",
+   "name": "SKDK",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "skdk",
+    "skdknickerbocker"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "bpi-18a1d9ad",
+   "co": "bpi",
+   "name": "FGS Global",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "fgs global"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "bpi-8e257609",
+   "co": "bpi",
+   "name": "Precision Strategies",
+   "role": "rival",
+   "state": "DC",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "precision strategies llc"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "fh-bcaed7e3",
+   "co": "fh",
+   "name": "Solo Brands",
+   "role": "rival",
+   "state": "",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "solo brands"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  },
+  {
+   "id": "fh-dfe752b2",
+   "co": "fh",
+   "name": "Chubbies",
+   "role": "rival",
+   "state": "TX",
+   "city": "",
+   "lat": null,
+   "lon": null,
+   "phrases": [
+    "chubbies"
+   ],
+   "wide": true,
+   "from": "rival_filings"
+  }
+ ]
+}

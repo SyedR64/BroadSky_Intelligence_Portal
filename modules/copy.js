@@ -310,6 +310,7 @@ export const VIEW_TITLES = {
   'national/scorer': 'county scorer', 'national/phases': 'Punctual Pros phases on the national map', 'national/markets': 'metro markets', 'national/method': 'method, sources and coverage',
   'fin/portfolio': 'portfolio financial picture', 'fin/explorer': 'filings explorer', 'fin/comps': 'public comparables', 'fin/methods': 'methods and gaps',
   'techos/overview': 'program overview', 'techos/evidence': 'valuation evidence', 'techos/roadmap': 'OS roadmap', 'techos/calculator': 'value-creation calculator',
+  'signals/legal': 'legal records',
   'theater/play': 'cinematic map scenes', 'briefing/play': 'chapters and script',
 };
 const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Frontline|Fair)\b/;

@@ -67,3 +67,7 @@
 .m-signals .sg-card-read{display:block;padding:8px 10px;border-radius:var(--sys-r-sm);background:var(--sys-bg-2)}
 .m-signals .kpi .spark{position:static;margin-top:6px}
 .m-signals .sg-fed .sys-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--co);vertical-align:1px}
+
+/* Legal records (modules/legal.js): one feed table; the record's line follows its type chip */
+.m-legal .lg-line{margin-left:var(--sys-sp-2);color:var(--sys-ink-2)}
+.m-legal #lg-fil{padding:var(--sys-sp-3) var(--sys-sp-4) 0}

@@ -4,12 +4,14 @@
                                    a company shows its factor table; "All six" (?co=all) ranks every sized lever
                                    (est., assumptions shown) across the portfolio by today's effect, chart then table
      readings  "Live readings"     the public series behind each reading, with source and as-of date
+     legal     "Legal records"     public court dockets, liens and contract awards naming watched companies (modules/legal.js)
    Readings come from the nightly snapshots in data/live/ written by scripts/refresh_live.py (fred_signals,
    housing_counties, nih_awards, federal_buying, policy_activity, census_permits, echo_npdes_majors; NWS alerts are
    read live with the snapshot as fallback) and from the repo's own tables (national_counties, company filings
    estimate tables, fl_lawfirms, ma_targets_pp, cet_opportunities). Every estimate is labelled est. and shows its
    assumption; a missing snapshot leaves its factors as "not available" instead of failing the view. */
 import * as Copy from './copy.js?v=20261125120619';
+import { legalView } from './legal.js?v=20261125120619';
 
 const injectCss = () => { if (document.getElementById('css-signals')) return; const l = document.createElement('link'); l.id = 'css-signals'; l.rel = 'stylesheet'; l.href = new URL('./signals.css', import.meta.url).href; document.head.appendChild(l); };
 const COUNTIES_URL = new URL('../data/national_counties.json', import.meta.url).href;
@@ -646,6 +648,7 @@ export default {
   views: [
     { id: 'overview', name: 'What moves sales', icon: '◎', render: overview },
     { id: 'readings', name: 'Live readings', icon: '∿', render: readings },
+    { id: 'legal', name: 'Legal records', icon: '§', render: ctx => { injectCss(); return legalView(ctx); } },
   ],
   tour: [
     { order: 125, hash: '#/signals/overview', caption: '<b>What moves sales.</b> Weather is one force. Home sales, pay, prices, rates, grants and elections likely move sales too.', narration: 'Weather is one force. Home sales, pay, prices, rates, grants and elections likely move sales too.', duration: 8000 },

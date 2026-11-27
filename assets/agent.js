@@ -12,6 +12,7 @@ import { Frame } from './frame.js?v=20261125120619';
 import { Chat, PERSONAS } from './chat.js?v=20261125120619';
 import { Session, CONN_STATES } from './session.js?v=20261125120619';
 import { classify, parseAddress, addressReply } from './globe-intents.js?v=20261125120619';
+import { legalQuestion } from './legal-intents.js?v=20261125120619';
 
 const APPROVALS_KEY = 'bsp-os-approvals';   // drafts waiting for the person's OK; the home screen lists them (modules/home.js)
 const ON = CONN_STATES[1];                  // the demonstration state: connected with example records
@@ -167,7 +168,7 @@ function registerPersona(role) {
   const sig = norm(sigOf(role)?.question);   // the signature question has its own chip, answered without the model
   PERSONAS['ag-' + role.id] = {
     name: 'Company agent', short: 'the agent', initials: 'AG', color: accentOf(role.org),
-    greeting: '', placeholder: placeholderOf(role), suggestions: (role.chips || []).filter(c => norm(c) !== sig), intents: [], faq: [],
+    greeting: '', placeholder: placeholderOf(role), suggestions: [...(role.chips || []).filter(c => norm(c) !== sig), legalQuestion(role)].filter(Boolean), intents: [], faq: [],
   };
 }
 function applyRoleAccent() {

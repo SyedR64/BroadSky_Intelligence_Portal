@@ -543,6 +543,7 @@ function bindHotkey(spec) {
 /** Readable names for dataset files and other identifiers that leak into copy. */
 export const LABELS = {
   // portal datasets (data/)
+  legal_signals: 'Public legal records about watched companies', legal_watchlist: 'Legal records watch list',
   cet_ne_counties: 'CET New England county scores', cet_ne_development: 'New England development activity', cet_ne_rfps: 'New England public bids',
   fl_lawfirms: 'Frontline law-firm universe', pp_meta: 'Punctual Pros territory profile',
   pp_sales_90d: 'Punctual Pros home sales, January to April 2026', pp_zips: 'Punctual Pros ZIP-code model', ts_parents: 'Thomas Scientific parent accounts', ts_sites: 'Thomas Scientific lab sites',

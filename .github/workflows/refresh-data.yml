@@ -35,6 +35,9 @@ jobs:
       - name: Snapshot live sources
         run: python3 scripts/refresh_live.py
 
+      - name: Public legal records about watched companies
+        run: python3 scripts/refresh_legal.py
+
       - name: Is the home-sales pull due tonight?
         id: sales
         run: |

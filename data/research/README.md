@@ -267,6 +267,15 @@ sample: `{"id": "fl-001", "entity": "BSP-FL LP (BSP holding vehicle for Frontlin
 ## research/globe_tours  (0 items · 0.0 MB)
 extra top-level keys: generated, note, tours
 
+## research/legal_watchlist  (177 items · 0.1 MB)
+meta keys: title, generated, count, description, fields
+- **generated**: "2026-11-27"
+fields: `id`:str, `co`:str, `name`:str, `role`:str, `state`:str, `city`:str, `lat`:float, `lon`:float, `phrases`:list, `wide`:bool, `from`:str, `states`:list
+sample: `{"id": "pp-9faa088f", "co": "pp", "name": "Haller Enterprises", "role": "competitor", "state": "PA", "city": "Lititz", "lat": 40.153998, "lon": -76.304314, "phrases": ["haller enterprises"], "wide": false, "from": "pp_market"}`
+- `co` values: {'pp': 87, 'cet': 47, 'ts': 22, 'fl': 15, 'bpi': 4, 'fh': 2}
+- `role` values: {'target': 108, 'competitor': 45, 'rival': 24}
+- `from` values: {'pp_market': 45, 'ma_targets_cet': 43, 'ma_targets_pp': 34, 'ma_targets_fl_ts': 31, 'rival_filings': 24}
+
 ## research/ma_ppp_screen  (161 items · 1.3 MB)
 meta keys: dataset, title, generated, method, fit_formula, ownership_vocabulary, sources, caveats, highlights, enrichment_status, coverage, screened_out, full_data, revenue_model, build_inputs, item_count
 - **dataset**: "SBA loan add-on screen: PPP, 7(a) and 504 borrowers matched to the six BSP companies"
