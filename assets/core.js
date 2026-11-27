@@ -4,7 +4,7 @@
    The role in view ("Viewing as") comes from assets/session.js; which screens it opens comes from modules/registry.js
    LEVELS, handed over by app.html (App.levels).
    ═══════════════════════════════════════════════════════════════════════════ */
-import { Session } from './session.js?v=20261125120619';
+import { Session } from './session.js?v=20261127070155';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -919,5 +919,5 @@ export const App = {
     });
   },
 };
-// Guard: assets/components.js imports ./core.js?v=20261125120619 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
+// Guard: assets/components.js imports ./core.js?v=20261127070155 without the ?v= stamp, which creates a second module instance; keep the first (the one index.html registers modules on).
 window.BSP = window.BSP || { Data, Fmt, UI, Maps, Charts, Live, Tour, App, Inspector, Theme };

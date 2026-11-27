@@ -12,8 +12,8 @@
    est. badge. NOTHING IS SENT: there is no ad account, no sign-in and no call to any ad platform in this file. Approve
    and Discard only change the draft's state, kept for the browser tab (sessionStorage 'bsp-mk') with the working brief,
    because a tab link does not carry address parameters from one screen to the next. */
-import * as Copy from './copy.js?v=20261125120619';
-import { Session } from '../assets/session.js?v=20261125120619';
+import * as Copy from './copy.js?v=20261127070155';
+import { Session } from '../assets/session.js?v=20261127070155';
 
 const V = '20261125120619';
 const css = (id, file) => { if (document.getElementById(id)) return; const l = document.createElement('link'); l.id = id; l.rel = 'stylesheet'; l.href = `modules/${file}?v=${V}`; document.head.appendChild(l); };

@@ -6,7 +6,7 @@
    of sources). Companies only: the file holds no private person; a private party in a case caption reads "Individual".
    A source that did not answer shows its earlier rows or nothing, never a made-up row. A company role sees its own company
    (the shell opens the screen with ?co=<company>, modules/registry.js LEVELS). */
-import { TYPE_NAME, dayWords, money, sourceName, recordLine } from '../assets/legal-intents.js?v=20261125120619';
+import { TYPE_NAME, dayWords, money, sourceName, recordLine } from '../assets/legal-intents.js?v=20261127070155';
 
 const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const COS = [['pp', 'Punctual Pros'], ['cet', 'CET'], ['fl', 'Frontline'], ['ts', 'Thomas Scientific'], ['bpi', 'BPI'], ['fh', 'Fair Harbor']];

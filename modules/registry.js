@@ -3,27 +3,27 @@
    default screen). The side menu and the tab rows are drawn from the flags set at the bottom of this file, sorted and
    filtered at draw time in assets/core.js. A screen is flagged, never taken out of its module's views. Which levels
    see a module or screen is the LEVELS table below (its rules sit above it); the shell reads it, nothing is deleted. */
-import home from './home.js?v=20261125120619';
-import signals from './signals.js?v=20261125120619';
-import bsp from './bsp.js?v=20261125120619';
-import cet from './cet.js?v=20261125120619';
-import pp from './pp.js?v=20261125120619';
-import fl from './fl.js?v=20261125120619';
-import ts from './ts.js?v=20261125120619';
-import bpi from './bpi.js?v=20261125120619';
-import fh from './fh.js?v=20261125120619';
-import ma from './ma.js?v=20261125120619';
-import deal from './deal.js?v=20261125120619';
-import cases from './cases.js?v=20261125120619';
-import pe from './pe.js?v=20261125120619';
-import national from './national.js?v=20261125120619';
-import fin from './fin.js?v=20261125120619';
-import techos from './techos.js?v=20261125120619';
-import marketing from './marketing.js?v=20261125120619';
-import theater from './theater.js?v=20261125120619';
-import briefing from './briefing.js?v=20261125120619';
-import connect from './connect.js?v=20261125120619';
-import globe from './globe.js?v=20261125120619';
+import home from './home.js?v=20261127070155';
+import signals from './signals.js?v=20261127070155';
+import bsp from './bsp.js?v=20261127070155';
+import cet from './cet.js?v=20261127070155';
+import pp from './pp.js?v=20261127070155';
+import fl from './fl.js?v=20261127070155';
+import ts from './ts.js?v=20261127070155';
+import bpi from './bpi.js?v=20261127070155';
+import fh from './fh.js?v=20261127070155';
+import ma from './ma.js?v=20261127070155';
+import deal from './deal.js?v=20261127070155';
+import cases from './cases.js?v=20261127070155';
+import pe from './pe.js?v=20261127070155';
+import national from './national.js?v=20261127070155';
+import fin from './fin.js?v=20261127070155';
+import techos from './techos.js?v=20261127070155';
+import marketing from './marketing.js?v=20261127070155';
+import theater from './theater.js?v=20261127070155';
+import briefing from './briefing.js?v=20261127070155';
+import connect from './connect.js?v=20261127070155';
+import globe from './globe.js?v=20261127070155';
 /* Menu names. The window title reads "<module name> · <view title>" (modules/copy.js VIEW_TITLES), so a module name
    must not repeat a word of its own view titles ("PE landscape · sponsor landscape"). Ids never change. */
 const NAMES = { home: 'Home', cases: 'Sponsor precedents', pe: 'Private equity', national: 'US expansion', fin: 'Fundamentals', briefing: 'Narrated tour' };

@@ -1,4 +1,4 @@
-import * as Copy from './copy.js?v=20261125120619';
+import * as Copy from './copy.js?v=20261127070155';
 /* Narrated tour: the two recorded films and the memo first, then the tour over the live screens (start from any
    chapter) and its script. The films, the memo and briefing/tour_steps.json are read as they are, never changed. */
 const RECORDINGS = [

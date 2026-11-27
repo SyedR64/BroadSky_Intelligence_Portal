@@ -3,7 +3,7 @@
    The page is asked for its embedded form (?embed=1: no top bar, footer, page sub-bar or floating Ask button;
    assets/frame.js) and is given the role in view, so it follows the "Viewing as" switch (assets/session.js).
    The frame takes the whole content area and the page scrolls inside it: one scroll. Same origin only. */
-import { Session } from '../assets/session.js?v=20261125120619';
+import { Session } from '../assets/session.js?v=20261127070155';
 // the shell's own backend setting from its address: 'off', 'auto' or an http(s) address (assets/backend.js reads the same parameter)
 const BACKEND = (() => {
   try {

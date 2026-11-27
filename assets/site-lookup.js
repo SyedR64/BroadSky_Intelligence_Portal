@@ -10,11 +10,11 @@
    One short progress line while it runs; it always ends (the backend call has an 11 s timeout and the box a guard of its own).
    The map command runs through window.MapCmd (assets/mapcmd.js). Inside a frame it goes to the shell by postMessage.
    Nothing here calls a model. */
-import { Backend } from './backend.js?v=20261125120619';
-import { renderCard } from './agent-cards.js?v=20261125120619';
-import { renderView, VIEW_KINDS } from './agent-views.js?v=20261125120619';
-import { parseAddress } from './globe-intents.js?v=20261125120619';
-import { Session } from './session.js?v=20261125120619';
+import { Backend } from './backend.js?v=20261127070155';
+import { renderCard } from './agent-cards.js?v=20261127070155';
+import { renderView, VIEW_KINDS } from './agent-views.js?v=20261127070155';
+import { parseAddress } from './globe-intents.js?v=20261127070155';
+import { Session } from './session.js?v=20261127070155';
 
 const STAMP = new URL(import.meta.url).search;   // the ?v= stamp this file was loaded with, for the stylesheets it adds
 const GUARD_MS = 12500;                           // the box gives up even if the network never answers
@@ -67,7 +67,7 @@ function threeD(card) {
     if (view) { close(); btn.focus(); return; }
     btn.disabled = true;
     try {
-      const H = await import('./house3d.js?v=20261125120619');
+      const H = await import('./house3d.js?v=20261127070155');
       if (!H.supports3D()) { wrap.remove(); return; }
       view = H.renderHouse3D(host, card, { onClose: () => { close(); btn.focus(); } });
       if (view?.fallback) { view = null; wrap.remove(); return; }
@@ -107,7 +107,7 @@ export function renderCards(host, cards, ctx = {}) {
 
 /* ── the map command: the shell's bus (assets/mapcmd.js) ── */
 let busP = null;
-const bus = () => (window.MapCmd ? Promise.resolve(window.MapCmd) : (busP ||= import('./mapcmd.js?v=20261125120619').then(m => m.MapCmd || window.MapCmd).catch(() => null)));
+const bus = () => (window.MapCmd ? Promise.resolve(window.MapCmd) : (busP ||= import('./mapcmd.js?v=20261127070155').then(m => m.MapCmd || window.MapCmd).catch(() => null)));
 /** Sends a map command without leaving the screen: inside a frame to the shell; in the shell to the globe when it is open,
  *  else as a 'bsp:map' event the bus keeps off the globe ("Show on map" opens the globe with it). Returns where it went. */
 export async function sendMap(cmd) {
