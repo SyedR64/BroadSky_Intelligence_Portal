@@ -311,6 +311,7 @@ export const VIEW_TITLES = {
   'fin/portfolio': 'portfolio financial picture', 'fin/explorer': 'filings explorer', 'fin/comps': 'public comparables', 'fin/methods': 'methods and gaps',
   'techos/overview': 'program overview', 'techos/evidence': 'valuation evidence', 'techos/roadmap': 'OS roadmap', 'techos/calculator': 'value-creation calculator',
   'signals/legal': 'legal records',
+  'marketing/board': 'all six companies', 'marketing/build': 'campaign builder', 'marketing/cost': 'cost and reach', 'marketing/queue': 'placement queue',
   'theater/play': 'cinematic map scenes', 'briefing/play': 'chapters and script',
 };
 const KEEP_CASE = /^(?:[A-Z]{2,}|AM|OS|Broad|Punctual|Manhattan|New|Thomas|Frontline|Fair)\b/;

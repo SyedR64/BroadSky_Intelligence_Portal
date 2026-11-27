@@ -388,9 +388,9 @@ class Collector:
 LEVEL_ROLES = [('firm_leadership', 'bsp-managing-partner'), ('firm_team', 'bsp-investor-relations'),
                ('co_leadership', 'pp-ceo'), ('co_office', 'pp-dispatcher'), ('co_field', 'pp-hvac-technician')]
 LEVEL_MENU = {
-    'bsp-managing-partner': {'must': ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh', 'ma', 'deal', 'pe', 'bsp', 'signals', 'fin', 'techos', 'connect', 'globe'], 'may': []},
+    'bsp-managing-partner': {'must': ['home', 'cet', 'pp', 'fl', 'ts', 'bpi', 'fh', 'ma', 'deal', 'pe', 'bsp', 'signals', 'fin', 'techos', 'marketing', 'connect', 'globe'], 'may': []},
     'bsp-investor-relations': {'must': ['home', 'fin', 'connect'], 'may': []},
-    'pp-ceo': {'must': ['home', 'pp', 'fin/portfolio', 'ma/pipeline', 'signals/overview', 'pp/plan', 'pp/tools', 'connect', 'globe'], 'may': []},
+    'pp-ceo': {'must': ['home', 'pp', 'fin/portfolio', 'ma/pipeline', 'signals/overview', 'marketing/build', 'pp/plan', 'pp/tools', 'connect', 'globe'], 'may': []},
     'pp-dispatcher': {'must': ['home', 'pp', 'pp/tools', 'connect'], 'may': []},
     'pp-hvac-technician': {'must': ['home'], 'may': []},
 }

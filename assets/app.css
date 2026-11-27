@@ -352,10 +352,10 @@ kbd.k{display:inline-flex;align-items:center;height:20px;padding:0 6px;border-ra
 @media print{#rail,#topbar,#inspector,#tour,.filters .sys-btn{display:none!important}#app{display:block}#content{overflow:visible;height:auto}}
 
 /* ── 9 · responsive ──────────────────────────────────────────────────────── */
-/* short windows: the menu tightens so every item, and a 15th while a module off the menu is open, shows without scrolling
-   (820px covers a 1280x800 laptop; 780px covers 768px- and 720px-tall screens) */
+/* short windows: the menu tightens so every item (17 for the firm), and one more while a module off the menu is open,
+   shows without scrolling (820px covers a 1280x800 laptop; 780px covers 768px- and 720px-tall screens) */
 @media (max-height:820px){.rail-nav{padding-bottom:var(--sys-sp-3)}.rail-group+.rail-group{margin-top:var(--sys-sp-3)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-2)}}
-@media (max-height:780px){.rail-nav{padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}.rail-group+.rail-group{margin-top:var(--sys-sp-2)}.rail-section{padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}.rail-item{min-height:34px}.rail-group+.rail-group--open{margin-top:var(--sys-sp-1);padding-top:var(--sys-sp-1)}}
+@media (max-height:780px){.rail-nav{padding-top:var(--sys-sp-2);padding-bottom:var(--sys-sp-2)}.rail-group+.rail-group{margin-top:var(--sys-sp-2)}.rail-section{padding-top:var(--sys-sp-1);padding-bottom:var(--sys-sp-1)}.rail-group+.rail-group--open{margin-top:var(--sys-sp-1);padding-top:var(--sys-sp-1)}}
 @media (max-width:1280px){.search-btn{width:36px;min-width:36px;padding:0;justify-content:center}.search-btn .search-label,.search-btn .sys-kbd{display:none}}
 /* the narrowest phones: the controls wrap onto a second line, right-aligned, instead of running past the edge */
 @media (max-width:400px){.top-right{flex-wrap:wrap;justify-content:flex-end;flex-shrink:1;min-width:0;row-gap:var(--sys-sp-2)}}

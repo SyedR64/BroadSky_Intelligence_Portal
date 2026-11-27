@@ -194,7 +194,7 @@
    "folder": "research",
    "title": "Legal records watch list",
    "item_count": 177,
-   "bytes": 51710,
+   "bytes": 51739,
    "generated": "2026-11-27"
   },
   {
@@ -228,6 +228,20 @@
    "item_count": 61,
    "bytes": 172792,
    "generated": "2026-09-24"
+  },
+  {
+   "name": "marketing_engine",
+   "folder": "research",
+   "title": "Marketing engine: channels, public ad rates, example campaigns and example ad concepts",
+   "item_count": 14,
+   "bytes": 49492,
+   "generated": "2026-11-27",
+   "lists": {
+    "channels": 5,
+    "platforms": 14,
+    "minimums": 3,
+    "sources": 29
+   }
   },
   {
    "name": "pe_landscape",
@@ -441,11 +455,11 @@
   }
  ],
  "totals": {
-  "research_files": 42,
-  "research_items": 5040,
+  "research_files": 43,
+  "research_items": 5054,
   "sales_files": 10,
   "sales_rows": 182351,
-  "bytes": 45296542,
+  "bytes": 45346063,
   "data_from": "2026-09-24",
   "data_to": "2026-11-27"
  }

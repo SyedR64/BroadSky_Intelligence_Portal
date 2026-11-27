@@ -332,6 +332,20 @@ sample: `{"id": "pp-t01", "company": "Benjamin Franklin Plumbing / One Hour Heat
 - `revenue_source` values: {'ZoomInfo company search modeled estimate (retrieved 2026-09-24)': 40, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (site states 33 employees; ZoomInfo shows 20)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (likely includes appliance retail/remodeling)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (includes heating-fuel delivery)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (sum of Pronto Plumbing 29 emp/$6.22M and SECCO Home Services 23 emp/$4.16M records)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (includes fuel)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (predominantly fuel/propane)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (site: 230+ employees, 145+ technicians, 160+ trucks)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (ZoomInfo also shows 74 employees; the pair is internally inconsistent)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (revenue appears understated relative to headcount)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (a second ZoomInfo record, Bovio & Rubino Service, Sicklerville, shows 17 emp/$3.64M)': 1, 'ZoomInfo company search modeled estimate (retrieved 2026-09-24) (likely overstated; formerly included propane)': 1}
 - `ownership` values: {'family': 30, 'private_independent': 10, 'founder': 9, 'franchisee': 5, 'franchisee_founder': 4, 'esop': 2, 'unverified': 1}
 
+## research/marketing_engine  (14 items · 0.0 MB)
+meta keys: dataset, title, generated, author, method, item_count
+- **dataset**: "marketing_engine"
+- **generated**: "2026-11-27"
+- **method**: "Rates are public figures read from the cited pages (retrieved dates on each source). Campaigns, budgets and ad concepts are example records written for this page; they stand in for each company's own marketing records. Taglines are quoted from each brand's own site. No offer, price or guarantee is added. Every computed figure (cost to make, impressions, leads) is an estimate from the rates below.
+- **item_count**: 14
+extra top-level keys: as_of, channels, platforms, rates, minimums, make, sources, companies, brands, concepts
+fields: `id`:str, `co`:str, `brand`:str, `market`:str, `goal`:str, `budget`:int
+sample: `{"id": "pp-onehour-lancaster", "co": "pp", "brand": "onehour", "market": "lancaster", "goal": "aware", "budget": 15000}`
+- `co` values: {'pp': 4, 'fh': 3, 'cet': 2, 'fl': 2, 'ts': 2, 'bpi': 1}
+- `brand` values: {'fh': 3, 'onehour': 2, 'cet': 2, 'fl': 2, 'ts': 2, 'bfp': 1, 'sparky': 1, 'bpi': 1}
+- `market` values: {'shore': 2, 'boston': 2, 'lancaster': 1, 'york': 1, 'harrisburg': 1, 'central-ma': 1, 'amlaw': 1, 'midsize': 1, 'philly': 1, 'dc': 1, 'li': 1, 'cape': 1}
+- `goal` values: {'aware': 4, 'demo': 2, 'quotes': 2, 'calls': 1, 'movers': 1, 'hiring': 1, 'newbiz': 1, 'sales': 1, 'stores': 1}
+
 ## research/pe_landscape  (35 items · 0.2 MB)
 meta keys: dataset, title, generated, method, sources_summary, item_count, bsp_reference, landscape_summary, sector_heatmap, implications_for_bsp, excluded_candidates, caveats
 - **dataset**: "pe_landscape"

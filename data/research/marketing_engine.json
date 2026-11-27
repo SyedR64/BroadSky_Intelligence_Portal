@@ -1,0 +1,2272 @@
+{
+ "meta": {
+  "dataset": "marketing_engine",
+  "title": "Marketing engine: channels, public ad rates, example campaigns and example ad concepts",
+  "generated": "2026-11-27",
+  "author": "Syed Rahman",
+  "method": "Rates are public figures read from the cited pages (retrieved dates on each source). Campaigns, budgets and ad concepts are example records written for this page; they stand in for each company's own marketing records. Taglines are quoted from each brand's own site. No offer, price or guarantee is added. Every computed figure (cost to make, impressions, leads) is an estimate from the rates below.",
+  "item_count": 14
+ },
+ "as_of": "2026-11-27",
+ "channels": [
+  {
+   "id": "ctv",
+   "name": "CTV and streaming TV",
+   "short": "CTV",
+   "unit": "cpm",
+   "formats": [
+    {
+     "name": "Spot",
+     "len": "15 s · 30 s",
+     "spec": "16:9, sound on"
+    }
+   ],
+   "platforms": [
+    "universal",
+    "vibe",
+    "disney",
+    "roku",
+    "amazon"
+   ]
+  },
+  {
+   "id": "yt",
+   "name": "YouTube",
+   "short": "YouTube",
+   "unit": "cpm",
+   "formats": [
+    {
+     "name": "Bumper",
+     "len": "6 s",
+     "spec": "16:9"
+    },
+    {
+     "name": "Non-skippable",
+     "len": "15 s",
+     "spec": "16:9"
+    },
+    {
+     "name": "Skippable in-stream",
+     "len": "30 s",
+     "spec": "16:9"
+    }
+   ],
+   "platforms": [
+    "youtube"
+   ]
+  },
+  {
+   "id": "search",
+   "name": "Search",
+   "short": "Search",
+   "unit": "cpl",
+   "formats": [
+    {
+     "name": "Responsive search ad",
+     "len": "30-character headlines",
+     "spec": "90-character descriptions"
+    },
+    {
+     "name": "Local Services Ads",
+     "len": "Profile and reviews",
+     "spec": "by service area",
+     "only": "home_services"
+    }
+   ],
+   "platforms": [
+    "google",
+    "lsa",
+    "microsoft"
+   ]
+  },
+  {
+   "id": "social",
+   "name": "Social",
+   "short": "Social",
+   "unit": "cpm",
+   "formats": [
+    {
+     "name": "Reels and Stories",
+     "len": "15 s",
+     "spec": "9:16"
+    },
+    {
+     "name": "Feed",
+     "len": "Image or video",
+     "spec": "1:1 or 4:5"
+    }
+   ],
+   "platforms": [
+    "meta",
+    "tiktok",
+    "linkedin"
+   ]
+  },
+  {
+   "id": "local",
+   "name": "Local marketplaces",
+   "short": "Local",
+   "unit": "cpm",
+   "formats": [
+    {
+     "name": "Sponsored post",
+     "len": "Image, headline, body",
+     "spec": "by neighbourhood"
+    }
+   ],
+   "platforms": [
+    "nextdoor",
+    "yelp"
+   ]
+  }
+ ],
+ "platforms": [
+  {
+   "id": "universal",
+   "name": "Universal Ads",
+   "channel": "ctv",
+   "takes": "15 s and 30 s spots",
+   "state": "planned",
+   "src": "universal_ads"
+  },
+  {
+   "id": "vibe",
+   "name": "Vibe",
+   "channel": "ctv",
+   "takes": "15 s and 30 s spots, by zip",
+   "state": "planned",
+   "src": "vibe_pricing"
+  },
+  {
+   "id": "disney",
+   "name": "Disney Campaign Manager",
+   "channel": "ctv",
+   "takes": "15 s and 30 s spots",
+   "state": "planned",
+   "src": "disney_cm"
+  },
+  {
+   "id": "roku",
+   "name": "Roku Ads Manager",
+   "channel": "ctv",
+   "takes": "15 s and 30 s spots",
+   "state": "planned",
+   "src": "roku_cost"
+  },
+  {
+   "id": "amazon",
+   "name": "Amazon Ads",
+   "channel": "ctv",
+   "takes": "Streaming TV spots",
+   "state": "available",
+   "doc": "amazon_api"
+  },
+  {
+   "id": "youtube",
+   "name": "YouTube",
+   "channel": "yt",
+   "takes": "6 s, 15 s and 30 s video",
+   "state": "available",
+   "doc": "google_ads_api"
+  },
+  {
+   "id": "google",
+   "name": "Google Ads",
+   "channel": "search",
+   "takes": "Headlines and descriptions",
+   "state": "available",
+   "doc": "google_ads_api"
+  },
+  {
+   "id": "lsa",
+   "name": "Google Local Services Ads",
+   "channel": "search",
+   "takes": "Profile and service areas",
+   "state": "planned"
+  },
+  {
+   "id": "microsoft",
+   "name": "Microsoft Advertising",
+   "channel": "search",
+   "takes": "Headlines and descriptions",
+   "state": "available",
+   "doc": "microsoft_ads_api"
+  },
+  {
+   "id": "meta",
+   "name": "Meta",
+   "channel": "social",
+   "takes": "Facebook and Instagram video and images",
+   "state": "available",
+   "doc": "meta_api"
+  },
+  {
+   "id": "tiktok",
+   "name": "TikTok",
+   "channel": "social",
+   "takes": "Vertical video",
+   "state": "available",
+   "doc": "tiktok_api"
+  },
+  {
+   "id": "linkedin",
+   "name": "LinkedIn",
+   "channel": "social",
+   "takes": "Video and sponsored posts",
+   "state": "available",
+   "doc": "linkedin_api"
+  },
+  {
+   "id": "nextdoor",
+   "name": "Nextdoor",
+   "channel": "local",
+   "takes": "Sponsored posts by neighbourhood",
+   "state": "available",
+   "doc": "nextdoor_api"
+  },
+  {
+   "id": "yelp",
+   "name": "Yelp",
+   "channel": "local",
+   "takes": "Sponsored listings",
+   "state": "available",
+   "doc": "yelp_api"
+  }
+ ],
+ "rates": {
+  "ctv": {
+   "value": 26,
+   "range": [
+    15,
+    35
+   ],
+   "unit": "cpm",
+   "src": "adwave_ctv",
+   "note": "blended market average, 2026"
+  },
+  "yt": {
+   "value": 9.37,
+   "range": [
+    8.72,
+    10.01
+   ],
+   "unit": "cpm",
+   "src": "storegrowers_yt",
+   "note": "YouTube on TV screens, 2024 campaign data"
+  },
+  "social": {
+   "value": 14.19,
+   "unit": "cpm",
+   "src": "madgicx_social",
+   "note": "Facebook and Instagram, e-commerce brands, 2025"
+  },
+  "local": {
+   "value": 10,
+   "unit": "cpm",
+   "est": true,
+   "note": "public guides disagree, $2 to $20"
+  },
+  "search": {
+   "unit": "cpl",
+   "by_sector": {
+    "home_services": {
+     "value": 51,
+     "range": [
+      39,
+      57
+     ],
+     "src": "searchlight_lsa",
+     "note": "Local Services Ads, February 2026"
+    }
+   }
+  }
+ },
+ "minimums": [
+  {
+   "platform": "Vibe",
+   "usd": 50,
+   "src": "vibe_pricing"
+  },
+  {
+   "platform": "Universal Ads",
+   "usd": 100,
+   "src": "universal_ads"
+  },
+  {
+   "platform": "Disney Campaign Manager",
+   "usd": 500,
+   "src": "disney_cm"
+  }
+ ],
+ "make": {
+  "tiers": [
+   {
+    "id": "draft",
+    "name": "Draft",
+    "usd_per_s": 0.07,
+    "model": "Gemini Omni Flash 1.2, 720p"
+   },
+   {
+    "id": "standard",
+    "name": "Standard",
+    "usd_per_s": 0.235,
+    "model": "Kling 4, 1080p"
+   },
+   {
+    "id": "premium",
+    "name": "Premium",
+    "usd_per_s": 0.68,
+    "model": "Seedance 2.5, 1080p"
+   }
+  ],
+  "tier_src": "runway_api",
+  "takes": 3,
+  "retry": 1.3,
+  "finishing_usd": 150,
+  "conventional": {
+   "basic": [
+    1000,
+    5000
+   ],
+   "high": 10000,
+   "src": "vibe_local_tv"
+  }
+ },
+ "sources": [
+  {
+   "id": "vibe_local_tv",
+   "title": "Local TV advertising cost: production and airtime",
+   "publisher": "Vibe",
+   "url": "https://www.vibe.co/blog/how-to/local-tv-advertising-cost",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "runway_api",
+   "title": "API pricing: video models, per second",
+   "publisher": "Runway",
+   "url": "https://docs.dev.runwayml.com/guides/pricing/",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "adwave_ctv",
+   "title": "Average CTV CPM, Q2 2026 (eMarketer figures)",
+   "publisher": "Adwave",
+   "url": "https://adwave.com/resources/average-ctv-cpm-q2-2026",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "vibe_pricing",
+   "title": "Budget and pricing",
+   "publisher": "Vibe",
+   "url": "https://help.vibe.co/en/articles/6134952-budget-and-pricing",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "universal_ads",
+   "title": "Advertise on TV without a big budget",
+   "publisher": "Universal Ads",
+   "url": "https://www.universalads.com/article/advertise-on-tv-without-a-big-budget",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "disney_cm",
+   "title": "Getting started",
+   "publisher": "Disney Campaign Manager",
+   "url": "https://www.disneycampaignmanager.com/resources/product-updates/faq/getting-started/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "roku_cost",
+   "title": "Roku advertising cost",
+   "publisher": "Vibe",
+   "url": "https://www.vibe.co/blog/roku-advertising-cost",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "storegrowers_yt",
+   "title": "YouTube ads benchmarks (Strike Social 2024 campaign data)",
+   "publisher": "Store Growers",
+   "url": "https://storegrowers.com/youtube-ads-benchmarks",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "madgicx_social",
+   "title": "Social media advertising cost",
+   "publisher": "Madgicx",
+   "url": "https://madgicx.com/blog/social-media-advertising-cost",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "searchlight_lsa",
+   "title": "Google Local Services Ads cost per lead",
+   "publisher": "SearchLight Digital",
+   "url": "https://searchlightdigital.io/google-local-service-ads-cost-per-lead/",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "google_video_formats",
+   "title": "About video ad formats",
+   "publisher": "Google Ads Help",
+   "url": "https://support.google.com/google-ads/answer/2375464",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "google_rsa",
+   "title": "About responsive search ads",
+   "publisher": "Google Ads Help",
+   "url": "https://support.google.com/google-ads/answer/7684791",
+   "retrieved": "2026-11-27"
+  },
+  {
+   "id": "census_acs",
+   "title": "Housing units by county, ACS 2019 to 2023",
+   "publisher": "Census Bureau",
+   "url": "https://www.census.gov/programs-surveys/acs",
+   "retrieved": "2026-10-06"
+  },
+  {
+   "id": "google_ads_api",
+   "title": "Google Ads API",
+   "publisher": "Google",
+   "url": "https://developers.google.com/google-ads/api/docs/start"
+  },
+  {
+   "id": "meta_api",
+   "title": "Marketing API",
+   "publisher": "Meta",
+   "url": "https://developers.facebook.com/docs/marketing-apis"
+  },
+  {
+   "id": "tiktok_api",
+   "title": "TikTok API for Business",
+   "publisher": "TikTok",
+   "url": "https://business-api.tiktok.com/portal/docs"
+  },
+  {
+   "id": "linkedin_api",
+   "title": "LinkedIn Marketing API",
+   "publisher": "Microsoft",
+   "url": "https://learn.microsoft.com/en-us/linkedin/marketing/"
+  },
+  {
+   "id": "amazon_api",
+   "title": "Amazon Ads API",
+   "publisher": "Amazon",
+   "url": "https://advertising.amazon.com/API/docs/en-us"
+  },
+  {
+   "id": "microsoft_ads_api",
+   "title": "Microsoft Advertising API",
+   "publisher": "Microsoft",
+   "url": "https://learn.microsoft.com/en-us/advertising/guides/"
+  },
+  {
+   "id": "nextdoor_api",
+   "title": "Nextdoor developer site",
+   "publisher": "Nextdoor",
+   "url": "https://developer.nextdoor.com/"
+  },
+  {
+   "id": "yelp_api",
+   "title": "Yelp developer documentation",
+   "publisher": "Yelp",
+   "url": "https://docs.developer.yelp.com/"
+  },
+  {
+   "id": "brand_onehour",
+   "title": "One Hour Heating & Air Conditioning",
+   "publisher": "Brand site",
+   "url": "https://www.onehourheatandair.com/"
+  },
+  {
+   "id": "brand_bfp",
+   "title": "Benjamin Franklin Plumbing",
+   "publisher": "Brand site",
+   "url": "https://www.benjaminfranklinplumbing.com/"
+  },
+  {
+   "id": "brand_sparky",
+   "title": "Mister Sparky",
+   "publisher": "Brand site",
+   "url": "https://www.mistersparky.com/"
+  },
+  {
+   "id": "brand_cet",
+   "title": "CET Energy Solutions",
+   "publisher": "Brand site",
+   "url": "https://cetenergy.com/"
+  },
+  {
+   "id": "brand_fl",
+   "title": "Frontline Managed Services",
+   "publisher": "Brand site",
+   "url": "https://frontlinems.com/"
+  },
+  {
+   "id": "brand_ts",
+   "title": "Thomas Scientific",
+   "publisher": "Brand site",
+   "url": "https://www.thomassci.com/"
+  },
+  {
+   "id": "brand_bpi",
+   "title": "Bully Pulpit International",
+   "publisher": "Brand site",
+   "url": "https://bpigroup.com/"
+  },
+  {
+   "id": "brand_fh",
+   "title": "Fair Harbor",
+   "publisher": "Brand site",
+   "url": "https://www.fairharborclothing.com/"
+  }
+ ],
+ "companies": {
+  "pp": {
+   "name": "Punctual Pros",
+   "sector": "home_services",
+   "budget": 15000,
+   "weights": {
+    "ctv": 40,
+    "yt": 20,
+    "search": 20,
+    "social": 12,
+    "local": 8
+   },
+   "targets": {
+    "ctv": "vibe",
+    "yt": "youtube",
+    "search": "lsa",
+    "social": "meta",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "calls",
+     "name": "Booked calls",
+     "cta": "Call or book online"
+    },
+    {
+     "id": "movers",
+     "name": "New movers",
+     "cta": "Welcome to the neighbourhood"
+    }
+   ],
+   "brands": [
+    "onehour",
+    "bfp",
+    "sparky"
+   ],
+   "markets": [
+    {
+     "id": "lancaster",
+     "name": "Lancaster County, PA",
+     "short": "Lancaster",
+     "homes": 217863
+    },
+    {
+     "id": "york",
+     "name": "York County, PA",
+     "short": "York",
+     "homes": 188608
+    },
+    {
+     "id": "harrisburg",
+     "name": "Harrisburg area, PA",
+     "short": "Harrisburg",
+     "homes": 237524
+    },
+    {
+     "id": "reading",
+     "name": "Reading area, PA",
+     "short": "Reading",
+     "homes": 171147
+    },
+    {
+     "id": "shore",
+     "name": "Jersey Shore, NJ",
+     "short": "Toms River",
+     "homes": 564929
+    }
+   ]
+  },
+  "cet": {
+   "name": "CET",
+   "sector": "commercial_electrical",
+   "budget": 12000,
+   "weights": {
+    "ctv": 30,
+    "yt": 20,
+    "search": 20,
+    "social": 30,
+    "local": 0
+   },
+   "targets": {
+    "ctv": "universal",
+    "yt": "youtube",
+    "search": "google",
+    "social": "linkedin",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "bids",
+     "name": "Project enquiries",
+     "cta": "Talk to our team"
+    },
+    {
+     "id": "hiring",
+     "name": "Hiring",
+     "cta": "See open roles"
+    }
+   ],
+   "brands": [
+    "cet"
+   ],
+   "markets": [
+    {
+     "id": "central-ma",
+     "name": "Central Massachusetts",
+     "short": "Central Mass.",
+     "homes": 353405
+    },
+    {
+     "id": "boston",
+     "name": "Greater Boston",
+     "short": "Greater Boston",
+     "homes": 1308164
+    },
+    {
+     "id": "taunton",
+     "name": "Taunton area, MA",
+     "short": "Taunton",
+     "homes": 244166
+    },
+    {
+     "id": "ri",
+     "name": "Providence, RI",
+     "short": "Providence",
+     "homes": 277117
+    }
+   ]
+  },
+  "fl": {
+   "name": "Frontline",
+   "sector": "legal_services",
+   "budget": 10000,
+   "weights": {
+    "ctv": 30,
+    "yt": 20,
+    "search": 15,
+    "social": 35,
+    "local": 0
+   },
+   "targets": {
+    "ctv": "universal",
+    "yt": "youtube",
+    "search": "google",
+    "social": "linkedin",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "demo",
+     "name": "Demo requests",
+     "cta": "Book a conversation"
+    }
+   ],
+   "brands": [
+    "fl"
+   ],
+   "markets": [
+    {
+     "id": "amlaw",
+     "name": "AM Law 200 firms, national",
+     "short": "large firms"
+    },
+    {
+     "id": "midsize",
+     "name": "Mid-size firms, national",
+     "short": "mid-size firms"
+    },
+    {
+     "id": "ny",
+     "name": "New York",
+     "short": "New York"
+    },
+    {
+     "id": "stl",
+     "name": "St. Louis",
+     "short": "St. Louis"
+    }
+   ]
+  },
+  "ts": {
+   "name": "Thomas Scientific",
+   "sector": "lab_distribution",
+   "budget": 9000,
+   "weights": {
+    "ctv": 30,
+    "yt": 20,
+    "search": 20,
+    "social": 30,
+    "local": 0
+   },
+   "targets": {
+    "ctv": "universal",
+    "yt": "youtube",
+    "search": "google",
+    "social": "linkedin",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "quotes",
+     "name": "Quote requests",
+     "cta": "Request a quote"
+    }
+   ],
+   "brands": [
+    "ts"
+   ],
+   "markets": [
+    {
+     "id": "boston",
+     "name": "Boston and Cambridge",
+     "short": "Boston"
+    },
+    {
+     "id": "philly",
+     "name": "Philadelphia and New Jersey",
+     "short": "Philadelphia"
+    },
+    {
+     "id": "rtp",
+     "name": "Research Triangle, NC",
+     "short": "the Triangle"
+    },
+    {
+     "id": "sd",
+     "name": "San Diego",
+     "short": "San Diego"
+    }
+   ]
+  },
+  "bpi": {
+   "name": "BPI",
+   "sector": "communications",
+   "budget": 8000,
+   "weights": {
+    "ctv": 30,
+    "yt": 25,
+    "search": 10,
+    "social": 35,
+    "local": 0
+   },
+   "targets": {
+    "ctv": "universal",
+    "yt": "youtube",
+    "search": "google",
+    "social": "linkedin",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "newbiz",
+     "name": "New business",
+     "cta": "Start a conversation"
+    }
+   ],
+   "brands": [
+    "bpi"
+   ],
+   "markets": [
+    {
+     "id": "dc",
+     "name": "Washington, DC",
+     "short": "Washington"
+    },
+    {
+     "id": "ny",
+     "name": "New York",
+     "short": "New York"
+    },
+    {
+     "id": "sf",
+     "name": "San Francisco",
+     "short": "San Francisco"
+    },
+    {
+     "id": "chi",
+     "name": "Chicago",
+     "short": "Chicago"
+    }
+   ]
+  },
+  "fh": {
+   "name": "Fair Harbor",
+   "sector": "apparel",
+   "budget": 20000,
+   "weights": {
+    "ctv": 35,
+    "yt": 20,
+    "search": 10,
+    "social": 30,
+    "local": 5
+   },
+   "targets": {
+    "ctv": "vibe",
+    "yt": "youtube",
+    "search": "google",
+    "social": "meta",
+    "local": "nextdoor"
+   },
+   "goals": [
+    {
+     "id": "aware",
+     "name": "Household name",
+     "cta": ""
+    },
+    {
+     "id": "sales",
+     "name": "Online sales",
+     "cta": "Shop online"
+    },
+    {
+     "id": "stores",
+     "name": "Store visits",
+     "cta": "Find a store near you"
+    }
+   ],
+   "brands": [
+    "fh"
+   ],
+   "markets": [
+    {
+     "id": "li",
+     "name": "Long Island, NY",
+     "short": "Long Island",
+     "homes": 579790
+    },
+    {
+     "id": "shore",
+     "name": "Jersey Shore, NJ",
+     "short": "the Jersey Shore",
+     "homes": 564929
+    },
+    {
+     "id": "cape",
+     "name": "Cape Cod, MA",
+     "short": "Cape Cod",
+     "homes": 165661
+    },
+    {
+     "id": "chs",
+     "name": "Charleston, SC",
+     "short": "Charleston",
+     "homes": 206299
+    }
+   ]
+  }
+ },
+ "brands": {
+  "onehour": {
+   "name": "One Hour Heating & Air Conditioning",
+   "short": "One Hour",
+   "logo": "onehour.png",
+   "plate": "light",
+   "tagline": "Always On Time... Or You Don't Pay A Dime!",
+   "src": "brand_onehour"
+  },
+  "bfp": {
+   "name": "Benjamin Franklin Plumbing",
+   "short": "Benjamin Franklin",
+   "logo": "bfp_white.png",
+   "plate": "dark",
+   "tagline": "The Punctual Plumber",
+   "src": "brand_bfp"
+  },
+  "sparky": {
+   "name": "Mister Sparky",
+   "short": "Mister Sparky",
+   "logo": "mistersparky.png",
+   "plate": "light",
+   "tagline": "America's On-Time Electrician",
+   "src": "brand_sparky"
+  },
+  "cet": {
+   "name": "CET Energy Solutions",
+   "short": "CET",
+   "logo": "cet.svg",
+   "plate": "light",
+   "tagline": "Everything Electrical. Everything Energy.",
+   "src": "brand_cet"
+  },
+  "fl": {
+   "name": "Frontline Managed Services",
+   "short": "Frontline",
+   "logo": "frontline.png",
+   "plate": "light",
+   "tagline": "The Engine Behind High-Performing Law Firms",
+   "src": "brand_fl"
+  },
+  "ts": {
+   "name": "Thomas Scientific",
+   "short": "Thomas Scientific",
+   "logo": "thomas.png",
+   "plate": "light",
+   "tagline": "",
+   "src": "brand_ts"
+  },
+  "bpi": {
+   "name": "Bully Pulpit International",
+   "short": "BPI",
+   "logo": "bpi.svg",
+   "plate": "light",
+   "tagline": "We make change possible.",
+   "src": "brand_bpi"
+  },
+  "fh": {
+   "name": "Fair Harbor",
+   "short": "Fair Harbor",
+   "logo": "fairharbor.png",
+   "plate": "light",
+   "tagline": "",
+   "src": "brand_fh"
+  }
+ },
+ "concepts": {
+  "onehour": [
+   {
+    "id": "window",
+    "title": "The four-hour window",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "phone",
+      "shot": "Close",
+      "pic": "Office desk. A phone reads: arriving between 8 and 12.",
+      "vo": "Ever taken a whole day off for a four-hour window?",
+      "text": ""
+     },
+     {
+      "t": 6,
+      "icon": "clock",
+      "shot": "Wide",
+      "pic": "Kitchen clock. The van pulls in on the minute.",
+      "vo": "At One Hour Heating & Air Conditioning, you pick the window. We arrive in it.",
+      "text": "You choose the window"
+     },
+     {
+      "t": 14,
+      "icon": "thermo",
+      "shot": "Medium",
+      "pic": "Technician and homeowner at the thermostat, a {m} street behind them.",
+      "vo": "Heating and cooling service across {m}.",
+      "text": "Serving {m}"
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and promise.",
+      "vo": "Always On Time... Or You Don't Pay A Dime!",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Heating repair in {m}",
+     "You pick the arrival window",
+     "One Hour Heating & Air"
+    ],
+    "copy": [
+     "Always On Time... Or You Don't Pay A Dime! Book heating service in {m}.",
+     "Pick your arrival window online. One Hour Heating & Air Conditioning, {m}."
+    ]
+   },
+   {
+    "id": "cold",
+    "title": "Cold front tonight",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "yt",
+     "social",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "snow",
+      "shot": "Wide, night",
+      "pic": "First snow under a porch light.",
+      "vo": "Cold front tonight.",
+      "text": "Cold tonight in {m}"
+     },
+     {
+      "t": 4,
+      "icon": "home",
+      "shot": "Medium",
+      "pic": "Warm living room. The thermostat holds steady.",
+      "vo": "Get your heat checked before you need it.",
+      "text": "Book a heating check"
+     },
+     {
+      "t": 10,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and promise.",
+      "vo": "One Hour Heating & Air Conditioning. Always On Time... Or You Don't Pay A Dime!",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Cold front in {m}?",
+     "Book a heating check today",
+     "Furnace tune-ups, on time"
+    ],
+    "copy": [
+     "Cold weather is coming to {m}. Book a heating check with One Hour today.",
+     "Furnace acting up? One Hour Heating & Air Conditioning serves {m}."
+    ]
+   },
+   {
+    "id": "newhome",
+    "title": "New house, meet your furnace",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "boxes",
+      "shot": "Medium",
+      "pic": "Moving boxes in a hallway. The basement door opens on an old furnace.",
+      "vo": "New house? Meet its furnace.",
+      "text": "Just moved in?"
+     },
+     {
+      "t": 4,
+      "icon": "door",
+      "shot": "Medium",
+      "pic": "A technician at the front door, shoe covers on.",
+      "vo": "One Hour Heating & Air Conditioning will check it, on time.",
+      "text": "A first check for your new home"
+     },
+     {
+      "t": 10,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and promise.",
+      "vo": "Always On Time... Or You Don't Pay A Dime!",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Just moved to {m}?",
+     "Meet your new furnace",
+     "Heating checks, on time"
+    ],
+    "copy": [
+     "New to {m}? Have One Hour check the heating and cooling in your new home.",
+     "A first look at your new home's furnace, from One Hour Heating & Air Conditioning."
+    ]
+   },
+   {
+    "id": "clock",
+    "title": "The clock",
+    "len": 6,
+    "runs": [
+     "yt",
+     "search"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "clock",
+      "shot": "Close",
+      "pic": "A wall clock, ticking loudly.",
+      "vo": "(ticking)",
+      "text": ""
+     },
+     {
+      "t": 3,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Doorbell. Logo and promise.",
+      "vo": "Right on time.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Right on time",
+     "AC and heating in {m}",
+     "One Hour Heating & Air"
+    ],
+    "copy": [
+     "One Hour Heating & Air Conditioning. Always On Time... Or You Don't Pay A Dime!",
+     "Heating and air conditioning service in {m}. Book online."
+    ]
+   }
+  ],
+  "bfp": [
+   {
+    "id": "pipes",
+    "title": "Old house, old pipes",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "home",
+      "shot": "Wide",
+      "pic": "A brick rowhome, then a basement pipe with a slow drip.",
+      "vo": "Your house has character. So do its pipes.",
+      "text": ""
+     },
+     {
+      "t": 6,
+      "icon": "clock",
+      "shot": "Medium",
+      "pic": "A plumber at the door as the clock strikes the hour.",
+      "vo": "Benjamin Franklin Plumbing. The Punctual Plumber.",
+      "text": "The Punctual Plumber"
+     },
+     {
+      "t": 14,
+      "icon": "wrench",
+      "shot": "Close",
+      "pic": "Hands on an old valve. The homeowner watches.",
+      "vo": "Drains, water heaters and pipes, looked after across {m}.",
+      "text": "Plumbing in {m}"
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Benjamin Franklin Plumbing.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "The Punctual Plumber",
+     "Plumber in {m}",
+     "Old pipes? Get them checked"
+    ],
+    "copy": [
+     "Benjamin Franklin Plumbing, The Punctual Plumber, serves {m}.",
+     "Older home in {m}? Have a plumber look at the pipes."
+    ]
+   },
+   {
+    "id": "freeze",
+    "title": "Hard freeze tonight",
+    "len": 15,
+    "runs": [
+     "social",
+     "yt",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "snow",
+      "shot": "To camera",
+      "pic": "A plumber in a basement, frost on the window.",
+      "vo": "Hard freeze tonight? Do three things.",
+      "text": "Freeze tonight in {m}"
+     },
+     {
+      "t": 4,
+      "icon": "drop",
+      "shot": "Close",
+      "pic": "A cabinet opens. A faucet drips. A hose comes off the spigot.",
+      "vo": "Open the cabinets. Drip the faucets. Unhook the hose.",
+      "text": "Open · Drip · Unhook"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Benjamin Franklin Plumbing. The Punctual Plumber.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Freeze tonight in {m}?",
+     "Three steps for your pipes",
+     "The Punctual Plumber"
+    ],
+    "copy": [
+     "Hard freeze in {m}: open cabinets, drip faucets, unhook hoses.",
+     "Pipe trouble after a freeze? Benjamin Franklin Plumbing serves {m}."
+    ]
+   },
+   {
+    "id": "hotwater",
+    "title": "Monday, no hot water",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "search",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "drop",
+      "shot": "Close",
+      "pic": "A cold shower. A yelp. Steam that never comes.",
+      "vo": "No hot water?",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "van",
+      "shot": "Wide",
+      "pic": "A blue van at the kerb. The plumber checks his watch.",
+      "vo": "Call The Punctual Plumber.",
+      "text": "Water heaters in {m}"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Benjamin Franklin Plumbing.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "No hot water in {m}?",
+     "Water heater repair",
+     "The Punctual Plumber"
+    ],
+    "copy": [
+     "No hot water? Call Benjamin Franklin Plumbing, The Punctual Plumber.",
+     "Water heater repair and replacement in {m}."
+    ]
+   }
+  ],
+  "sparky": [
+   {
+    "id": "flicker",
+    "title": "Flicker",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "bulb",
+      "shot": "Wide",
+      "pic": "Living room lights flicker in a storm. The dog looks up.",
+      "vo": "That flicker isn't a ghost.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "panel",
+      "shot": "Close",
+      "pic": "An electrician opens an old panel with a flashlight.",
+      "vo": "In an older home it can mean a panel working hard.",
+      "text": "Older panel? Get it checked"
+     },
+     {
+      "t": 13,
+      "icon": "door",
+      "shot": "Doorbell camera",
+      "pic": "The electrician arrives at the booked minute.",
+      "vo": "Mister Sparky looks it over, on time.",
+      "text": "Electricians in {m}"
+     },
+     {
+      "t": 23,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Mister Sparky. America's On-Time Electrician.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Lights flickering?",
+     "Electrician in {m}",
+     "America's On-Time Electrician"
+    ],
+    "copy": [
+     "Flickering lights in an older home? Have Mister Sparky take a look.",
+     "Mister Sparky, America's On-Time Electrician, serves {m}."
+    ]
+   },
+   {
+    "id": "outage",
+    "title": "Lights out",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "local",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "bolt",
+      "shot": "Wide, night",
+      "pic": "A street goes dark. One window is lit by a phone.",
+      "vo": "Power back, but something's off?",
+      "text": ""
+     },
+     {
+      "t": 4,
+      "icon": "plug",
+      "shot": "Close",
+      "pic": "An electrician tests an outlet.",
+      "vo": "Have an electrician check it.",
+      "text": "Electrical checks in {m}"
+     },
+     {
+      "t": 10,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Mister Sparky. America's On-Time Electrician.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "After the outage in {m}",
+     "Have an electrician check",
+     "Mister Sparky"
+    ],
+    "copy": [
+     "Something off after a power cut? Mister Sparky serves {m}.",
+     "Outlets, panels and wiring checked by America's On-Time Electrician."
+    ]
+   },
+   {
+    "id": "charger",
+    "title": "New car, old garage",
+    "len": 15,
+    "runs": [
+     "yt",
+     "search",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "car",
+      "shot": "Wide",
+      "pic": "A new electric car in a driveway. The cord will not reach.",
+      "vo": "New car. Old garage.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "plug",
+      "shot": "Medium",
+      "pic": "An electrician looks over the garage wall with the owner.",
+      "vo": "Ask Mister Sparky about a home charger.",
+      "text": "Home EV chargers in {m}"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Mister Sparky. America's On-Time Electrician.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Home EV charger in {m}",
+     "Ask Mister Sparky",
+     "America's On-Time Electrician"
+    ],
+    "copy": [
+     "New electric car? Ask Mister Sparky about a home charger.",
+     "Home charging in {m}, from America's On-Time Electrician."
+    ]
+   }
+  ],
+  "cet": [
+   {
+    "id": "oneteam",
+    "title": "One team",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "building",
+      "shot": "Aerial",
+      "pic": "Dawn over a commercial roof. A solar array catches the light.",
+      "vo": "A building has a lot of systems.",
+      "text": ""
+     },
+     {
+      "t": 6,
+      "icon": "panel",
+      "shot": "Medium",
+      "pic": "A switchgear room. An electrician in a hard hat closes a panel.",
+      "vo": "Power. Solar. Charging. Efficiency.",
+      "text": "Electrical · Solar · EV charging"
+     },
+     {
+      "t": 14,
+      "icon": "people",
+      "shot": "Tracking",
+      "pic": "A site walk with a facilities manager, tablet in hand.",
+      "vo": "CET Energy Solutions handles every one, with the same team.",
+      "text": "Every system, handled by the same team."
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "CET Energy Solutions. Everything Electrical. Everything Energy.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Everything Electrical",
+     "Everything Energy",
+     "Commercial electrical"
+    ],
+    "copy": [
+     "Every system, handled by the same team. CET Energy Solutions, {m}.",
+     "Electrical construction, solar and EV charging for sites in {m}."
+    ]
+   },
+   {
+    "id": "carpark",
+    "title": "The car park",
+    "len": 15,
+    "runs": [
+     "yt",
+     "social",
+     "search"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "car",
+      "shot": "Wide",
+      "pic": "A staff car park. Two cars wait for one charger.",
+      "vo": "More electric cars than chargers?",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "plug",
+      "shot": "Medium",
+      "pic": "A crew sets a row of new chargers.",
+      "vo": "CET Energy Solutions installs workplace charging.",
+      "text": "EV charging for sites in {m}"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Everything Electrical. Everything Energy.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Workplace EV charging",
+     "EV charging in {m}",
+     "CET Energy Solutions"
+    ],
+    "copy": [
+     "Workplace and fleet charging, installed by CET Energy Solutions.",
+     "Planning EV charging for a site in {m}? Talk to CET."
+    ]
+   },
+   {
+    "id": "crew",
+    "title": "Join the crew",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "hardhat",
+      "shot": "Close",
+      "pic": "Hard hats on a tailgate at sunrise.",
+      "vo": "Electricians wanted.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "people",
+      "shot": "Medium",
+      "pic": "An apprentice and a journeyman wire a panel together.",
+      "vo": "Join 400 professionals at CET Energy Solutions.",
+      "text": "Hiring in {m}"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Everything Electrical. Everything Energy.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Electricians wanted",
+     "Careers in {m}",
+     "Join CET Energy Solutions"
+    ],
+    "copy": [
+     "Join 400 professionals at CET Energy Solutions.",
+     "Electrical and energy careers in {m}."
+    ]
+   }
+  ],
+  "fl": [
+   {
+    "id": "858",
+    "title": "8:58",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "laptop",
+      "shot": "Close",
+      "pic": "A law office. A partner's laptop will not connect.",
+      "vo": "8:58. Hearing at nine.",
+      "text": "8:58"
+     },
+     {
+      "t": 6,
+      "icon": "headset",
+      "shot": "Medium",
+      "pic": "A service desk engineer picks up the call.",
+      "vo": "Frontline's service desk works only with law firms.",
+      "text": "IT for law firms"
+     },
+     {
+      "t": 14,
+      "icon": "check",
+      "shot": "Tracking",
+      "pic": "The screen comes alive. The partner walks into court.",
+      "vo": "So your people get back to the work.",
+      "text": ""
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Frontline Managed Services. The engine behind high-performing law firms.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Managed IT for law firms",
+     "A service desk for lawyers",
+     "Frontline Managed Services"
+    ],
+    "copy": [
+     "Managed IT and a service desk built only for law firms.",
+     "The Engine Behind High-Performing Law Firms."
+    ]
+   },
+   {
+    "id": "ebills",
+    "title": "The rejected invoice",
+    "len": 15,
+    "runs": [
+     "social",
+     "yt",
+     "search"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "doc",
+      "shot": "Close",
+      "pic": "Rejected e-bills stack up on a billing manager's screen.",
+      "vo": "Rejected e-bills slow the cash.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "check",
+      "shot": "Close",
+      "pic": "The same screen, a clean queue.",
+      "vo": "Frontline runs billing and collections for law firms.",
+      "text": "E-billing and collections"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Frontline Managed Services.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "E-billing for law firms",
+     "Law firm collections",
+     "Frontline Managed Services"
+    ],
+    "copy": [
+     "E-billing, billing and collections support for law firms.",
+     "Frontline works only with law firms. Talk to our billing team."
+    ]
+   },
+   {
+    "id": "phish",
+    "title": "It looks like a client",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "shield",
+      "shot": "Close",
+      "pic": "An email that looks like a client's lands in a paralegal's inbox.",
+      "vo": "It looks like a client.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "laptop",
+      "shot": "Close",
+      "pic": "A warning banner. The message is held.",
+      "vo": "Frontline watches the network for law firms.",
+      "text": "Cybersecurity for law firms"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Frontline Managed Services.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Cybersecurity for law firms",
+     "Network monitoring",
+     "Frontline Managed Services"
+    ],
+    "copy": [
+     "Cybersecurity and network monitoring for law firms.",
+     "Protect client matters with a team that works only with law firms."
+    ]
+   }
+  ],
+  "ts": [
+   {
+    "id": "since1900",
+    "title": "Since 1900",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "flask",
+      "shot": "Close",
+      "pic": "Glassware on a wooden bench, in the style of an old photograph.",
+      "vo": "Labs have changed since 1900.",
+      "text": "1900"
+     },
+     {
+      "t": 6,
+      "icon": "shield",
+      "shot": "Wide",
+      "pic": "A modern cleanroom. A gowned technician at work.",
+      "vo": "They still need the right supplies.",
+      "text": "Supplies · Equipment · Cleanroom"
+     },
+     {
+      "t": 14,
+      "icon": "box",
+      "shot": "Tracking",
+      "pic": "A distribution centre aisle. A tote moves down the line.",
+      "vo": "Thomas Scientific has supplied labs for 125 years.",
+      "text": "125 years"
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo.",
+      "vo": "Thomas Scientific.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Lab supplies since 1900",
+     "Lab supplies in {m}",
+     "Thomas Scientific"
+    ],
+    "copy": [
+     "Lab supplies, equipment and cleanroom products from Thomas Scientific.",
+     "Supplying research and clinical labs for 125 years."
+    ]
+   },
+   {
+    "id": "tips",
+    "title": "Out of tips",
+    "len": 15,
+    "runs": [
+     "social",
+     "search",
+     "yt"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "box",
+      "shot": "Close",
+      "pic": "A researcher shakes an empty pipette-tip box.",
+      "vo": "Out again?",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "check",
+      "shot": "Medium",
+      "pic": "A stocked supply room with labelled bins.",
+      "vo": "Ask Thomas Scientific about managed inventory.",
+      "text": "Managed inventory for labs"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo.",
+      "vo": "Thomas Scientific.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Managed lab inventory",
+     "Lab consumables, {m}",
+     "Thomas Scientific"
+    ],
+    "copy": [
+     "Ask Thomas Scientific about managed inventory for your lab.",
+     "Consumables for research and clinical labs in {m}."
+    ]
+   },
+   {
+    "id": "newlab",
+    "title": "New lab, empty benches",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "building",
+      "shot": "Wide",
+      "pic": "An empty lab. The benches are still wrapped.",
+      "vo": "New lab, empty benches.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "flask",
+      "shot": "Tracking",
+      "pic": "Equipment rolls in on carts.",
+      "vo": "Thomas Scientific supplies equipment and consumables for labs.",
+      "text": "Equipment and consumables"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo.",
+      "vo": "Thomas Scientific.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Fitting out a new lab?",
+     "Lab equipment in {m}",
+     "Thomas Scientific"
+    ],
+    "copy": [
+     "Opening a lab in {m}? Thomas Scientific supplies equipment and consumables.",
+     "Equipment and supplies for research and clinical labs."
+    ]
+   }
+  ],
+  "bpi": [
+   {
+    "id": "room",
+    "title": "The room",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "mic",
+      "shot": "Wide",
+      "pic": "A hearing room fills up. Microphones wait on the table.",
+      "vo": "Every big change starts as an argument.",
+      "text": ""
+     },
+     {
+      "t": 6,
+      "icon": "chart",
+      "shot": "Medium",
+      "pic": "A wall of polling charts and message drafts.",
+      "vo": "Bully Pulpit International finds the audience and the words.",
+      "text": "Research · Public affairs · Campaigns"
+     },
+     {
+      "t": 14,
+      "icon": "building",
+      "shot": "Aerial, dusk",
+      "pic": "Phones light up across a city.",
+      "vo": "And gets them heard.",
+      "text": ""
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Bully Pulpit International. We make change possible.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "We make change possible.",
+     "{m} public affairs",
+     "Bully Pulpit International"
+    ],
+    "copy": [
+     "Public affairs, reputation and campaign work from Bully Pulpit International.",
+     "We make change possible."
+    ]
+   },
+   {
+    "id": "lead",
+    "title": "Lead change",
+    "len": 15,
+    "runs": [
+     "social",
+     "yt"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "doc",
+      "shot": "Over the shoulder",
+      "pic": "Headlines scroll past a chief executive's window.",
+      "vo": "Change is coming either way.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "mic",
+      "shot": "Medium",
+      "pic": "The executive steps up to a microphone.",
+      "vo": "Lead change, don't be consumed by it.",
+      "text": "Lead change"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "Bully Pulpit International.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Lead change",
+     "We make change possible.",
+     "Bully Pulpit International"
+    ],
+    "copy": [
+     "Lead change, don't be consumed by it.",
+     "Strategic communications from Bully Pulpit International."
+    ]
+   },
+   {
+    "id": "week",
+    "title": "Bad week",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social",
+     "search"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "phone",
+      "shot": "Close",
+      "pic": "A company name trends for the wrong reason.",
+      "vo": "Bad week?",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "people",
+      "shot": "Medium",
+      "pic": "A calm team at a table. One screen, one plan.",
+      "vo": "Corporate reputation work from Bully Pulpit International.",
+      "text": "Corporate reputation"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo and tagline.",
+      "vo": "We make change possible.",
+      "text": ""
+     }
+    ],
+    "headlines": [
+     "Corporate reputation",
+     "Reputation work, {m}",
+     "Bully Pulpit International"
+    ],
+    "copy": [
+     "Corporate reputation work from Bully Pulpit International.",
+     "Research, public affairs and campaigns, from one team."
+    ]
+   }
+  ],
+  "fh": [
+   {
+    "id": "bottle",
+    "title": "Bottle to boardshort",
+    "len": 30,
+    "runs": [
+     "ctv",
+     "yt",
+     "social"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "bottle",
+      "shot": "Close",
+      "pic": "A plastic bottle tumbles in the surf at first light.",
+      "vo": "This bottle washed up on a beach.",
+      "text": ""
+     },
+     {
+      "t": 6,
+      "icon": "wave",
+      "shot": "Animation",
+      "pic": "Bottle to flake to yarn to fabric, drawn as one line.",
+      "vo": "Fair Harbor turns bottles like it into swim trunks.",
+      "text": "Made from recycled plastic bottles"
+     },
+     {
+      "t": 16,
+      "icon": "sun",
+      "shot": "Wide",
+      "pic": "Friends jump off a dock.",
+      "vo": "Comfortable enough for the whole day.",
+      "text": "Comfortable. Sustainable."
+     },
+     {
+      "t": 24,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo. Certified B Corp.",
+      "vo": "Fair Harbor.",
+      "text": "Certified B Corp"
+     }
+    ],
+    "headlines": [
+     "Swim trunks from bottles",
+     "Made from recycled plastic",
+     "Fair Harbor"
+    ],
+    "copy": [
+     "Swim trunks made from recycled plastic bottles. Fair Harbor.",
+     "Comfortable, sustainable apparel for everyday ease."
+    ]
+   },
+   {
+    "id": "saturday",
+    "title": "First warm Saturday",
+    "len": 15,
+    "runs": [
+     "ctv",
+     "social",
+     "local"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "sun",
+      "shot": "Wide",
+      "pic": "A boardwalk shakes off winter.",
+      "vo": "First warm Saturday of the year.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "shorts",
+      "shot": "Close",
+      "pic": "Trunks pulled from a drawer, then straight to the water.",
+      "vo": "Be ready for it.",
+      "text": "Swim trunks from recycled bottles"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo. Certified B Corp.",
+      "vo": "Fair Harbor.",
+      "text": "Certified B Corp"
+     }
+    ],
+    "headlines": [
+     "Ready for the first swim?",
+     "Swim trunks from bottles",
+     "Fair Harbor"
+    ],
+    "copy": [
+     "First warm Saturday is coming. Swim trunks made from recycled bottles.",
+     "Fair Harbor: comfortable, sustainable apparel for everyday ease."
+    ]
+   },
+   {
+    "id": "ease",
+    "title": "One pair, all day",
+    "len": 15,
+    "runs": [
+     "social",
+     "yt",
+     "search"
+    ],
+    "beats": [
+     {
+      "t": 0,
+      "icon": "shorts",
+      "shot": "Three cuts",
+      "pic": "The same shorts: coffee run, dog walk, dock.",
+      "vo": "One pair. All day.",
+      "text": ""
+     },
+     {
+      "t": 5,
+      "icon": "bottle",
+      "shot": "Close",
+      "pic": "The fabric, with a bottle beside it.",
+      "vo": "Comfortable, sustainable apparel for everyday ease.",
+      "text": "Made from recycled plastic bottles"
+     },
+     {
+      "t": 11,
+      "icon": "end",
+      "shot": "End card",
+      "pic": "Logo. Certified B Corp.",
+      "vo": "Fair Harbor.",
+      "text": "Certified B Corp"
+     }
+    ],
+    "headlines": [
+     "One pair, all day",
+     "Everyday ease",
+     "Fair Harbor"
+    ],
+    "copy": [
+     "Comfortable, sustainable apparel for everyday ease.",
+     "Shorts and swim made from recycled plastic bottles. Fair Harbor."
+    ]
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "pp-onehour-lancaster",
+   "co": "pp",
+   "brand": "onehour",
+   "market": "lancaster",
+   "goal": "aware",
+   "budget": 15000
+  },
+  {
+   "id": "pp-bfp-york",
+   "co": "pp",
+   "brand": "bfp",
+   "market": "york",
+   "goal": "calls",
+   "budget": 8000
+  },
+  {
+   "id": "pp-sparky-harrisburg",
+   "co": "pp",
+   "brand": "sparky",
+   "market": "harrisburg",
+   "goal": "aware",
+   "budget": 6000
+  },
+  {
+   "id": "pp-onehour-shore",
+   "co": "pp",
+   "brand": "onehour",
+   "market": "shore",
+   "goal": "movers",
+   "budget": 9000
+  },
+  {
+   "id": "cet-cet-central-ma",
+   "co": "cet",
+   "brand": "cet",
+   "market": "central-ma",
+   "goal": "aware",
+   "budget": 12000
+  },
+  {
+   "id": "cet-cet-boston",
+   "co": "cet",
+   "brand": "cet",
+   "market": "boston",
+   "goal": "hiring",
+   "budget": 8000
+  },
+  {
+   "id": "fl-fl-amlaw",
+   "co": "fl",
+   "brand": "fl",
+   "market": "amlaw",
+   "goal": "demo",
+   "budget": 10000
+  },
+  {
+   "id": "fl-fl-midsize",
+   "co": "fl",
+   "brand": "fl",
+   "market": "midsize",
+   "goal": "demo",
+   "budget": 6000
+  },
+  {
+   "id": "ts-ts-boston",
+   "co": "ts",
+   "brand": "ts",
+   "market": "boston",
+   "goal": "quotes",
+   "budget": 9000
+  },
+  {
+   "id": "ts-ts-philly",
+   "co": "ts",
+   "brand": "ts",
+   "market": "philly",
+   "goal": "quotes",
+   "budget": 7000
+  },
+  {
+   "id": "bpi-bpi-dc",
+   "co": "bpi",
+   "brand": "bpi",
+   "market": "dc",
+   "goal": "newbiz",
+   "budget": 8000
+  },
+  {
+   "id": "fh-fh-li",
+   "co": "fh",
+   "brand": "fh",
+   "market": "li",
+   "goal": "sales",
+   "budget": 20000
+  },
+  {
+   "id": "fh-fh-shore",
+   "co": "fh",
+   "brand": "fh",
+   "market": "shore",
+   "goal": "aware",
+   "budget": 12000
+  },
+  {
+   "id": "fh-fh-cape",
+   "co": "fh",
+   "brand": "fh",
+   "market": "cape",
+   "goal": "stores",
+   "budget": 6000
+  }
+ ]
+}
